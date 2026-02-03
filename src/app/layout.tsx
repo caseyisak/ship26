@@ -3,9 +3,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
-import Banner from '@/components/layout/banner';
-import { Footer } from '@/components/layout/footer';
-import Navbar from '@/components/layout/navbar';
+import { ContentfulAppRedirect } from '@/components/contentful-app-redirect';
+import { ConditionalSiteChrome } from '@/components/layout/conditional-site-chrome';
 import { LivePreviewProviderWrapper } from '@/components/live-preview-provider';
 import { ThemeProvider } from '@/components/theme-provider';
 
@@ -78,17 +77,24 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`h-screen ${inter.variable} antialiased`}>
+        {/* Inline script runs before React: when Contentful iframes root (/) we redirect immediately so the Section Style Editor loads, not the homepage */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(window.self!==window.top&&(window.location.pathname==='/'||window.location.pathname==='')){window.location.replace('/contentful-app');}}catch(e){}})();`,
+          }}
+        />
+        <ContentfulAppRedirect />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
-          <LivePreviewProviderWrapper>
-            <Banner url="https://www.shadcnblocks.com/template/metafi" />
-            <Navbar />
-            <main>{children}</main>
-            <Footer />
+          <LivePreviewProviderWrapper
+            space={process.env.CONTENTFUL_SPACE_ID}
+            environment={process.env.CONTENTFUL_ENVIRONMENT ?? 'master'}
+          >
+            <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
           </LivePreviewProviderWrapper>
         </ThemeProvider>
       </body>

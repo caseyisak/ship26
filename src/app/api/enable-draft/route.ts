@@ -8,6 +8,11 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get('secret');
   const slug = searchParams.get('slug');
+  const entryId = searchParams.get('entryId');
+  const typeParam = searchParams.get('type');
+  const ctypeParam = searchParams.get('ctype');
+  /** Contentful can send type as "ctype" (e.g. ctype=hero); accept both. */
+  const type = typeParam ?? ctypeParam;
 
   if (!PREVIEW_SECRET || secret !== PREVIEW_SECRET) {
     return NextResponse.json(
@@ -16,17 +21,78 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  const base = request.nextUrl.origin;
+
+  // ID-based preview (e.g. Hero): redirect to /preview/hero/[entryId]
+  if (entryId && type === 'hero') {
+    if (
+      entryId.includes('entry.') ||
+      entryId.includes('NOT_FOUND') ||
+      entryId.length < 10
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Invalid entryId: use the entry ID merge tag in Contentful (e.g. {{entry.sys.id}}).',
+          received: entryId,
+        },
+        { status: 400 },
+      );
+    }
+    const redirectUrl = `${base}/preview/hero/${encodeURIComponent(entryId)}`;
+    const res = NextResponse.redirect(redirectUrl);
+    try {
+      const draft = await draftMode();
+      draft.enable();
+    } catch {
+      res.cookies.set('__prerender_bypass', '1', {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60,
+      });
+    }
+    return res;
+  }
+
   if (!slug) {
     return NextResponse.json(
-      { error: 'Missing slug for redirect' },
+      { error: 'Missing slug or entryId+type for redirect' },
       { status: 400 },
     );
   }
 
-  const { enable } = await draftMode();
-  enable();
+  // Contentful sends literal "entry.fields.slug_NOT_FOUND" when the preview URL template
+  // doesn't resolve the slug variable (e.g. wrong merge tag or entry has no slug).
+  if (
+    slug.includes('entry.fields') ||
+    slug.includes('NOT_FOUND') ||
+    slug.startsWith('entry.')
+  ) {
+    return NextResponse.json(
+      {
+        error:
+          'Invalid slug: preview URL template in Contentful is not resolving. Use the slug merge tag for your Page content type (e.g. {{entry.fields.slug}} or the UI slug variable) and ensure the entry has a slug.',
+        received: slug,
+      },
+      { status: 400 },
+    );
+  }
 
-  const base = request.nextUrl.origin;
   const redirectUrl = `${base}/page/${encodeURIComponent(slug)}`;
-  return NextResponse.redirect(redirectUrl);
+  const res = NextResponse.redirect(redirectUrl);
+
+  try {
+    const draft = await draftMode();
+    draft.enable();
+  } catch {
+    // Fallback when enable() throws (e.g. Turbopack): set bypass cookie so draftMode().isEnabled is true
+    res.cookies.set('__prerender_bypass', '1', {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60,
+    });
+  }
+  return res;
 }
