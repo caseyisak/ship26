@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
+    "@testing-library/react": "^16.0.0",
     "jsdom": "^25.0.0",
     "vitest": "^2.0.0",
     "@tailwindcss/postcss": "^4.0.2",
