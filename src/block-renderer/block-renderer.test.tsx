@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it } from 'vitest';
 
+import { LivePreviewProvider } from '@/lib/live-preview';
+
 import { BlockRenderer } from './block-renderer';
 
 describe('BlockRenderer', () => {
@@ -41,7 +43,11 @@ describe('BlockRenderer', () => {
       ctaText: 'Click me',
       ctaUrl: '/test',
     };
-    render(<BlockRenderer data={mockHero} />);
+    render(
+      <LivePreviewProvider locale="en-US">
+        <BlockRenderer data={mockHero} />
+      </LivePreviewProvider>,
+    );
     const heading = screen.getByRole('heading', { level: 1 });
     expect(heading.textContent).to.equal('Test Headline');
     expect(screen.getByText('Test subheadline')).toBeTruthy();

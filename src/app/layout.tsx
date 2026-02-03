@@ -6,6 +6,7 @@ import { Inter } from 'next/font/google';
 import Banner from '@/components/layout/banner';
 import { Footer } from '@/components/layout/footer';
 import Navbar from '@/components/layout/navbar';
+import { LivePreviewProviderWrapper } from '@/components/live-preview-provider';
 import { ThemeProvider } from '@/components/theme-provider';
 
 const inter = Inter({
@@ -83,10 +84,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Banner url="https://www.shadcnblocks.com/template/metafi" />
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
+          <LivePreviewProviderWrapper>
+            <Banner url="https://www.shadcnblocks.com/template/metafi" />
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+          </LivePreviewProviderWrapper>
         </ThemeProvider>
       </body>
     </html>

@@ -5,14 +5,22 @@ import React from 'react';
 import type { HeroFragment } from '@/block-renderer/types';
 import { BlockProps } from '@/block-renderer/types';
 import { Button } from '@/components/ui/button';
+import {
+  useContentfulInspectorModeProps,
+  useLiveUpdates,
+} from '@/lib/live-preview';
 
 const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
-  const headline = data.headline ?? 'Simplifying Payments for Growing Business';
+  const liveData = useLiveUpdates(data);
+  const getProps = useContentfulInspectorModeProps(data.sys.id);
+
+  const headline =
+    liveData.headline ?? 'Simplifying Payments for Growing Business';
   const subheadline =
-    data.subheadline ??
+    liveData.subheadline ??
     'Streamlining transactions for expanding enterprises. Our solutions simplify payment processes, empowering businesses to focus on growth and innovation.';
-  const ctaText = data.ctaText ?? 'Get Started';
-  const ctaUrl = data.ctaUrl ?? '/pricing';
+  const ctaText = liveData.ctaText ?? 'Get Started';
+  const ctaUrl = liveData.ctaUrl ?? '/pricing';
 
   return (
     <section
@@ -22,10 +30,16 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
     >
       <div className="relative container px-0 md:px-6">
         <div className="mx-auto grid max-w-4xl gap-6 py-14 text-center sm:py-16 md:gap-8 md:pt-24 md:pb-20">
-          <h1 className="text-foreground text-4xl leading-tight font-medium tracking-tight text-balance sm:text-5xl md:text-[68px]">
+          <h1
+            className="text-foreground text-4xl leading-tight font-medium tracking-tight text-balance sm:text-5xl md:text-[68px]"
+            {...getProps({ fieldId: 'headline' })}
+          >
             {headline}
           </h1>
-          <p className="text-muted-foreground md:text-md mx-auto max-w-2xl text-base sm:text-lg">
+          <p
+            className="text-muted-foreground md:text-md mx-auto max-w-2xl text-base sm:text-lg"
+            {...getProps({ fieldId: 'subheadline' })}
+          >
             {subheadline}
           </p>
           <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4">
