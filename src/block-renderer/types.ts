@@ -1,10 +1,21 @@
 import type { LayoutType } from '@/block-renderer/layouts';
 
-/** Minimal block data for Milestone 1; no GraphQL dependency. */
+/** Minimal block data; no GraphQL codegen dependency. */
 export type BlockData = {
   __typename: string;
   sys: { id: string; spaceId?: string };
   _serverError?: string;
+};
+
+/** Hero section (matches Contentful hero content type). */
+export type HeroFragment = BlockData & {
+  __typename: 'Hero';
+  internalName?: string | null;
+  headline?: string | null;
+  subheadline?: string | null;
+  ctaText?: string | null;
+  ctaUrl?: string | null;
+  variant?: string | null;
 };
 
 export type PersonalizedBlockData = BlockData & {

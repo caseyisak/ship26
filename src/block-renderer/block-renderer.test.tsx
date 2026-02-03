@@ -31,4 +31,21 @@ describe('BlockRenderer', () => {
     ).toBeTruthy();
     expect(screen.getByText('UnknownBlock')).toBeTruthy();
   });
+
+  it('renders Hero with mock Hero data', () => {
+    const mockHero = {
+      __typename: 'Hero' as const,
+      sys: { id: 'hero-1', spaceId: 'test' },
+      headline: 'Test Headline',
+      subheadline: 'Test subheadline',
+      ctaText: 'Click me',
+      ctaUrl: '/test',
+    };
+    render(<BlockRenderer data={mockHero} />);
+    const heading = screen.getByRole('heading', { level: 1 });
+    expect(heading.textContent).to.equal('Test Headline');
+    expect(screen.getByText('Test subheadline')).toBeTruthy();
+    const link = screen.getByRole('link', { name: 'Click me' });
+    expect(link.getAttribute('href')).to.equal('/test');
+  });
 });

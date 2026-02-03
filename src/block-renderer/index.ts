@@ -5,6 +5,7 @@ export type {
   BlockData,
   BlockProps,
   BlockRendererDefaultProps,
+  HeroFragment,
 } from './types';
 export {
   getComponent,
