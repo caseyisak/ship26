@@ -41,6 +41,31 @@ export type FaqFragment = BlockData & {
   itemsCollection?: { items: FaqItemFragment[] } | null;
 };
 
+/** TabbedContentItem (matches Contentful TabbedContentItem content type: label, body, image, imageAlt, href, buttonLabel). */
+export type TabbedContentItemFragment = {
+  __typename: 'TabbedContentItem';
+  sys: { id: string };
+  label?: string | null;
+  body?: string | null;
+  image?: { url?: string; width?: number; height?: number } | null;
+  imageAlt?: string | null;
+  href?: string | null;
+  buttonLabel?: string | null;
+};
+
+/** TabbedContent section (matches Contentful TabbedContent content type: internalName, tagline, title, description, itemsCollection, nt_experiences). */
+export type TabbedContentFragment = BlockData & {
+  __typename: 'Tabbedcontent';
+  internalName?: string | null;
+  tagline?: string | null;
+  title?: string | null;
+  description?: string | null;
+  itemsCollection?: { items: TabbedContentItemFragment[] } | null;
+  ntExperiencesCollection?: {
+    items: Array<{ __typename?: string; sys?: { id: string } }>;
+  };
+};
+
 export type PersonalizedBlockData = BlockData & {
   ntExperiencesCollection?: { items: unknown[] };
 };

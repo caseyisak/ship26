@@ -35,15 +35,25 @@ export async function fetchGraphQL<T>({
   }
   const json = (await res.json()) as {
     data?: T;
-    errors?: { message: string; locations?: Array<{ line: number; column: number }> }[];
+    errors?: {
+      message: string;
+      locations?: Array<{ line: number; column: number }>;
+      path?: Array<string | number>;
+    }[];
   };
   if (json.errors?.length) {
+    const errorMessages = json.errors.map((e) => {
+      const location = e.locations?.[0]
+        ? ` (line ${e.locations[0].line}, column ${e.locations[0].column})`
+        : '';
+      const path = e.path ? ` at path: ${e.path.join('.')}` : '';
+      return `${e.message}${location}${path}`;
+    });
+    const fullError = `Contentful GraphQL errors:\n${errorMessages.join('\n')}`;
     if (process.env.NODE_ENV === 'development') {
       console.error('[fetchGraphQL] GraphQL errors:', JSON.stringify(json.errors, null, 2));
     }
-    throw new Error(
-      `Contentful GraphQL: ${json.errors.map((e) => e.message).join(', ')}`,
-    );
+    throw new Error(fullError);
   }
   if (!json.data) {
     throw new Error('Contentful GraphQL: no data');

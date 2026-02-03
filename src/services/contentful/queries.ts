@@ -44,6 +44,40 @@ const FAQ_FIELDS = `
   }
 `;
 
+/** TabbedContentItem fragment: all fields from TabbedContentItem content type (label, body, image, imageAlt, href, buttonLabel). */
+const TABBED_CONTENT_ITEM_FIELDS = `
+  __typename
+  sys { id }
+  ... on Tabbedcontentitem {
+    label
+    body
+    image { url width height }
+    imageAlt
+    href
+    buttonLabel
+  }
+`;
+
+/** TabbedContent fragment: all fields from TabbedContent content type (internalName, tagline, title, description, itemsCollection, nt_experiences). */
+const TABBED_CONTENT_FIELDS = `
+  __typename
+  sys { id }
+  ... on Tabbedcontent {
+    internalName
+    tagline
+    title
+    description
+    itemsCollectionCollection(limit: 50) {
+      items {
+        ${TABBED_CONTENT_ITEM_FIELDS}
+      }
+    }
+    ntExperiencesCollectionCollection(limit: 10) {
+      items { __typename sys { id } }
+    }
+  }
+`;
+
 export const PAGE_BY_SLUG = `
   query PageBySlug($slug: String!, $locale: String!, $preview: Boolean) {
     pageCollection(where: { slug: $slug }, locale: $locale, preview: $preview, limit: 1) {
@@ -56,6 +90,7 @@ export const PAGE_BY_SLUG = `
             sys { id }
             ${HERO_FIELDS}
             ${FAQ_FIELDS}
+            ${TABBED_CONTENT_FIELDS}
           }
         }
         ntExperiencesCollection(limit: 10) {
@@ -82,6 +117,17 @@ export const HERO_BY_ID = `
     heroCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${HERO_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single TabbedContent entry by entry ID (for ID-based live preview, no slug). Uses same TabbedContent fields as PAGE_BY_SLUG. */
+export const TABBED_CONTENT_BY_ID = `
+  query TabbedContentById($id: String!, $locale: String!, $preview: Boolean) {
+    tabbedContentCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${TABBED_CONTENT_FIELDS}
       }
     }
   }
