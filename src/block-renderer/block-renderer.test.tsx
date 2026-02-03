@@ -54,4 +54,33 @@ describe('BlockRenderer', () => {
     const link = screen.getByRole('link', { name: 'Click me' });
     expect(link.getAttribute('href')).to.equal('/test');
   });
+
+  it('renders Faq with mock Faq data', () => {
+    const mockFaq = {
+      __typename: 'Faq' as const,
+      sys: { id: 'faq-1', spaceId: 'test' },
+      internalName: 'Test FAQ',
+      title: 'Frequently Asked Questions',
+      description: 'Find answers to common questions',
+      itemsCollection: {
+        items: [
+          {
+            __typename: 'FaqItem' as const,
+            sys: { id: 'faq-item-1' },
+            question: 'What is this?',
+            answer: 'This is a test answer.',
+          },
+        ],
+      },
+    };
+    render(
+      <LivePreviewProvider locale="en-US">
+        <BlockRenderer data={mockFaq} />
+      </LivePreviewProvider>,
+    );
+    const heading = screen.getByRole('heading', { level: 2 });
+    expect(heading.textContent).to.equal('Frequently Asked Questions');
+    expect(screen.getByText('Find answers to common questions')).toBeTruthy();
+    expect(screen.getByText('What is this?')).toBeTruthy();
+  });
 });

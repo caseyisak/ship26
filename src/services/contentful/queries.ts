@@ -21,7 +21,7 @@ const HERO_FIELDS = `
 const FAQ_ITEM_FIELDS = `
   __typename
   sys { id }
-  ... on faqitem {
+  ... on Faqitem {
     internalName
     question
     answer
@@ -32,7 +32,7 @@ const FAQ_ITEM_FIELDS = `
 const FAQ_FIELDS = `
   __typename
   sys { id }
-  ... on faq {
+  ... on Faq {
     internalName
     title
     description
@@ -52,6 +52,8 @@ export const PAGE_BY_SLUG = `
         slug
         sectionsCollection(limit: 20) {
           items {
+            __typename
+            sys { id }
             ${HERO_FIELDS}
             ${FAQ_FIELDS}
           }

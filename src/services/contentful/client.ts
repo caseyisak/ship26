@@ -35,9 +35,12 @@ export async function fetchGraphQL<T>({
   }
   const json = (await res.json()) as {
     data?: T;
-    errors?: { message: string }[];
+    errors?: { message: string; locations?: Array<{ line: number; column: number }> }[];
   };
   if (json.errors?.length) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('[fetchGraphQL] GraphQL errors:', JSON.stringify(json.errors, null, 2));
+    }
     throw new Error(
       `Contentful GraphQL: ${json.errors.map((e) => e.message).join(', ')}`,
     );

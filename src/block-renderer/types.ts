@@ -23,6 +23,24 @@ export type HeroFragment = BlockData & {
   };
 };
 
+/** FaqItem (matches Contentful FaqItem content type: internalName, question, answer). */
+export type FaqItemFragment = {
+  __typename: 'FaqItem';
+  sys: { id: string };
+  internalName?: string | null;
+  question?: string | null;
+  answer?: string | null;
+};
+
+/** FAQ section (matches Contentful FAQ content type: internalName, title, description, items). */
+export type FaqFragment = BlockData & {
+  __typename: 'Faq';
+  internalName?: string | null;
+  title?: string | null;
+  description?: string | null;
+  itemsCollection?: { items: FaqItemFragment[] } | null;
+};
+
 export type PersonalizedBlockData = BlockData & {
   ntExperiencesCollection?: { items: unknown[] };
 };

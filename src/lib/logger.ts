@@ -3,8 +3,20 @@ const noop = (..._args: unknown[]) => {
 };
 
 export const logger = {
-  error: noop,
-  warn: noop,
-  info: noop,
+  error: (...args: unknown[]) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('[logger]', ...args);
+    }
+  },
+  warn: (...args: unknown[]) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('[logger]', ...args);
+    }
+  },
+  info: (...args: unknown[]) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.info('[logger]', ...args);
+    }
+  },
   debug: noop,
 };
