@@ -17,6 +17,33 @@ const HERO_FIELDS = `
   }
 `;
 
+/** FaqItem fragment: all fields from FaqItem content type (internalName, question, answer). */
+const FAQ_ITEM_FIELDS = `
+  __typename
+  sys { id }
+  ... on faqitem {
+    internalName
+    question
+    answer
+  }
+`;
+
+/** FAQ fragment: all fields from FAQ content type (internalName, title, description, items). */
+const FAQ_FIELDS = `
+  __typename
+  sys { id }
+  ... on faq {
+    internalName
+    title
+    description
+    itemsCollection(limit: 50) {
+      items {
+        ${FAQ_ITEM_FIELDS}
+      }
+    }
+  }
+`;
+
 export const PAGE_BY_SLUG = `
   query PageBySlug($slug: String!, $locale: String!, $preview: Boolean) {
     pageCollection(where: { slug: $slug }, locale: $locale, preview: $preview, limit: 1) {
@@ -26,6 +53,7 @@ export const PAGE_BY_SLUG = `
         sectionsCollection(limit: 20) {
           items {
             ${HERO_FIELDS}
+            ${FAQ_FIELDS}
           }
         }
         ntExperiencesCollection(limit: 10) {

@@ -1,12 +1,16 @@
 import { draftMode } from 'next/headers';
 
-import type { HeroFragment } from '@/block-renderer/types';
+import type {
+  FaqFragment,
+  FaqItemFragment,
+  HeroFragment,
+} from '@/block-renderer/types';
 import { logger } from '@/lib/logger';
 
 import { fetchGraphQL } from './client';
 import { PAGE_BY_SLUG, PAGE_SLUGS } from './queries';
 
-export type PageSection = HeroFragment;
+export type PageSection = HeroFragment | FaqFragment;
 
 export type PageData = {
   slug: string;
@@ -37,12 +41,29 @@ type RawHero = {
   ntExperiencesCollection?: NtExperiencesCollection | null;
 };
 
+type RawFaqItem = {
+  __typename: string;
+  sys: { id: string };
+  internalName?: string | null;
+  question?: string | null;
+  answer?: string | null;
+};
+
+type RawFaq = {
+  __typename: string;
+  sys: { id: string };
+  internalName?: string | null;
+  title?: string | null;
+  description?: string | null;
+  itemsCollection?: { items: RawFaqItem[] } | null;
+};
+
 type PageBySlugResponse = {
   pageCollection: {
     items: Array<{
       slug: string;
       internalName?: string | null;
-      sectionsCollection?: { items: Array<RawHero | null> } | null;
+      sectionsCollection?: { items: Array<RawHero | RawFaq | null> } | null;
       ntExperiencesCollection?: NtExperiencesCollection | null;
     }>;
   };
@@ -52,21 +73,57 @@ type PageSlugsResponse = {
   pageCollection: { items: Array<{ slug: string }> };
 };
 
-function mapSection(item: RawHero | null): HeroFragment | null {
-  if (!item || item.__typename !== 'Hero') return null;
+function mapFaqItem(item: RawFaqItem): FaqItemFragment | null {
+  if (!item || item.__typename !== 'faqitem') return null;
   return {
-    __typename: 'Hero',
+    __typename: 'FaqItem',
     sys: { id: item.sys.id },
     internalName: item.internalName ?? null,
-    headline: item.headline ?? null,
-    subheadline: item.subheadline ?? null,
-    ctaText: item.ctaText ?? null,
-    ctaUrl: item.ctaUrl ?? null,
-    variant: item.variant ?? null,
-    sectionStyle: item.sectionStyle ?? null,
-    image: item.media ?? null,
-    ntExperiencesCollection: item.ntExperiencesCollection ?? undefined,
+    question: item.question ?? null,
+    answer: item.answer ?? null,
   };
+}
+
+function mapFaq(item: RawFaq): FaqFragment | null {
+  if (!item || item.__typename !== 'faq') return null;
+  return {
+    __typename: 'Faq',
+    sys: { id: item.sys.id },
+    internalName: item.internalName ?? null,
+    title: item.title ?? null,
+    description: item.description ?? null,
+    itemsCollection: item.itemsCollection
+      ? {
+          items: item.itemsCollection.items
+            .map(mapFaqItem)
+            .filter(Boolean) as FaqItemFragment[],
+        }
+      : null,
+  };
+}
+
+function mapSection(item: RawHero | RawFaq | null): PageSection | null {
+  if (!item) return null;
+  if (item.__typename === 'Hero') {
+    const hero = item as RawHero;
+    return {
+      __typename: 'Hero',
+      sys: { id: hero.sys.id },
+      internalName: hero.internalName ?? null,
+      headline: hero.headline ?? null,
+      subheadline: hero.subheadline ?? null,
+      ctaText: hero.ctaText ?? null,
+      ctaUrl: hero.ctaUrl ?? null,
+      variant: hero.variant ?? null,
+      sectionStyle: hero.sectionStyle ?? null,
+      image: hero.media ?? null,
+      ntExperiencesCollection: hero.ntExperiencesCollection ?? undefined,
+    };
+  }
+  if (item.__typename === 'faq') {
+    return mapFaq(item as RawFaq);
+  }
+  return null;
 }
 
 export async function getPageBySlug({
