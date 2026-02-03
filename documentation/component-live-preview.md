@@ -55,9 +55,16 @@ When you add a new CMS component that should have its own live preview:
   ```
 - Otherwise the hero/quote branch is never taken and you get 400 “Missing slug or entryId+type”.
 
-### 3. Entry ID merge tag
+### 3. Entry ID merge tag (`{entry.sys.id_NOT_FOUND}`)
 
-- The preview URL must use a merge tag that resolves to the **entry ID** (e.g. `{{entry.sys.id}}`). If it’s missing or wrong, enable-draft gets a literal string and returns 400. In Contentful, configure the preview URL for that content type with the correct merge tag.
+- The preview URL must use a merge tag that resolves to the **entry ID** (e.g. `{{entry.sys.id}}`). If it’s missing or wrong, Contentful sends a placeholder and enable-draft returns 400 with `"received": "{entry.sys.id_NOT_FOUND}"`.
+- **Root cause:** The Preview URL in Contentful for that content type is not using a **resolving** entry ID variable. Contentful shows `_NOT_FOUND` when a variable doesn’t resolve.
+- **Fix in Contentful (not in app code):**
+  1. Go to **Settings → Content preview**.
+  2. Open the preview config for the content type (e.g. **Hero**).
+  3. Set **Preview URL** to your enable-draft URL and **insert the Entry ID variable** via the UI (e.g. “Insert variable” → “Entry ID” or “System → ID”), or use the template `{{entry.sys.id}}` if your Contentful version supports it.
+  4. Save. Reload the entry and open Live Preview again — the iframe should request a URL with the real ID (e.g. `entryId=6yUhVoaCfb1sBoHCKgBlrY`).
+- If it worked before and stopped: the preview URL may have been reset, or you were testing with the **direct** app URL (e.g. `/preview/hero/6yUhVoaCfb1sBoHCKgBlrY`) which bypasses the merge tag.
 
 ### 4. Debug instrumentation and Turbopack
 
