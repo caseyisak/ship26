@@ -49,6 +49,11 @@
 
 **GraphQL codegen:** This repo does **not** use GraphQL codegen (no `codegen.ts` or script). Hero fields `sectionStyle` and `image` were added manually in `queries.ts` and `block-renderer/types.ts`; that is the source of truth. No codegen needed unless you add it later.
 
+**Section style editor fixes (2025-02-03):**
+1. **Height:** `useAutoResizer({ absoluteElements: true })` in a wrapper only when in iframe; iframe now resizes to content so no scroll inside entry.
+2. **Forma-36:** Added `@contentful/forma-36-tokens`; `contentful-app.css` imports F36 tokens; section-style-editor uses F36 gray/blue, border-radius, spacing for Contentful-native look.
+3. **Layout buttons:** Hero was reading `sectionStyle` from initial `data` only. Now uses `(liveData as HeroFragment).sectionStyle ?? data.sectionStyle` so Overlay center/left/right (and Split 50%/33%) updates in Live Preview when buttons are clicked. Ensure "Use style override" is ON for layout to apply.
+
 **404 for `/page/kaz-test`:** Not caused by the Section Style app. A 404 means no page in Contentful has slug `kaz-test`. If you don’t have a page with that slug, the 404 is expected (e.g. from a link or bookmark). If you do have that page, the bug would be in `getPageBySlug`/slug resolution.
 
 ---

@@ -48,4 +48,17 @@ describe('GET /api/enable-draft', () => {
     const response = await GET(request);
     expect(response.status).to.equal(400);
   });
+
+  it('returns 400 when slug is unresolved Contentful placeholder', async () => {
+    process.env.CONTENTFUL_PREVIEW_SECRET = 'kaz';
+    const { GET } = await import('./route');
+    const request = new Request(
+      'http://localhost:3000/api/enable-draft?secret=kaz&slug=entry.fields.slug_NOT_FOUND&locale=en-US&ctype=page',
+    );
+    const response = await GET(request);
+    expect(response.status).to.equal(400);
+    const body = await response.json();
+    expect(body.error).to.include('Invalid slug');
+    expect(body.received).to.equal('entry.fields.slug_NOT_FOUND');
+  });
 });

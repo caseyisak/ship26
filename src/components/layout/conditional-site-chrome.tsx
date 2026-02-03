@@ -1,0 +1,33 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
+
+import Banner from '@/components/layout/banner';
+import { Footer } from '@/components/layout/footer';
+import Navbar from '@/components/layout/navbar';
+
+/**
+ * Renders site chrome (Banner, Navbar, main, Footer) only when not on the Contentful app route.
+ * The Section Style Editor at /contentful-app is shown without header/footer so it fits in the iframe.
+ */
+export function ConditionalSiteChrome({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const isContentfulApp = pathname?.startsWith('/contentful-app') ?? false;
+
+  if (isContentfulApp) {
+    return <>{children}</>;
+  }
+
+  return (
+    <>
+      <Banner url="https://www.shadcnblocks.com/template/metafi" />
+      <Navbar />
+      <main>{children}</main>
+      <Footer />
+    </>
+  );
+}
