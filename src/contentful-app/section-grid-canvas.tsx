@@ -681,10 +681,10 @@ export function SectionGridCanvas({
       {/* Grid canvas */}
       <div
         ref={containerRef}
-        className="flex w-full items-center justify-center rounded-[var(--border-radius-medium)] p-2"
+        className="flex w-full items-center justify-center rounded-[var(--border-radius-medium)] p-1"
         style={{
-          backgroundColor: 'var(--gray-800)',
-          borderColor: 'var(--gray-700)',
+          backgroundColor: 'var(--gray-200)',
+          borderColor: 'var(--gray-200)',
           minHeight: gridHeight,
         }}
       >
@@ -708,8 +708,8 @@ export function SectionGridCanvas({
                 key={`cell-${rowIdx}-${colIdx}`}
                 className="box-border rounded border-2 border-dashed"
                 style={{
-                  borderColor: 'var(--gray-600)',
-                  backgroundColor: 'rgba(0,0,0,0.2)',
+                  borderColor: 'var(--gray-400)',
+                  backgroundColor: 'rgba(0,0,0,0.1)',
                   boxSizing: 'border-box',
                 }}
               />
