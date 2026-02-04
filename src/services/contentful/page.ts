@@ -164,8 +164,7 @@ function mapTabbedContent(
         }
       : null,
     ntExperiencesCollection:
-      item.ntExperiencesCollectionCollection ??
-      undefined,
+      item.ntExperiencesCollectionCollection ?? undefined,
   };
 }
 

@@ -2,8 +2,11 @@
 
 import { locations } from '@contentful/app-sdk';
 import { useAutoResizer, useSDK } from '@contentful/react-apps-toolkit';
+import React, { useEffect, useRef } from 'react';
 
 import { SectionStyleEditor } from '@/contentful-app/section-style-editor';
+
+const IFRAME_HEIGHT_PADDING = 32;
 
 function SectionStyleEditorWithResizer({
   sdk,
@@ -12,9 +15,33 @@ function SectionStyleEditorWithResizer({
   sdk: ReturnType<typeof useSDK>;
   isEntryField: boolean;
 }) {
-  useAutoResizer({ absoluteElements: true });
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useAutoResizer();
+
+  useEffect(() => {
+    const el = contentRef.current;
+    const windowApi = (
+      sdk as { window?: { updateHeight: (h?: number) => void } }
+    )?.window;
+    if (!el || typeof windowApi?.updateHeight !== 'function') return;
+
+    const updateHeight = () => {
+      const height =
+        Math.ceil(el.getBoundingClientRect().height) + IFRAME_HEIGHT_PADDING;
+      windowApi.updateHeight(height);
+    };
+
+    const observer = new ResizeObserver(() => {
+      updateHeight();
+    });
+    observer.observe(el);
+    updateHeight();
+    return () => observer.disconnect();
+  }, [sdk]);
+
   return (
-    <div className="min-h-full min-w-full">
+    <div ref={contentRef} className="min-w-full">
       <SectionStyleEditor sdk={sdk} isEntryField={isEntryField} />
     </div>
   );

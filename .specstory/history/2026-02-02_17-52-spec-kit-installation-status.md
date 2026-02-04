@@ -55,3 +55,65 @@ uv tool install specify-cli --force --from git+https://github.com/github/spec-ki
 
 ---
 
+_**User**_
+
+this is an existing project. should I use init ?
+
+---
+
+_**Assistant**_
+
+
+Yes. Spec Kit supports existing projects. Use:
+
+```bash
+specify init . --ai cursor-agent
+```
+
+or:
+
+```bash
+specify init --here --ai cursor-agent
+```
+
+That will add the Spec Kit structure (`.specify/` with memory, scripts, templates, specs) into your current project without replacing your code.
+
+If the directory already has files, you may be prompted to confirm. To skip that:
+
+```bash
+specify init . --force --ai cursor-agent
+```
+
+After init, you’ll have the `/speckit.*` slash commands (constitution, specify, plan, tasks, implement) in Cursor. Your existing code stays as-is; Spec Kit is layered on top for new features and specs.
+
+---
+
+_**User**_
+
+whats the first speckit step?
+
+---
+
+_**Assistant**_
+
+
+The first Spec Kit step is **establishing project principles** with **`/speckit.constitution`**.
+
+Use it in Cursor like this:
+
+```
+/speckit.constitution Create principles focused on code quality, testing standards, user experience consistency, and performance requirements
+```
+
+That writes (or updates) `.specify/memory/constitution.md` with your project’s guidelines. Everything that comes after (specify, plan, tasks, implement) is supposed to follow those principles.
+
+Order of steps:
+
+1. **`/speckit.constitution`** – principles and guidelines  
+2. **`/speckit.specify`** – what you’re building (requirements, user stories)  
+3. **`/speckit.plan`** – tech stack and implementation plan  
+4. **`/speckit.tasks`** – task list from the plan  
+5. **`/speckit.implement`** – run the implementation
+
+---
+

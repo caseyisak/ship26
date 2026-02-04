@@ -51,7 +51,11 @@ export async function fetchGraphQL<T>({
     });
     const fullError = `Contentful GraphQL errors:\n${errorMessages.join('\n')}`;
     if (process.env.NODE_ENV === 'development') {
-      console.error('[fetchGraphQL] GraphQL errors:', JSON.stringify(json.errors, null, 2));
+      // eslint-disable-next-line no-console
+      console.error(
+        '[fetchGraphQL] GraphQL errors:',
+        JSON.stringify(json.errors, null, 2),
+      );
     }
     throw new Error(fullError);
   }

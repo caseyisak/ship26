@@ -139,16 +139,96 @@ Contentful merge tag for entry ID: `{{entry.sys.id}}` (or the equivalent in your
 
 ---
 
-## ENOENT loop (enable-draft / contentful-app)
+## ENOENT loop (enable-draft / contentful-app) — FIXED
 
 **Situation:** Dev server logs a loop of ENOENT errors:
 - `open '.../.next/server/app/api/enable-draft/[__metadata_id__]/route/app-paths-manifest.json'`
 - `open '.../.next/server/app/contentful-app/page/app-build-manifest.json'`
 
-**Cause:** Next.js/Turbopack is trying to load a route at `enable-draft/[__metadata_id__]/route/`, but the app only has `api/enable-draft/route.ts` (no `[__metadata_id__]` folder). This is Turbopack cache/metadata resolution getting out of sync—not something the Hero live-preview setup introduced in source (there is no such folder).
+**Cause:** Next.js 15.1.1 + Turbopack has a bug where manifest files aren't regenerated during hot reload. Turbopack cache/metadata resolution gets out of sync, causing Next.js to look for routes that don't exist (like `[__metadata_id__]` metadata routes).
 
-**Fix:**
-1. **Clear build and restart:** `rm -rf .next && bun run dev`. (Done once; restart dev yourself.)
-2. **If the loop returns:** Run without Turbopack: `bun run dev:no-turbopack` (uses `next dev` only). Use this when debugging live preview / enable-draft until Turbopack is fixed.
+**Fix (2025-02-03):**
+- **Changed default dev script:** `dev` now uses `next dev` (no Turbopack) instead of `next dev --turbopack`
+- **Added Turbopack option:** Use `bun run dev:turbo` if you want to use Turbopack (faster but has this bug)
+- **Result:** Code updates now work without manual cache clearing. Hot reload works correctly with standard Next.js dev server.
+
+**Note:** This is a known Turbopack bug in Next.js 15.1.1. Once Turbopack is fixed upstream, you can switch back to using it by default.
 
 **404 on /page/kaz-test after clearing cache:** enable-draft returns 307 and redirects; GET /page/kaz-test returns 404 because `getPageBySlug({ slug: 'kaz-test', locale: 'en-US' })` returns null. Page entry exists in Contentful (slug kaz-test). Dev-only logging was added in `getPageBySlug`: on null page you’ll see `[getPageBySlug] No page for slug=... items.length=...`; on throw you’ll see `[getPageBySlug] kaz-test en-US` + error. **Next:** Restart dev, open http://localhost:3000/page/kaz-test (or trigger preview again), then check the terminal for the `[getPageBySlug]` line to see whether the API returned 0 items or an error.
+
+---
+
+## /page/kaz-test 404 after FAQ component (fixed)
+
+**Situation:** After implementing FAQ component, `/page/kaz-test` started returning 404.
+
+**Root cause:** GraphQL query used `FaqItem` (camelCase) but Contentful GraphQL API expects `Faqitem` (capitalized first letter only, matching content type ID `faqitem`). Error: `Unknown type "FaqItem". Did you mean "Faqitem" or "FaqFilter"?`
+
+**Fix:**
+- `src/services/contentful/queries.ts`: Changed `... on FaqItem` → `... on Faqitem` in `FAQ_ITEM_FIELDS`
+- `src/services/contentful/page.ts`: Changed `item.__typename !== 'FaqItem'` → `item.__typename !== 'Faqitem'` in `mapFaqItem`
+- Also enabled logger to output to console for debugging
+
+**Result:** `/page/kaz-test` now returns 200. Page loads correctly with Hero section.
+
+**Lesson:** Contentful GraphQL type names match content type IDs exactly (capitalized first letter only). Use Contentful MCP or GraphQL introspection to verify type names.
+
+---
+
+## Custom Grid Layout for Section Style Editor (2025-02-04)
+
+**Goal:** Add a Custom Grid layout mode that allows dragging and resizing tiles (Content, Media, Background) on a 6-column, 2-6 row grid.
+
+### Implemented
+
+1. **Types (`section-style-types.ts`):**
+   - Extended `SectionStyleLayout` to include `'customGrid'`
+   - Added `SectionStyleTile` interface with `id`, `gridCol`, `gridRow`, `colSpan`, `rowSpan`, `visible`
+   - Added `SectionStyleConfig.gridColumns`, `gridRows`, `tiles` fields
+   - Added `getDefaultTiles(hasBackground)` helper
+   - Updated `parseSectionStyle` to parse Custom Grid fields
+
+2. **Background Field:**
+   - Added `background { url }` to Hero GraphQL query
+   - Added `background?: { url?: string }` to `HeroFragment` type
+   - Updated mappers in `page.ts` and `hero.ts`
+
+3. **Grid Canvas (`section-grid-canvas.tsx`):**
+   - Adapted from TST dashboard's `GridCanvas`
+   - 6 fixed columns, 2-6 rows selectable
+   - Three tile types with distinct colors: Content (teal), Media (blue), Background (slate)
+   - Drag to move, drag edges to resize
+   - Background tile excluded from collision detection (can go underneath)
+   - Uses F36 styling tokens for native Contentful look
+
+4. **Section Style Editor:**
+   - Added Custom Grid preset button
+   - Shows tile visibility checkboxes when Custom Grid is selected
+   - Integrates grid canvas for visual tile arrangement
+   - Auto-detects `background` asset field presence
+
+5. **Hero Component (`hero.tsx`):**
+   - Added `customGrid` layout branch
+   - Renders CSS Grid with positioned tiles based on `gridCol`/`gridRow`/`colSpan`/`rowSpan`
+   - Background tile rendered at z-index 0 with blur/overlay support
+   - Content and Media tiles rendered at z-index 10
+
+### Usage
+
+1. Open a Hero entry in Contentful
+2. In the Section Style editor, toggle "Use style override" ON
+3. Expand "Layout / tile grid" section
+4. Click "Drag and resize tiles" button to enable Custom Grid
+5. Use checkboxes to show/hide Content, Media, Background tiles
+6. Drag tiles to move, drag edges/corners to resize
+7. Changes reflect in live preview
+
+### Notes
+
+- Background tile only appears if the Hero entry has a `background` asset field with a value
+- Content and Media tiles cannot overlap each other
+- Background tile can span underneath Content and Media
+
+---
+
+**Completed work is archived in [archive/tasks-archive.md](archive/tasks-archive.md).** Error patterns and fixes are in [documentation/lessons-learned.md](documentation/lessons-learned.md). At the end of each milestone, follow the `.cursor/skills/continuous-improvement` skill to archive and update.
