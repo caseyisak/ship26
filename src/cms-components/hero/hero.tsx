@@ -66,12 +66,19 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
       <section
         id="hero"
         className={cn(
-          'border-b-border bg-background relative overflow-hidden border-b px-6 lg:px-0',
+          'border-b-border relative overflow-hidden border-b px-6 lg:px-0',
+          imageUrl ? 'min-h-[400px]' : 'bg-background',
           className ?? '',
         )}
         {...props}
       >
-        <div className="relative container px-0 md:px-6">
+        {imageUrl && (
+          <div
+            className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${imageUrl})` }}
+          />
+        )}
+        <div className="relative z-10 container px-0 md:px-6">
           <div className="mx-auto grid max-w-4xl gap-6 text-center">
             {contentBlock}
           </div>

@@ -23,8 +23,8 @@ export async function GET(request: NextRequest) {
 
   const base = request.nextUrl.origin;
 
-  // ID-based preview (e.g. Hero): redirect to /preview/hero/[entryId]
-  if (entryId && type === 'hero') {
+  // ID-based preview (e.g. Hero, TabbedContent): redirect to /preview/[type]/[entryId]
+  if (entryId && (type === 'hero' || type === 'tabbedContent')) {
     if (
       entryId.includes('entry.') ||
       entryId.includes('NOT_FOUND') ||
@@ -33,13 +33,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            'Invalid entryId: use the entry ID merge tag in Contentful (e.g. {{entry.sys.id}}).',
+            'Contentful did not substitute the entry ID. Fix in Contentful: Settings → Content preview → ' +
+            (type === 'hero' ? 'Hero' : 'TabbedContent') +
+            ' → set Preview URL and use the Entry ID merge tag (e.g. {{entry.sys.id}} or insert "Entry ID" / "System → ID") so the URL contains the real ID, not a placeholder.',
           received: entryId,
         },
         { status: 400 },
       );
     }
-    const redirectUrl = `${base}/preview/hero/${encodeURIComponent(entryId)}`;
+    const redirectUrl = `${base}/preview/${type}/${encodeURIComponent(entryId)}`;
     const res = NextResponse.redirect(redirectUrl);
     try {
       const draft = await draftMode();
