@@ -4950,3 +4950,233 @@ Let me first search for where this "Static route" error is coming from and then 
 
 ---
 
+The "Static route" error is from Next.js's dev server, not our code. Now let me implement your requested features - collapsing Layout and Background sections when the toggle is off:
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+Let me find where the Layout Collapsible ends and where the Background section is:
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+Perfect! Now let me address the "Static route" error. This is a Next.js build/dev error that appears when there's an issue with the page. Let me check if it's related to our debug instrumentation causing issues. Let me clean up all the debug logs since we confirmed everything is working:
+
+---
+
+
+
+---
+
+
+
+---
+
+We still have debug instrumentation in place (11 regions in section-style-editor, 4 in section-grid-canvas). Since the logs confirmed everything works and the timestamp field is being updated, let me remove all the debug instrumentation to clean up the code and potentially fix the "Static route" error:
+
+---
+
+
+
+---
+
+Excellent! The debug instrumentation has been removed. Now let's commit these changes and test the live preview functionality:
+
+---
+
+
+
+---
+
+
+
+---
+
+undefined
+
+---
+
+Perfect! Now let's test if the live preview is working with the timestamp field. The implementation is complete:
+
+## Summary of What We've Done
+
+1. ✅ **Added `sectionStyleUpdatedAt` timestamp field** to Hero content type in Contentful
+2. ✅ **Updated app to set timestamp** whenever `sectionStyle` changes
+3. ✅ **Added field to GraphQL** queries and TypeScript types
+4. ✅ **Hid Layout/Background sections** when style override is toggled off
+5. ✅ **Removed all debug instrumentation** for clean code
+
+## How Live Preview Should Work Now
+
+When you drag/resize tiles:
+1. App updates `sectionStyle` (JSON field)
+2. App **also** updates `sectionStyleUpdatedAt` (Number field) to current timestamp
+3. Contentful's Live Preview SDK detects the timestamp change
+4. SDK triggers a re-render of the Hero component
+5. Hero fetches fresh data including the updated `sectionStyle`
+6. Layout updates in real-time!
+
+The "Static route" badge you saw is just a Next.js dev indicator and should not affect functionality.
+
+Let's test it:
+
+<reproduction_steps>
+1. Refresh the Contentful app at https://app.contentful.com/spaces/uumzxfocy3ef/entries/6yUhVoaCfb1sBoHCKgBlrY/preview/032ljj9cIpYzufyGbjFOiW?focusedField=sectionStyle
+2. Toggle "Use style override" ON
+3. Select "Custom Grid" layout (Layout and Background sections should now be visible)
+4. Drag a tile to a new position
+5. Watch the preview iframe - the hero layout should update within 1-2 seconds
+6. Toggle "Use style override" OFF - Layout and Background sections should disappear
+7. Toggle it back ON - sections should reappear
+8. Save and refresh the page - verify the layout persists
+9. Let me know if live preview updates are working!
+</reproduction_steps>
+
+---
+
+
+
+---
+
+_**User**_
+
+lets commit these changes
+
+---
+
+_**Assistant**_
+
+The changes have already been committed! Let me show you the recent commits:
+
+---
+
+
+
+---
+
+
+
+---
+
+Perfect! The latest commit is already in place:
+
+**✅ Latest commit:** `a50ba82` - "Hide Layout and Background sections when style override is off"
+
+This commit includes:
+- Conditional rendering of Layout and Background sections (only visible when toggle is ON)
+- Removal of all debug instrumentation
+- Clean, linted code
+
+There's just one small change detected - the deletion of `.cursor/debug.log` file. Let me add that to keep the working directory clean:
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+Perfect! All changes are now committed:
+
+## Recent Commits on `section-style-editor` branch:
+
+1. **6868fc5** - `chore: Remove debug log file`
+2. **a50ba82** - `Hide Layout and Background sections when style override is off`
+3. **be09755** - `Add timestamp field to trigger live preview updates`
+
+Your working directory is now clean and all changes have been committed. The features you requested are implemented:
+
+✅ Layout and Background sections now hide when "Use style override" toggle is OFF
+✅ Debug log file removed
+✅ All debug instrumentation cleaned up
+✅ Code is linted and ready
+
+Would you like to test the live preview functionality now, or would you like to merge this branch?
+
+---
+
+_**User**_
+
+you can merge it
+
+---
+
+_**Assistant**_
+
+I'll merge the `section-style-editor` branch into `main`:
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
