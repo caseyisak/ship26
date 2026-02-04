@@ -5,9 +5,10 @@
   "private": true,
   "packageManager": "bun@1.1.38",
   "scripts": {
-    "dev": "next dev --turbopack",
-    "dev:no-turbopack": "next dev",
-    "dev:https": "next dev --turbopack --experimental-https",
+    "dev": "next dev",
+    "dev:turbo": "next dev --turbopack",
+    "dev:https": "next dev --experimental-https",
+    "dev:https:turbo": "next dev --turbopack --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

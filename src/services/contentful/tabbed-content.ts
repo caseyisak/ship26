@@ -73,7 +73,8 @@ function mapTabbedContent(
             ) as import('@/block-renderer/types').TabbedContentItemFragment[],
         }
       : null,
-    ntExperiencesCollection: item.ntExperiencesCollectionCollection ?? undefined,
+    ntExperiencesCollection:
+      item.ntExperiencesCollectionCollection ?? undefined,
   };
 }
 
