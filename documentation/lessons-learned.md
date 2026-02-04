@@ -15,6 +15,7 @@ Error patterns, root causes, and fixes from this project so agents and humans do
 | LL-005 | Rich Text shows "[object Object]"      | Rendered as object, not document   | Use `@contentful/rich-text-react-renderer` (or equivalent) to render document nodes |
 | LL-006 | FAQ items filtered out; mapSection returns null | `__typename` = content type ID (not name) | Use PascalCase for content type IDs (e.g., `Faq` not `faq`) |
 | LL-007 | GraphQL error: "Cannot query field X on type Y" | Array field names get "Collection" suffix in GraphQL | Use `fieldNameCollection` in GraphQL if field ID is `fieldName` |
+| LL-008 | Live preview images not updating; shows old values | useLiveUpdates returns raw Contentful field names, not mapped names | Check both mapped field (image) and raw field (media) in live preview components |
 
 ---
 
@@ -143,5 +144,50 @@ Copy the block below, assign the next ID (LL-007, …), and fill in. Then add on
 
 ---
 
+---
+
+## LL-008 — Live preview field name mismatch (raw vs mapped fields)
+
+- **Exact error / symptom:** Images don't update in Contentful live preview when changed; background image persists even after removal; media image doesn't appear when added. Component shows stale data despite Contentful updates.
+
+- **Root cause:** 
+  1. `useLiveUpdates` returns **raw Contentful data** with original field names (e.g., `media`), not the mapped field names used in the app (e.g., `image`). The mapper (`hero.ts`, `page.ts`) converts `media` → `image` for initial data, but live updates bypass this mapping.
+  2. Fallback logic (`?? data.field`) prevents updates: when Contentful sends `null` for a removed field, code falls back to stale `data` instead of using the `null`.
+  3. Conditional rendering components (like GridBackground) render unconditionally, showing visual elements even when data is missing.
+
+- **Solution:**
+  1. In live preview components, check **both** mapped and raw field names:
+     ```typescript
+     type RawLiveData = HeroFragment & { media?: { url?: string } | null };
+     const rawImageUrl =
+       (liveData as HeroFragment).image?.url ??
+       ((liveData as RawLiveData).media?.url ?? undefined);
+     ```
+  2. **Don't fall back to `data`** for live preview updates - use `liveData` directly. If `liveData.field` is `null`, it means the field was removed.
+  3. Conditionally render visual elements only when data exists:
+     ```typescript
+     {backgroundUrl && (
+       <>
+         <BackgroundImage />
+         <GridBackground />
+       </>
+     )}
+     ```
+  4. Remove default/fallback content - conditionally render elements only when Contentful data exists to avoid unnecessary whitespace.
+
+- **Prevention:**
+  1. When using `useLiveUpdates`, remember it returns raw Contentful structure, not mapped structure
+  2. Always check both mapped field name (from initial data) and raw field name (from live updates)
+  3. Never fall back to `data` for fields that should update in live preview
+  4. Conditionally render all visual elements based on actual data presence
+  5. Remove placeholder/fallback content - let empty fields render nothing
+
+- **Related files:**
+  - `src/cms-components/hero/hero.tsx` (live preview field handling)
+  - `src/lib/live-preview.tsx` (useLiveUpdates hook)
+  - `src/services/contentful/hero.ts` (mapper functions)
+
+---
+
 **Last updated:** 2026-02-03  
-**Total lessons:** 7
+**Total lessons:** 8

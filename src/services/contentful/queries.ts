@@ -1,4 +1,4 @@
-/** Hero fragment: all fields from Hero content type (internalName, headline, subheadline, media, ctaText, ctaUrl, sectionStyle, variant, nt_experiences). */
+/** Hero fragment: all fields from Hero content type (internalName, headline, subheadline, background, media, ctaText, ctaUrl, sectionStyle, variant, nt_experiences). */
 const HERO_FIELDS = `
   __typename
   sys { id }
@@ -6,6 +6,7 @@ const HERO_FIELDS = `
     internalName
     headline
     subheadline
+    background { url }
     media { url }
     ctaText
     ctaUrl

@@ -39,6 +39,7 @@ type RawHero = {
   ctaUrl?: string | null;
   variant?: string | null;
   sectionStyle?: string | null;
+  background?: { url?: string } | null;
   media?: { url?: string } | null;
   ntExperiencesCollection?: NtExperiencesCollection | null;
 };
@@ -162,7 +163,9 @@ function mapTabbedContent(
             .filter(Boolean) as TabbedContentItemFragment[],
         }
       : null,
-    ntExperiencesCollection: item.ntExperiencesCollectionCollection ?? undefined,
+    ntExperiencesCollection:
+      item.ntExperiencesCollectionCollection ??
+      undefined,
   };
 }
 
@@ -186,6 +189,7 @@ function mapSection(
         ctaUrl: hero.ctaUrl ?? null,
         variant: hero.variant ?? null,
         sectionStyle: hero.sectionStyle ?? null,
+        background: hero.background ?? null,
         image: hero.media ?? null,
         ntExperiencesCollection: hero.ntExperiencesCollection ?? undefined,
       };

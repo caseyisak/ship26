@@ -7,7 +7,7 @@ export type BlockData = {
   _serverError?: string;
 };
 
-/** Hero section (matches Contentful Hero content type: internalName, headline, subheadline, media, ctaText, ctaUrl, sectionStyle, variant, nt_experiences). */
+/** Hero section (matches Contentful Hero content type: internalName, headline, subheadline, background, media, ctaText, ctaUrl, sectionStyle, variant, nt_experiences). */
 export type HeroFragment = BlockData & {
   __typename: 'Hero';
   internalName?: string | null;
@@ -17,6 +17,7 @@ export type HeroFragment = BlockData & {
   ctaUrl?: string | null;
   variant?: string | null;
   sectionStyle?: string | null;
+  background?: { url?: string } | null;
   image?: { url?: string } | null;
   ntExperiencesCollection?: {
     items: Array<{ __typename?: string; sys?: { id: string } }>;
