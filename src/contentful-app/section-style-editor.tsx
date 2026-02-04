@@ -11,14 +11,24 @@ import {
 } from '@/components/ui/collapsible';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import type { SectionStyleConfig } from '@/lib/section-style-types';
+import type {
+  SectionStyleConfig,
+  SectionStyleTile,
+  SectionStyleTileId,
+} from '@/lib/section-style-types';
 import {
+  DEFAULT_GRID_COLUMNS,
+  DEFAULT_GRID_ROWS,
   DEFAULT_SECTION_STYLE_CONFIG,
+  getDefaultTiles,
   parseSectionStyle,
 } from '@/lib/section-style-types';
 import { cn } from '@/lib/utils';
 
+import { SectionGridCanvas } from './section-grid-canvas';
+
 const SECTION_STYLE_FIELD_ID = 'sectionStyle';
+const BACKGROUND_FIELD_ID = 'background';
 
 /** Token names that map to app CSS vars (from globals.css) */
 const COLOR_TOKEN_OPTIONS = [
@@ -34,10 +44,14 @@ type SdkField = {
   setValue: (v: unknown) => Promise<void>;
 };
 
+type SdkEntry = {
+  fields: Record<string, SdkField>;
+};
+
 function getFieldFromSdk(
   sdk: {
     field?: SdkField;
-    entry?: { fields: Record<string, SdkField> };
+    entry?: SdkEntry;
   },
   isEntryField: boolean,
 ): SdkField | null {
@@ -49,6 +63,20 @@ function getFieldFromSdk(
   return null;
 }
 
+/** Check if entry has a background asset field with a value */
+async function checkHasBackgroundAsset(sdk: {
+  entry?: SdkEntry;
+}): Promise<boolean> {
+  const bgField = sdk?.entry?.fields?.[BACKGROUND_FIELD_ID];
+  if (!bgField) return false;
+  try {
+    const value = await Promise.resolve(bgField.getValue());
+    return value != null && value !== '';
+  } catch {
+    return false;
+  }
+}
+
 export function SectionStyleEditor({
   sdk,
   isEntryField,
@@ -56,37 +84,207 @@ export function SectionStyleEditor({
   sdk: unknown;
   isEntryField: boolean;
 }) {
-  const field = getFieldFromSdk(
-    sdk as Parameters<typeof getFieldFromSdk>[0],
-    isEntryField,
-  );
+  const typedSdk = sdk as {
+    field?: SdkField;
+    entry?: SdkEntry;
+    app?: { setReady: () => Promise<void> };
+  };
+  const field = getFieldFromSdk(typedSdk, isEntryField);
   const [config, setConfig] = useState<SectionStyleConfig>(() => ({
     ...DEFAULT_SECTION_STYLE_CONFIG,
   }));
   const [showBackground, setShowBackground] = useState(true);
   const [showLayout, setShowLayout] = useState(true);
   const [ready, setReady] = useState(false);
+  const [hasBackgroundAsset, setHasBackgroundAsset] = useState(false);
 
   const persist = useCallback(
     (next: SectionStyleConfig) => {
+      // #region agent log
+      fetch(
+        'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'section-style-editor.tsx:persist:entry',
+            message: 'persist called',
+            data: {
+              hasField: !!field,
+              configKeys: Object.keys(next),
+              useOverride: next.useStyleOverride,
+              tilesCount: next.tiles?.length,
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'run1',
+            hypothesisId: 'H1,H2',
+          }),
+        },
+      ).catch(() => {});
+      // #endregion
       if (!field) return;
       // Contentful JSON field expects type Object; pass the object, not a string.
-      field.setValue(next).catch(() => {});
+      // #region agent log
+      fetch(
+        'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'section-style-editor.tsx:persist:before-setValue',
+            message: 'calling field.setValue',
+            data: { config: next },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'run1',
+            hypothesisId: 'H1,H2,H5',
+          }),
+        },
+      ).catch(() => {});
+      // #endregion
+      field
+        .setValue(next)
+        .catch((err) => {
+          // #region agent log
+          fetch(
+            'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                location: 'section-style-editor.tsx:persist:setValue-error',
+                message: 'field.setValue rejected',
+                data: {
+                  error: String(err),
+                  errorType: err?.constructor?.name,
+                  errorMessage: err?.message,
+                },
+                timestamp: Date.now(),
+                sessionId: 'debug-session',
+                runId: 'run1',
+                hypothesisId: 'H1,H4',
+              }),
+            },
+          ).catch(() => {});
+          // #endregion
+        })
+        .then(() => {
+          // #region agent log
+          fetch(
+            'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                location: 'section-style-editor.tsx:persist:setValue-success',
+                message: 'field.setValue succeeded',
+                data: {},
+                timestamp: Date.now(),
+                sessionId: 'debug-session',
+                runId: 'run1',
+                hypothesisId: 'H1',
+              }),
+            },
+          ).catch(() => {});
+          // #endregion
+        });
     },
     [field],
   );
 
+  // Check if entry has a background asset
   useEffect(() => {
+    checkHasBackgroundAsset(typedSdk).then(setHasBackgroundAsset);
+  }, [typedSdk]);
+
+  // Load initial field value
+  useEffect(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'section-style-editor.tsx:useEffect:init',
+        message: 'init useEffect triggered',
+        data: { hasField: !!field },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'H3',
+      }),
+    }).catch(() => {});
+    // #endregion
     if (!field) {
       setReady(true);
       return;
     }
     Promise.resolve(field.getValue())
       .then((raw) => {
+        // #region agent log
+        fetch(
+          'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              location: 'section-style-editor.tsx:useEffect:getValue-success',
+              message: 'field.getValue succeeded',
+              data: {
+                rawType: typeof raw,
+                rawIsNull: raw == null,
+                rawIsEmpty: raw === '',
+              },
+              timestamp: Date.now(),
+              sessionId: 'debug-session',
+              runId: 'run1',
+              hypothesisId: 'H3',
+            }),
+          },
+        ).catch(() => {});
+        // #endregion
         if (raw == null || raw === '') {
           const defaultConfig = { ...DEFAULT_SECTION_STYLE_CONFIG };
           setConfig(defaultConfig);
-          field.setValue(defaultConfig).catch(() => {});
+          // #region agent log
+          fetch(
+            'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                location: 'section-style-editor.tsx:useEffect:setting-default',
+                message: 'setting default config',
+                data: { defaultConfig },
+                timestamp: Date.now(),
+                sessionId: 'debug-session',
+                runId: 'run1',
+                hypothesisId: 'H3',
+              }),
+            },
+          ).catch(() => {});
+          // #endregion
+          field.setValue(defaultConfig).catch((err) => {
+            // #region agent log
+            fetch(
+              'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  location:
+                    'section-style-editor.tsx:useEffect:default-setValue-error',
+                  message: 'default setValue failed',
+                  data: { error: String(err) },
+                  timestamp: Date.now(),
+                  sessionId: 'debug-session',
+                  runId: 'run1',
+                  hypothesisId: 'H1,H3,H4',
+                }),
+              },
+            ).catch(() => {});
+            // #endregion
+          });
           return;
         }
         const str =
@@ -95,10 +293,48 @@ export function SectionStyleEditor({
         setConfig(parsed);
         // If field held a string (e.g. from an older app version), persist object so Contentful validation passes.
         if (typeof raw === 'string') {
-          field.setValue(parsed).catch(() => {});
+          field.setValue(parsed).catch((err) => {
+            // #region agent log
+            fetch(
+              'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  location:
+                    'section-style-editor.tsx:useEffect:parsed-setValue-error',
+                  message: 'parsed setValue failed',
+                  data: { error: String(err) },
+                  timestamp: Date.now(),
+                  sessionId: 'debug-session',
+                  runId: 'run1',
+                  hypothesisId: 'H1,H3,H4',
+                }),
+              },
+            ).catch(() => {});
+            // #endregion
+          });
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        // #region agent log
+        fetch(
+          'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              location: 'section-style-editor.tsx:useEffect:getValue-error',
+              message: 'field.getValue failed',
+              data: { error: String(err) },
+              timestamp: Date.now(),
+              sessionId: 'debug-session',
+              runId: 'run1',
+              hypothesisId: 'H3,H4',
+            }),
+          },
+        ).catch(() => {});
+        // #endregion
         const defaultConfig = { ...DEFAULT_SECTION_STYLE_CONFIG };
         setConfig(defaultConfig);
         field.setValue(defaultConfig).catch(() => {});
@@ -108,8 +344,47 @@ export function SectionStyleEditor({
 
   const update = useCallback(
     (patch: Partial<SectionStyleConfig>) => {
+      // #region agent log
+      fetch(
+        'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'section-style-editor.tsx:update',
+            message: 'update called',
+            data: { patchKeys: Object.keys(patch) },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'run1',
+            hypothesisId: 'H2,H5',
+          }),
+        },
+      ).catch(() => {});
+      // #endregion
       setConfig((prev) => {
         const next = { ...prev, ...patch };
+        // #region agent log
+        fetch(
+          'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              location: 'section-style-editor.tsx:update:before-persist',
+              message: 'calling persist with merged config',
+              data: {
+                nextKeys: Object.keys(next),
+                tilesValid: Array.isArray(next.tiles),
+              },
+              timestamp: Date.now(),
+              sessionId: 'debug-session',
+              runId: 'run1',
+              hypothesisId: 'H2,H5',
+            }),
+          },
+        ).catch(() => {});
+        // #endregion
         persist(next);
         return next;
       });
@@ -117,16 +392,62 @@ export function SectionStyleEditor({
     [persist],
   );
 
+  // Handle switching to Custom Grid
+  const switchToCustomGrid = useCallback(() => {
+    setConfig((prev) => {
+      // Preserve existing tiles if set, otherwise use defaults
+      const tiles = prev.tiles ?? getDefaultTiles(hasBackgroundAsset);
+      const next: SectionStyleConfig = {
+        ...prev,
+        layout: 'customGrid',
+        gridColumns: prev.gridColumns ?? DEFAULT_GRID_COLUMNS,
+        gridRows: prev.gridRows ?? DEFAULT_GRID_ROWS,
+        tiles,
+      };
+      persist(next);
+      return next;
+    });
+  }, [hasBackgroundAsset, persist]);
+
+  // Handle tile changes from grid canvas
+  const handleTilesChange = useCallback(
+    (tiles: SectionStyleTile[]) => {
+      update({ tiles });
+    },
+    [update],
+  );
+
+  // Handle grid rows change
+  const handleGridRowsChange = useCallback(
+    (rows: number) => {
+      update({ gridRows: rows });
+    },
+    [update],
+  );
+
+  // Toggle tile visibility
+  const toggleTileVisibility = useCallback(
+    (tileId: SectionStyleTileId) => {
+      setConfig((prev) => {
+        const tiles = prev.tiles ?? getDefaultTiles(hasBackgroundAsset);
+        const updatedTiles = tiles.map((t) =>
+          t.id === tileId
+            ? { ...t, visible: t.visible === false ? true : false }
+            : t,
+        );
+        const next = { ...prev, tiles: updatedTiles };
+        persist(next);
+        return next;
+      });
+    },
+    [hasBackgroundAsset, persist],
+  );
+
   useEffect(() => {
-    if (
-      ready &&
-      (sdk as { app?: { setReady: () => Promise<void> } })?.app?.setReady
-    ) {
-      (sdk as { app: { setReady: () => Promise<void> } }).app
-        .setReady()
-        .catch(() => {});
+    if (ready && typedSdk?.app?.setReady) {
+      typedSdk.app.setReady().catch(() => {});
     }
-  }, [ready, sdk]);
+  }, [ready, typedSdk]);
 
   if (!ready) {
     return (
@@ -141,7 +462,7 @@ export function SectionStyleEditor({
 
   return (
     <div
-      className="flex flex-col gap-4 p-4"
+      className="flex flex-col gap-4 p-0"
       style={{
         color: 'var(--gray-800)',
         fontFamily: 'var(--font-stack-primary, inherit)',
@@ -259,6 +580,83 @@ export function SectionStyleEditor({
               );
             })}
           </div>
+
+          {/* Custom Grid preset */}
+          <div
+            className="text-xs font-medium"
+            style={{ color: 'var(--gray-600)' }}
+          >
+            Custom Grid
+          </div>
+          <button
+            type="button"
+            className={cn(
+              'w-full rounded-[var(--border-radius-small)] border px-3 py-2 text-sm font-medium transition-colors',
+              config.layout === 'customGrid'
+                ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white hover:bg-[var(--blue-600)]'
+                : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-100)]',
+            )}
+            onClick={switchToCustomGrid}
+          >
+            Drag and resize tiles
+          </button>
+
+          {/* Custom Grid controls (shown when customGrid is selected) */}
+          {config.layout === 'customGrid' && (
+            <div className="space-y-3 pt-2">
+              {/* Tile visibility checkboxes */}
+              <div
+                className="flex flex-wrap items-center gap-3 rounded-[var(--border-radius-small)] p-2"
+                style={{ backgroundColor: 'var(--gray-200)' }}
+              >
+                {(['content', 'media'] as const).map((tileId) => {
+                  const tile = config.tiles?.find((t) => t.id === tileId);
+                  const isVisible = tile?.visible !== false;
+                  return (
+                    <label
+                      key={tileId}
+                      className="flex cursor-pointer items-center gap-1.5 text-xs font-medium"
+                      style={{ color: 'var(--gray-700)' }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isVisible}
+                        onChange={() => toggleTileVisibility(tileId)}
+                        className="accent-[var(--blue-500)]"
+                      />
+                      {tileId.charAt(0).toUpperCase() + tileId.slice(1)}
+                    </label>
+                  );
+                })}
+                {hasBackgroundAsset && (
+                  <label
+                    className="flex cursor-pointer items-center gap-1.5 text-xs font-medium"
+                    style={{ color: 'var(--gray-700)' }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={
+                        config.tiles?.find((t) => t.id === 'background')
+                          ?.visible !== false
+                      }
+                      onChange={() => toggleTileVisibility('background')}
+                      className="accent-[var(--blue-500)]"
+                    />
+                    Background
+                  </label>
+                )}
+              </div>
+
+              {/* Grid canvas */}
+              <SectionGridCanvas
+                tiles={config.tiles ?? getDefaultTiles(hasBackgroundAsset)}
+                gridColumns={config.gridColumns ?? DEFAULT_GRID_COLUMNS}
+                gridRows={config.gridRows ?? DEFAULT_GRID_ROWS}
+                onTilesChange={handleTilesChange}
+                onGridRowsChange={handleGridRowsChange}
+              />
+            </div>
+          )}
         </CollapsibleContent>
       </Collapsible>
 
