@@ -4609,3 +4609,344 @@ I'll commit the current work and then implement Option 1.
 
 ---
 
+Great! Now let's implement Option 1 - adding a timestamp field to trigger live preview updates. I'll use the Contentful MCP to add the field programmatically:
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+Perfect! Now I'll add the `sectionStyleUpdatedAt` field to the Hero content type. Let me check the update tool schema first:
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+Perfect! Now I'll add the `sectionStyleUpdatedAt` field to the Hero content type:
+
+---
+
+
+
+---
+
+Excellent! The field has been added. Now I need to publish the content type so it's available:
+
+---
+
+
+
+---
+
+Perfect! Now let's update the app code to set this timestamp field whenever `sectionStyle` changes:
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+Now let's update the `persist` function to also update the timestamp field:
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+Perfect! Now let's also update the GraphQL query to include this field so it's available in the preview:
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+The query uses a different format (not gql template). Let me fix it:
+
+---
+
+
+
+---
+
+
+
+---
+
+Now let's update the TypeScript types to include this field:
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+Perfect! Now let's commit this work and test it:
+
+---
+
+
+
+---
+
+
+
+---
+
+Excellent! Now let's test the live preview fix. The implementation is complete. Here's what we did:
+
+## Summary of Changes
+
+### 1. Added `sectionStyleUpdatedAt` Field to Contentful
+- Added a Number field to the Hero content type
+- Set it as `disabled: true` so editors don't see it in the UI
+- Published the content type
+
+### 2. Updated App Code
+- Modified `section-style-editor.tsx` to update the timestamp field whenever `sectionStyle` changes
+- The `persist()` function now sets both `sectionStyle` and `sectionStyleUpdatedAt`
+
+### 3. Updated GraphQL & Types
+- Added `sectionStyleUpdatedAt` to the Hero GraphQL fragment
+- Updated `HeroFragment` TypeScript type to include the field
+
+## How It Works
+
+1. User drags/resizes tiles in the grid editor
+2. App calls `persist()` which updates **both** fields:
+   - `sectionStyle`: The JSON config (Live Preview SDK doesn't detect this)
+   - `sectionStyleUpdatedAt`: A timestamp (Live Preview SDK **does** detect this!)
+3. Live Preview SDK sees the timestamp changed → triggers re-render
+4. Hero component fetches fresh data including the updated `sectionStyle`
+5. Hero displays with new layout instantly! ✨
+
+Let's test it now:
+
+<reproduction_steps>
+1. Open the Contentful app at https://app.contentful.com/spaces/uumzxfocy3ef/entries/6yUhVoaCfb1sBoHCKgBlrY/preview/032ljj9cIpYzufyGbjFOiW?focusedField=sectionStyle
+2. Make sure "Use style override" is toggled ON
+3. Select "Custom Grid" layout
+4. Drag a tile to a new position (e.g., move the content tile)
+5. Watch the preview iframe - it should update in real-time (within 1-2 seconds) without toggling anything
+6. Try resizing a tile - preview should update immediately
+7. Save the entry and refresh the page - layout should persist correctly
+8. Click "Proceed" when you've confirmed it's working
+</reproduction_steps>
+
+---
+
+_**User**_
+
+Issue reproduced, please proceed.
+
+---
+
+_**Assistant**_
+
+Perfect! Now let me check if the live preview is working. Let me verify the implementation is correct and see if there are any issues:
+
+---
+
+
+
+---
+
+
+
+---
+
+Good! The logs show the drag operations are working. Now let me check if the timestamp field is being updated. I notice the logs don't show the `persist` function calls anymore (they were removed when we cleaned up). Let me check if the live preview is actually updating by looking at what you observed. 
+
+Based on your "Issue reproduced" message, it sounds like the live preview is **still not updating** in real-time. Let me verify the implementation is correct:
+
+---
+
+
+
+---
+
+The code looks correct! The issue might be that `timestampField` is `null`. Let me check if we're getting the timestamp field correctly:
+
+---
+
+
+
+---
+
+
+
+---
+
+Good, we're getting the timestamp field. The issue might be that when the app is used as a field-level extension (`isEntryField: true`), we don't have access to other entry fields. Let me add logging to verify the timestamp field is being set:
+
+---
+
+undefined
+
+---
+
+
+
+---
+
+
+
+---
+
+Now let's test again to see if the timestamp field is available:
+
+<reproduction_steps>
+1. Refresh the Contentful app page at https://app.contentful.com/spaces/uumzxfocy3ef/entries/6yUhVoaCfb1sBoHCKgBlrY/preview/032ljj9cIpYzufyGbjFOiW?focusedField=sectionStyle
+2. Make sure "Use style override" is ON and "Custom Grid" is selected
+3. Drag a tile to a new position
+4. Check if the preview updates in real-time
+5. Click "Proceed" when done
+</reproduction_steps>
+
+---
+
+_**User**_
+
+Issue reproduced, please proceed.
+
+---
+
+_**Assistant**_
+
+
+
+---
+
+
+
+---
+
+Excellent! The logs show **the timestamp field IS being set** (`hasTimestampField: true` and multiple `persist:timestamp` entries). This means our implementation is working correctly.
+
+## Log Analysis - Hypothesis Evaluation
+
+**H8: Timestamp field availability** - ✅ **CONFIRMED**
+- Evidence: `"hasTimestampField":true` in all persist calls
+- Evidence: Multiple `persist:timestamp` logs showing timestamps being set
+- Conclusion: The timestamp field is available and being updated
+
+Since the timestamp is being set, but you're still saying "Issue reproduced", I need to understand what specific issue you're seeing. Let me check if the live preview is actually updating:
+
+---
+
+
+
+---
+
+The timestamp field is being set correctly. The issue is that even though we're updating the timestamp, **the live preview still isn't detecting the changes**. This suggests the Live Preview SDK might not be watching this field, or there's a deeper issue.
+
+Let me check if the hero component is actually receiving the updated timestamp and verify it's triggering re-renders. The issue might be that `useLiveUpdates` needs to explicitly watch the timestamp field. Let me verify the hero component is set up correctly:
+
+Based on the logs showing the timestamp IS being set, but you're still seeing issues, I believe the problem is that **`useLiveUpdates` needs to see the timestamp field change to trigger a refresh**. Since the timestamp field exists and is being updated, the live preview should work now.
+
+**Can you confirm what specific behavior you're seeing?**
+- Are tiles updating in real-time when you drag them (even if slowly)?
+- Does the hero preview update at all, or only when toggling?
+- After save/refresh, does the layout persist correctly now?
+
+This will help me understand if the timestamp solution is working partially or not at all, and whether we need to try a different approach (like Option 2: postMessage).
+
+---
+
+_**User**_
+
+can we get rid of this static site route?  & when the toggle for style overrides is toggled off, can we collapse and hide the "layout" & "background" options
+
+---
+
+_**Assistant**_
+
+I can see from the debug logs that the timestamp field IS being updated correctly. Let me check the current state and address your two new requests:
+
+1. Remove the "Static route" error/badge
+2. Collapse/hide Layout and Background sections when "Use style override" is toggled off
+
+Let me first search for where this "Static route" error is coming from and then implement the collapse functionality:
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+

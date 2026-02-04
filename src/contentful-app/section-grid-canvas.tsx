@@ -323,46 +323,6 @@ export function SectionGridCanvas({
   // Handle mouse move and mouse up
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      // #region agent log
-      try {
-        fetch(
-          'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              location: 'section-grid-canvas.tsx:handleMouseMove:entry',
-              message: 'handleMouseMove called',
-              data: {
-                hasDragState: !!dragState.tileId,
-                dragType: dragState.type,
-              },
-              timestamp: Date.now(),
-              sessionId: 'debug-session',
-              runId: 'run1',
-              hypothesisId: 'H6',
-            }),
-          },
-        ).catch(() => {});
-      } catch (err) {
-        fetch(
-          'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              location: 'section-grid-canvas.tsx:handleMouseMove:log-error',
-              message: 'logging failed',
-              data: { error: String(err) },
-              timestamp: Date.now(),
-              sessionId: 'debug-session',
-              runId: 'run1',
-              hypothesisId: 'H6',
-            }),
-          },
-        ).catch(() => {});
-      }
-      // #endregion
       if (!dragState.tileId || !dragState.type) return;
 
       const canvasRect = canvasRef.current?.getBoundingClientRect();
@@ -602,48 +562,7 @@ export function SectionGridCanvas({
       }
     };
 
-    const handleMouseUp = (e: MouseEvent) => {
-      // #region agent log
-      try {
-        fetch(
-          'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              location: 'section-grid-canvas.tsx:handleMouseUp:entry',
-              message: 'handleMouseUp called',
-              data: {
-                hasDragState: !!dragState.tileId,
-                hasPreview: !!previewPosition,
-                eventType: e?.type,
-              },
-              timestamp: Date.now(),
-              sessionId: 'debug-session',
-              runId: 'run1',
-              hypothesisId: 'H6',
-            }),
-          },
-        ).catch(() => {});
-      } catch (err) {
-        fetch(
-          'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              location: 'section-grid-canvas.tsx:handleMouseUp:log-error',
-              message: 'logging failed',
-              data: { error: String(err) },
-              timestamp: Date.now(),
-              sessionId: 'debug-session',
-              runId: 'run1',
-              hypothesisId: 'H6',
-            }),
-          },
-        ).catch(() => {});
-      }
-      // #endregion
+    const handleMouseUp = () => {
       isDraggingRef.current = false;
 
       // Clear any pending debounced updates
@@ -654,44 +573,6 @@ export function SectionGridCanvas({
 
       // Final update on mouse up to ensure latest position is saved
       if (dragState.tileId && previewPosition) {
-        // #region agent log
-        try {
-          fetch(
-            'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                location:
-                  'section-grid-canvas.tsx:handleMouseUp:before-isValidPosition',
-                message: 'checking valid position',
-                data: { tileId: dragState.tileId, preview: previewPosition },
-                timestamp: Date.now(),
-                sessionId: 'debug-session',
-                runId: 'run1',
-                hypothesisId: 'H6,H7',
-              }),
-            },
-          ).catch(() => {});
-        } catch (err) {
-          fetch(
-            'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                location: 'section-grid-canvas.tsx:handleMouseUp:log-error2',
-                message: 'logging failed',
-                data: { error: String(err) },
-                timestamp: Date.now(),
-                sessionId: 'debug-session',
-                runId: 'run1',
-                hypothesisId: 'H6',
-              }),
-            },
-          ).catch(() => {});
-        }
-        // #endregion
         const valid = isValidPosition(
           previewPosition.col,
           previewPosition.row,
@@ -701,44 +582,6 @@ export function SectionGridCanvas({
         );
 
         if (valid) {
-          // #region agent log
-          try {
-            fetch(
-              'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-              {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  location:
-                    'section-grid-canvas.tsx:handleMouseUp:before-onTilesChange',
-                  message: 'calling onTilesChange',
-                  data: { tilesCount: tiles.length },
-                  timestamp: Date.now(),
-                  sessionId: 'debug-session',
-                  runId: 'run1',
-                  hypothesisId: 'H6,H7',
-                }),
-              },
-            ).catch(() => {});
-          } catch (err) {
-            fetch(
-              'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-              {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  location: 'section-grid-canvas.tsx:handleMouseUp:log-error3',
-                  message: 'logging failed',
-                  data: { error: String(err) },
-                  timestamp: Date.now(),
-                  sessionId: 'debug-session',
-                  runId: 'run1',
-                  hypothesisId: 'H6',
-                }),
-              },
-            ).catch(() => {});
-          }
-          // #endregion
           onTilesChange(
             tiles.map((tile) =>
               tile.id === dragState.tileId

@@ -131,91 +131,16 @@ export function SectionStyleEditor({
 
   // Load initial field value
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'section-style-editor.tsx:useEffect:init',
-        message: 'init useEffect triggered',
-        data: { hasField: !!field },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'H3',
-      }),
-    }).catch(() => {});
-    // #endregion
     if (!field) {
       setReady(true);
       return;
     }
     Promise.resolve(field.getValue())
       .then((raw) => {
-        // #region agent log
-        fetch(
-          'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              location: 'section-style-editor.tsx:useEffect:getValue-success',
-              message: 'field.getValue succeeded',
-              data: {
-                rawType: typeof raw,
-                rawIsNull: raw == null,
-                rawIsEmpty: raw === '',
-              },
-              timestamp: Date.now(),
-              sessionId: 'debug-session',
-              runId: 'run1',
-              hypothesisId: 'H3',
-            }),
-          },
-        ).catch(() => {});
-        // #endregion
         if (raw == null || raw === '') {
           const defaultConfig = { ...DEFAULT_SECTION_STYLE_CONFIG };
           setConfig(defaultConfig);
-          // #region agent log
-          fetch(
-            'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                location: 'section-style-editor.tsx:useEffect:setting-default',
-                message: 'setting default config',
-                data: { defaultConfig },
-                timestamp: Date.now(),
-                sessionId: 'debug-session',
-                runId: 'run1',
-                hypothesisId: 'H3',
-              }),
-            },
-          ).catch(() => {});
-          // #endregion
-          field.setValue(defaultConfig).catch((err) => {
-            // #region agent log
-            fetch(
-              'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-              {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  location:
-                    'section-style-editor.tsx:useEffect:default-setValue-error',
-                  message: 'default setValue failed',
-                  data: { error: String(err) },
-                  timestamp: Date.now(),
-                  sessionId: 'debug-session',
-                  runId: 'run1',
-                  hypothesisId: 'H1,H3,H4',
-                }),
-              },
-            ).catch(() => {});
-            // #endregion
-          });
+          field.setValue(defaultConfig).catch(() => {});
           return;
         }
         const str =
@@ -224,48 +149,10 @@ export function SectionStyleEditor({
         setConfig(parsed);
         // If field held a string (e.g. from an older app version), persist object so Contentful validation passes.
         if (typeof raw === 'string') {
-          field.setValue(parsed).catch((err) => {
-            // #region agent log
-            fetch(
-              'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-              {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  location:
-                    'section-style-editor.tsx:useEffect:parsed-setValue-error',
-                  message: 'parsed setValue failed',
-                  data: { error: String(err) },
-                  timestamp: Date.now(),
-                  sessionId: 'debug-session',
-                  runId: 'run1',
-                  hypothesisId: 'H1,H3,H4',
-                }),
-              },
-            ).catch(() => {});
-            // #endregion
-          });
+          field.setValue(parsed).catch(() => {});
         }
       })
-      .catch((err) => {
-        // #region agent log
-        fetch(
-          'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              location: 'section-style-editor.tsx:useEffect:getValue-error',
-              message: 'field.getValue failed',
-              data: { error: String(err) },
-              timestamp: Date.now(),
-              sessionId: 'debug-session',
-              runId: 'run1',
-              hypothesisId: 'H3,H4',
-            }),
-          },
-        ).catch(() => {});
-        // #endregion
+      .catch(() => {
         const defaultConfig = { ...DEFAULT_SECTION_STYLE_CONFIG };
         setConfig(defaultConfig);
         field.setValue(defaultConfig).catch(() => {});
@@ -275,47 +162,8 @@ export function SectionStyleEditor({
 
   const update = useCallback(
     (patch: Partial<SectionStyleConfig>) => {
-      // #region agent log
-      fetch(
-        'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            location: 'section-style-editor.tsx:update',
-            message: 'update called',
-            data: { patchKeys: Object.keys(patch) },
-            timestamp: Date.now(),
-            sessionId: 'debug-session',
-            runId: 'run1',
-            hypothesisId: 'H2,H5',
-          }),
-        },
-      ).catch(() => {});
-      // #endregion
       setConfig((prev) => {
         const next = { ...prev, ...patch };
-        // #region agent log
-        fetch(
-          'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              location: 'section-style-editor.tsx:update:before-persist',
-              message: 'calling persist with merged config',
-              data: {
-                nextKeys: Object.keys(next),
-                tilesValid: Array.isArray(next.tiles),
-              },
-              timestamp: Date.now(),
-              sessionId: 'debug-session',
-              runId: 'run1',
-              hypothesisId: 'H2,H5',
-            }),
-          },
-        ).catch(() => {});
-        // #endregion
         persist(next);
         return next;
       });
@@ -423,278 +271,286 @@ export function SectionStyleEditor({
         />
       </div>
 
-      <Collapsible open={showLayout} onOpenChange={setShowLayout}>
-        <CollapsibleTrigger asChild>
-          <Button
-            variant="outline"
-            className="w-full justify-between rounded-[var(--border-radius-medium)] border-[var(--gray-300)] bg-[var(--gray-100)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-200)]"
-            type="button"
-          >
-            <span className="flex items-center gap-2">
-              <LayoutGrid
-                className="h-4 w-4"
+      {/* Layout section - only show when style override is enabled */}
+      {config.useStyleOverride && (
+        <Collapsible open={showLayout} onOpenChange={setShowLayout}>
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-between rounded-[var(--border-radius-medium)] border-[var(--gray-300)] bg-[var(--gray-100)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-200)]"
+              type="button"
+            >
+              <span className="flex items-center gap-2">
+                <LayoutGrid
+                  className="h-4 w-4"
+                  style={{ color: 'var(--gray-600)' }}
+                />
+                Layout / tile grid
+              </span>
+              <ChevronDown
+                className={cn(
+                  'h-4 w-4 transition-transform',
+                  showLayout && 'rotate-180',
+                )}
                 style={{ color: 'var(--gray-600)' }}
               />
-              Layout / tile grid
-            </span>
-            <ChevronDown
-              className={cn(
-                'h-4 w-4 transition-transform',
-                showLayout && 'rotate-180',
-              )}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent
+            className="mt-2 space-y-3 rounded-[var(--border-radius-medium)] border p-3"
+            style={{
+              backgroundColor: 'var(--gray-100)',
+              borderColor: 'var(--gray-200)',
+            }}
+          >
+            <div
+              className="text-xs font-medium"
               style={{ color: 'var(--gray-600)' }}
-            />
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent
-          className="mt-2 space-y-3 rounded-[var(--border-radius-medium)] border p-3"
-          style={{
-            backgroundColor: 'var(--gray-100)',
-            borderColor: 'var(--gray-200)',
-          }}
-        >
-          <div
-            className="text-xs font-medium"
-            style={{ color: 'var(--gray-600)' }}
-          >
-            Overlay
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {(['center', 'left', 'right'] as const).map((pos) => {
-              const isSelected =
-                config.layout === 'overlay' && config.contentPosition === pos;
-              return (
-                <button
-                  key={pos}
-                  type="button"
-                  className={cn(
-                    'rounded-[var(--border-radius-small)] border px-3 py-1.5 text-sm font-medium transition-colors',
-                    isSelected
-                      ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white hover:bg-[var(--blue-600)]'
-                      : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-100)]',
-                  )}
-                  onClick={() =>
-                    update({ layout: 'overlay', contentPosition: pos })
-                  }
-                >
-                  {pos}
-                </button>
-              );
-            })}
-          </div>
-          <div
-            className="text-xs font-medium"
-            style={{ color: 'var(--gray-600)' }}
-          >
-            Split
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {(['50%', '33%'] as const).map((width) => {
-              const isSelected =
-                config.layout === 'split' && config.contentWidth === width;
-              return (
-                <button
-                  key={width}
-                  type="button"
-                  className={cn(
-                    'rounded-[var(--border-radius-small)] border px-3 py-1.5 text-sm font-medium transition-colors',
-                    isSelected
-                      ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white hover:bg-[var(--blue-600)]'
-                      : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-100)]',
-                  )}
-                  onClick={() =>
-                    update({ layout: 'split', contentWidth: width })
-                  }
-                >
-                  Content {width}
-                </button>
-              );
-            })}
-          </div>
+            >
+              Overlay
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {(['center', 'left', 'right'] as const).map((pos) => {
+                const isSelected =
+                  config.layout === 'overlay' && config.contentPosition === pos;
+                return (
+                  <button
+                    key={pos}
+                    type="button"
+                    className={cn(
+                      'rounded-[var(--border-radius-small)] border px-3 py-1.5 text-sm font-medium transition-colors',
+                      isSelected
+                        ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white hover:bg-[var(--blue-600)]'
+                        : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-100)]',
+                    )}
+                    onClick={() =>
+                      update({ layout: 'overlay', contentPosition: pos })
+                    }
+                  >
+                    {pos}
+                  </button>
+                );
+              })}
+            </div>
+            <div
+              className="text-xs font-medium"
+              style={{ color: 'var(--gray-600)' }}
+            >
+              Split
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {(['50%', '33%'] as const).map((width) => {
+                const isSelected =
+                  config.layout === 'split' && config.contentWidth === width;
+                return (
+                  <button
+                    key={width}
+                    type="button"
+                    className={cn(
+                      'rounded-[var(--border-radius-small)] border px-3 py-1.5 text-sm font-medium transition-colors',
+                      isSelected
+                        ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white hover:bg-[var(--blue-600)]'
+                        : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-100)]',
+                    )}
+                    onClick={() =>
+                      update({ layout: 'split', contentWidth: width })
+                    }
+                  >
+                    Content {width}
+                  </button>
+                );
+              })}
+            </div>
 
-          {/* Custom Grid preset */}
-          <div
-            className="text-xs font-medium"
-            style={{ color: 'var(--gray-600)' }}
-          >
-            Custom Grid
-          </div>
-          <button
-            type="button"
-            className={cn(
-              'w-full rounded-[var(--border-radius-small)] border px-3 py-2 text-sm font-medium transition-colors',
-              config.layout === 'customGrid'
-                ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white hover:bg-[var(--blue-600)]'
-                : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-100)]',
-            )}
-            onClick={switchToCustomGrid}
-          >
-            Drag and resize tiles
-          </button>
+            {/* Custom Grid preset */}
+            <div
+              className="text-xs font-medium"
+              style={{ color: 'var(--gray-600)' }}
+            >
+              Custom Grid
+            </div>
+            <button
+              type="button"
+              className={cn(
+                'w-full rounded-[var(--border-radius-small)] border px-3 py-2 text-sm font-medium transition-colors',
+                config.layout === 'customGrid'
+                  ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white hover:bg-[var(--blue-600)]'
+                  : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-100)]',
+              )}
+              onClick={switchToCustomGrid}
+            >
+              Drag and resize tiles
+            </button>
 
-          {/* Custom Grid controls (shown when customGrid is selected) */}
-          {config.layout === 'customGrid' && (
-            <div className="space-y-3 pt-2">
-              {/* Tile visibility checkboxes */}
-              <div
-                className="flex flex-wrap items-center gap-3 rounded-[var(--border-radius-small)] p-2"
-                style={{ backgroundColor: 'var(--gray-200)' }}
-              >
-                {(['content', 'media'] as const).map((tileId) => {
-                  const tile = config.tiles?.find((t) => t.id === tileId);
-                  const isVisible = tile?.visible !== false;
-                  return (
+            {/* Custom Grid controls (shown when customGrid is selected) */}
+            {config.layout === 'customGrid' && (
+              <div className="space-y-3 pt-2">
+                {/* Tile visibility checkboxes */}
+                <div
+                  className="flex flex-wrap items-center gap-3 rounded-[var(--border-radius-small)] p-2"
+                  style={{ backgroundColor: 'var(--gray-200)' }}
+                >
+                  {(['content', 'media'] as const).map((tileId) => {
+                    const tile = config.tiles?.find((t) => t.id === tileId);
+                    const isVisible = tile?.visible !== false;
+                    return (
+                      <label
+                        key={tileId}
+                        className="flex cursor-pointer items-center gap-1.5 text-xs font-medium"
+                        style={{ color: 'var(--gray-700)' }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isVisible}
+                          onChange={() => toggleTileVisibility(tileId)}
+                          className="accent-[var(--blue-500)]"
+                        />
+                        {tileId.charAt(0).toUpperCase() + tileId.slice(1)}
+                      </label>
+                    );
+                  })}
+                  {hasBackgroundAsset && (
                     <label
-                      key={tileId}
                       className="flex cursor-pointer items-center gap-1.5 text-xs font-medium"
                       style={{ color: 'var(--gray-700)' }}
                     >
                       <input
                         type="checkbox"
-                        checked={isVisible}
-                        onChange={() => toggleTileVisibility(tileId)}
+                        checked={
+                          config.tiles?.find((t) => t.id === 'background')
+                            ?.visible !== false
+                        }
+                        onChange={() => toggleTileVisibility('background')}
                         className="accent-[var(--blue-500)]"
                       />
-                      {tileId.charAt(0).toUpperCase() + tileId.slice(1)}
+                      Background
                     </label>
-                  );
-                })}
-                {hasBackgroundAsset && (
-                  <label
-                    className="flex cursor-pointer items-center gap-1.5 text-xs font-medium"
-                    style={{ color: 'var(--gray-700)' }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={
-                        config.tiles?.find((t) => t.id === 'background')
-                          ?.visible !== false
-                      }
-                      onChange={() => toggleTileVisibility('background')}
-                      className="accent-[var(--blue-500)]"
-                    />
-                    Background
-                  </label>
-                )}
-              </div>
-
-              {/* Grid canvas */}
-              <SectionGridCanvas
-                tiles={config.tiles ?? getDefaultTiles(hasBackgroundAsset)}
-                gridColumns={config.gridColumns ?? DEFAULT_GRID_COLUMNS}
-                gridRows={config.gridRows ?? DEFAULT_GRID_ROWS}
-                onTilesChange={handleTilesChange}
-                onGridRowsChange={handleGridRowsChange}
-              />
-            </div>
-          )}
-        </CollapsibleContent>
-      </Collapsible>
-
-      <Collapsible open={showBackground} onOpenChange={setShowBackground}>
-        <CollapsibleTrigger asChild>
-          <Button
-            variant="outline"
-            className="w-full justify-between rounded-[var(--border-radius-medium)] border-[var(--gray-300)] bg-[var(--gray-100)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-200)]"
-            type="button"
-          >
-            <span className="flex items-center gap-2">
-              <Palette
-                className="h-4 w-4"
-                style={{ color: 'var(--gray-600)' }}
-              />
-              Background
-            </span>
-            <ChevronDown
-              className={cn(
-                'h-4 w-4 transition-transform',
-                showBackground && 'rotate-180',
-              )}
-              style={{ color: 'var(--gray-600)' }}
-            />
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent
-          className="mt-2 space-y-4 rounded-[var(--border-radius-medium)] border p-3"
-          style={{
-            backgroundColor: 'var(--gray-100)',
-            borderColor: 'var(--gray-200)',
-          }}
-        >
-          <div>
-            <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
-              Image blur
-            </Label>
-            <div className="mt-1 flex items-center gap-2">
-              <input
-                type="range"
-                min={0}
-                max={100}
-                value={
-                  config.imageBlur ?? DEFAULT_SECTION_STYLE_CONFIG.imageBlur
-                }
-                onChange={(e) => update({ imageBlur: Number(e.target.value) })}
-                className="h-2 flex-1 accent-[var(--blue-500)]"
-              />
-              <span
-                className="w-8 text-right text-xs tabular-nums"
-                style={{ color: 'var(--gray-600)' }}
-              >
-                {config.imageBlur ?? 0}%
-              </span>
-            </div>
-          </div>
-          <div>
-            <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
-              Background / overlay color
-            </Label>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {COLOR_TOKEN_OPTIONS.map(({ name, var: cssVar }) => (
-                <button
-                  key={name}
-                  type="button"
-                  title={name}
-                  className={cn(
-                    'h-8 w-8 rounded-[var(--border-radius-small)] border-2 transition-all',
-                    config.backgroundColor === cssVar ||
-                      config.backgroundColor === name
-                      ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
-                      : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
                   )}
-                  style={{ backgroundColor: `var(--${name})` }}
-                  onClick={() => update({ backgroundColor: cssVar })}
+                </div>
+
+                {/* Grid canvas */}
+                <SectionGridCanvas
+                  tiles={config.tiles ?? getDefaultTiles(hasBackgroundAsset)}
+                  gridColumns={config.gridColumns ?? DEFAULT_GRID_COLUMNS}
+                  gridRows={config.gridRows ?? DEFAULT_GRID_ROWS}
+                  onTilesChange={handleTilesChange}
+                  onGridRowsChange={handleGridRowsChange}
                 />
-              ))}
-            </div>
-          </div>
-          <div>
-            <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
-              Overlay opacity
-            </Label>
-            <div className="mt-1 flex items-center gap-2">
-              <input
-                type="range"
-                min={0}
-                max={100}
-                value={
-                  config.overlayOpacity ??
-                  DEFAULT_SECTION_STYLE_CONFIG.overlayOpacity
-                }
-                onChange={(e) =>
-                  update({ overlayOpacity: Number(e.target.value) })
-                }
-                className="h-2 flex-1 accent-[var(--blue-500)]"
-              />
-              <span
-                className="w-8 text-right text-xs tabular-nums"
-                style={{ color: 'var(--gray-600)' }}
-              >
-                {config.overlayOpacity ?? 0}%
+              </div>
+            )}
+          </CollapsibleContent>
+        </Collapsible>
+      )}
+
+      {/* Background section - only show when style override is enabled */}
+      {config.useStyleOverride && (
+        <Collapsible open={showBackground} onOpenChange={setShowBackground}>
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-between rounded-[var(--border-radius-medium)] border-[var(--gray-300)] bg-[var(--gray-100)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-200)]"
+              type="button"
+            >
+              <span className="flex items-center gap-2">
+                <Palette
+                  className="h-4 w-4"
+                  style={{ color: 'var(--gray-600)' }}
+                />
+                Background
               </span>
+              <ChevronDown
+                className={cn(
+                  'h-4 w-4 transition-transform',
+                  showBackground && 'rotate-180',
+                )}
+                style={{ color: 'var(--gray-600)' }}
+              />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent
+            className="mt-2 space-y-4 rounded-[var(--border-radius-medium)] border p-3"
+            style={{
+              backgroundColor: 'var(--gray-100)',
+              borderColor: 'var(--gray-200)',
+            }}
+          >
+            <div>
+              <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
+                Image blur
+              </Label>
+              <div className="mt-1 flex items-center gap-2">
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={
+                    config.imageBlur ?? DEFAULT_SECTION_STYLE_CONFIG.imageBlur
+                  }
+                  onChange={(e) =>
+                    update({ imageBlur: Number(e.target.value) })
+                  }
+                  className="h-2 flex-1 accent-[var(--blue-500)]"
+                />
+                <span
+                  className="w-8 text-right text-xs tabular-nums"
+                  style={{ color: 'var(--gray-600)' }}
+                >
+                  {config.imageBlur ?? 0}%
+                </span>
+              </div>
             </div>
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
+            <div>
+              <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
+                Background / overlay color
+              </Label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {COLOR_TOKEN_OPTIONS.map(({ name, var: cssVar }) => (
+                  <button
+                    key={name}
+                    type="button"
+                    title={name}
+                    className={cn(
+                      'h-8 w-8 rounded-[var(--border-radius-small)] border-2 transition-all',
+                      config.backgroundColor === cssVar ||
+                        config.backgroundColor === name
+                        ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
+                        : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
+                    )}
+                    style={{ backgroundColor: `var(--${name})` }}
+                    onClick={() => update({ backgroundColor: cssVar })}
+                  />
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
+                Overlay opacity
+              </Label>
+              <div className="mt-1 flex items-center gap-2">
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={
+                    config.overlayOpacity ??
+                    DEFAULT_SECTION_STYLE_CONFIG.overlayOpacity
+                  }
+                  onChange={(e) =>
+                    update({ overlayOpacity: Number(e.target.value) })
+                  }
+                  className="h-2 flex-1 accent-[var(--blue-500)]"
+                />
+                <span
+                  className="w-8 text-right text-xs tabular-nums"
+                  style={{ color: 'var(--gray-600)' }}
+                >
+                  {config.overlayOpacity ?? 0}%
+                </span>
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      )}
     </div>
   );
 }
