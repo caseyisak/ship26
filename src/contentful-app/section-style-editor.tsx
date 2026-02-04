@@ -28,6 +28,7 @@ import { cn } from '@/lib/utils';
 import { SectionGridCanvas } from './section-grid-canvas';
 
 const SECTION_STYLE_FIELD_ID = 'sectionStyle';
+const SECTION_STYLE_UPDATED_AT_FIELD_ID = 'sectionStyleUpdatedAt';
 const BACKGROUND_FIELD_ID = 'background';
 
 /** Token names that map to app CSS vars (from globals.css) */
@@ -63,6 +64,15 @@ function getFieldFromSdk(
   return null;
 }
 
+/** Get the timestamp field used to trigger live preview updates */
+function getTimestampFieldFromSdk(sdk: { entry?: SdkEntry }): SdkField | null {
+  const entryFields = sdk?.entry?.fields;
+  if (entryFields && SECTION_STYLE_UPDATED_AT_FIELD_ID in entryFields) {
+    return entryFields[SECTION_STYLE_UPDATED_AT_FIELD_ID];
+  }
+  return null;
+}
+
 /** Check if entry has a background asset field with a value */
 async function checkHasBackgroundAsset(sdk: {
   entry?: SdkEntry;
@@ -90,6 +100,7 @@ export function SectionStyleEditor({
     app?: { setReady: () => Promise<void> };
   };
   const field = getFieldFromSdk(typedSdk, isEntryField);
+  const timestampField = getTimestampFieldFromSdk(typedSdk);
   const [config, setConfig] = useState<SectionStyleConfig>(() => ({
     ...DEFAULT_SECTION_STYLE_CONFIG,
   }));
@@ -100,97 +111,17 @@ export function SectionStyleEditor({
 
   const persist = useCallback(
     (next: SectionStyleConfig) => {
-      // #region agent log
-      fetch(
-        'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            location: 'section-style-editor.tsx:persist:entry',
-            message: 'persist called',
-            data: {
-              hasField: !!field,
-              configKeys: Object.keys(next),
-              useOverride: next.useStyleOverride,
-              tilesCount: next.tiles?.length,
-            },
-            timestamp: Date.now(),
-            sessionId: 'debug-session',
-            runId: 'run1',
-            hypothesisId: 'H1,H2',
-          }),
-        },
-      ).catch(() => {});
-      // #endregion
       if (!field) return;
       // Contentful JSON field expects type Object; pass the object, not a string.
-      // #region agent log
-      fetch(
-        'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            location: 'section-style-editor.tsx:persist:before-setValue',
-            message: 'calling field.setValue',
-            data: { config: next },
-            timestamp: Date.now(),
-            sessionId: 'debug-session',
-            runId: 'run1',
-            hypothesisId: 'H1,H2,H5',
-          }),
-        },
-      ).catch(() => {});
-      // #endregion
-      field
-        .setValue(next)
-        .catch((err) => {
-          // #region agent log
-          fetch(
-            'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                location: 'section-style-editor.tsx:persist:setValue-error',
-                message: 'field.setValue rejected',
-                data: {
-                  error: String(err),
-                  errorType: err?.constructor?.name,
-                  errorMessage: err?.message,
-                },
-                timestamp: Date.now(),
-                sessionId: 'debug-session',
-                runId: 'run1',
-                hypothesisId: 'H1,H4',
-              }),
-            },
-          ).catch(() => {});
-          // #endregion
-        })
-        .then(() => {
-          // #region agent log
-          fetch(
-            'http://127.0.0.1:7244/ingest/a6fa6f15-47e6-4790-a172-27529f67770f',
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                location: 'section-style-editor.tsx:persist:setValue-success',
-                message: 'field.setValue succeeded',
-                data: {},
-                timestamp: Date.now(),
-                sessionId: 'debug-session',
-                runId: 'run1',
-                hypothesisId: 'H1',
-              }),
-            },
-          ).catch(() => {});
-          // #endregion
-        });
+      field.setValue(next).catch(() => {});
+
+      // Update timestamp field to trigger live preview refresh
+      // This is necessary because Contentful's Live Preview SDK doesn't detect JSON field changes
+      if (timestampField) {
+        timestampField.setValue(Date.now()).catch(() => {});
+      }
     },
-    [field],
+    [field, timestampField],
   );
 
   // Check if entry has a background asset

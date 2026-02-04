@@ -20,6 +20,7 @@ type RawHero = {
   variant?: string | null;
   sectionStyle?: string | null;
   media?: { url?: string } | null;
+  background?: { url?: string } | null;
   ntExperiencesCollection?: NtExperiencesCollection | null;
 };
 
@@ -42,6 +43,7 @@ function mapHero(item: RawHero | null): HeroFragment | null {
     variant: item.variant ?? null,
     sectionStyle: item.sectionStyle ?? null,
     image: item.media ?? null,
+    background: item.background ?? null,
     ntExperiencesCollection: item.ntExperiencesCollection ?? undefined,
   };
 }

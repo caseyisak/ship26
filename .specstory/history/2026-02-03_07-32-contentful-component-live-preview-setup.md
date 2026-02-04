@@ -1375,3 +1375,288 @@ Your uncommitted changes (package.json, disable-draft route, enable-draft route.
 
 ---
 
+_**User**_
+
+I am getting an error on the hero entry live preview again: {"error":"Invalid entryId: use the entry ID merge tag in Contentful (e.g. {{entry.sys.id}}).","received":"{entry.sys.id_NOT_FOUND}"}
+/ctfl-live-preview-debug  https://app.contentful.com/spaces/uumzxfocy3ef/entries/6yUhVoaCfb1sBoHCKgBlrY/preview/032ljj9cIpYzufyGbjFOiW?focusedField=internalName 
+
+I thought we sorted this out. I cleared the cache adn ran it fine earlier. whats teh root cause?
+
+---
+
+_**Assistant**_
+
+
+Gathering diagnostics per the live-preview-debug workflow, then explaining the root cause.
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+Confirming root cause from terminal and error payload. Adding a clearer error message and documenting the fix in the component live-preview doc.
+
+
+---
+
+
+
+---
+
+
+Confirming root cause and applying two improvements: a clearer 400 response and a short troubleshooting section in the docs.
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+Summary of what’s going on and what was changed:
+
+---
+
+## Live preview debug
+
+**Checked:** terminal (enable-draft request with `entryId={entry.sys.id_NOT_FOUND}`), error payload, enable-draft code.
+
+---
+
+## Root cause
+
+**The problem is in Contentful’s preview URL configuration, not in your app.**
+
+- Your app is receiving:  
+  `entryId={entry.sys.id_NOT_FOUND}`  
+  instead of the real ID:  
+  `entryId=6yUhVoaCfb1sBoHCKgBlrY`.
+- So when Contentful opens the preview iframe, it’s calling your enable-draft URL with a **literal placeholder** that never got replaced by the entry ID. Contentful uses `_NOT_FOUND` when a merge tag/variable doesn’t resolve.
+- Your app correctly rejects that with 400 and the message you saw.
+
+Why it seemed “sorted” before:
+
+- You may have been testing by opening the **direct** app URL (e.g. `http://localhost:3000/preview/hero/6yUhVoaCfb1sBoHCKgBlrY`), which skips Contentful’s preview URL and merge tag.
+- Or the Hero preview URL in Contentful was correct once and later changed/reset (e.g. after clearing cache, different space, or editing the preview config).
+
+---
+
+## Fix (in Contentful)
+
+1. In Contentful go to **Settings → Content preview**.
+2. Open the preview configuration for the **Hero** content type.
+3. Set the **Preview URL** to your enable-draft URL and make sure the **entry ID is a real variable**, not typed by hand:
+   - Prefer: use the UI (e.g. “Insert variable” / “Add variable”) and choose **Entry ID** or **System → ID** so Contentful injects the current entry’s ID.
+   - Or, if your Contentful version supports it, use the template: `{{entry.sys.id}}` (exact syntax may vary; the UI variable is more reliable).
+4. Save and open a Hero entry → Live Preview again. The iframe should request something like:  
+   `.../api/enable-draft?secret=...&entryId=6yUhVoaCfb1sBoHCKgBlrY&ctype=hero`.
+
+No code change can “fix” this: the app only sees what Contentful puts in the URL; if Contentful doesn’t substitute the entry ID, you’ll keep getting `{entry.sys.id_NOT_FOUND}`.
+
+---
+
+## Changes made in the repo
+
+1. **enable-draft 400 response**  
+   The error message now says explicitly that **Contentful did not substitute the entry ID** and to fix it under **Settings → Content preview → Hero** by using the Entry ID merge tag (or “Entry ID” / “System → ID”) so the URL contains the real ID.
+
+2. **`documentation/component-live-preview.md`**  
+   Added a short **“Entry ID merge tag (`{entry.sys.id_NOT_FOUND}`)”** troubleshooting section that:
+   - Explains the root cause (Preview URL not using a resolving entry ID variable).
+   - Gives step-by-step fix in Contentful (Settings → Content preview → Hero → Preview URL + Entry ID variable).
+   - Notes that testing via the direct app URL bypasses the merge tag and can make it seem “fixed” when the Contentful config is still wrong.
+
+Once the Hero preview URL in Contentful uses a resolving Entry ID variable, the error should stop and live preview will work from the Contentful UI.
+
+---
+
+_**User**_
+
+k its fixed. remove any logs or tests
+
+---
+
+_**Assistant**_
+
+
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+Checking for a debug log file and any temporary test files:
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+Checking for other debug artifacts:
+
+
+---
+
+
+
+---
+
+
+Removing the debug log file. No debug instrumentation remains in the source (it was removed earlier). Keeping the enable-draft unit tests — they're standard API tests, not temporary debug tests.
+
+
+---
+
+undefined
+
+---
+
+
+Summary:
+
+- **Removed:** `.cursor/debug.log` (leftover debug log file).
+- **Checked:** There is no debug instrumentation left in the codebase (no ingest URL, `DEBUG_LOG`, or `#region agent` blocks). That was already removed when we fixed the “Missing catch or finally” issue.
+- **Kept:** `src/app/api/enable-draft/route.test.ts` — it’s the normal unit test for the enable-draft API (secret, slug, slug placeholder). It’s not a temporary debug test.
+
+So there are no remaining debug logs or temporary tests to remove. The only change was deleting `.cursor/debug.log`.
+
+---
+
+_**User**_
+
+if I dont use the style override app, teh hero does not show media, can we fix it so it shows up correctly?
+
+---
+
+_**Assistant**_
+
+
+Checking how the Hero component renders media in the default (no style override) case:
+
+
+---
+
+
+
+---
+
+
+Adding media display to the default branch: when `!useOverride` the Hero currently renders only the content block (headline, subheadline, CTA) and no image. Showing the media as a background when present.
+
+
+---
+
+
+
+---
+
+
+
+
+
+---
+
+
+
+---
+
+
+Summary of what changed:
+
+**Cause:** With style override off (`!useOverride`), the Hero only rendered the content block (headline, subheadline, CTA) and never used `imageUrl`, so media never appeared.
+
+**Change:** In that default branch we now:
+- If **`imageUrl` is set**: render it as a full-bleed background (`absolute inset-0`, `bg-cover`/`bg-center`) and keep the content on top with `z-10`, and give the section `min-h-[400px]` so the hero has height.
+- If **no image**: keep the previous behavior (section uses `bg-background`, content only).
+
+So when you don’t use the style override app, the Hero still shows the Contentful media as the background when it exists. If the image makes the text hard to read, you can turn on style override and use the overlay/opacity options, or we can add a light default overlay later.
+
+---
+
+_**User**_
+
+commit that 
+
+---
+
+_**Assistant**_
+
+
+
+
+
+---
+
+
+
+---
+
+
+
+
+
+---
+
+
+
+---
+
+
+Committed on `main` as `b8a1d1a`:
+
+**fix(hero): show media when style override is not used**
+
+- Default branch (`!useOverride`) now shows the image as a full-bleed background when `imageUrl` is set; content stays on top with `z-10`.
+- When there’s no image, the hero still uses `bg-background` only.
+
+---
+

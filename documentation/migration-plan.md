@@ -10,6 +10,8 @@ This document details the migration strategy to **bring Contentful plumbing from
 
 **Rule**: At each milestone, tests and build must pass before moving on. See [Milestones and test gates](#milestones-and-test-gates) below.
 
+**Continuous improvement**: At the **end of each milestone**, follow the [continuous-improvement](../.cursor/skills/continuous-improvement/SKILL.md) skill (archive completed work to [archive/tasks-archive.md](../archive/tasks-archive.md), update [lessons-learned.md](lessons-learned.md) if a new error pattern appeared). **Before starting** implementation, read [lessons-learned.md](lessons-learned.md) and the tasks archive for relevant patterns and past outcomes.
+
 ---
 
 ## Milestones and test gates

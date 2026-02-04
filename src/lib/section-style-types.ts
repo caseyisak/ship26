@@ -3,10 +3,23 @@
  * Used by Hero and other sections that support style override.
  */
 
-export type SectionStyleLayout = 'overlay' | 'split';
+export type SectionStyleLayout = 'overlay' | 'split' | 'customGrid';
 export type SectionStyleContentPosition = 'center' | 'left' | 'right';
 export type SectionStyleContentWidth = '50%' | '33%';
 export type SectionStyleContentColor = 'light' | 'dark' | 'auto';
+
+/** Tile IDs for Custom Grid layout */
+export type SectionStyleTileId = 'content' | 'media' | 'background';
+
+/** A tile in the Custom Grid layout */
+export interface SectionStyleTile {
+  id: SectionStyleTileId;
+  gridCol: number; // 1-based column start
+  gridRow: number; // 1-based row start
+  colSpan: number; // number of columns to span
+  rowSpan: number; // number of rows to span
+  visible?: boolean; // default true; false = hidden
+}
 
 export interface SectionStyleConfig {
   useStyleOverride: boolean;
@@ -17,6 +30,47 @@ export interface SectionStyleConfig {
   overlayOpacity?: number;
   imageBlur?: number;
   contentColor?: SectionStyleContentColor;
+  // Custom Grid fields (only used when layout === 'customGrid')
+  gridColumns?: number; // fixed at 6
+  gridRows?: number; // 2-6, default 3
+  tiles?: SectionStyleTile[];
+}
+
+/** Default grid dimensions for Custom Grid */
+export const DEFAULT_GRID_COLUMNS = 6;
+export const DEFAULT_GRID_ROWS = 3;
+
+/** Generate default tiles for Custom Grid (optionally including background) */
+export function getDefaultTiles(hasBackground: boolean): SectionStyleTile[] {
+  const tiles: SectionStyleTile[] = [
+    {
+      id: 'content',
+      gridCol: 1,
+      gridRow: 1,
+      colSpan: 2,
+      rowSpan: 2,
+      visible: true,
+    },
+    {
+      id: 'media',
+      gridCol: 4,
+      gridRow: 1,
+      colSpan: 2,
+      rowSpan: 2,
+      visible: true,
+    },
+  ];
+  if (hasBackground) {
+    tiles.push({
+      id: 'background',
+      gridCol: 1,
+      gridRow: 1,
+      colSpan: DEFAULT_GRID_COLUMNS,
+      rowSpan: DEFAULT_GRID_ROWS,
+      visible: true,
+    });
+  }
+  return tiles;
 }
 
 export const DEFAULT_SECTION_STYLE_CONFIG: SectionStyleConfig = {
@@ -28,6 +82,31 @@ export const DEFAULT_SECTION_STYLE_CONFIG: SectionStyleConfig = {
   imageBlur: 5,
   contentColor: 'auto',
 };
+
+/** Validate and parse a single tile */
+function parseTile(t: unknown): SectionStyleTile | null {
+  if (!t || typeof t !== 'object') return null;
+  const tile = t as Record<string, unknown>;
+  const id = tile.id;
+  if (id !== 'content' && id !== 'media' && id !== 'background') return null;
+  const gridCol = typeof tile.gridCol === 'number' ? tile.gridCol : 1;
+  const gridRow = typeof tile.gridRow === 'number' ? tile.gridRow : 1;
+  const colSpan = typeof tile.colSpan === 'number' ? tile.colSpan : 1;
+  const rowSpan = typeof tile.rowSpan === 'number' ? tile.rowSpan : 1;
+  const visible = tile.visible !== false; // default true
+  return { id, gridCol, gridRow, colSpan, rowSpan, visible };
+}
+
+/** Parse tiles array from JSON */
+function parseTiles(arr: unknown): SectionStyleTile[] | undefined {
+  if (!Array.isArray(arr)) return undefined;
+  const tiles: SectionStyleTile[] = [];
+  for (const item of arr) {
+    const tile = parseTile(item);
+    if (tile) tiles.push(tile);
+  }
+  return tiles.length > 0 ? tiles : undefined;
+}
 
 /**
  * Parse sectionStyle JSON from Contentful (string or null). Returns defaults when invalid/missing.
@@ -43,13 +122,17 @@ export function parseSectionStyle(
       typeof json === 'string' ? json : String(json),
     ) as Record<string, unknown>;
     if (parsed && typeof parsed === 'object') {
-      return {
+      const layout =
+        parsed.layout === 'overlay' ||
+        parsed.layout === 'split' ||
+        parsed.layout === 'customGrid'
+          ? parsed.layout
+          : DEFAULT_SECTION_STYLE_CONFIG.layout;
+
+      const result: SectionStyleConfig = {
         ...DEFAULT_SECTION_STYLE_CONFIG,
         useStyleOverride: Boolean(parsed.useStyleOverride),
-        layout:
-          parsed.layout === 'overlay' || parsed.layout === 'split'
-            ? parsed.layout
-            : DEFAULT_SECTION_STYLE_CONFIG.layout,
+        layout,
         contentPosition:
           parsed.contentPosition === 'center' ||
           parsed.contentPosition === 'left' ||
@@ -83,6 +166,25 @@ export function parseSectionStyle(
             ? parsed.contentColor
             : DEFAULT_SECTION_STYLE_CONFIG.contentColor,
       };
+
+      // Custom Grid fields
+      if (layout === 'customGrid') {
+        result.gridColumns =
+          typeof parsed.gridColumns === 'number' &&
+          parsed.gridColumns >= 2 &&
+          parsed.gridColumns <= 6
+            ? parsed.gridColumns
+            : DEFAULT_GRID_COLUMNS;
+        result.gridRows =
+          typeof parsed.gridRows === 'number' &&
+          parsed.gridRows >= 2 &&
+          parsed.gridRows <= 6
+            ? parsed.gridRows
+            : DEFAULT_GRID_ROWS;
+        result.tiles = parseTiles(parsed.tiles);
+      }
+
+      return result;
     }
   } catch {
     // ignore
