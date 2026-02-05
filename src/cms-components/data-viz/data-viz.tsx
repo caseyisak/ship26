@@ -176,6 +176,27 @@ const DataViz = ({
   const renderTreemap = () => {
     if (chartData.length === 0) return null;
 
+    // Helper to determine if a color is light or dark
+    const getContrastColor = (bgColor: string): string => {
+      // Handle CSS variables
+      if (bgColor.startsWith('var(')) {
+        // For chart colors, use dark text since they're generally bright
+        return '#000';
+      }
+
+      // Convert hex to RGB
+      const hex = bgColor.replace('#', '');
+      const r = parseInt(hex.substr(0, 2), 16);
+      const g = parseInt(hex.substr(2, 2), 16);
+      const b = parseInt(hex.substr(4, 2), 16);
+
+      // Calculate relative luminance
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+      // Return black for light backgrounds, white for dark
+      return luminance > 0.5 ? '#000' : '#fff';
+    };
+
     // Treemap expects: name, size, (optional) fill
     // Use first numeric column as size
     const sizeKey = seriesKeys[0] ?? 'series1';
@@ -196,6 +217,8 @@ const DataViz = ({
 
       if (widthNum < 40 || heightNum < 30) return null;
 
+      const textColor = getContrastColor(props.fill);
+
       return (
         <g>
           <rect
@@ -212,7 +235,7 @@ const DataViz = ({
             x={xNum + widthNum / 2}
             y={yNum + heightNum / 2 - 6}
             textAnchor="middle"
-            fill="#fff"
+            fill={textColor}
             fontSize={12}
             fontWeight="bold"
           >
@@ -222,7 +245,7 @@ const DataViz = ({
             x={xNum + widthNum / 2}
             y={yNum + heightNum / 2 + 8}
             textAnchor="middle"
-            fill="#fff"
+            fill={textColor}
             fontSize={10}
           >
             {sizeStr}
