@@ -296,8 +296,10 @@ const DataViz = ({
             y={yNum + heightNum / 2 - 6}
             textAnchor="middle"
             fill={textColor}
+            stroke="none"
             fontSize={18}
             fontWeight="bold"
+            style={{ paintOrder: 'fill' }}
           >
             {nameStr}
           </text>
@@ -306,7 +308,9 @@ const DataViz = ({
             y={yNum + heightNum / 2 + 10}
             textAnchor="middle"
             fill={textColor}
+            stroke="none"
             fontSize={15}
+            style={{ paintOrder: 'fill' }}
           >
             {sizeStr}
           </text>
