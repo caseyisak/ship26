@@ -177,7 +177,12 @@ const DataViz = ({
     if (chartData.length === 0) return null;
 
     // Helper to determine if a color is light or dark
-    const getContrastColor = (bgColor: string): string => {
+    const getContrastColor = (bgColor: string | undefined): string => {
+      // Default to white text if no color provided
+      if (!bgColor || typeof bgColor !== 'string') {
+        return '#fff';
+      }
+
       // Handle CSS variables
       if (bgColor.startsWith('var(')) {
         // For chart colors, use dark text since they're generally bright
