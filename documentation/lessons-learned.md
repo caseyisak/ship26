@@ -16,6 +16,7 @@ Error patterns, root causes, and fixes from this project so agents and humans do
 | LL-006 | FAQ items filtered out; mapSection returns null | `__typename` = content type ID (not name) | Use PascalCase for content type IDs (e.g., `Faq` not `faq`) |
 | LL-007 | GraphQL error: "Cannot query field X on type Y" | Array field names get "Collection" suffix in GraphQL | Use `fieldNameCollection` in GraphQL if field ID is `fieldName` |
 | LL-008 | Live preview images not updating; shows old values | useLiveUpdates returns raw Contentful field names, not mapped names | Check both mapped field (image) and raw field (media) in live preview components |
+| LL-009 | Live preview not updating; SDK error "Invalid live updates subscription" | Transforming GraphQL data before useLiveUpdates breaks SDK tracking | Pass raw GraphQL data to useLiveUpdates, transform after in client component |
 
 ---
 
@@ -150,7 +151,7 @@ Copy the block below, assign the next ID (LL-007, …), and fill in. Then add on
 
 - **Exact error / symptom:** Images don't update in Contentful live preview when changed; background image persists even after removal; media image doesn't appear when added. Component shows stale data despite Contentful updates.
 
-- **Root cause:** 
+- **Root cause:**
   1. `useLiveUpdates` returns **raw Contentful data** with original field names (e.g., `media`), not the mapped field names used in the app (e.g., `image`). The mapper (`hero.ts`, `page.ts`) converts `media` → `image` for initial data, but live updates bypass this mapping.
   2. Fallback logic (`?? data.field`) prevents updates: when Contentful sends `null` for a removed field, code falls back to stale `data` instead of using the `null`.
   3. Conditional rendering components (like GridBackground) render unconditionally, showing visual elements even when data is missing.
@@ -189,5 +190,56 @@ Copy the block below, assign the next ID (LL-007, …), and fill in. Then add on
 
 ---
 
-**Last updated:** 2026-02-03  
-**Total lessons:** 8
+## LL-009 — Transforming GraphQL data breaks useLiveUpdates SDK
+
+- **Exact error / symptom:** Console error: "Invalid live updates subscription detected. Please keep in mind that the data provided to the live updates needs to have 'sys.id', 'fields' for REST or the '__typename' for GraphQL on the data structure." Live preview updates don't work; sections don't reorder; SDK shows error: "Live updates for transformed data is not supported at the moment."
+
+- **Root cause:** The Contentful Live Preview SDK (`useLiveUpdates`) requires **raw GraphQL data** with exact field names and `__typename` to track changes. When server-side code transforms data (mapping field names like `media` → `image`, or applying mappers like `mapSection`), the SDK loses the ability to track updates because the data structure no longer matches what Contentful sends via postMessage.
+
+- **Context - What went wrong:** AI tools (Cursor, Claude Code) attempted to build custom rendering logic by transforming GraphQL data server-side for cleaner component props. This pattern works for static rendering but breaks Contentful's Live Preview SDK, leading to:
+  1. 10-40 second delays when reordering sections (waiting for manual refresh)
+  2. SDK errors about invalid subscription structure
+  3. Images and fields not updating in live preview despite Contentful sending correct data
+
+- **Solution:**
+  1. **Server-side**: Return completely raw GraphQL response from `getPageBySlug`:
+     ```typescript
+     // ❌ DON'T transform server-side
+     const sections = page.sectionsCollection?.items.map(mapSection) ?? [];
+
+     // ✅ DO return raw GraphQL data
+     return page; // Keep __typename, original field names
+     ```
+  2. **Client-side**: Apply `useLiveUpdates` to raw data, THEN transform:
+     ```typescript
+     export function PageContentLive({ page }: Props) {
+       // Apply live updates to RAW data first
+       const livePage = useLiveUpdates(page);
+
+       // THEN transform for rendering
+       const rawSections = livePage?.sectionsCollection?.items ?? [];
+       const sections = rawSections
+         .map(transformSection)
+         .filter(Boolean) as PageSection[];
+
+       return sections.map(section => <BlockRenderer data={section} />);
+     }
+     ```
+  3. **Type safety**: Accept `any` in PageData.sectionsCollection.items since it's raw GraphQL, or create union type of raw content types
+
+- **Prevention:**
+  1. **Never transform GraphQL data before passing to `useLiveUpdates`** - the SDK must receive exact GraphQL structure
+  2. Always do transformation **after** `useLiveUpdates` in client components
+  3. When debugging live preview issues, check browser console for SDK errors about "Invalid live updates subscription"
+  4. Resist the urge to "clean up" data structure for components - keep raw data flowing to SDK
+  5. Document this pattern in the codebase so AI tools don't try to "optimize" it away
+
+- **Related files:**
+  - `src/services/contentful/page.ts` (return raw GraphQL, removed server-side mappers)
+  - `src/app/page/[slug]/page-content-live.tsx` (client-side transformation after useLiveUpdates)
+  - `src/lib/live-preview.tsx` (useLiveUpdates hook)
+
+---
+
+**Last updated:** 2026-02-05
+**Total lessons:** 9

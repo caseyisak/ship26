@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { BlockRenderer } from '@/block-renderer';
+import { PageContentLive } from '@/app/page/[slug]/page-content-live';
 import { getPageBySlug, getPageSlugs } from '@/services/contentful/page';
 
 export const revalidate = 0;
@@ -12,23 +12,24 @@ export async function generateStaticParams() {
 
 export default async function ContentfulPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { slug } = await params;
-  const page = await getPageBySlug({ slug, locale: 'en-US' });
+  const { preview } = await searchParams;
+  // Use preview query param as override (for cross-site iframe context where cookies may not work)
+  const previewEnabled = preview === 'true';
+  const page = await getPageBySlug({
+    slug,
+    locale: 'en-US',
+    preview: previewEnabled || undefined,
+  });
 
   if (!page) {
     return notFound();
   }
 
-  const sections = page.sectionsCollection?.items?.filter(Boolean) ?? [];
-
-  return (
-    <div className="container">
-      {sections.map((section) => (
-        <BlockRenderer key={section!.sys.id} data={section!} />
-      ))}
-    </div>
-  );
+  return <PageContentLive page={page} />;
 }

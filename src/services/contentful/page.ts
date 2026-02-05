@@ -3,6 +3,8 @@ import { draftMode } from 'next/headers';
 import type {
   FaqFragment,
   FaqItemFragment,
+  FeatureItemFragment,
+  FeaturesFragment,
   HeroFragment,
   TabbedContentFragment,
   TabbedContentItemFragment,
@@ -12,13 +14,21 @@ import { logger } from '@/lib/logger';
 import { fetchGraphQL } from './client';
 import { PAGE_BY_SLUG, PAGE_SLUGS } from './queries';
 
-export type PageSection = HeroFragment | FaqFragment | TabbedContentFragment;
+export type PageSection =
+  | HeroFragment
+  | FaqFragment
+  | TabbedContentFragment
+  | FeaturesFragment;
 
 export type PageData = {
+  __typename?: string;
+  sys?: { id: string };
   slug: string;
   internalName?: string | null;
   sectionsCollection?: {
-    items: (PageSection | null)[];
+    // Raw GraphQL data - will be transformed client-side
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    items: Array<any>;
   } | null;
   nt_experiencesCollection?: {
     items: Array<{ __typename?: string; sys?: { id: string } }>;
@@ -83,13 +93,35 @@ type RawTabbedContent = {
   ntExperiencesCollectionCollection?: NtExperiencesCollection | null;
 };
 
+type RawFeatureItem = {
+  __typename: string;
+  sys: { id: string };
+  title?: string | null;
+  description?: string | null;
+  media?: { url?: string } | null;
+  animationKey?: string | null;
+};
+
+type RawFeatures = {
+  __typename: string;
+  sys: { id: string };
+  internalName?: string | null;
+  label?: string | null;
+  title?: string | null;
+  description?: string | null;
+  itemsCollection?: { items: RawFeatureItem[] } | null;
+  ntExperiencesCollection?: NtExperiencesCollection | null;
+};
+
 type PageBySlugResponse = {
   pageCollection: {
     items: Array<{
+      __typename?: string;
+      sys?: { id: string };
       slug: string;
       internalName?: string | null;
       sectionsCollection?: {
-        items: Array<RawHero | RawFaq | RawTabbedContent | null>;
+        items: Array<RawHero | RawFaq | RawTabbedContent | RawFeatures | null>;
       } | null;
       ntExperiencesCollection?: NtExperiencesCollection | null;
     }>;
@@ -100,196 +132,35 @@ type PageSlugsResponse = {
   pageCollection: { items: Array<{ slug: string }> };
 };
 
-function mapFaqItem(item: RawFaqItem): FaqItemFragment | null {
-  if (!item || item.__typename !== 'Faqitem') return null;
-  return {
-    __typename: 'FaqItem',
-    sys: { id: item.sys.id },
-    internalName: item.internalName ?? null,
-    question: item.question ?? null,
-    answer: item.answer ?? null,
-  };
-}
-
-function mapFaq(item: RawFaq): FaqFragment | null {
-  if (!item || item.__typename !== 'Faq') return null;
-  return {
-    __typename: 'Faq',
-    sys: { id: item.sys.id },
-    internalName: item.internalName ?? null,
-    title: item.title ?? null,
-    description: item.description ?? null,
-    itemsCollection: item.itemsCollection
-      ? {
-          items: item.itemsCollection.items
-            .map(mapFaqItem)
-            .filter(Boolean) as FaqItemFragment[],
-        }
-      : null,
-  };
-}
-
-function mapTabbedContentItem(
-  item: RawTabbedContentItem,
-): TabbedContentItemFragment | null {
-  if (!item || item.__typename !== 'Tabbedcontentitem') return null;
-  return {
-    __typename: 'TabbedContentItem',
-    sys: { id: item.sys.id },
-    label: item.label ?? null,
-    body: item.body ?? null,
-    image: item.image ?? null,
-    imageAlt: item.imageAlt ?? null,
-    href: item.href ?? null,
-    buttonLabel: item.buttonLabel ?? null,
-  };
-}
-
-function mapTabbedContent(
-  item: RawTabbedContent,
-): TabbedContentFragment | null {
-  if (!item || item.__typename !== 'Tabbedcontent') return null;
-  return {
-    __typename: 'Tabbedcontent',
-    sys: { id: item.sys.id },
-    internalName: item.internalName ?? null,
-    tagline: item.tagline ?? null,
-    title: item.title ?? null,
-    description: item.description ?? null,
-    itemsCollection: item.itemsCollectionCollection
-      ? {
-          items: item.itemsCollectionCollection.items
-            .map(mapTabbedContentItem)
-            .filter(Boolean) as TabbedContentItemFragment[],
-        }
-      : null,
-    ntExperiencesCollection:
-      item.ntExperiencesCollectionCollection ?? undefined,
-  };
-}
-
-function mapSection(
-  item: RawHero | RawFaq | RawTabbedContent | null,
-): PageSection | null {
-  if (!item) return null;
-  if (process.env.NODE_ENV === 'development') {
-    logger.info('[mapSection]', item.__typename, item.sys.id);
-  }
-  try {
-    if (item.__typename === 'Hero') {
-      const hero = item as RawHero;
-      return {
-        __typename: 'Hero',
-        sys: { id: hero.sys.id },
-        internalName: hero.internalName ?? null,
-        headline: hero.headline ?? null,
-        subheadline: hero.subheadline ?? null,
-        ctaText: hero.ctaText ?? null,
-        ctaUrl: hero.ctaUrl ?? null,
-        variant: hero.variant ?? null,
-        sectionStyle: hero.sectionStyle ?? null,
-        background: hero.background ?? null,
-        image: hero.media ?? null,
-        ntExperiencesCollection: hero.ntExperiencesCollection ?? undefined,
-      };
-    }
-    if (item.__typename === 'Faq') {
-      return mapFaq(item as RawFaq);
-    }
-    if (item.__typename === 'Tabbedcontent') {
-      return mapTabbedContent(item as RawTabbedContent);
-    }
-    if (process.env.NODE_ENV === 'development') {
-      logger.warn('[mapSection] Unknown typename:', item.__typename);
-    }
-    return null;
-  } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      logger.error(
-        `[mapSection] Error mapping section ${item.__typename} (${item.sys.id}):`,
-        error,
-      );
-    }
-    // Return null to skip this section instead of breaking the entire page
-    return null;
-  }
-}
+// Note: Data transformation moved to client-side (page-content-live.tsx)
+// to maintain raw GraphQL structure required by useLiveUpdates SDK
 
 export async function getPageBySlug({
   slug,
   locale,
+  preview: previewOverride,
 }: {
   slug: string;
   locale: string;
+  /** Override for preview mode (useful when cookie-based draft mode fails in cross-site iframes) */
+  preview?: boolean;
 }): Promise<PageData | null> {
   try {
-    const { isEnabled } = await draftMode();
+    const { isEnabled: draftModeEnabled } = await draftMode();
+    // Use override if provided, otherwise fall back to draft mode cookie
+    const isEnabled = previewOverride ?? draftModeEnabled;
     const data = await fetchGraphQL<PageBySlugResponse>({
       query: PAGE_BY_SLUG,
       variables: { slug, locale, preview: isEnabled },
       preview: isEnabled,
     });
-    if (process.env.NODE_ENV === 'development') {
-      const sectionsData =
-        data.pageCollection?.items?.[0]?.sectionsCollection?.items;
-      logger.info(
-        '[getPageBySlug] Sections from GraphQL:',
-        sectionsData?.map((s) => ({ typename: s?.__typename, id: s?.sys?.id })),
-      );
-      logger.info(
-        '[getPageBySlug] Full sectionsCollection:',
-        JSON.stringify(
-          data.pageCollection?.items?.[0]?.sectionsCollection,
-          null,
-          2,
-        ),
-      );
-    }
     const page = data.pageCollection?.items?.[0];
     if (!page) {
-      if (process.env.NODE_ENV === 'development') {
-        const count = data.pageCollection?.items?.length ?? 0;
-        logger.warn(
-          `[getPageBySlug] No page for slug="${slug}" locale="${locale}" preview=${isEnabled}; items.length=${count}`,
-        );
-      }
       return null;
     }
-    const rawSections = page.sectionsCollection?.items ?? [];
-    if (process.env.NODE_ENV === 'development') {
-      logger.info(
-        '[getPageBySlug] Raw sections:',
-        rawSections.map((s) => ({ typename: s?.__typename, id: s?.sys?.id })),
-      );
-    }
-    // Map sections with error handling - skip sections that fail to map instead of breaking the page
-    const sections = rawSections
-      .map((section) => {
-        try {
-          return mapSection(section);
-        } catch (error) {
-          if (process.env.NODE_ENV === 'development') {
-            logger.error(
-              `[getPageBySlug] Failed to map section ${section?.__typename} (${section?.sys?.id}):`,
-              error,
-            );
-          }
-          return null;
-        }
-      })
-      .filter(Boolean);
-    if (process.env.NODE_ENV === 'development') {
-      logger.info(
-        '[getPageBySlug] Mapped sections:',
-        sections.map((s) => ({ typename: s?.__typename, id: s?.sys?.id })),
-      );
-    }
-    return {
-      slug: page.slug,
-      internalName: page.internalName ?? null,
-      sectionsCollection: { items: sections },
-      nt_experiencesCollection: page.ntExperiencesCollection ?? null,
-    };
+    // IMPORTANT: Return RAW GraphQL data without any transformation
+    // The SDK's useLiveUpdates requires the exact GraphQL structure with __typename
+    return page;
   } catch (err) {
     if (process.env.NODE_ENV === 'development') {
       logger.error('[getPageBySlug]', slug, locale, err);
