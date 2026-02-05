@@ -236,17 +236,17 @@ const DataViz = ({
             y={yNum + heightNum / 2 - 6}
             textAnchor="middle"
             fill={textColor}
-            fontSize={12}
+            fontSize={18}
             fontWeight="bold"
           >
             {nameStr}
           </text>
           <text
             x={xNum + widthNum / 2}
-            y={yNum + heightNum / 2 + 8}
+            y={yNum + heightNum / 2 + 10}
             textAnchor="middle"
             fill={textColor}
-            fontSize={10}
+            fontSize={15}
           >
             {sizeStr}
           </text>
