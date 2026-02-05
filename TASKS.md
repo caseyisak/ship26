@@ -1,5 +1,33 @@
 # Migration tasks
 
+## Features block (branch: feat/features-block)
+
+**Goal:** Contentful-driven features section (label, title, description, 2–4 feature cards with optional animation key or image). No variant field; reusable animation registry; personalization field present for later wiring.
+
+### Done
+
+1. **Reusable animation registry** (`src/lib/feature-visual-registry.tsx`): `FEATURE_VISUAL_KEYS` and `getFeatureVisualComponent(key)` so animations can be referenced by key (e.g. `checkout`, `recurring-billing`, `invoicing`, `payment-link`) and reused elsewhere.
+2. **Types:** `FeaturesFragment`, `FeatureItemFragment` in `block-renderer/types.ts` (label, title, description, itemsCollection, ntExperiencesCollection; item: title, description, image, animationKey).
+3. **GraphQL:** `FEATURE_ITEM_FIELDS`, `FEATURES_FIELDS` in `queries.ts`; included in `PAGE_BY_SLUG` sectionsCollection.
+4. **Page mapper:** `RawFeatures`, `RawFeatureItem`, `mapFeatureItem`, `mapFeatures`; `mapSection` extended; `PageSection` includes `FeaturesFragment`.
+5. **Component:** `src/cms-components/features/features.tsx` — live preview hooks, flexible grid (1 col or 2 cols for 2–4 items), FeatureCard uses registry for `animationKey` or image (LL-008: check both `image` and `media`).
+6. **Block config:** Features registered in `block-renderer/configs/index.ts` with `typename: 'Features'`.
+7. **Test:** `block-renderer.test.tsx` includes “renders Features with mock Features data”; `@/lib/feature-visual-registry` mocked so motion-based animations aren’t loaded. *(Note: full test run still hits a pre-existing motion package error when loading TabbedContent; Features test is in place for when that’s fixed.)*
+
+7. **Milestone 3 (Contentful):** Content types **features** and **featureItem** created and published. Four Feature Item entries published: Checkout, Recurring Billing, Invoicing, Payment Link (IDs: `2lpBH3VFIOtLA596MoVyZ4`, `42ef4xXeOZ22vpWNnR2Y2e`, `7GXKVp2aQfIvLDjkqS6fNN`, `Vro4jZbk7rla4hrKNT86n`). One Features entry "Homepage Features" created and published (ID: `6sAqLv0XQlh4b3ipvEg5qH`) with all four items linked. Add this Features entry to a Page’s sections in Contentful to see it on the site.
+
+### Next
+
+- **Page sections:** In Contentful, edit a Page (e.g. Home) and add the Features entry (`6sAqLv0XQlh4b3ipvEg5qH`) to the sections field so the Features block appears on the page.
+- **Personalization:** You will wire the block to the personalization app after creation; `ntExperiencesCollection` is already on the fragment and in the query.
+
+### Content model (for MCP)
+
+- **Features:** internalName, label (Symbol), title (Symbol), description (Text), items (References → Feature Item, many), ntExperiences (References → NtExperience if needed).
+- **Feature Item:** title (Symbol), description (Text), media (Asset, optional), animationKey (Symbol, optional; one of checkout, recurring-billing, invoicing, payment-link or future keys in registry).
+
+---
+
 ## Current hypothesis
 
 - Migration happens **in this repo** (metafi-nextjs-shadcnblocks). No separate fork folder.
@@ -124,6 +152,32 @@ Contentful merge tag for entry ID: `{{entry.sys.id}}` (or the equivalent in your
 **Fix (code):**
 - `section-style-editor.tsx`: `persist()` now calls `field.setValue(next)` with the object, not a string.
 - On load: if field value is null/empty, persist `DEFAULT_SECTION_STYLE_CONFIG` so the field is valid; if value is a string (e.g. from an older version), persist the parsed object so validation passes.
+
+---
+
+## Live preview: refreshing when section references change
+
+**Finding (exploration):** Contentful Live Preview SDK has two subscription events:
+- **`edit`** — ENTRY_UPDATED: editor pushes **field-level** changes (e.g. text); LiveUpdates merges into subscribed data. Used in `page-content-live.tsx` with `router.refresh()`.
+- **`save`** — ENTRY_SAVED: fired when the user **saves** the entry in the editor (no payload). Reference changes (add/remove/reorder sections) are typically committed on save, not as incremental edits.
+
+**Current behavior:** This repo only subscribes to `'edit'`. So when you add, remove, or reorder section references on a Page, the preview does **not** refresh until you publish and reload—because those changes don’t trigger ENTRY_UPDATED the same way field edits do; they’re reflected on **save**.
+
+**Demo 2.0 (colorful-demo-2.0-1):** No explicit `subscribe('edit')` or `subscribe('save')` at page level; only `useContentfulLiveUpdates` in components for field-level updates. So demo 2.0 does **not** implement full-page refetch on reference change either. Contentful’s “no client components” approach in the docs uses `subscribe('save', { callback })` then revalidate + reload to pick up structural/reference changes.
+
+**Recommendation:** In `page-content-live.tsx`, also subscribe to `'save'` and call `router.refresh()` in its callback, so that when the user saves the Page (after changing sections), the iframe refetches and shows the new section list.
+
+**Implemented:** `page-content-live.tsx` now subscribes to both `'edit'` and `'save'`; on either, it calls `router.refresh()`. Please test: change section references (add/remove/reorder) in the Contentful editor, save (without publishing), and confirm the preview iframe updates.
+
+**Debug (section add/remove not updating iframe):**
+- **Hypothesis:** Either (1) the editor never sends ENTRY_SAVED to the preview iframe, or (2) the SDK doesn’t invoke our save callback (e.g. init/registration order), or (3) router.refresh() doesn’t refetch draft content in the iframe.
+- **Instrumentation added:** In dev, `page-content-live.tsx` logs: `[PageContentLive] subscribed to edit`, `[PageContentLive] subscribed to save` on mount; `[PageContentLive] save callback → router.refresh()` / `edit callback → router.refresh()` when callbacks run; and `[PageContentLive] postMessage received` for any ENTRY_SAVED/ENTRY_UPDATED message reaching the iframe. Open the **preview iframe’s** console (e.g. Chrome: DevTools → top frame dropdown → select the iframe that shows your app) to see these.
+- **Next:** Run reproduction steps and report: (A) Do you see `subscribed to save` on load? (B) When you add Features to sections and click Save, do you see `postMessage received { method: 'ENTRY_SAVED' }`? (C) Do you see `save callback → router.refresh()`? That will show whether the message arrives and whether the SDK calls our callback.
+- **Contentful debug skill:** `.cursor/skills/contentful-live-preview-verify/SKILL.md` + rule `.cursor/rules/contentful-live-preview-debug.mdc`. Verify skill uses agent-browser to switch into iframe (`frame "iframe[src*='localhost']"`) and capture console/network. Agent navigated to `http://localhost:3000/page/kaz-test` to mirror iframe; MCP returned metadata only. **Screenshot (user):** iframe console shows multiple 404s—need **Request URL** for each 404 from Network tab to fix.
+
+**Agent-browser run (2026-02-05):** Headed Chromium → Contentful kaz-test entry → viewport 1800×1200 → full-page screenshots: `.cursor/live-preview-1-initial.png`, `.cursor/live-preview-2-after-add-features.png` (after adding Features; preview did not update), `.cursor/live-preview-3-after-publish-refresh.png` (after Publish + Refresh preview). Then `agent-browser frame "iframe[src*='localhost']"` → console, errors, network. **Evidence:** (1) `[PageContentLive] postMessage received {method: ENTRY_SAVED}` appears—editor does send ENTRY_SAVED to iframe. (2) `[PageContentLive] save callback → router.refresh()` **not** seen in log—SDK may not be calling our save callback when ENTRY_SAVED is received, or callback runs but refresh doesn’t refetch draft. (3) React duplicate key: same section entry (Features) added twice → key `6sAqLv0XQlh4b3ipvEg5qH` duplicated. **Fix applied:** `page-content-live.tsx` section key changed to `` `${section.sys.id}-${index}` `` so the same entry can appear multiple times. Full report: `.cursor/live-preview-diagnostic-report.md`. Logs: `.cursor/live-preview-iframe-console.txt`, `.cursor/live-preview-iframe-errors.txt`, `.cursor/live-preview-iframe-network.txt`.
+
+**Root cause (SDK save callback):** With `enableInspectorMode` on, the SDK only invokes the save callback when the saved entry’s ID is in the **tagged** list (entries with getProps on the page). The **Page** entry is not tagged, so saving the Page never ran our callback. **Fix:** In `page-content-live.tsx`, listen to `postMessage` for `ENTRY_SAVED` and call `router.refresh()` when `e.data.entity.sys.id === page.sys.id`. Verified in agent-browser: after refresh preview + edit+save, iframe console showed `ENTRY_SAVED { entityId, pageId, match: true }` and `ENTRY_SAVED for this page → router.refresh()`.
 
 ---
 

@@ -1,0 +1,3962 @@
+[error] Failed to load resource: the server responded with a status of 401 ()
+[warning] [LaunchDarkly] The waitForInitialization function was called without a timeout specified. In a future version a default timeout will be applied.
+[info] [LaunchDarkly] LaunchDarkly client initialized
+[info] [LaunchDarkly] Opening stream connection to https://clientstream.launchdarkly.com/eval/588a047044b03e0b3211298e/eyJhbm9ueW1vdXMiOnRydWUsImtpbmQiOiJ1c2VyIiwia2V5IjoiZjY5ZDMzMzAtMDIyYy0xMWYxLTk1ZmUtYzc4MDVhZGU0YmQ0In0
+[warning] Uncompiled message detected! Message:
+
+> Loading...
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in - Contentful
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in to your Contentful account.
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> New to Contentful?
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Sign up
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Welcome back
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in to your Contentful account
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Or log in with
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> GitHub
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Google
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in via SSO
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Reset password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Resend confirmation
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Unlock account
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Email
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Password
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Remember me
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] Uncompiled message detected! Message:
+
+> Log in
+
+That means you use raw catalog or your catalog doesn't have a translation for the message and fallback was used.
+ICU features such as interpolation and plurals will not work properly for that message. 
+
+Please compile your catalog first. 
+
+[warning] [LaunchDarkly] Error on stream connection: {"isTrusted":true}, will continue retrying after 946 milliseconds.
+[info] [LaunchDarkly] Closing stream connection
+[warning] [LaunchDarkly] The waitForInitialization function was called without a timeout specified. In a future version a default timeout will be applied.
+[info] [LaunchDarkly] LaunchDarkly client initialized
+[warning] Allow attribute will take precedence over 'allowfullscreen'.
+[warning] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing.
+[error] Failed to load resource: the server responded with a status of 422 ()
+[error] Failed to load resource: the server responded with a status of 404 ()
+[warning] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] %c%s%c  [33m[1m⚠[22m[39m metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server  
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Sections from GraphQL: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Full sectionsCollection: {
+  "items": [
+    {
+      "__typename": "Hero",
+      "sys": {
+        "id": "6yUhVoaCfb1sBoHCKgBlrY"
+      },
+      "internalName": "Hero 1",
+      "headline": "Hero headline",
+      "subheadline": null,
+      "ctaText": null,
+      "ctaUrl": null,
+      "sectionStyle": {
+        "tiles": [
+          {
+            "id": "content",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "media",
+            "colSpan": 3,
+            "gridCol": 4,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "background",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 3,
+            "visible": false
+          }
+        ],
+        "layout": "customGrid",
+        "gridRows": 3,
+        "imageBlur": 0,
+        "gridColumns": 6,
+        "contentColor": "auto",
+        "contentWidth": "33%",
+        "overlayOpacity": 100,
+        "backgroundColor": "var(--primary)",
+        "contentPosition": "right",
+        "useStyleOverride": false
+      },
+      "sectionStyleUpdatedAt": 1770188097730,
+      "variant": null,
+      "background": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4ceAGPOTH1V0bmAzIjecdc/1bf10e61b514595c59e582849bb144dc/hero_Pattern.webp"
+      },
+      "media": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4NMc4kDUQwjdOcVMUWn9MZ/964717ef8a7787412649dad4a82e80fb/hero_Dashboard.webp"
+      },
+      "ntExperiencesCollection": {
+        "items": [
+          {
+            "__typename": "NtExperience",
+            "sys": {
+              "id": "7BPYMahwIjywrCk6RIA4Y6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Faq",
+      "sys": {
+        "id": "1AY2HHjnjj2dZWJWsqybxA"
+      },
+      "internalName": "Homepage FAQ",
+      "title": "Frequently Asked Questions",
+      "description": "Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "5gUBdVWPw4IaDoD5qojCiA"
+            },
+            "internalName": "FAQ Item 1",
+            "question": "How can I send one-time or recurring invoices to customers?",
+            "answer": "Metafi Billing lets you create both one-time and recurring invoices. You can generate payment links or embed checkout forms directly on your site, making it easy for customers to pay securely without extra setup."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3e5tDthLbOeEd1Vuel5Z7t"
+            },
+            "internalName": "FAQ Item 2",
+            "question": "How do I create and send an invoice using Metafi Billing?",
+            "answer": "To create an invoice:\n1. Log in to your Metafi Billing dashboard.\n2. Open the \"Invoices\" section and select **Create New Invoice**.\n3. Add client details, invoice date, and line items.\n4. Review everything, then click **Send** to email the invoice directly to your customer."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "1XsKaxLRlfCWyyDub8PRnN"
+            },
+            "internalName": "FAQ Item 3",
+            "question": "How do I mark an invoice as paid outside of Metafi?",
+            "answer": "If you receive payment through another channel—such as a bank transfer or cash—you can mark the invoice as paid manually. Open the invoice, choose **Mark as Paid**, select \"Out of band,\" and record any payment reference or note for accurate reconciliation."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3evoqngfYbulyNsQP80BjD"
+            },
+            "internalName": "FAQ Item 4",
+            "question": "How can I calculate my trial conversion rate in Billing?",
+            "answer": "In your Billing dashboard, open **Analytics**, then select the **Funnels** tab and choose **Trials**. The report shows how many customers started a trial and how many converted to paid plans. You can filter results by date range and export them for further analysis."
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Tabbedcontent",
+      "sys": {
+        "id": "6CrFVbtNPJqWcPZCAAanfh"
+      },
+      "ntExperiencesCollectionCollection": {
+        "items": []
+      },
+      "internalName": "Features Tabs",
+      "tagline": "For Developers",
+      "title": "Building Blocks for Recurring Billing",
+      "description": "Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.",
+      "itemsCollectionCollection": {
+        "items": [
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "4SzHcbb2pDwXUaSd0REMiq"
+            },
+            "image": null,
+            "label": "Plan Manager",
+            "body": "Track your subscription payment status in realtime, know about subscription details and download data. Plus, generate detailed reports to help you stay on top of your business.",
+            "imageAlt": "Sales report dashboard",
+            "href": "/docs/dashboard",
+            "buttonLabel": "Learn more"
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3gWELcQoW0E2LLzMx3l2XD"
+            },
+            "image": null,
+            "label": "Integrations",
+            "body": "Connect Metafi to your stack with webhooks and SDKs. Sync events from billing to your CRM, data warehouse, and analytics tools.",
+            "imageAlt": "Integrations list",
+            "href": "/integrations",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "5rhrxTQ9CAhRA8GO7hrCMF"
+            },
+            "image": null,
+            "label": "Dashboard",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3arURj8cbrk542K8aSx3nm"
+            },
+            "image": null,
+            "label": "Customer Portal",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          }
+        ]
+      }
+    }
+  ]
+}
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Raw sections: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Hero 6yUhVoaCfb1sBoHCKgBlrY
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Faq 1AY2HHjnjj2dZWJWsqybxA
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Tabbedcontent 6CrFVbtNPJqWcPZCAAanfh
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Mapped sections: [Object, Object, Object]
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[log] [PageContentLive] subscribed to edit {pageId: 6yuInMRWMJc5kKiFtW4gea}
+[log] [PageContentLive] subscribed to save
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[log] [PageContentLive] postMessage received {method: ENTRY_SAVED, origin: https://app.contentful.com}
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Sections from GraphQL: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Full sectionsCollection: {
+  "items": [
+    {
+      "__typename": "Hero",
+      "sys": {
+        "id": "6yUhVoaCfb1sBoHCKgBlrY"
+      },
+      "internalName": "Hero 1",
+      "headline": "Hero headline",
+      "subheadline": null,
+      "ctaText": null,
+      "ctaUrl": null,
+      "sectionStyle": {
+        "tiles": [
+          {
+            "id": "content",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "media",
+            "colSpan": 3,
+            "gridCol": 4,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "background",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 3,
+            "visible": false
+          }
+        ],
+        "layout": "customGrid",
+        "gridRows": 3,
+        "imageBlur": 0,
+        "gridColumns": 6,
+        "contentColor": "auto",
+        "contentWidth": "33%",
+        "overlayOpacity": 100,
+        "backgroundColor": "var(--primary)",
+        "contentPosition": "right",
+        "useStyleOverride": false
+      },
+      "sectionStyleUpdatedAt": 1770188097730,
+      "variant": null,
+      "background": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4ceAGPOTH1V0bmAzIjecdc/1bf10e61b514595c59e582849bb144dc/hero_Pattern.webp"
+      },
+      "media": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4NMc4kDUQwjdOcVMUWn9MZ/964717ef8a7787412649dad4a82e80fb/hero_Dashboard.webp"
+      },
+      "ntExperiencesCollection": {
+        "items": [
+          {
+            "__typename": "NtExperience",
+            "sys": {
+              "id": "7BPYMahwIjywrCk6RIA4Y6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Faq",
+      "sys": {
+        "id": "1AY2HHjnjj2dZWJWsqybxA"
+      },
+      "internalName": "Homepage FAQ",
+      "title": "Frequently Asked Questions",
+      "description": "Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "5gUBdVWPw4IaDoD5qojCiA"
+            },
+            "internalName": "FAQ Item 1",
+            "question": "How can I send one-time or recurring invoices to customers?",
+            "answer": "Metafi Billing lets you create both one-time and recurring invoices. You can generate payment links or embed checkout forms directly on your site, making it easy for customers to pay securely without extra setup."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3e5tDthLbOeEd1Vuel5Z7t"
+            },
+            "internalName": "FAQ Item 2",
+            "question": "How do I create and send an invoice using Metafi Billing?",
+            "answer": "To create an invoice:\n1. Log in to your Metafi Billing dashboard.\n2. Open the \"Invoices\" section and select **Create New Invoice**.\n3. Add client details, invoice date, and line items.\n4. Review everything, then click **Send** to email the invoice directly to your customer."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "1XsKaxLRlfCWyyDub8PRnN"
+            },
+            "internalName": "FAQ Item 3",
+            "question": "How do I mark an invoice as paid outside of Metafi?",
+            "answer": "If you receive payment through another channel—such as a bank transfer or cash—you can mark the invoice as paid manually. Open the invoice, choose **Mark as Paid**, select \"Out of band,\" and record any payment reference or note for accurate reconciliation."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3evoqngfYbulyNsQP80BjD"
+            },
+            "internalName": "FAQ Item 4",
+            "question": "How can I calculate my trial conversion rate in Billing?",
+            "answer": "In your Billing dashboard, open **Analytics**, then select the **Funnels** tab and choose **Trials**. The report shows how many customers started a trial and how many converted to paid plans. You can filter results by date range and export them for further analysis."
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Tabbedcontent",
+      "sys": {
+        "id": "6CrFVbtNPJqWcPZCAAanfh"
+      },
+      "ntExperiencesCollectionCollection": {
+        "items": []
+      },
+      "internalName": "Features Tabs",
+      "tagline": "For Developers",
+      "title": "Building Blocks for Recurring Billing",
+      "description": "Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.",
+      "itemsCollectionCollection": {
+        "items": [
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "4SzHcbb2pDwXUaSd0REMiq"
+            },
+            "image": null,
+            "label": "Plan Manager",
+            "body": "Track your subscription payment status in realtime, know about subscription details and download data. Plus, generate detailed reports to help you stay on top of your business.",
+            "imageAlt": "Sales report dashboard",
+            "href": "/docs/dashboard",
+            "buttonLabel": "Learn more"
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3gWELcQoW0E2LLzMx3l2XD"
+            },
+            "image": null,
+            "label": "Integrations",
+            "body": "Connect Metafi to your stack with webhooks and SDKs. Sync events from billing to your CRM, data warehouse, and analytics tools.",
+            "imageAlt": "Integrations list",
+            "href": "/integrations",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "5rhrxTQ9CAhRA8GO7hrCMF"
+            },
+            "image": null,
+            "label": "Dashboard",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3arURj8cbrk542K8aSx3nm"
+            },
+            "image": null,
+            "label": "Customer Portal",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          }
+        ]
+      }
+    }
+  ]
+}
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Raw sections: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Hero 6yUhVoaCfb1sBoHCKgBlrY
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Faq 1AY2HHjnjj2dZWJWsqybxA
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Tabbedcontent 6CrFVbtNPJqWcPZCAAanfh
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Mapped sections: [Object, Object, Object]
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[log] [PageContentLive] subscribed to edit {pageId: 6yuInMRWMJc5kKiFtW4gea}
+[log] [PageContentLive] subscribed to save
+[warning] Image with src "http://localhost:3000/images/layout/logo.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[log] [PageContentLive] postMessage received {method: ENTRY_SAVED, origin: https://app.contentful.com}
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 249ms
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Sections from GraphQL: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Full sectionsCollection: {
+  "items": [
+    {
+      "__typename": "Hero",
+      "sys": {
+        "id": "6yUhVoaCfb1sBoHCKgBlrY"
+      },
+      "internalName": "Hero 1",
+      "headline": "Hero headline",
+      "subheadline": null,
+      "ctaText": null,
+      "ctaUrl": null,
+      "sectionStyle": {
+        "tiles": [
+          {
+            "id": "content",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "media",
+            "colSpan": 3,
+            "gridCol": 4,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "background",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 3,
+            "visible": false
+          }
+        ],
+        "layout": "customGrid",
+        "gridRows": 3,
+        "imageBlur": 0,
+        "gridColumns": 6,
+        "contentColor": "auto",
+        "contentWidth": "33%",
+        "overlayOpacity": 100,
+        "backgroundColor": "var(--primary)",
+        "contentPosition": "right",
+        "useStyleOverride": false
+      },
+      "sectionStyleUpdatedAt": 1770188097730,
+      "variant": null,
+      "background": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4ceAGPOTH1V0bmAzIjecdc/1bf10e61b514595c59e582849bb144dc/hero_Pattern.webp"
+      },
+      "media": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4NMc4kDUQwjdOcVMUWn9MZ/964717ef8a7787412649dad4a82e80fb/hero_Dashboard.webp"
+      },
+      "ntExperiencesCollection": {
+        "items": [
+          {
+            "__typename": "NtExperience",
+            "sys": {
+              "id": "7BPYMahwIjywrCk6RIA4Y6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Faq",
+      "sys": {
+        "id": "1AY2HHjnjj2dZWJWsqybxA"
+      },
+      "internalName": "Homepage FAQ",
+      "title": "Frequently Asked Questions",
+      "description": "Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "5gUBdVWPw4IaDoD5qojCiA"
+            },
+            "internalName": "FAQ Item 1",
+            "question": "How can I send one-time or recurring invoices to customers?",
+            "answer": "Metafi Billing lets you create both one-time and recurring invoices. You can generate payment links or embed checkout forms directly on your site, making it easy for customers to pay securely without extra setup."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3e5tDthLbOeEd1Vuel5Z7t"
+            },
+            "internalName": "FAQ Item 2",
+            "question": "How do I create and send an invoice using Metafi Billing?",
+            "answer": "To create an invoice:\n1. Log in to your Metafi Billing dashboard.\n2. Open the \"Invoices\" section and select **Create New Invoice**.\n3. Add client details, invoice date, and line items.\n4. Review everything, then click **Send** to email the invoice directly to your customer."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "1XsKaxLRlfCWyyDub8PRnN"
+            },
+            "internalName": "FAQ Item 3",
+            "question": "How do I mark an invoice as paid outside of Metafi?",
+            "answer": "If you receive payment through another channel—such as a bank transfer or cash—you can mark the invoice as paid manually. Open the invoice, choose **Mark as Paid**, select \"Out of band,\" and record any payment reference or note for accurate reconciliation."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3evoqngfYbulyNsQP80BjD"
+            },
+            "internalName": "FAQ Item 4",
+            "question": "How can I calculate my trial conversion rate in Billing?",
+            "answer": "In your Billing dashboard, open **Analytics**, then select the **Funnels** tab and choose **Trials**. The report shows how many customers started a trial and how many converted to paid plans. You can filter results by date range and export them for further analysis."
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Tabbedcontent",
+      "sys": {
+        "id": "6CrFVbtNPJqWcPZCAAanfh"
+      },
+      "ntExperiencesCollectionCollection": {
+        "items": []
+      },
+      "internalName": "Features Tabs",
+      "tagline": "For Developers",
+      "title": "Building Blocks for Recurring Billing",
+      "description": "Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.",
+      "itemsCollectionCollection": {
+        "items": [
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "4SzHcbb2pDwXUaSd0REMiq"
+            },
+            "image": null,
+            "label": "Plan Manager",
+            "body": "Track your subscription payment status in realtime, know about subscription details and download data. Plus, generate detailed reports to help you stay on top of your business.",
+            "imageAlt": "Sales report dashboard",
+            "href": "/docs/dashboard",
+            "buttonLabel": "Learn more"
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3gWELcQoW0E2LLzMx3l2XD"
+            },
+            "image": null,
+            "label": "Integrations",
+            "body": "Connect Metafi to your stack with webhooks and SDKs. Sync events from billing to your CRM, data warehouse, and analytics tools.",
+            "imageAlt": "Integrations list",
+            "href": "/integrations",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "5rhrxTQ9CAhRA8GO7hrCMF"
+            },
+            "image": null,
+            "label": "Dashboard",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3arURj8cbrk542K8aSx3nm"
+            },
+            "image": null,
+            "label": "Customer Portal",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          }
+        ]
+      }
+    }
+  ]
+}
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Raw sections: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Hero 6yUhVoaCfb1sBoHCKgBlrY
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Faq 1AY2HHjnjj2dZWJWsqybxA
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Tabbedcontent 6CrFVbtNPJqWcPZCAAanfh
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Mapped sections: [Object, Object, Object]
+[log] [PageContentLive] subscribed to edit {pageId: 6yuInMRWMJc5kKiFtW4gea}
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 179ms
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Sections from GraphQL: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Full sectionsCollection: {
+  "items": [
+    {
+      "__typename": "Hero",
+      "sys": {
+        "id": "6yUhVoaCfb1sBoHCKgBlrY"
+      },
+      "internalName": "Hero 1",
+      "headline": "Hero headline",
+      "subheadline": null,
+      "ctaText": null,
+      "ctaUrl": null,
+      "sectionStyle": {
+        "tiles": [
+          {
+            "id": "content",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "media",
+            "colSpan": 3,
+            "gridCol": 4,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "background",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 3,
+            "visible": false
+          }
+        ],
+        "layout": "customGrid",
+        "gridRows": 3,
+        "imageBlur": 0,
+        "gridColumns": 6,
+        "contentColor": "auto",
+        "contentWidth": "33%",
+        "overlayOpacity": 100,
+        "backgroundColor": "var(--primary)",
+        "contentPosition": "right",
+        "useStyleOverride": false
+      },
+      "sectionStyleUpdatedAt": 1770188097730,
+      "variant": null,
+      "background": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4ceAGPOTH1V0bmAzIjecdc/1bf10e61b514595c59e582849bb144dc/hero_Pattern.webp"
+      },
+      "media": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4NMc4kDUQwjdOcVMUWn9MZ/964717ef8a7787412649dad4a82e80fb/hero_Dashboard.webp"
+      },
+      "ntExperiencesCollection": {
+        "items": [
+          {
+            "__typename": "NtExperience",
+            "sys": {
+              "id": "7BPYMahwIjywrCk6RIA4Y6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Faq",
+      "sys": {
+        "id": "1AY2HHjnjj2dZWJWsqybxA"
+      },
+      "internalName": "Homepage FAQ",
+      "title": "Frequently Asked Questions",
+      "description": "Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "5gUBdVWPw4IaDoD5qojCiA"
+            },
+            "internalName": "FAQ Item 1",
+            "question": "How can I send one-time or recurring invoices to customers?",
+            "answer": "Metafi Billing lets you create both one-time and recurring invoices. You can generate payment links or embed checkout forms directly on your site, making it easy for customers to pay securely without extra setup."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3e5tDthLbOeEd1Vuel5Z7t"
+            },
+            "internalName": "FAQ Item 2",
+            "question": "How do I create and send an invoice using Metafi Billing?",
+            "answer": "To create an invoice:\n1. Log in to your Metafi Billing dashboard.\n2. Open the \"Invoices\" section and select **Create New Invoice**.\n3. Add client details, invoice date, and line items.\n4. Review everything, then click **Send** to email the invoice directly to your customer."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "1XsKaxLRlfCWyyDub8PRnN"
+            },
+            "internalName": "FAQ Item 3",
+            "question": "How do I mark an invoice as paid outside of Metafi?",
+            "answer": "If you receive payment through another channel—such as a bank transfer or cash—you can mark the invoice as paid manually. Open the invoice, choose **Mark as Paid**, select \"Out of band,\" and record any payment reference or note for accurate reconciliation."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3evoqngfYbulyNsQP80BjD"
+            },
+            "internalName": "FAQ Item 4",
+            "question": "How can I calculate my trial conversion rate in Billing?",
+            "answer": "In your Billing dashboard, open **Analytics**, then select the **Funnels** tab and choose **Trials**. The report shows how many customers started a trial and how many converted to paid plans. You can filter results by date range and export them for further analysis."
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Tabbedcontent",
+      "sys": {
+        "id": "6CrFVbtNPJqWcPZCAAanfh"
+      },
+      "ntExperiencesCollectionCollection": {
+        "items": []
+      },
+      "internalName": "Features Tabs",
+      "tagline": "For Developers",
+      "title": "Building Blocks for Recurring Billing",
+      "description": "Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.",
+      "itemsCollectionCollection": {
+        "items": [
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "4SzHcbb2pDwXUaSd0REMiq"
+            },
+            "image": null,
+            "label": "Plan Manager",
+            "body": "Track your subscription payment status in realtime, know about subscription details and download data. Plus, generate detailed reports to help you stay on top of your business.",
+            "imageAlt": "Sales report dashboard",
+            "href": "/docs/dashboard",
+            "buttonLabel": "Learn more"
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3gWELcQoW0E2LLzMx3l2XD"
+            },
+            "image": null,
+            "label": "Integrations",
+            "body": "Connect Metafi to your stack with webhooks and SDKs. Sync events from billing to your CRM, data warehouse, and analytics tools.",
+            "imageAlt": "Integrations list",
+            "href": "/integrations",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "5rhrxTQ9CAhRA8GO7hrCMF"
+            },
+            "image": null,
+            "label": "Dashboard",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3arURj8cbrk542K8aSx3nm"
+            },
+            "image": null,
+            "label": "Customer Portal",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          }
+        ]
+      }
+    }
+  ]
+}
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Raw sections: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Hero 6yUhVoaCfb1sBoHCKgBlrY
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Faq 1AY2HHjnjj2dZWJWsqybxA
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Tabbedcontent 6CrFVbtNPJqWcPZCAAanfh
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Mapped sections: [Object, Object, Object]
+[log] [PageContentLive] subscribed to edit {pageId: 6yuInMRWMJc5kKiFtW4gea}
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 256ms
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Sections from GraphQL: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Full sectionsCollection: {
+  "items": [
+    {
+      "__typename": "Hero",
+      "sys": {
+        "id": "6yUhVoaCfb1sBoHCKgBlrY"
+      },
+      "internalName": "Hero 1",
+      "headline": "Hero headline",
+      "subheadline": null,
+      "ctaText": null,
+      "ctaUrl": null,
+      "sectionStyle": {
+        "tiles": [
+          {
+            "id": "content",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "media",
+            "colSpan": 3,
+            "gridCol": 4,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "background",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 3,
+            "visible": false
+          }
+        ],
+        "layout": "customGrid",
+        "gridRows": 3,
+        "imageBlur": 0,
+        "gridColumns": 6,
+        "contentColor": "auto",
+        "contentWidth": "33%",
+        "overlayOpacity": 100,
+        "backgroundColor": "var(--primary)",
+        "contentPosition": "right",
+        "useStyleOverride": false
+      },
+      "sectionStyleUpdatedAt": 1770188097730,
+      "variant": null,
+      "background": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4ceAGPOTH1V0bmAzIjecdc/1bf10e61b514595c59e582849bb144dc/hero_Pattern.webp"
+      },
+      "media": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4NMc4kDUQwjdOcVMUWn9MZ/964717ef8a7787412649dad4a82e80fb/hero_Dashboard.webp"
+      },
+      "ntExperiencesCollection": {
+        "items": [
+          {
+            "__typename": "NtExperience",
+            "sys": {
+              "id": "7BPYMahwIjywrCk6RIA4Y6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Faq",
+      "sys": {
+        "id": "1AY2HHjnjj2dZWJWsqybxA"
+      },
+      "internalName": "Homepage FAQ",
+      "title": "Frequently Asked Questions",
+      "description": "Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "5gUBdVWPw4IaDoD5qojCiA"
+            },
+            "internalName": "FAQ Item 1",
+            "question": "How can I send one-time or recurring invoices to customers?",
+            "answer": "Metafi Billing lets you create both one-time and recurring invoices. You can generate payment links or embed checkout forms directly on your site, making it easy for customers to pay securely without extra setup."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3e5tDthLbOeEd1Vuel5Z7t"
+            },
+            "internalName": "FAQ Item 2",
+            "question": "How do I create and send an invoice using Metafi Billing?",
+            "answer": "To create an invoice:\n1. Log in to your Metafi Billing dashboard.\n2. Open the \"Invoices\" section and select **Create New Invoice**.\n3. Add client details, invoice date, and line items.\n4. Review everything, then click **Send** to email the invoice directly to your customer."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "1XsKaxLRlfCWyyDub8PRnN"
+            },
+            "internalName": "FAQ Item 3",
+            "question": "How do I mark an invoice as paid outside of Metafi?",
+            "answer": "If you receive payment through another channel—such as a bank transfer or cash—you can mark the invoice as paid manually. Open the invoice, choose **Mark as Paid**, select \"Out of band,\" and record any payment reference or note for accurate reconciliation."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3evoqngfYbulyNsQP80BjD"
+            },
+            "internalName": "FAQ Item 4",
+            "question": "How can I calculate my trial conversion rate in Billing?",
+            "answer": "In your Billing dashboard, open **Analytics**, then select the **Funnels** tab and choose **Trials**. The report shows how many customers started a trial and how many converted to paid plans. You can filter results by date range and export them for further analysis."
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Tabbedcontent",
+      "sys": {
+        "id": "6CrFVbtNPJqWcPZCAAanfh"
+      },
+      "ntExperiencesCollectionCollection": {
+        "items": []
+      },
+      "internalName": "Features Tabs",
+      "tagline": "For Developers",
+      "title": "Building Blocks for Recurring Billing",
+      "description": "Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.",
+      "itemsCollectionCollection": {
+        "items": [
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "4SzHcbb2pDwXUaSd0REMiq"
+            },
+            "image": null,
+            "label": "Plan Manager",
+            "body": "Track your subscription payment status in realtime, know about subscription details and download data. Plus, generate detailed reports to help you stay on top of your business.",
+            "imageAlt": "Sales report dashboard",
+            "href": "/docs/dashboard",
+            "buttonLabel": "Learn more"
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3gWELcQoW0E2LLzMx3l2XD"
+            },
+            "image": null,
+            "label": "Integrations",
+            "body": "Connect Metafi to your stack with webhooks and SDKs. Sync events from billing to your CRM, data warehouse, and analytics tools.",
+            "imageAlt": "Integrations list",
+            "href": "/integrations",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "5rhrxTQ9CAhRA8GO7hrCMF"
+            },
+            "image": null,
+            "label": "Dashboard",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3arURj8cbrk542K8aSx3nm"
+            },
+            "image": null,
+            "label": "Customer Portal",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          }
+        ]
+      }
+    }
+  ]
+}
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Raw sections: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Hero 6yUhVoaCfb1sBoHCKgBlrY
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Faq 1AY2HHjnjj2dZWJWsqybxA
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Tabbedcontent 6CrFVbtNPJqWcPZCAAanfh
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Mapped sections: [Object, Object, Object]
+[log] [PageContentLive] subscribed to edit {pageId: 6yuInMRWMJc5kKiFtW4gea}
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 231ms
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Sections from GraphQL: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Full sectionsCollection: {
+  "items": [
+    {
+      "__typename": "Hero",
+      "sys": {
+        "id": "6yUhVoaCfb1sBoHCKgBlrY"
+      },
+      "internalName": "Hero 1",
+      "headline": "Hero headline",
+      "subheadline": null,
+      "ctaText": null,
+      "ctaUrl": null,
+      "sectionStyle": {
+        "tiles": [
+          {
+            "id": "content",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "media",
+            "colSpan": 3,
+            "gridCol": 4,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "background",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 3,
+            "visible": false
+          }
+        ],
+        "layout": "customGrid",
+        "gridRows": 3,
+        "imageBlur": 0,
+        "gridColumns": 6,
+        "contentColor": "auto",
+        "contentWidth": "33%",
+        "overlayOpacity": 100,
+        "backgroundColor": "var(--primary)",
+        "contentPosition": "right",
+        "useStyleOverride": false
+      },
+      "sectionStyleUpdatedAt": 1770188097730,
+      "variant": null,
+      "background": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4ceAGPOTH1V0bmAzIjecdc/1bf10e61b514595c59e582849bb144dc/hero_Pattern.webp"
+      },
+      "media": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4NMc4kDUQwjdOcVMUWn9MZ/964717ef8a7787412649dad4a82e80fb/hero_Dashboard.webp"
+      },
+      "ntExperiencesCollection": {
+        "items": [
+          {
+            "__typename": "NtExperience",
+            "sys": {
+              "id": "7BPYMahwIjywrCk6RIA4Y6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Faq",
+      "sys": {
+        "id": "1AY2HHjnjj2dZWJWsqybxA"
+      },
+      "internalName": "Homepage FAQ",
+      "title": "Frequently Asked Questions",
+      "description": "Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "5gUBdVWPw4IaDoD5qojCiA"
+            },
+            "internalName": "FAQ Item 1",
+            "question": "How can I send one-time or recurring invoices to customers?",
+            "answer": "Metafi Billing lets you create both one-time and recurring invoices. You can generate payment links or embed checkout forms directly on your site, making it easy for customers to pay securely without extra setup."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3e5tDthLbOeEd1Vuel5Z7t"
+            },
+            "internalName": "FAQ Item 2",
+            "question": "How do I create and send an invoice using Metafi Billing?",
+            "answer": "To create an invoice:\n1. Log in to your Metafi Billing dashboard.\n2. Open the \"Invoices\" section and select **Create New Invoice**.\n3. Add client details, invoice date, and line items.\n4. Review everything, then click **Send** to email the invoice directly to your customer."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "1XsKaxLRlfCWyyDub8PRnN"
+            },
+            "internalName": "FAQ Item 3",
+            "question": "How do I mark an invoice as paid outside of Metafi?",
+            "answer": "If you receive payment through another channel—such as a bank transfer or cash—you can mark the invoice as paid manually. Open the invoice, choose **Mark as Paid**, select \"Out of band,\" and record any payment reference or note for accurate reconciliation."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3evoqngfYbulyNsQP80BjD"
+            },
+            "internalName": "FAQ Item 4",
+            "question": "How can I calculate my trial conversion rate in Billing?",
+            "answer": "In your Billing dashboard, open **Analytics**, then select the **Funnels** tab and choose **Trials**. The report shows how many customers started a trial and how many converted to paid plans. You can filter results by date range and export them for further analysis."
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Tabbedcontent",
+      "sys": {
+        "id": "6CrFVbtNPJqWcPZCAAanfh"
+      },
+      "ntExperiencesCollectionCollection": {
+        "items": []
+      },
+      "internalName": "Features Tabs",
+      "tagline": "For Developers",
+      "title": "Building Blocks for Recurring Billing",
+      "description": "Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.",
+      "itemsCollectionCollection": {
+        "items": [
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "4SzHcbb2pDwXUaSd0REMiq"
+            },
+            "image": null,
+            "label": "Plan Manager",
+            "body": "Track your subscription payment status in realtime, know about subscription details and download data. Plus, generate detailed reports to help you stay on top of your business.",
+            "imageAlt": "Sales report dashboard",
+            "href": "/docs/dashboard",
+            "buttonLabel": "Learn more"
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3gWELcQoW0E2LLzMx3l2XD"
+            },
+            "image": null,
+            "label": "Integrations",
+            "body": "Connect Metafi to your stack with webhooks and SDKs. Sync events from billing to your CRM, data warehouse, and analytics tools.",
+            "imageAlt": "Integrations list",
+            "href": "/integrations",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "5rhrxTQ9CAhRA8GO7hrCMF"
+            },
+            "image": null,
+            "label": "Dashboard",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3arURj8cbrk542K8aSx3nm"
+            },
+            "image": null,
+            "label": "Customer Portal",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          }
+        ]
+      }
+    }
+  ]
+}
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Raw sections: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Hero 6yUhVoaCfb1sBoHCKgBlrY
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Faq 1AY2HHjnjj2dZWJWsqybxA
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Tabbedcontent 6CrFVbtNPJqWcPZCAAanfh
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Mapped sections: [Object, Object, Object]
+[log] [PageContentLive] subscribed to edit {pageId: 6yuInMRWMJc5kKiFtW4gea}
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 205ms
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Sections from GraphQL: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Full sectionsCollection: {
+  "items": [
+    {
+      "__typename": "Hero",
+      "sys": {
+        "id": "6yUhVoaCfb1sBoHCKgBlrY"
+      },
+      "internalName": "Hero 1",
+      "headline": "Hero headline",
+      "subheadline": null,
+      "ctaText": null,
+      "ctaUrl": null,
+      "sectionStyle": {
+        "tiles": [
+          {
+            "id": "content",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "media",
+            "colSpan": 3,
+            "gridCol": 4,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "background",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 3,
+            "visible": false
+          }
+        ],
+        "layout": "customGrid",
+        "gridRows": 3,
+        "imageBlur": 0,
+        "gridColumns": 6,
+        "contentColor": "auto",
+        "contentWidth": "33%",
+        "overlayOpacity": 100,
+        "backgroundColor": "var(--primary)",
+        "contentPosition": "right",
+        "useStyleOverride": false
+      },
+      "sectionStyleUpdatedAt": 1770188097730,
+      "variant": null,
+      "background": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4ceAGPOTH1V0bmAzIjecdc/1bf10e61b514595c59e582849bb144dc/hero_Pattern.webp"
+      },
+      "media": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4NMc4kDUQwjdOcVMUWn9MZ/964717ef8a7787412649dad4a82e80fb/hero_Dashboard.webp"
+      },
+      "ntExperiencesCollection": {
+        "items": [
+          {
+            "__typename": "NtExperience",
+            "sys": {
+              "id": "7BPYMahwIjywrCk6RIA4Y6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Faq",
+      "sys": {
+        "id": "1AY2HHjnjj2dZWJWsqybxA"
+      },
+      "internalName": "Homepage FAQ",
+      "title": "Frequently Asked Questions",
+      "description": "Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "5gUBdVWPw4IaDoD5qojCiA"
+            },
+            "internalName": "FAQ Item 1",
+            "question": "How can I send one-time or recurring invoices to customers?",
+            "answer": "Metafi Billing lets you create both one-time and recurring invoices. You can generate payment links or embed checkout forms directly on your site, making it easy for customers to pay securely without extra setup."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3e5tDthLbOeEd1Vuel5Z7t"
+            },
+            "internalName": "FAQ Item 2",
+            "question": "How do I create and send an invoice using Metafi Billing?",
+            "answer": "To create an invoice:\n1. Log in to your Metafi Billing dashboard.\n2. Open the \"Invoices\" section and select **Create New Invoice**.\n3. Add client details, invoice date, and line items.\n4. Review everything, then click **Send** to email the invoice directly to your customer."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "1XsKaxLRlfCWyyDub8PRnN"
+            },
+            "internalName": "FAQ Item 3",
+            "question": "How do I mark an invoice as paid outside of Metafi?",
+            "answer": "If you receive payment through another channel—such as a bank transfer or cash—you can mark the invoice as paid manually. Open the invoice, choose **Mark as Paid**, select \"Out of band,\" and record any payment reference or note for accurate reconciliation."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3evoqngfYbulyNsQP80BjD"
+            },
+            "internalName": "FAQ Item 4",
+            "question": "How can I calculate my trial conversion rate in Billing?",
+            "answer": "In your Billing dashboard, open **Analytics**, then select the **Funnels** tab and choose **Trials**. The report shows how many customers started a trial and how many converted to paid plans. You can filter results by date range and export them for further analysis."
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Tabbedcontent",
+      "sys": {
+        "id": "6CrFVbtNPJqWcPZCAAanfh"
+      },
+      "ntExperiencesCollectionCollection": {
+        "items": []
+      },
+      "internalName": "Features Tabs",
+      "tagline": "For Developers",
+      "title": "Building Blocks for Recurring Billing",
+      "description": "Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.",
+      "itemsCollectionCollection": {
+        "items": [
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "4SzHcbb2pDwXUaSd0REMiq"
+            },
+            "image": null,
+            "label": "Plan Manager",
+            "body": "Track your subscription payment status in realtime, know about subscription details and download data. Plus, generate detailed reports to help you stay on top of your business.",
+            "imageAlt": "Sales report dashboard",
+            "href": "/docs/dashboard",
+            "buttonLabel": "Learn more"
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3gWELcQoW0E2LLzMx3l2XD"
+            },
+            "image": null,
+            "label": "Integrations",
+            "body": "Connect Metafi to your stack with webhooks and SDKs. Sync events from billing to your CRM, data warehouse, and analytics tools.",
+            "imageAlt": "Integrations list",
+            "href": "/integrations",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "5rhrxTQ9CAhRA8GO7hrCMF"
+            },
+            "image": null,
+            "label": "Dashboard",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3arURj8cbrk542K8aSx3nm"
+            },
+            "image": null,
+            "label": "Customer Portal",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          }
+        ]
+      }
+    }
+  ]
+}
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Raw sections: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Hero 6yUhVoaCfb1sBoHCKgBlrY
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Faq 1AY2HHjnjj2dZWJWsqybxA
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Tabbedcontent 6CrFVbtNPJqWcPZCAAanfh
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Mapped sections: [Object, Object, Object]
+[log] [PageContentLive] subscribed to edit {pageId: 6yuInMRWMJc5kKiFtW4gea}
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 155ms
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Sections from GraphQL: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Full sectionsCollection: {
+  "items": [
+    {
+      "__typename": "Hero",
+      "sys": {
+        "id": "6yUhVoaCfb1sBoHCKgBlrY"
+      },
+      "internalName": "Hero 1",
+      "headline": "Hero headline",
+      "subheadline": null,
+      "ctaText": null,
+      "ctaUrl": null,
+      "sectionStyle": {
+        "tiles": [
+          {
+            "id": "content",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "media",
+            "colSpan": 3,
+            "gridCol": 4,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "background",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 3,
+            "visible": false
+          }
+        ],
+        "layout": "customGrid",
+        "gridRows": 3,
+        "imageBlur": 0,
+        "gridColumns": 6,
+        "contentColor": "auto",
+        "contentWidth": "33%",
+        "overlayOpacity": 100,
+        "backgroundColor": "var(--primary)",
+        "contentPosition": "right",
+        "useStyleOverride": false
+      },
+      "sectionStyleUpdatedAt": 1770188097730,
+      "variant": null,
+      "background": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4ceAGPOTH1V0bmAzIjecdc/1bf10e61b514595c59e582849bb144dc/hero_Pattern.webp"
+      },
+      "media": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4NMc4kDUQwjdOcVMUWn9MZ/964717ef8a7787412649dad4a82e80fb/hero_Dashboard.webp"
+      },
+      "ntExperiencesCollection": {
+        "items": [
+          {
+            "__typename": "NtExperience",
+            "sys": {
+              "id": "7BPYMahwIjywrCk6RIA4Y6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Faq",
+      "sys": {
+        "id": "1AY2HHjnjj2dZWJWsqybxA"
+      },
+      "internalName": "Homepage FAQ",
+      "title": "Frequently Asked Questions",
+      "description": "Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "5gUBdVWPw4IaDoD5qojCiA"
+            },
+            "internalName": "FAQ Item 1",
+            "question": "How can I send one-time or recurring invoices to customers?",
+            "answer": "Metafi Billing lets you create both one-time and recurring invoices. You can generate payment links or embed checkout forms directly on your site, making it easy for customers to pay securely without extra setup."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3e5tDthLbOeEd1Vuel5Z7t"
+            },
+            "internalName": "FAQ Item 2",
+            "question": "How do I create and send an invoice using Metafi Billing?",
+            "answer": "To create an invoice:\n1. Log in to your Metafi Billing dashboard.\n2. Open the \"Invoices\" section and select **Create New Invoice**.\n3. Add client details, invoice date, and line items.\n4. Review everything, then click **Send** to email the invoice directly to your customer."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "1XsKaxLRlfCWyyDub8PRnN"
+            },
+            "internalName": "FAQ Item 3",
+            "question": "How do I mark an invoice as paid outside of Metafi?",
+            "answer": "If you receive payment through another channel—such as a bank transfer or cash—you can mark the invoice as paid manually. Open the invoice, choose **Mark as Paid**, select \"Out of band,\" and record any payment reference or note for accurate reconciliation."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3evoqngfYbulyNsQP80BjD"
+            },
+            "internalName": "FAQ Item 4",
+            "question": "How can I calculate my trial conversion rate in Billing?",
+            "answer": "In your Billing dashboard, open **Analytics**, then select the **Funnels** tab and choose **Trials**. The report shows how many customers started a trial and how many converted to paid plans. You can filter results by date range and export them for further analysis."
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Tabbedcontent",
+      "sys": {
+        "id": "6CrFVbtNPJqWcPZCAAanfh"
+      },
+      "ntExperiencesCollectionCollection": {
+        "items": []
+      },
+      "internalName": "Features Tabs",
+      "tagline": "For Developers",
+      "title": "Building Blocks for Recurring Billing",
+      "description": "Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.",
+      "itemsCollectionCollection": {
+        "items": [
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "4SzHcbb2pDwXUaSd0REMiq"
+            },
+            "image": null,
+            "label": "Plan Manager",
+            "body": "Track your subscription payment status in realtime, know about subscription details and download data. Plus, generate detailed reports to help you stay on top of your business.",
+            "imageAlt": "Sales report dashboard",
+            "href": "/docs/dashboard",
+            "buttonLabel": "Learn more"
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3gWELcQoW0E2LLzMx3l2XD"
+            },
+            "image": null,
+            "label": "Integrations",
+            "body": "Connect Metafi to your stack with webhooks and SDKs. Sync events from billing to your CRM, data warehouse, and analytics tools.",
+            "imageAlt": "Integrations list",
+            "href": "/integrations",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "5rhrxTQ9CAhRA8GO7hrCMF"
+            },
+            "image": null,
+            "label": "Dashboard",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3arURj8cbrk542K8aSx3nm"
+            },
+            "image": null,
+            "label": "Customer Portal",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          }
+        ]
+      }
+    }
+  ]
+}
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Raw sections: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Hero 6yUhVoaCfb1sBoHCKgBlrY
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Faq 1AY2HHjnjj2dZWJWsqybxA
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Tabbedcontent 6CrFVbtNPJqWcPZCAAanfh
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Mapped sections: [Object, Object, Object]
+[log] [PageContentLive] subscribed to edit {pageId: 6yuInMRWMJc5kKiFtW4gea}
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[log] [PageContentLive] postMessage received {method: ENTRY_SAVED, origin: https://app.contentful.com}
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 262ms
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Sections from GraphQL: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Full sectionsCollection: {
+  "items": [
+    {
+      "__typename": "Hero",
+      "sys": {
+        "id": "6yUhVoaCfb1sBoHCKgBlrY"
+      },
+      "internalName": "Hero 1",
+      "headline": "Hero headline",
+      "subheadline": null,
+      "ctaText": null,
+      "ctaUrl": null,
+      "sectionStyle": {
+        "tiles": [
+          {
+            "id": "content",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "media",
+            "colSpan": 3,
+            "gridCol": 4,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "background",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 3,
+            "visible": false
+          }
+        ],
+        "layout": "customGrid",
+        "gridRows": 3,
+        "imageBlur": 0,
+        "gridColumns": 6,
+        "contentColor": "auto",
+        "contentWidth": "33%",
+        "overlayOpacity": 100,
+        "backgroundColor": "var(--primary)",
+        "contentPosition": "right",
+        "useStyleOverride": false
+      },
+      "sectionStyleUpdatedAt": 1770188097730,
+      "variant": null,
+      "background": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4ceAGPOTH1V0bmAzIjecdc/1bf10e61b514595c59e582849bb144dc/hero_Pattern.webp"
+      },
+      "media": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4NMc4kDUQwjdOcVMUWn9MZ/964717ef8a7787412649dad4a82e80fb/hero_Dashboard.webp"
+      },
+      "ntExperiencesCollection": {
+        "items": [
+          {
+            "__typename": "NtExperience",
+            "sys": {
+              "id": "7BPYMahwIjywrCk6RIA4Y6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Faq",
+      "sys": {
+        "id": "1AY2HHjnjj2dZWJWsqybxA"
+      },
+      "internalName": "Homepage FAQ",
+      "title": "Frequently Asked Questions",
+      "description": "Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "5gUBdVWPw4IaDoD5qojCiA"
+            },
+            "internalName": "FAQ Item 1",
+            "question": "How can I send one-time or recurring invoices to customers?",
+            "answer": "Metafi Billing lets you create both one-time and recurring invoices. You can generate payment links or embed checkout forms directly on your site, making it easy for customers to pay securely without extra setup."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3e5tDthLbOeEd1Vuel5Z7t"
+            },
+            "internalName": "FAQ Item 2",
+            "question": "How do I create and send an invoice using Metafi Billing?",
+            "answer": "To create an invoice:\n1. Log in to your Metafi Billing dashboard.\n2. Open the \"Invoices\" section and select **Create New Invoice**.\n3. Add client details, invoice date, and line items.\n4. Review everything, then click **Send** to email the invoice directly to your customer."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "1XsKaxLRlfCWyyDub8PRnN"
+            },
+            "internalName": "FAQ Item 3",
+            "question": "How do I mark an invoice as paid outside of Metafi?",
+            "answer": "If you receive payment through another channel—such as a bank transfer or cash—you can mark the invoice as paid manually. Open the invoice, choose **Mark as Paid**, select \"Out of band,\" and record any payment reference or note for accurate reconciliation."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3evoqngfYbulyNsQP80BjD"
+            },
+            "internalName": "FAQ Item 4",
+            "question": "How can I calculate my trial conversion rate in Billing?",
+            "answer": "In your Billing dashboard, open **Analytics**, then select the **Funnels** tab and choose **Trials**. The report shows how many customers started a trial and how many converted to paid plans. You can filter results by date range and export them for further analysis."
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Tabbedcontent",
+      "sys": {
+        "id": "6CrFVbtNPJqWcPZCAAanfh"
+      },
+      "ntExperiencesCollectionCollection": {
+        "items": []
+      },
+      "internalName": "Features Tabs",
+      "tagline": "For Developers",
+      "title": "Building Blocks for Recurring Billing",
+      "description": "Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.",
+      "itemsCollectionCollection": {
+        "items": [
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "4SzHcbb2pDwXUaSd0REMiq"
+            },
+            "image": null,
+            "label": "Plan Manager",
+            "body": "Track your subscription payment status in realtime, know about subscription details and download data. Plus, generate detailed reports to help you stay on top of your business.",
+            "imageAlt": "Sales report dashboard",
+            "href": "/docs/dashboard",
+            "buttonLabel": "Learn more"
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3gWELcQoW0E2LLzMx3l2XD"
+            },
+            "image": null,
+            "label": "Integrations",
+            "body": "Connect Metafi to your stack with webhooks and SDKs. Sync events from billing to your CRM, data warehouse, and analytics tools.",
+            "imageAlt": "Integrations list",
+            "href": "/integrations",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "5rhrxTQ9CAhRA8GO7hrCMF"
+            },
+            "image": null,
+            "label": "Dashboard",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3arURj8cbrk542K8aSx3nm"
+            },
+            "image": null,
+            "label": "Customer Portal",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          }
+        ]
+      }
+    }
+  ]
+}
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Raw sections: [Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Hero 6yUhVoaCfb1sBoHCKgBlrY
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Faq 1AY2HHjnjj2dZWJWsqybxA
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Tabbedcontent 6CrFVbtNPJqWcPZCAAanfh
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Mapped sections: [Object, Object, Object]
+[log] [PageContentLive] subscribed to edit {pageId: 6yuInMRWMJc5kKiFtW4gea}
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Sections from GraphQL: [Object, Object, Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Full sectionsCollection: {
+  "items": [
+    {
+      "__typename": "Hero",
+      "sys": {
+        "id": "6yUhVoaCfb1sBoHCKgBlrY"
+      },
+      "internalName": "Hero 1",
+      "headline": "Hero headline",
+      "subheadline": null,
+      "ctaText": null,
+      "ctaUrl": null,
+      "sectionStyle": {
+        "tiles": [
+          {
+            "id": "content",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "media",
+            "colSpan": 3,
+            "gridCol": 4,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "background",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 3,
+            "visible": false
+          }
+        ],
+        "layout": "customGrid",
+        "gridRows": 3,
+        "imageBlur": 0,
+        "gridColumns": 6,
+        "contentColor": "auto",
+        "contentWidth": "33%",
+        "overlayOpacity": 100,
+        "backgroundColor": "var(--primary)",
+        "contentPosition": "right",
+        "useStyleOverride": false
+      },
+      "sectionStyleUpdatedAt": 1770188097730,
+      "variant": null,
+      "background": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4ceAGPOTH1V0bmAzIjecdc/1bf10e61b514595c59e582849bb144dc/hero_Pattern.webp"
+      },
+      "media": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4NMc4kDUQwjdOcVMUWn9MZ/964717ef8a7787412649dad4a82e80fb/hero_Dashboard.webp"
+      },
+      "ntExperiencesCollection": {
+        "items": [
+          {
+            "__typename": "NtExperience",
+            "sys": {
+              "id": "7BPYMahwIjywrCk6RIA4Y6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Faq",
+      "sys": {
+        "id": "1AY2HHjnjj2dZWJWsqybxA"
+      },
+      "internalName": "Homepage FAQ",
+      "title": "Frequently Asked Questions",
+      "description": "Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "5gUBdVWPw4IaDoD5qojCiA"
+            },
+            "internalName": "FAQ Item 1",
+            "question": "How can I send one-time or recurring invoices to customers?",
+            "answer": "Metafi Billing lets you create both one-time and recurring invoices. You can generate payment links or embed checkout forms directly on your site, making it easy for customers to pay securely without extra setup."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3e5tDthLbOeEd1Vuel5Z7t"
+            },
+            "internalName": "FAQ Item 2",
+            "question": "How do I create and send an invoice using Metafi Billing?",
+            "answer": "To create an invoice:\n1. Log in to your Metafi Billing dashboard.\n2. Open the \"Invoices\" section and select **Create New Invoice**.\n3. Add client details, invoice date, and line items.\n4. Review everything, then click **Send** to email the invoice directly to your customer."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "1XsKaxLRlfCWyyDub8PRnN"
+            },
+            "internalName": "FAQ Item 3",
+            "question": "How do I mark an invoice as paid outside of Metafi?",
+            "answer": "If you receive payment through another channel—such as a bank transfer or cash—you can mark the invoice as paid manually. Open the invoice, choose **Mark as Paid**, select \"Out of band,\" and record any payment reference or note for accurate reconciliation."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3evoqngfYbulyNsQP80BjD"
+            },
+            "internalName": "FAQ Item 4",
+            "question": "How can I calculate my trial conversion rate in Billing?",
+            "answer": "In your Billing dashboard, open **Analytics**, then select the **Funnels** tab and choose **Trials**. The report shows how many customers started a trial and how many converted to paid plans. You can filter results by date range and export them for further analysis."
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Tabbedcontent",
+      "sys": {
+        "id": "6CrFVbtNPJqWcPZCAAanfh"
+      },
+      "ntExperiencesCollectionCollection": {
+        "items": []
+      },
+      "internalName": "Features Tabs",
+      "tagline": "For Developers",
+      "title": "Building Blocks for Recurring Billing",
+      "description": "Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.",
+      "itemsCollectionCollection": {
+        "items": [
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "4SzHcbb2pDwXUaSd0REMiq"
+            },
+            "image": null,
+            "label": "Plan Manager",
+            "body": "Track your subscription payment status in realtime, know about subscription details and download data. Plus, generate detailed reports to help you stay on top of your business.",
+            "imageAlt": "Sales report dashboard",
+            "href": "/docs/dashboard",
+            "buttonLabel": "Learn more"
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3gWELcQoW0E2LLzMx3l2XD"
+            },
+            "image": null,
+            "label": "Integrations",
+            "body": "Connect Metafi to your stack with webhooks and SDKs. Sync events from billing to your CRM, data warehouse, and analytics tools.",
+            "imageAlt": "Integrations list",
+            "href": "/integrations",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "5rhrxTQ9CAhRA8GO7hrCMF"
+            },
+            "image": null,
+            "label": "Dashboard",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3arURj8cbrk542K8aSx3nm"
+            },
+            "image": null,
+            "label": "Customer Portal",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Features",
+      "sys": {
+        "id": "6sAqLv0XQlh4b3ipvEg5qH"
+      },
+      "ntExperiencesCollection": {
+        "items": []
+      },
+      "internalName": "Homepage Features",
+      "label": "Features",
+      "title": "Everything you need to run your business",
+      "description": "From checkout to invoicing, get paid and manage revenue with tools that work the way you do.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "2lpBH3VFIOtLA596MoVyZ4"
+            },
+            "media": null,
+            "title": "Checkout",
+            "description": "Embed checkout into your website or direct customers to a Metafi-hosted page to easily and securely accept one-time payments or subscriptions.",
+            "animationKey": "checkout"
+          },
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "42ef4xXeOZ22vpWNnR2Y2e"
+            },
+            "media": null,
+            "title": "Recurring Billing",
+            "description": "Collect and retain more revenue, automate revenue management workflows, and accept payments.",
+            "animationKey": "recurring-billing"
+          },
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "7GXKVp2aQfIvLDjkqS6fNN"
+            },
+            "media": null,
+            "title": "Invoicing",
+            "description": "Create an invoice and send it to your customers in minutes—no-code required—to easily collect payments.",
+            "animationKey": "invoicing"
+          },
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "Vro4jZbk7rla4hrKNT86n"
+            },
+            "media": null,
+            "title": "Payment Link",
+            "description": "Sell online without a website. Create a full payment page in a few clicks and share the link with customers—no code required.",
+            "animationKey": "payment-link"
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Features",
+      "sys": {
+        "id": "6sAqLv0XQlh4b3ipvEg5qH"
+      },
+      "ntExperiencesCollection": {
+        "items": []
+      },
+      "internalName": "Homepage Features",
+      "label": "Features",
+      "title": "Everything you need to run your business",
+      "description": "From checkout to invoicing, get paid and manage revenue with tools that work the way you do.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "2lpBH3VFIOtLA596MoVyZ4"
+            },
+            "media": null,
+            "title": "Checkout",
+            "description": "Embed checkout into your website or direct customers to a Metafi-hosted page to easily and securely accept one-time payments or subscriptions.",
+            "animationKey": "checkout"
+          },
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "42ef4xXeOZ22vpWNnR2Y2e"
+            },
+            "media": null,
+            "title": "Recurring Billing",
+            "description": "Collect and retain more revenue, automate revenue management workflows, and accept payments.",
+            "animationKey": "recurring-billing"
+          },
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "7GXKVp2aQfIvLDjkqS6fNN"
+            },
+            "media": null,
+            "title": "Invoicing",
+            "description": "Create an invoice and send it to your customers in minutes—no-code required—to easily collect payments.",
+            "animationKey": "invoicing"
+          },
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "Vro4jZbk7rla4hrKNT86n"
+            },
+            "media": null,
+            "title": "Payment Link",
+            "description": "Sell online without a website. Create a full payment page in a few clicks and share the link with customers—no code required.",
+            "animationKey": "payment-link"
+          }
+        ]
+      }
+    }
+  ]
+}
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Raw sections: [Object, Object, Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Hero 6yUhVoaCfb1sBoHCKgBlrY
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Faq 1AY2HHjnjj2dZWJWsqybxA
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Tabbedcontent 6CrFVbtNPJqWcPZCAAanfh
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Features 6sAqLv0XQlh4b3ipvEg5qH
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Features 6sAqLv0XQlh4b3ipvEg5qH
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Mapped sections: [Object, Object, Object, Object, Object]
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/layout/logo.svg'. This request was not upgraded to HTTPS because it is a local network request.
+[error] Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. 6sAqLv0XQlh4b3ipvEg5qH
+[log] [PageContentLive] subscribed to edit {pageId: 6yuInMRWMJc5kKiFtW4gea}
+[log] [PageContentLive] subscribed to save
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/homepage/features/anim1-Item1.webp'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/homepage/features/anim1-Item3.webp'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/homepage/features/anim1-Item2.webp'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/homepage/features/anim3-item1.webp'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/homepage/features/anim3-item2.webp'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/homepage/features/anim4-item1.webp'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/homepage/features/anim1-Item1.webp'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/homepage/features/anim1-Item3.webp'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/homepage/features/anim1-Item2.webp'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/homepage/features/anim3-item1.webp'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/homepage/features/anim3-item2.webp'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Mixed Content: The page at 'http://localhost:3000/page/kaz-test' was loaded over HTTPS, but requested an insecure element 'http://localhost:3000/images/homepage/features/anim4-item1.webp'. This request was not upgraded to HTTPS because it is a local network request.
+[warning] Image with src "http://localhost:3000/images/layout/logo.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 154ms
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Sections from GraphQL: [Object, Object, Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Full sectionsCollection: {
+  "items": [
+    {
+      "__typename": "Hero",
+      "sys": {
+        "id": "6yUhVoaCfb1sBoHCKgBlrY"
+      },
+      "internalName": "Hero 1",
+      "headline": "Hero headline",
+      "subheadline": null,
+      "ctaText": null,
+      "ctaUrl": null,
+      "sectionStyle": {
+        "tiles": [
+          {
+            "id": "content",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "media",
+            "colSpan": 3,
+            "gridCol": 4,
+            "gridRow": 1,
+            "rowSpan": 2,
+            "visible": true
+          },
+          {
+            "id": "background",
+            "colSpan": 3,
+            "gridCol": 1,
+            "gridRow": 1,
+            "rowSpan": 3,
+            "visible": false
+          }
+        ],
+        "layout": "customGrid",
+        "gridRows": 3,
+        "imageBlur": 0,
+        "gridColumns": 6,
+        "contentColor": "auto",
+        "contentWidth": "33%",
+        "overlayOpacity": 100,
+        "backgroundColor": "var(--primary)",
+        "contentPosition": "right",
+        "useStyleOverride": false
+      },
+      "sectionStyleUpdatedAt": 1770188097730,
+      "variant": null,
+      "background": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4ceAGPOTH1V0bmAzIjecdc/1bf10e61b514595c59e582849bb144dc/hero_Pattern.webp"
+      },
+      "media": {
+        "url": "https://images.ctfassets.net/uumzxfocy3ef/4NMc4kDUQwjdOcVMUWn9MZ/964717ef8a7787412649dad4a82e80fb/hero_Dashboard.webp"
+      },
+      "ntExperiencesCollection": {
+        "items": [
+          {
+            "__typename": "NtExperience",
+            "sys": {
+              "id": "7BPYMahwIjywrCk6RIA4Y6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Faq",
+      "sys": {
+        "id": "1AY2HHjnjj2dZWJWsqybxA"
+      },
+      "internalName": "Homepage FAQ",
+      "title": "Frequently Asked Questions",
+      "description": "Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "5gUBdVWPw4IaDoD5qojCiA"
+            },
+            "internalName": "FAQ Item 1",
+            "question": "How can I send one-time or recurring invoices to customers?",
+            "answer": "Metafi Billing lets you create both one-time and recurring invoices. You can generate payment links or embed checkout forms directly on your site, making it easy for customers to pay securely without extra setup."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3e5tDthLbOeEd1Vuel5Z7t"
+            },
+            "internalName": "FAQ Item 2",
+            "question": "How do I create and send an invoice using Metafi Billing?",
+            "answer": "To create an invoice:\n1. Log in to your Metafi Billing dashboard.\n2. Open the \"Invoices\" section and select **Create New Invoice**.\n3. Add client details, invoice date, and line items.\n4. Review everything, then click **Send** to email the invoice directly to your customer."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "1XsKaxLRlfCWyyDub8PRnN"
+            },
+            "internalName": "FAQ Item 3",
+            "question": "How do I mark an invoice as paid outside of Metafi?",
+            "answer": "If you receive payment through another channel—such as a bank transfer or cash—you can mark the invoice as paid manually. Open the invoice, choose **Mark as Paid**, select \"Out of band,\" and record any payment reference or note for accurate reconciliation."
+          },
+          {
+            "__typename": "Faqitem",
+            "sys": {
+              "id": "3evoqngfYbulyNsQP80BjD"
+            },
+            "internalName": "FAQ Item 4",
+            "question": "How can I calculate my trial conversion rate in Billing?",
+            "answer": "In your Billing dashboard, open **Analytics**, then select the **Funnels** tab and choose **Trials**. The report shows how many customers started a trial and how many converted to paid plans. You can filter results by date range and export them for further analysis."
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Tabbedcontent",
+      "sys": {
+        "id": "6CrFVbtNPJqWcPZCAAanfh"
+      },
+      "ntExperiencesCollectionCollection": {
+        "items": []
+      },
+      "internalName": "Features Tabs",
+      "tagline": "For Developers",
+      "title": "Building Blocks for Recurring Billing",
+      "description": "Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.",
+      "itemsCollectionCollection": {
+        "items": [
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "4SzHcbb2pDwXUaSd0REMiq"
+            },
+            "image": null,
+            "label": "Plan Manager",
+            "body": "Track your subscription payment status in realtime, know about subscription details and download data. Plus, generate detailed reports to help you stay on top of your business.",
+            "imageAlt": "Sales report dashboard",
+            "href": "/docs/dashboard",
+            "buttonLabel": "Learn more"
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3gWELcQoW0E2LLzMx3l2XD"
+            },
+            "image": null,
+            "label": "Integrations",
+            "body": "Connect Metafi to your stack with webhooks and SDKs. Sync events from billing to your CRM, data warehouse, and analytics tools.",
+            "imageAlt": "Integrations list",
+            "href": "/integrations",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "5rhrxTQ9CAhRA8GO7hrCMF"
+            },
+            "image": null,
+            "label": "Dashboard",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          },
+          {
+            "__typename": "Tabbedcontentitem",
+            "sys": {
+              "id": "3arURj8cbrk542K8aSx3nm"
+            },
+            "image": null,
+            "label": "Customer Portal",
+            "body": "Embed a self-serve portal so customers can manage payment methods, invoices, and subscriptions—no support ticket needed.",
+            "imageAlt": "Customer portal screen",
+            "href": "/docs/portal",
+            "buttonLabel": null
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Features",
+      "sys": {
+        "id": "6sAqLv0XQlh4b3ipvEg5qH"
+      },
+      "ntExperiencesCollection": {
+        "items": []
+      },
+      "internalName": "Homepage Features",
+      "label": "Features",
+      "title": "Everything you need to run your business",
+      "description": "From checkout to invoicing, get paid and manage revenue with tools that work the way you do.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "2lpBH3VFIOtLA596MoVyZ4"
+            },
+            "media": null,
+            "title": "Checkout",
+            "description": "Embed checkout into your website or direct customers to a Metafi-hosted page to easily and securely accept one-time payments or subscriptions.",
+            "animationKey": "checkout"
+          },
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "42ef4xXeOZ22vpWNnR2Y2e"
+            },
+            "media": null,
+            "title": "Recurring Billing",
+            "description": "Collect and retain more revenue, automate revenue management workflows, and accept payments.",
+            "animationKey": "recurring-billing"
+          },
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "7GXKVp2aQfIvLDjkqS6fNN"
+            },
+            "media": null,
+            "title": "Invoicing",
+            "description": "Create an invoice and send it to your customers in minutes—no-code required—to easily collect payments.",
+            "animationKey": "invoicing"
+          },
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "Vro4jZbk7rla4hrKNT86n"
+            },
+            "media": null,
+            "title": "Payment Link",
+            "description": "Sell online without a website. Create a full payment page in a few clicks and share the link with customers—no code required.",
+            "animationKey": "payment-link"
+          }
+        ]
+      }
+    },
+    {
+      "__typename": "Features",
+      "sys": {
+        "id": "6sAqLv0XQlh4b3ipvEg5qH"
+      },
+      "ntExperiencesCollection": {
+        "items": []
+      },
+      "internalName": "Homepage Features",
+      "label": "Features",
+      "title": "Everything you need to run your business",
+      "description": "From checkout to invoicing, get paid and manage revenue with tools that work the way you do.",
+      "itemsCollection": {
+        "items": [
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "2lpBH3VFIOtLA596MoVyZ4"
+            },
+            "media": null,
+            "title": "Checkout",
+            "description": "Embed checkout into your website or direct customers to a Metafi-hosted page to easily and securely accept one-time payments or subscriptions.",
+            "animationKey": "checkout"
+          },
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "42ef4xXeOZ22vpWNnR2Y2e"
+            },
+            "media": null,
+            "title": "Recurring Billing",
+            "description": "Collect and retain more revenue, automate revenue management workflows, and accept payments.",
+            "animationKey": "recurring-billing"
+          },
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "7GXKVp2aQfIvLDjkqS6fNN"
+            },
+            "media": null,
+            "title": "Invoicing",
+            "description": "Create an invoice and send it to your customers in minutes—no-code required—to easily collect payments.",
+            "animationKey": "invoicing"
+          },
+          {
+            "__typename": "FeatureItem",
+            "sys": {
+              "id": "Vro4jZbk7rla4hrKNT86n"
+            },
+            "media": null,
+            "title": "Payment Link",
+            "description": "Sell online without a website. Create a full payment page in a few clicks and share the link with customers—no code required.",
+            "animationKey": "payment-link"
+          }
+        ]
+      }
+    }
+  ]
+}
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Raw sections: [Object, Object, Object, Object, Object]
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Hero 6yUhVoaCfb1sBoHCKgBlrY
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Faq 1AY2HHjnjj2dZWJWsqybxA
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Tabbedcontent 6CrFVbtNPJqWcPZCAAanfh
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Features 6sAqLv0XQlh4b3ipvEg5qH
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [mapSection] Features 6sAqLv0XQlh4b3ipvEg5qH
+[info] %c%s%c [logger] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   [getPageBySlug] Mapped sections: [Object, Object, Object, Object, Object]
+[error] Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. 6sAqLv0XQlh4b3ipvEg5qH
+[log] [PageContentLive] subscribed to edit {pageId: 6yuInMRWMJc5kKiFtW4gea}
+[warning] 
+            [Live Preview]: Invalid live updates subscription detected.
+            Please keep in mind that the data provided to the live updates needs to have "sys.id", "fields" for REST or the "__typename" for GraphQL on the data structure.
+            Live updates for transformed data is not supported at the moment. {isValid: false, sysIds: Array(1), isGQL: false, isREST: false, hasContentSourceMaps: false}
+[log] [Fast Refresh] rebuilding

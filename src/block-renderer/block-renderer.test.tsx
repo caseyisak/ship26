@@ -1,10 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { LivePreviewProvider } from '@/lib/live-preview';
 
 import { BlockRenderer } from './block-renderer';
+
+vi.mock('@/lib/feature-visual-registry', () => ({
+  getFeatureVisualComponent: () => null,
+}));
 
 describe('BlockRenderer', () => {
   it('can be imported and rendered', () => {
@@ -82,5 +86,74 @@ describe('BlockRenderer', () => {
     expect(heading.textContent).to.equal('Frequently Asked Questions');
     expect(screen.getByText('Find answers to common questions')).toBeTruthy();
     expect(screen.getByText('What is this?')).toBeTruthy();
+  });
+
+  it('renders DataViz with mock DataViz data', () => {
+    const mockDataViz = {
+      __typename: 'DataViz' as const,
+      sys: { id: 'dataviz-1', spaceId: 'test' },
+      internalName: 'Test Data Viz',
+      title: 'Sales Data',
+      description: 'Quarterly sales by department',
+      chartType: 'groupedBar',
+      csvData: { url: '//example.com/test.csv' },
+      colorScheme: 'default',
+      showLegend: true,
+    };
+    render(
+      <LivePreviewProvider locale="en-US">
+        <BlockRenderer data={mockDataViz} />
+      </LivePreviewProvider>,
+    );
+    expect(screen.getByText('Sales Data')).toBeTruthy();
+    expect(
+      screen.getByText('Quarterly sales by department'),
+    ).toBeTruthy();
+  });
+
+  it('renders Features with mock Features data', () => {
+    const mockFeatures = {
+      __typename: 'Features' as const,
+      sys: { id: 'features-1', spaceId: 'test' },
+      internalName: 'Homepage Features',
+      label: 'Features',
+      title: 'Everything You Need to Run & Grow Your Business',
+      description:
+        'All the tools and resources necessary for managing and expanding your business.',
+      itemsCollection: {
+        items: [
+          {
+            __typename: 'FeatureItem' as const,
+            sys: { id: 'fi-1' },
+            title: 'Checkout',
+            description: 'Embed checkout into your website.',
+            image: null,
+            animationKey: 'checkout',
+          },
+          {
+            __typename: 'FeatureItem' as const,
+            sys: { id: 'fi-2' },
+            title: 'Recurring Billing',
+            description: 'Collect and retain more revenue.',
+            image: null,
+            animationKey: 'recurring-billing',
+          },
+        ],
+      },
+      ntExperiencesCollection: { items: [] },
+    };
+    render(
+      <LivePreviewProvider locale="en-US">
+        <BlockRenderer data={mockFeatures} />
+      </LivePreviewProvider>,
+    );
+    const heading = screen.getByRole('heading', { level: 2 });
+    expect(heading.textContent).to.equal(
+      'Everything You Need to Run & Grow Your Business',
+    );
+    expect(screen.getByText('Features')).toBeTruthy();
+    expect(screen.getByText('Embed checkout into your website.')).toBeTruthy();
+    expect(screen.getByText('Checkout')).toBeTruthy();
+    expect(screen.getByText('Recurring Billing')).toBeTruthy();
   });
 });

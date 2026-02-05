@@ -68,6 +68,42 @@ export type TabbedContentFragment = BlockData & {
   };
 };
 
+/** Feature Item (matches Contentful Feature Item content type: title, description, media, animationKey). */
+export type FeatureItemFragment = {
+  __typename: 'FeatureItem';
+  sys: { id: string };
+  title?: string | null;
+  description?: string | null;
+  image?: { url?: string } | null; // Mapped field name (legacy)
+  media?: { url?: string } | null; // Raw Contentful field name
+  animationKey?: string | null;
+};
+
+/** Features section (matches Contentful Features content type: internalName, label, title, description, items, ntExperiences). */
+export type FeaturesFragment = BlockData & {
+  __typename: 'Features';
+  internalName?: string | null;
+  label?: string | null;
+  title?: string | null;
+  description?: string | null;
+  itemsCollection?: { items: FeatureItemFragment[] } | null;
+  ntExperiencesCollection?: {
+    items: Array<{ __typename?: string; sys?: { id: string } }>;
+  };
+};
+
+/** DataViz section (matches Contentful DataViz content type: internalName, title, description, chartType, csvData, colorScheme, showLegend). */
+export type DataVizFragment = BlockData & {
+  __typename: 'DataViz';
+  internalName?: string | null;
+  title?: string | null;
+  description?: string | null;
+  chartType?: string | null;
+  csvData?: { url?: string } | null;
+  colorScheme?: string | null;
+  showLegend?: boolean | null;
+};
+
 export type PersonalizedBlockData = BlockData & {
   ntExperiencesCollection?: { items: unknown[] };
 };

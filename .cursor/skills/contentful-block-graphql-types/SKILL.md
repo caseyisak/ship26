@@ -193,6 +193,54 @@ it('renders [BlockName] with mock [BlockName] data', () => {
 
 Run `bun test`. The test may fail until the component exists (Milestone 2), but there should be no TypeScript errors.
 
+## Test Enforcement (STRICT)
+
+If `bun test` fails:
+
+### Step 1: Diagnose
+Read the full error. Identify the type:
+- **Type error** → Fragment type doesn't match mock data or query response
+- **Import error** → Module path incorrect
+- **Assertion error** → Test expectations don't match implementation
+
+### Step 2: Fix ONE thing
+Make a single, targeted fix based on diagnosis.
+
+### Step 3: Re-run
+Run `bun test` again.
+
+### Step 4: Iterate or Escalate
+- If passes: proceed to Milestone 2
+- If fails with DIFFERENT error: repeat from Step 1
+- If fails with SAME error after 3 attempts: STOP and escalate
+
+### Escalation Template (after 3 failed attempts)
+
+Report to user:
+```
+## Test Failure - Need Guidance
+
+**Error:** [full error message]
+
+**Attempts:**
+1. Tried: [what you tried] → Result: [still failing]
+2. Tried: [what you tried] → Result: [still failing]
+3. Tried: [what you tried] → Result: [still failing]
+
+**Hypothesis:** [what you think is wrong]
+
+How would you like me to proceed?
+```
+
+### NOT ALLOWED
+
+- "Tests are pre-existing issues" (without git diff evidence)
+- "Proceeding anyway"
+- "Will fix later"
+- Skipping test step
+
+---
+
 ## Completion Checklist
 
 - [ ] Contentful MCP `get_content_type` verified field names
@@ -204,6 +252,6 @@ Run `bun test`. The test may fail until the component exists (Milestone 2), but 
 - [ ] Mapper function added to `page.ts`
 - [ ] `mapSection` discriminator extended
 - [ ] No TypeScript errors
-- [ ] Tests run (may fail until component exists)
+- [ ] Tests run and pass (or escalated if failing)
 
 Do not proceed to Milestone 2 until this checklist is complete and there are no TypeScript errors.

@@ -4,13 +4,13 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   images: {
-    unoptimized: true,
-
-    // If you want to use a custom image loader, uncomment the following lines
-    // loader: 'custom',
-    // loaderFile: './src/lib/imageLoader.ts',
-    // imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    // deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.ctfassets.net',
+        pathname: '/**',
+      },
+    ],
   },
 };
 const withMDX = createMDX({

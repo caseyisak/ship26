@@ -1,3 +1,14 @@
+# ARCHIVED
+
+This slash command has been replaced by:
+
+- **Skill:** `.cursor/skills/contentful-live-preview-verify/SKILL.md`
+- **Rule:** `.cursor/rules/contentful-live-preview-debug.mdc`
+
+Use Debug mode (which reads the rule) or invoke the skill directly.
+
+---
+
 # /ctfl-live-preview-debug
 
 When the user invokes **/ctfl-live-preview-debug** (or asks to run this workflow), they provide a **URL** (Contentful live preview URL). The **agent** gathers all diagnostic information programmatically; the user does not copy-paste. Confirm in your reply that you checked all three (browser network, browser console, terminal) before giving a diagnosis or conclusion.
@@ -15,6 +26,7 @@ Use the URL the user supplied. If none is given, ask for it.
 ## 3. Browser (always inspect the previewed app)
 
 - **Contentful preview URL** (e.g. `app.contentful.com/.../entries/.../preview/...`): The live preview runs **inside an iframe** (your app). The Browser MCP cannot read that iframe's console or network from the parent tab. So the agent must **inspect the same document the iframe loads** by navigating to the app URL and then gathering network and console there.
+
   1. **Derive the app URL** from the Contentful preview URL and the app origin from the terminal:
      - Parse the preview URL for **entry id** (e.g. from a path like `.../entries/118NRnWbHMV6pkdPquxXru/preview/...`) and **locale** if present (default e.g. `en-US`).
      - Path pattern for newsletter: `/{locale}/newsletter/{entryId}` (e.g. `/en-US/newsletter/118NRnWbHMV6pkdPquxXru`). For other content types, use the appropriate path (e.g. blog by slug).
@@ -33,16 +45,19 @@ The agent must perform these steps so that **all** information (network, console
 After checking network and console, **inspect the data flow** to catch issues where entries are fetched but not properly merged:
 
 1. **Check console logs** for `[useFetchEmbeddedEntries]` messages:
+
    - Look for logs showing "Fetched entries/assets" with entry details
    - Check if entries show `hasMedia: false` for CallToAction entries (indicates incomplete data)
    - Verify "Merged content" logs show entries were actually merged
 
 2. **Inspect network responses** for `/api/fetch-deferred-entries`:
+
    - If the API call succeeded (200), check the response payload
    - Verify that fetched entries include required fields (e.g., `CallToAction` entries have `media` field)
    - Compare what was fetched vs. what's in the console logs
 
 3. **Check for incomplete entry merge bugs**:
+
    - If console shows entries were fetched with complete data (`hasMedia: true`), but the UI still shows missing fields (e.g., CTA without image), this indicates a **merge logic bug**
    - The issue: incomplete entries in `links` are not being **replaced** with complete fetched versions
    - Solution: Check `src/hooks/use-fetch-embedded-entries.ts` merge logic - it should **replace** existing incomplete entries, not just append new ones
@@ -60,12 +75,14 @@ After checking network and console, **inspect the data flow** to catch issues wh
 After data flow inspection, check these additional areas:
 
 1. **Entry ID Consistency**:
+
    - Extract entry IDs from rich text JSON (`content.json` → find `EMBEDDED_ENTRY` nodes → get `node.data.target.sys.id`)
    - Compare with IDs in `content.links.entries.block` and `content.links.entries.inline`
    - **Issue**: If JSON references an ID that's not in `links`, the entry won't render
    - **Check**: All IDs in JSON should exist in `links` (either initially or after `useFetchEmbeddedEntries` runs)
 
 2. **Live Preview SDK Connection**:
+
    - Check console for `useLiveUpdates` or `useContentfulLiveUpdates` warnings/errors
    - Verify `LivePreviewProvider` is wrapping the page component
    - Check if `targetOrigin` matches the app's origin (should be `https://{appHost}`)
@@ -73,6 +90,7 @@ After data flow inspection, check these additional areas:
    - **Check**: Look for Contentful Live Preview connection messages in console
 
 3. **Rich Text JSON Structure Validation**:
+
    - Verify `content.json` is a valid rich text document structure
    - Check for required fields: `nodeType`, `content` array
    - Verify embedded entries have `data.target.sys.id`
@@ -80,12 +98,14 @@ After data flow inspection, check these additional areas:
    - **Check**: JSON should parse without errors and have expected structure
 
 4. **Hydration Mismatches**:
+
    - Look for React hydration warnings in console (e.g., "hydrated but attributes didn't match")
    - These indicate server-rendered HTML differs from client-rendered HTML
    - **Issue**: Can cause rendering issues or missing content
    - **Check**: Look for hydration warnings mentioning rich text or embedded entries
 
 5. **Preview Mode Detection**:
+
    - Verify `__prerender_bypass` cookie exists (check browser cookies)
    - Check if `isPreview` is correctly detected in `useFetchEmbeddedEntries` hook
    - Verify draft mode is enabled: `draftMode().isEnabled` should be `true`
@@ -93,6 +113,7 @@ After data flow inspection, check these additional areas:
    - **Check**: Console logs should show `preview: true` in `useFetchEmbeddedEntries` calls
 
 6. **Component Prop Validation**:
+
    - Check if `RichText` component receives `data` prop with both `json` and `links`
    - Verify `BlockRenderer` receives complete entry data (not just `{sys: {id}}`)
    - Check console for component warnings about missing props
@@ -107,6 +128,7 @@ After data flow inspection, check these additional areas:
    - **Check**: Compare `content.links` before and after live preview updates
 
 **Key insights**:
+
 - **Entry ID mismatch** → Entry won't render (check `extractEmbeddedIds` function)
 - **SDK not connected** → Live updates won't trigger client-side fetching
 - **Hydration mismatch** → May indicate server/client data inconsistency

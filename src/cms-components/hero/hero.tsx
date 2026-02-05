@@ -3,6 +3,7 @@
 import type { HeroFragment } from '@/block-renderer/types';
 import { BlockProps } from '@/block-renderer/types';
 import { Button } from '@/components/ui/button';
+import { GridBackground } from '@/components/ui/grid-background';
 import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
@@ -13,7 +14,6 @@ import {
   getDefaultTiles,
   parseSectionStyle,
 } from '@/lib/section-style-types';
-import { GridBackground } from '@/components/ui/grid-background';
 import { cn } from '@/lib/utils';
 
 const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
@@ -52,7 +52,8 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
   type RawLiveData = HeroFragment & { media?: { url?: string } | null };
   const rawImageUrl =
     (liveData as HeroFragment).image?.url ??
-    ((liveData as RawLiveData).media?.url ?? undefined);
+    (liveData as RawLiveData).media?.url ??
+    undefined;
 
   const imageUrl = rawImageUrl?.startsWith('//')
     ? `https:${rawImageUrl}`
@@ -76,15 +77,25 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
           {subheadline}
         </p>
       )}
-      {ctaText && ctaUrl && (
+      {ctaText && (
         <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4">
-          <Button
-            asChild
-            className="w-full sm:w-auto"
-            aria-label={ctaText ?? undefined}
-          >
-            <a href={ctaUrl ?? undefined}>{ctaText}</a>
-          </Button>
+          {ctaUrl ? (
+            <Button
+              asChild
+              className="w-full sm:w-auto"
+              aria-label={ctaText ?? undefined}
+            >
+              <a href={ctaUrl}>{ctaText}</a>
+            </Button>
+          ) : (
+            <Button
+              className="w-full sm:w-auto"
+              aria-label={ctaText ?? undefined}
+              disabled
+            >
+              {ctaText}
+            </Button>
+          )}
         </div>
       )}
     </div>
@@ -236,15 +247,25 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
                     {subheadline}
                   </p>
                 )}
-                {ctaText && ctaUrl && (
+                {ctaText && (
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:gap-3">
-                    <Button
-                      asChild
-                      className="w-full sm:w-auto"
-                      aria-label={ctaText ?? undefined}
-                    >
-                      <a href={ctaUrl ?? undefined}>{ctaText}</a>
-                    </Button>
+                    {ctaUrl ? (
+                      <Button
+                        asChild
+                        className="w-full sm:w-auto"
+                        aria-label={ctaText ?? undefined}
+                      >
+                        <a href={ctaUrl}>{ctaText}</a>
+                      </Button>
+                    ) : (
+                      <Button
+                        className="w-full sm:w-auto"
+                        aria-label={ctaText ?? undefined}
+                        disabled
+                      >
+                        {ctaText}
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>

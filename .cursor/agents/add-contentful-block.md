@@ -1,9 +1,23 @@
 ---
 name: add-contentful-block
-description: Orchestrates adding a new Contentful block from plan to delivery. Q&A (content source, existing component, style override, localization, personalization), content model proposal and approval, feature branch with TASKS.md, implementation milestones (GraphQL+types, component+config, Contentful MCP, live preview, tests), and check-ins with commit prompts. Use when the user wants to add a new block (e.g. FAQ), create a new Contentful component, or port a metafi/shadcn section into Contentful.
+description: Orchestrates adding a new Contentful block from plan to delivery. Discovery phase, Q&A, content model proposal and approval, feature branch with TASKS.md, implementation milestones (GraphQL+types, component+config, Contentful MCP, live preview, tests), and check-ins with commit prompts. Use when the user wants to add a new block (e.g. FAQ), create a new Contentful component, or port a metafi/shadcn section into Contentful.
 ---
 
-You orchestrate adding a new Contentful block to the metafi-nextjs-shadcnblocks app. Work in phases; do not skip Q&A or content model approval. Follow existing repo patterns only; do not introduce new architectures, doc formats, or tooling unless the user explicitly asks.
+You orchestrate adding a new Contentful block to the metafi-nextjs-shadcnblocks app. Work in phases with explicit STOP points; do not skip discovery, Q&A, or content model approval. Follow existing repo patterns only; do not introduce new architectures, doc formats, or tooling unless the user explicitly asks.
+
+## STOP Points (MANDATORY)
+
+You MUST wait for explicit user approval at these checkpoints. Do NOT proceed until user responds.
+
+| STOP | When | What to Show | Wait For |
+|------|------|--------------|----------|
+| STOP_0 | After discovery | Existing components found, patterns identified | User acknowledgment |
+| STOP_1 | After content model proposal | Visual field diagram | "approved" or specific changes |
+| STOP_2 | After entry preview | Proposed sample entries | "proceed" or user-provided content |
+| STOP_3 | After each milestone | Test results + runtime status | "continue" or debug request |
+| STOP_4 | After verification | Final checklist with evidence | User acceptance |
+
+**If user doesn't respond, ask again. Do NOT proceed silently.**
 
 ## Required Reading (At Start)
 
@@ -36,10 +50,19 @@ Ignore archived docs like chatgpt-isr.md.
 - Pages have `slug`; sections reference block types
 - Live preview per component-live-preview.md
 - Do not merge to main or push without user approval; only prompt to commit on branch
+- ALWAYS create feature branch before any code changes
 
-## Test Gate
+## Test Gate (Enforced)
 
-For each milestone, add or extend unit tests (vitest, same style as `src/block-renderer/block-renderer.test.tsx`). Run `bun test`. Do not move on to the next milestone until tests pass.
+For each milestone:
+1. Add or extend unit tests (vitest, same style as `src/block-renderer/block-renderer.test.tsx`)
+2. Run `bun test`
+3. If tests fail:
+   - Fix ONE thing
+   - Re-run
+   - If still failing after 3 attempts: STOP and report to user with what you tried
+   - Do NOT say "pre-existing issues" without evidence (git diff showing test was already failing before your changes)
+4. Do not move on until tests pass
 
 ## Continuous Improvement
 
@@ -51,38 +74,158 @@ At the end of each milestone:
 
 Follow `.cursor/skills/continuous-improvement/SKILL.md` for the full protocol.
 
+---
+
+## Phase 0: Discovery
+
+Before asking any questions, follow skill **contentful-block-discovery**:
+
+### 0a. Search for existing components
+
+```
+Search: src/components/sections/ for *[block-name]*.tsx
+Search: src/cms-components/ for similar blocks
+```
+
+### 0b. Identify patterns from existing cms-components
+
+Read `src/cms-components/hero/hero.tsx` and note:
+- How live preview hooks are used
+- How fields are accessed
+- How fallbacks are handled
+
+### 0c. Check lessons-learned.md
+
+Scan the index for patterns matching this block type (e.g., Rich Text, nested collections, media fields).
+
+### STOP_0: Discovery Report
+
+Present your findings:
+
+```
+## Discovery Report
+
+**Existing static component:** [path or "none found"]
+**Similar cms-components:** [list or "none"]
+**Patterns I'll follow:** [from hero.tsx]
+**Relevant lessons:** [LL-XXX list or "none"]
+
+Ready to proceed with Q&A?
+```
+
+Wait for user acknowledgment before proceeding.
+
+---
+
 ## Phase 1: Q&A Until Plan is Clear
 
-Ask these questions before proceeding:
+Ask these questions (do not skip any):
 
 - **Block name and purpose:** What is this block called and what does it do?
 - **Content source:** Do you have manual copy, should I generate it, or pull from a URL (Firecrawl)?
-- **Existing component:** Is there a metafi static component (e.g. `src/components/sections/metafi-faq.tsx`) or a shadcn block URL/snippet to port?
+- **Existing component:** [Reference discovery] Should I port the existing component, or start fresh?
 - **Style override:** Will this block use the Section Style Editor app? (Note risks: JSON field, layout variants)
 - **Localization:** Should this block be localized? (Default: follow Page/Hero locale pattern)
 - **Personalization:** Should this block support Ninetailed experiences? (If yes: include `ntExperiencesCollection`)
 
 Do not proceed until the plan is clear.
 
+---
+
 ## Phase 2: Content Model Proposal
 
 Before creating anything in Contentful:
 
-1. Propose content type(s) and fields using repo conventions
-2. Check existing types (Hero, Page) via Contentful MCP or codebase for consistent field naming
-3. Present the proposal: "Here's the content model I'll create; does anything need to change?"
+### 2a. Propose content type(s) visually
 
-Wait for user approval before proceeding.
+```
+[ContentTypeName]
+├── internalName: Symbol (required) — Entry title
+├── fieldName: Type (optional) — Description
+├── linkedField: Reference → [LinkedType] (many)
+└── ntExperiencesCollection: Reference → [NtExperience] (if personalization)
+
+[LinkedType] (if needed)
+├── internalName: Symbol (required)
+└── fieldName: Type
+```
+
+### 2b. Explain field choices
+
+For each field, briefly explain:
+- Why it exists
+- Validation rules (if any)
+- Default values (if any)
+
+### 2c. Pre-creation checklist
+
+Before calling MCP, verify against lessons-learned:
+- [ ] Content type name uses spaces for word boundaries ("Faq Item" not "FaqItem") — per LL-006
+- [ ] Field IDs are simple (`items` not `itemsCollection`) — per LL-007
+- [ ] Media fields use `media` or `backgroundMedia` — per LL-001
+
+### STOP_1: Content Model Approval
+
+Ask:
+```
+Does this content model look correct? 
+Reply "approved" to proceed, or tell me what to change.
+```
+
+**Do NOT create content types until user says "approved".**
+
+---
+
+## Phase 2.5: Entry Preview
+
+After content model is approved, before creating entries:
+
+### Propose sample entries
+
+```
+## Proposed Entries
+
+**[ContentTypeName] Entry 1:**
+- internalName: "Homepage [BlockName]"
+- title: "[Suggested title]"
+- [other fields with sample values]
+
+**[LinkedType] Items (if nested):**
+1. "[Item 1 title]" — [brief content]
+2. "[Item 2 title]" — [brief content]
+3. "[Item 3 title]" — [brief content]
+```
+
+### STOP_2: Entry Approval
+
+Ask:
+```
+Want me to create these sample entries?
+- Reply "proceed" to use these
+- Reply "yolo" to let me generate content
+- Or provide your own content to use instead
+```
+
+**Do NOT create entries until user responds.**
+
+---
 
 ## Phase 3: Implementation
 
 ### Pre-Implementation Check
 
-Read `documentation/lessons-learned.md` and note any lessons relevant to this block type (Rich Text handling, nested collections, field naming). Reference these during implementation.
+Read `documentation/lessons-learned.md` and note any lessons relevant to this block type. Reference these during implementation.
 
-### Feature Branch
+### Feature Branch (MANDATORY)
 
-Create feature branch (e.g. `feat/faq-block`). Add tasks to TASKS.md.
+Create feature branch BEFORE any code changes:
+```bash
+git checkout -b feat/[block-name]-block
+```
+
+If not on a feature branch, STOP and create one.
+
+Add tasks to TASKS.md.
 
 ### Milestone 1: Types + GraphQL + Mapper
 
@@ -94,9 +237,24 @@ Follow skill **contentful-block-graphql-types**:
 4. Add raw types + mapper in page.ts
 5. Optional: BY_ID query + get-by-ID service for preview
 
-**Tests:** Add or extend unit tests (BlockRenderer with mock new-type data). Run `bun test`; do not proceed until pass.
+**Tests:** Add or extend unit tests. Run `bun test`; do not proceed until pass.
 
-After tests pass: Follow continuous-improvement skill.
+### STOP_3a: Milestone 1 Verification
+
+Report:
+```
+## Milestone 1 Complete
+
+- [ ] Fragment type added
+- [ ] Query updated
+- [ ] Mapper added
+- [ ] Tests: [PASS/FAIL]
+- [ ] TypeScript: [no errors/X errors]
+
+Ready to proceed to Milestone 2?
+```
+
+---
 
 ### Milestone 2: Component + Block Config
 
@@ -109,18 +267,47 @@ Follow skill **contentful-block-component**:
 
 **Tests:** Add test(s) that render the new block with mock fragment data. Run `bun test`; do not proceed until pass.
 
-After tests pass: Follow continuous-improvement skill.
+### STOP_3b: Milestone 2 Verification
+
+Report:
+```
+## Milestone 2 Complete
+
+- [ ] Component created
+- [ ] Uses live preview hooks
+- [ ] Registered in block configs
+- [ ] Tests: [PASS/FAIL]
+
+Ready to proceed to Milestone 3?
+```
+
+---
 
 ### Milestone 3: Contentful
 
 Follow skill **contentful-mcp-create-model**:
 
-1. Use Contentful MCP to create content type(s)
+1. Use Contentful MCP to create content type(s) — using approved model from STOP_1
 2. Update Page's sections field to allow the new type (if needed)
-3. Create at least one entry (and linked entries)
-4. Use user-provided copy, generated copy, or scraped copy from URL
+3. Create entries — using approved content from STOP_2
+4. Publish all content types and entries
 
-After completion: Follow continuous-improvement skill.
+### STOP_3c: Milestone 3 Verification
+
+Report:
+```
+## Milestone 3 Complete
+
+- [ ] Content type(s) created and published
+- [ ] Entry/entries created and published
+- [ ] Page sections field updated (if needed)
+
+Verified in Contentful: [entry URL or MCP confirmation]
+
+Ready to proceed to Milestone 4?
+```
+
+---
 
 ### Milestone 4: Live Preview (Optional)
 
@@ -134,24 +321,84 @@ If live preview is requested, follow skill **contentful-block-live-preview**:
 
 **Tests:** Add test(s) for get-by-ID or preview route if applicable. Run `bun test`; do not proceed until pass.
 
-After tests pass: Follow continuous-improvement skill.
+### STOP_3d: Milestone 4 Verification
 
-### Milestone 5: Verification
+Report:
+```
+## Milestone 4 Complete
 
-1. Re-run full test suite: `bun test`
-2. Start dev server: `bun run dev`
-3. Verify section appears on a page with expected content
-4. (If live preview) Verify preview works from Contentful
+- [ ] Preview route created
+- [ ] BY_ID query added
+- [ ] get*ByEntryId service added
+- [ ] enable-draft branch added
+- [ ] Tests: [PASS/FAIL]
 
-Run the Final Verification Checklist:
-- [ ] Contentful MCP: Content type exists and is published
-- [ ] Contentful MCP: At least one entry exists and is published
-- [ ] bun test passes with new block test
-- [ ] Dev server: New section appears on a page
-- [ ] (If live preview) Preview URL in Contentful is configured
-- [ ] (If live preview) /preview/[type]/[entryId] renders the component
+Ready to proceed to Milestone 5 (Runtime Verification)?
+```
 
-Then check-in and prompt user to commit.
+---
+
+### Milestone 5: Runtime Verification (MANDATORY)
+
+This milestone cannot be skipped or declared complete without evidence.
+
+Follow skill **contentful-live-preview-verify**:
+
+1. Provide entry ID and block type to the verification skill
+2. Skill navigates to the page and captures:
+   - Whether block renders correctly
+   - Console errors (if any)
+   - Network failures (if any)
+   - Known error patterns from lessons-learned.md
+3. If live preview enabled, skill also verifies:
+   - Preview URL works
+   - Live updates function correctly
+
+### STOP_4: Verification Evidence
+
+Present the skill's structured output:
+
+```
+## Runtime Verification Results
+
+**Page tested:** /page/[slug]
+**Block appears:** [yes/no]
+**Content correct:** [yes/no]
+
+**Console errors:** [none or list]
+**Network failures:** [none or list]
+**Known patterns detected:** [none or LL-XXX list]
+
+(If live preview enabled):
+**Preview URL tested:** /preview/[type]/[entryId]
+**Preview works:** [yes/no]
+**Live updates work:** [yes/no]
+```
+
+If any issues are found, debug before requesting acceptance.
+
+### Final Verification Checklist
+
+Present with evidence:
+
+```
+## Final Verification Checklist
+
+- [x] Contentful MCP: Content type exists and is published
+- [x] Contentful MCP: Entry exists and is published  
+- [x] bun test passes
+- [x] Dev server: Block appears on /page/[slug]
+- [x] (If live preview) Preview URL configured in Contentful
+- [x] (If live preview) /preview/[type]/[entryId] renders correctly
+- [x] No console errors related to new block
+- [x] No network failures for new block queries
+
+**All items verified. Ready to commit?**
+```
+
+Wait for user acceptance before committing.
+
+---
 
 ## When Tests Fail
 
@@ -165,12 +412,43 @@ If `bun test` fails at any milestone:
    - `is not a function` → Named vs default export issue
 3. Fix ONE thing
 4. Re-run tests
+5. If still failing after 3 attempts: 
+   - STOP
+   - Report the error with what you tried
+   - Ask user for guidance
+   - Do NOT proceed
 
-If still failing after 3 attempts: Report the error to the user with what you tried; do NOT proceed.
+**NEVER dismiss failures as "pre-existing" without evidence:**
+- Run `git diff` to show the test was failing before your changes
+- Or show the test file hasn't been modified
+
+### Test Failure Escalation Template
+
+```
+## Test Failure - Need Guidance
+
+**Error:** [full error message]
+
+**Attempts:**
+1. Tried: [what you tried] → Result: [still failing]
+2. Tried: [what you tried] → Result: [still failing]
+3. Tried: [what you tried] → Result: [still failing]
+
+**Hypothesis:** [what you think is wrong]
+
+How would you like me to proceed?
+```
+
+---
 
 ## Check-Ins
 
-At each milestone:
+At each STOP point:
 1. Summarize what was completed
-2. Ask user to review and commit on the branch
-3. Do not force-push, merge, or proceed without user approval
+2. Show evidence (test output, verification steps)
+3. Ask user to review
+4. Do not proceed without response
+
+At final acceptance:
+1. Ask user to review and commit on the branch
+2. Do not force-push, merge, or proceed without user approval

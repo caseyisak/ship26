@@ -95,25 +95,22 @@ function transformSection(item: any): PageSection | null {
         label: item.label ?? null,
         title: item.title ?? null,
         description: item.description ?? null,
-        itemsCollection: item.itemsCollection
-          ? {
-              items: item.itemsCollection.items
-                .map((featureItem: any) =>
-                  featureItem && featureItem.__typename === 'FeatureItem'
-                    ? {
-                        __typename: 'FeatureItem',
-                        sys: { id: featureItem.sys.id },
-                        title: featureItem.title ?? null,
-                        description: featureItem.description ?? null,
-                        image: featureItem.media ?? null,
-                        animationKey: featureItem.animationKey ?? null,
-                      }
-                    : null
-                )
-                .filter(Boolean),
-            }
-          : null,
+        // Keep feature items RAW - let FeatureCard component handle transformation after useLiveUpdates
+        itemsCollection: item.itemsCollection ?? null,
         ntExperiencesCollection: item.ntExperiencesCollection ?? undefined,
+      };
+    }
+    if (item.__typename === 'DataViz') {
+      return {
+        __typename: 'DataViz',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        title: item.title ?? null,
+        description: item.description ?? null,
+        chartType: item.chartType ?? null,
+        csvData: item.csvData ?? null,
+        colorScheme: item.colorScheme ?? null,
+        showLegend: item.showLegend ?? null,
       };
     }
     return null;

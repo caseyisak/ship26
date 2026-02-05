@@ -402,12 +402,42 @@ If the Page content type needs to allow the new block type in its `sections` fie
 8. Publish parent entry
 9. (If needed) Update Page content type to allow new block
 
+## Pre-Creation Checklist (MANDATORY)
+
+Before calling any MCP create operations, verify against lessons-learned:
+
+### Content Type Naming (LL-006)
+- [ ] Content type name uses spaces for word boundaries
+  - ✅ "Faq Item" → API ID `faqItem` → `__typename: "FaqItem"`
+  - ❌ "FaqItem" → API ID `faqitem` → `__typename: "Faqitem"`
+- [ ] Expected `__typename` documented before creation
+
+### Field Naming (LL-007)
+- [ ] Field IDs do NOT include "Collection" suffix
+  - ✅ `items` → GraphQL `itemsCollection`
+  - ❌ `itemsCollection` → GraphQL `itemsCollectionCollection`
+- [ ] Reference/array fields use simple names: `items`, `faqs`, `tabs`
+
+### Media Field Naming (LL-001)
+- [ ] Image fields use Contentful conventions:
+  - Main image: `media` (maps to `image` in code)
+  - Background: `backgroundMedia` (maps to `backgroundImage` in code)
+- [ ] NOT using generic names like `image` (conflicts with mapper)
+
+### Live Preview Compatibility (LL-008)
+- [ ] If component has media fields, aware that `useLiveUpdates` returns raw field names
+- [ ] Component code will check both mapped and raw field names
+
+---
+
 ## Completion Checklist
 
+- [ ] Pre-creation checklist above completed
 - [ ] All content types created and published
 - [ ] At least one entry created and published
 - [ ] (If nested) Linked entries created and published first
 - [ ] (If needed) Page content type updated to allow new block in sections
 - [ ] Verified in Contentful UI that entries appear correctly
+- [ ] Verified `__typename` matches code expectations
 
 Do not mark Milestone 3 complete until content exists in Contentful and is accessible.

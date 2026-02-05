@@ -257,6 +257,55 @@ After implementation, verify:
 - For background images: check both `backgroundImage` and `backgroundMedia`
 - See LL-008 in lessons-learned.md
 
+## Test Enforcement (STRICT)
+
+If `bun test` fails:
+
+### Step 1: Diagnose
+Read the full error. Identify the type:
+- **Type error** → Service function types don't match fragment
+- **Import error** → Query or service import path issue
+- **Runtime error** → Preview route throws during render
+- **Assertion error** → Mapper doesn't return expected data
+
+### Step 2: Fix ONE thing
+Make a single, targeted fix based on diagnosis.
+
+### Step 3: Re-run
+Run `bun test` again.
+
+### Step 4: Iterate or Escalate
+- If passes: proceed to Milestone 5 (Verification)
+- If fails with DIFFERENT error: repeat from Step 1
+- If fails with SAME error after 3 attempts: STOP and escalate
+
+### Escalation Template (after 3 failed attempts)
+
+Report to user:
+```
+## Test Failure - Need Guidance
+
+**Error:** [full error message]
+
+**Attempts:**
+1. Tried: [what you tried] → Result: [still failing]
+2. Tried: [what you tried] → Result: [still failing]
+3. Tried: [what you tried] → Result: [still failing]
+
+**Hypothesis:** [what you think is wrong]
+
+How would you like me to proceed?
+```
+
+### NOT ALLOWED
+
+- "Tests are pre-existing issues" (without git diff evidence)
+- "Proceeding anyway"
+- "Will fix later"
+- Skipping test step
+
+---
+
 ## Completion Checklist
 
 - [ ] `*_BY_ID` query added to queries.ts
@@ -264,7 +313,7 @@ After implementation, verify:
 - [ ] Preview route created at `src/app/preview/<name>/[entryId]/page.tsx`
 - [ ] Enable-draft branch added for `type === '<name>'`
 - [ ] Contentful Preview URL configured with merge tag
-- [ ] `bun test` passes
+- [ ] `bun test` passes (or escalated if failing)
 - [ ] Manual verification: preview loads from Contentful
 
 Do not mark Milestone 4 complete until this checklist is verified.

@@ -1,0 +1,55 @@
+---
+description: Contentful live preview debugging context. Auto-applied when working with Contentful preview issues.
+globs: ['**/preview/**', '**/contentful/**', '**/cms-components/**']
+alwaysApply: false
+---
+
+# Contentful Live Preview Debugging Context
+
+When debugging Contentful live preview, use this context so you know which environment you are in and what to inspect.
+
+## Two-Context Architecture
+
+Contentful Live Preview has **two** distinct contexts:
+
+**PARENT (app.contentful.com)**
+
+- The Contentful web app (the tab or window that shows the entry editor).
+- Left side: Entry fields **or** your custom app (e.g. Section Style Editor).
+- The Contentful SDK runs here and sends live updates into the iframe.
+
+**IFRAME (localhost:XXXX)**
+
+- Your Next.js app running locally (or deployed preview URL).
+- Right side: The rendered block or page (what editors see as “preview”).
+- Receives live updates from the SDK. **This is where you debug rendering issues** (wrong data, missing images, hydration, etc.).
+
+When the user says “preview is broken,” clarify or assume: are they talking about the **parent** (entry form, custom app UI) or the **iframe** (rendered content)? Most issues are in the iframe.
+
+## Data Flow Inspection Points
+
+When diagnosing live preview, check:
+
+- **`[useFetchEmbeddedEntries]`** – Console logs for fetched/merged embedded entries; look for `hasMedia: false` or missing merge.
+- **`/api/fetch-deferred-entries`** – Network: status 200 and response payload; entries should have required fields (e.g. `media` for CTAs).
+- **Entry ID consistency** – Rich text JSON `content.json` → `EMBEDDED_ENTRY` nodes with `node.data.target.sys.id`; those IDs must exist in `content.links.entries.block` / `inline` (or after `useFetchEmbeddedEntries` runs).
+- **SDK connection** – Console: `useLiveUpdates` / `useContentfulLiveUpdates` / `LivePreviewProvider`; `targetOrigin` should match the app origin.
+- **Hydration** – React hydration warnings in console (server vs client HTML mismatch).
+- **Preview mode** – `__prerender_bypass` cookie; console logs showing `preview: true` in `useFetchEmbeddedEntries` or similar.
+
+If API calls succeed but the UI still shows incomplete data (e.g. CTA without image), the bug is likely in **merge/replace logic** in `src/hooks/use-fetch-embedded-entries.ts`, not the fetch itself.
+
+## Lessons Learned
+
+Before concluding, check **`documentation/lessons-learned.md`** (LL-001 through LL-008) for known error patterns, root causes, and fixes. Cross-reference console errors and network failures with that index.
+
+## When to Use the Verification Skill
+
+For systematic browser inspection (console, network, screenshot, lessons-learned check), invoke the **contentful-live-preview-verify** skill:
+
+- **Skill path:** `.cursor/skills/contentful-live-preview-verify/SKILL.md`
+- It captures console, errors, network (API filter), and a screenshot.
+- It checks all LL-001–LL-008 patterns and returns a structured report.
+- It supports iframe switching so diagnostics are from the preview app, not the parent.
+
+Use Debug mode for guided diagnosis; use this rule for context and the verification skill when you need automated browser capture and lesson matching.

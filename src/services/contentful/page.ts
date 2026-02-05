@@ -1,6 +1,7 @@
 import { draftMode } from 'next/headers';
 
 import type {
+  DataVizFragment,
   FaqFragment,
   FaqItemFragment,
   FeatureItemFragment,
@@ -18,7 +19,8 @@ export type PageSection =
   | HeroFragment
   | FaqFragment
   | TabbedContentFragment
-  | FeaturesFragment;
+  | FeaturesFragment
+  | DataVizFragment;
 
 export type PageData = {
   __typename?: string;
@@ -113,6 +115,18 @@ type RawFeatures = {
   ntExperiencesCollection?: NtExperiencesCollection | null;
 };
 
+type RawDataViz = {
+  __typename: string;
+  sys: { id: string };
+  internalName?: string | null;
+  title?: string | null;
+  description?: string | null;
+  chartType?: string | null;
+  csvData?: { url?: string } | null;
+  colorScheme?: string | null;
+  showLegend?: boolean | null;
+};
+
 type PageBySlugResponse = {
   pageCollection: {
     items: Array<{
@@ -121,7 +135,7 @@ type PageBySlugResponse = {
       slug: string;
       internalName?: string | null;
       sectionsCollection?: {
-        items: Array<RawHero | RawFaq | RawTabbedContent | RawFeatures | null>;
+        items: Array<RawHero | RawFaq | RawTabbedContent | RawFeatures | RawDataViz | null>;
       } | null;
       ntExperiencesCollection?: NtExperiencesCollection | null;
     }>;

@@ -80,10 +80,59 @@ const TABBED_CONTENT_FIELDS = `
   }
 `;
 
+/** Feature Item fragment: all fields from Feature Item content type (title, description, media, animationKey). */
+const FEATURE_ITEM_FIELDS = `
+  __typename
+  sys { id }
+  ... on FeatureItem {
+    title
+    description
+    media { url }
+    animationKey
+  }
+`;
+
+/** Features fragment: all fields from Features content type (internalName, label, title, description, items, ntExperiences). */
+const FEATURES_FIELDS = `
+  __typename
+  sys { id }
+  ... on Features {
+    internalName
+    label
+    title
+    description
+    itemsCollection(limit: 20) {
+      items {
+        ${FEATURE_ITEM_FIELDS}
+      }
+    }
+    ntExperiencesCollection(limit: 10) {
+      items { __typename sys { id } }
+    }
+  }
+`;
+
+/** DataViz fragment: all fields from DataViz content type (internalName, title, description, chartType, csvData, colorScheme, showLegend). */
+const DATA_VIZ_FIELDS = `
+  __typename
+  sys { id }
+  ... on DataViz {
+    internalName
+    title
+    description
+    chartType
+    csvData { url }
+    colorScheme
+    showLegend
+  }
+`;
+
 export const PAGE_BY_SLUG = `
   query PageBySlug($slug: String!, $locale: String!, $preview: Boolean) {
     pageCollection(where: { slug: $slug }, locale: $locale, preview: $preview, limit: 1) {
       items {
+        __typename
+        sys { id }
         internalName
         slug
         sectionsCollection(limit: 20) {
@@ -93,6 +142,8 @@ export const PAGE_BY_SLUG = `
             ${HERO_FIELDS}
             ${FAQ_FIELDS}
             ${TABBED_CONTENT_FIELDS}
+            ${FEATURES_FIELDS}
+            ${DATA_VIZ_FIELDS}
           }
         }
         ntExperiencesCollection(limit: 10) {
@@ -119,6 +170,17 @@ export const HERO_BY_ID = `
     heroCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${HERO_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single DataViz entry by entry ID (for ID-based live preview). */
+export const DATA_VIZ_BY_ID = `
+  query DataVizById($id: String!, $locale: String!, $preview: Boolean) {
+    dataVizCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${DATA_VIZ_FIELDS}
       }
     }
   }

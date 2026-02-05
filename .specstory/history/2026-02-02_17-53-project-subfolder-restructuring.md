@@ -88,3 +88,98 @@ Merging `.gitignore` and moving subfolder contents to root.
 
 ---
 
+
+
+---
+
+
+
+
+
+---
+
+
+
+---
+
+
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+Contents moved. Removing the empty subfolder:
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+Verifying the project still works:
+
+
+---
+
+
+
+---
+
+
+
+
+
+---
+
+
+
+---
+
+
+
+
+
+---
+
+
+
+---
+
+
+Summary of what was done:
+
+**Move completed**
+
+- All contents of `metafi-nextjs-template-1.0.0/` are now at the project root.
+- The empty `metafi-nextjs-template-1.0.0/` folder was removed.
+- `.gitignore` was merged: the root specstory entry was added to the template’s Next.js `.gitignore`.
+- `.cursorindexingignore` stayed at the root.
+- `npm run build` succeeds.
+
+**Git impact**
+
+- There is no git repository in this project (root or subfolder), so nothing was changed in git.
+- If you run `git init` later, the root `.gitignore` will apply as usual.
+
+**Current root layout**
+
+- `src/`, `public/`, `package.json`, `next.config.ts`, etc. are at the root.
+- `Metafi.fig`, `metafi-nextjs-template-1.0.0.zip`, and `.specstory/` remain at the root.
+
+---
+
