@@ -81,6 +81,7 @@ const DataViz = ({
   const [headers, setHeaders] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [visibleSeries, setVisibleSeries] = useState<Set<string>>(new Set());
 
   const colors = COLOR_SCHEMES[colorScheme] ?? COLOR_SCHEMES.default;
 
@@ -142,6 +143,61 @@ const DataViz = ({
     return { categoryKey: catKey, seriesKeys: numericKeys, chartConfig: config };
   }, [headers, chartData, colors]);
 
+  // Initialize all series as visible when seriesKeys changes
+  useEffect(() => {
+    if (seriesKeys.length > 0) {
+      setVisibleSeries(new Set(seriesKeys));
+    }
+  }, [seriesKeys]);
+
+  // Toggle series visibility when legend item is clicked
+  const handleLegendClick = (dataKey: string) => {
+    setVisibleSeries((prev) => {
+      const next = new Set(prev);
+      if (next.has(dataKey)) {
+        next.delete(dataKey);
+      } else {
+        next.add(dataKey);
+      }
+      return next;
+    });
+  };
+
+  // Custom legend content with click handlers
+  const ClickableLegendContent = (props: any) => {
+    const { payload } = props;
+    if (!payload?.length) return null;
+
+    return (
+      <div className="flex items-center justify-center gap-4 pt-3">
+        {payload
+          .filter((item: any) => item.type !== 'none')
+          .map((item: any) => {
+            const dataKey = item.dataKey || item.value;
+            const isVisible = visibleSeries.has(dataKey);
+            const label = chartConfig[dataKey]?.label || dataKey;
+
+            return (
+              <div
+                key={dataKey}
+                onClick={() => handleLegendClick(dataKey)}
+                className={cn(
+                  'flex cursor-pointer items-center gap-1.5 transition-opacity',
+                  !isVisible && 'opacity-40'
+                )}
+              >
+                <div
+                  className="h-2 w-2 shrink-0 rounded-[2px]"
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="text-sm">{label}</span>
+              </div>
+            );
+          })}
+      </div>
+    );
+  };
+
   const renderGroupedBar = () => {
     if (chartData.length === 0 || seriesKeys.length === 0) return null;
 
@@ -157,15 +213,14 @@ const DataViz = ({
           />
           <YAxis tickLine={false} axisLine={false} />
           <ChartTooltip content={<ChartTooltipContent />} />
-          {showLegend && (
-            <ChartLegend content={<ChartLegendContent />} />
-          )}
+          {showLegend && <ChartLegend content={<ClickableLegendContent />} />}
           {seriesKeys.map((key, i) => (
             <Bar
               key={key}
               dataKey={key}
               fill={colors[i % colors.length]}
               radius={[4, 4, 0, 0]}
+              hide={!visibleSeries.has(key)}
             />
           ))}
         </BarChart>
@@ -241,10 +296,8 @@ const DataViz = ({
             y={yNum + heightNum / 2 - 6}
             textAnchor="middle"
             fill={textColor}
-            stroke="none"
             fontSize={18}
             fontWeight="bold"
-            style={{ paintOrder: 'fill' }}
           >
             {nameStr}
           </text>
@@ -253,9 +306,7 @@ const DataViz = ({
             y={yNum + heightNum / 2 + 10}
             textAnchor="middle"
             fill={textColor}
-            stroke="none"
             fontSize={15}
-            style={{ paintOrder: 'fill' }}
           >
             {sizeStr}
           </text>
@@ -335,7 +386,7 @@ const DataViz = ({
           <PolarAngleAxis dataKey={categoryKey} />
           <PolarRadiusAxis />
           <ChartTooltip content={<ChartTooltipContent />} />
-          {showLegend && <ChartLegend content={<ChartLegendContent />} />}
+          {showLegend && <ChartLegend content={<ClickableLegendContent />} />}
           {seriesKeys.map((key, i) => (
             <Radar
               key={key}
@@ -344,6 +395,7 @@ const DataViz = ({
               stroke={colors[i % colors.length]}
               fill={colors[i % colors.length]}
               fillOpacity={0.5}
+              hide={!visibleSeries.has(key)}
             />
           ))}
         </RadarChart>
