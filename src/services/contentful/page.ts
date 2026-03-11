@@ -135,7 +135,9 @@ type PageBySlugResponse = {
       slug: string;
       internalName?: string | null;
       sectionsCollection?: {
-        items: Array<RawHero | RawFaq | RawTabbedContent | RawFeatures | RawDataViz | null>;
+        items: Array<
+          RawHero | RawFaq | RawTabbedContent | RawFeatures | RawDataViz | null
+        >;
       } | null;
       ntExperiencesCollection?: NtExperiencesCollection | null;
     }>;

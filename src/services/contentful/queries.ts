@@ -196,3 +196,91 @@ export const TABBED_CONTENT_BY_ID = `
     }
   }
 `;
+
+/** MediaWrapper fragment: asset URL + channel/aspect-ratio metadata. */
+const MEDIA_WRAPPER_FIELDS = `
+  __typename
+  sys { id }
+  ... on MediaWrapper {
+    internalName
+    asset { url width height }
+    channels
+    aspectRatios
+  }
+`;
+
+/** Game fragment: core game metadata used by Banner and SocialPost. */
+const GAME_FIELDS = `
+  __typename
+  sys { id }
+  ... on Game {
+    title
+    week
+    seasonYear
+    opponentName
+    homeAway
+    kickoffDateTime
+  }
+`;
+
+/** Banner fragment: gameday banner for web + mobile surfaces. */
+const BANNER_FIELDS = `
+  __typename
+  sys { id }
+  ... on Banner {
+    internalName
+    headline
+    subheadline
+    copy
+    ctaText
+    ctaUrl
+    game {
+      ${GAME_FIELDS}
+    }
+    media {
+      ${MEDIA_WRAPPER_FIELDS}
+    }
+  }
+`;
+
+/** SocialPost fragment: one social post per channel. */
+const SOCIAL_POST_FIELDS = `
+  __typename
+  sys { id }
+  ... on SocialPost {
+    internalName
+    channel
+    postType
+    copy
+    hashtags
+    status
+    game {
+      ${GAME_FIELDS}
+    }
+    media {
+      ${MEDIA_WRAPPER_FIELDS}
+    }
+  }
+`;
+
+/** Fetch a single Banner entry by entry ID (for ID-based live preview). */
+export const BANNER_BY_ID = `
+  query BannerById($id: String!, $locale: String!, $preview: Boolean) {
+    bannerCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${BANNER_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single SocialPost entry by entry ID (for ID-based live preview). */
+export const SOCIAL_POST_BY_ID = `
+  query SocialPostById($id: String!, $locale: String!, $preview: Boolean) {
+    socialPostCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${SOCIAL_POST_FIELDS}
+      }
+    }
+  }
+`;

@@ -76,7 +76,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`h-screen ${inter.variable} antialiased`}>
+      <body
+        className={`h-screen ${inter.variable} antialiased`}
+        data-theme={process.env.NEXT_PUBLIC_BRAND}
+      >
         {/* Inline script runs before React: when Contentful iframes root (/) we redirect immediately so the Section Style Editor loads, not the homepage */}
         <script
           dangerouslySetInnerHTML={{

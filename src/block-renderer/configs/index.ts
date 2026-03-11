@@ -1,4 +1,5 @@
 import type {
+  BannerFragment,
   BlockConfig,
   BlockData,
   DataVizFragment,
@@ -7,6 +8,7 @@ import type {
   HeroFragment,
   TabbedContentFragment,
 } from '@/block-renderer/types';
+import { Banner } from '@/cms-components/banner';
 import { DataViz } from '@/cms-components/data-viz';
 import { Faq } from '@/cms-components/faq';
 import { Features } from '@/cms-components/features';
@@ -48,10 +50,18 @@ const dataVizConfig: BlockConfig<DataVizFragment> = {
   },
 };
 
+const bannerConfig: BlockConfig<BannerFragment> = {
+  typename: 'Banner',
+  layouts: {
+    default: () => Banner,
+  },
+};
+
 export const blockConfigs: BlockConfig<BlockData>[] = [
   heroConfig as BlockConfig<BlockData>,
   faqConfig as BlockConfig<BlockData>,
   tabbedContentConfig as BlockConfig<BlockData>,
   featuresConfig as BlockConfig<BlockData>,
   dataVizConfig as BlockConfig<BlockData>,
+  bannerConfig as BlockConfig<BlockData>,
 ];

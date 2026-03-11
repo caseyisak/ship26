@@ -24,7 +24,14 @@ export async function GET(request: NextRequest) {
   const base = request.nextUrl.origin;
 
   // ID-based preview (e.g. Hero, TabbedContent, DataViz): redirect to /preview/[type]/[entryId]
-  if (entryId && (type === 'hero' || type === 'tabbedContent' || type === 'dataViz')) {
+  if (
+    entryId &&
+    (type === 'hero' ||
+      type === 'tabbedContent' ||
+      type === 'dataViz' ||
+      type === 'banner' ||
+      type === 'socialPost')
+  ) {
     if (
       entryId.includes('entry.') ||
       entryId.includes('NOT_FOUND') ||
@@ -34,7 +41,11 @@ export async function GET(request: NextRequest) {
         {
           error:
             'Contentful did not substitute the entry ID. Fix in Contentful: Settings → Content preview → ' +
-            (type === 'hero' ? 'Hero' : type === 'dataViz' ? 'Data Viz' : 'TabbedContent') +
+            (type === 'hero'
+              ? 'Hero'
+              : type === 'dataViz'
+                ? 'Data Viz'
+                : 'TabbedContent') +
             ' → set Preview URL and use the Entry ID merge tag (e.g. {{entry.sys.id}} or insert "Entry ID" / "System → ID") so the URL contains the real ID, not a placeholder.',
           received: entryId,
         },
