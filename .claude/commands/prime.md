@@ -80,6 +80,11 @@ Raw GraphQL data is passed to the client *untransformed* so `useLiveUpdates()` c
 - Features block: content types created in Contentful, entry `6sAqLv0XQlh4b3ipvEg5qH` ready to add to a Page
 - Next work: add Features block to a Page's sections in Contentful; wire personalization (`ntExperiencesCollection`)
 
+## Active Demo Project
+- **Chicago Bears demo** — branch `demo/bears`, Contentful env `bears`
+- Full brief: `documentation/bears-demo.md` — what's built, what's open, how to run
+- Open work: API token access, sample entries, preview URLs, logo, Contentful Release
+
 ## How to start working
 
 1. Read `TASKS.md` for current milestone status
