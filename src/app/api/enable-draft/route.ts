@@ -52,7 +52,16 @@ export async function GET(request: NextRequest) {
         { status: 400 },
       );
     }
-    const redirectUrl = `${base}/preview/${type}/${encodeURIComponent(entryId)}`;
+    // Map camelCase type params to kebab-case route segments
+    const typeToRoute: Record<string, string> = {
+      hero: 'hero',
+      tabbedContent: 'tabbed-content',
+      dataViz: 'data-viz',
+      banner: 'banner',
+      socialPost: 'social-post',
+    };
+    const routeSegment = typeToRoute[type] ?? type;
+    const redirectUrl = `${base}/preview/${routeSegment}/${encodeURIComponent(entryId)}`;
     const res = NextResponse.redirect(redirectUrl);
     try {
       const draft = await draftMode();

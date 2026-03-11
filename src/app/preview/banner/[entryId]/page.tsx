@@ -30,7 +30,7 @@ export default async function PreviewBannerPage({
   if (!banner) notFound();
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-6" data-theme={process.env.NEXT_PUBLIC_BRAND}>
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 flex items-center gap-3">
           <span className="rounded bg-[#0B1F41] px-3 py-1 text-xs font-bold tracking-widest text-white uppercase">
