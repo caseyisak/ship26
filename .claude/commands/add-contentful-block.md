@@ -79,6 +79,29 @@ Follow `.claude/commands/skills/continuous-improvement.md` for the full protocol
 
 Before asking any questions, follow skill **contentful-block-discovery** (read `.claude/commands/skills/contentful-block-discovery.md`):
 
+### 0a-pre. Research shadcnblocks for a matching component (MANDATORY)
+
+Before searching the local codebase, check shadcnblocks for a pre-built component:
+
+1. Browse https://www.shadcnblocks.com/components to find components matching the block type (e.g. searching "banner", "faq", "hero", "pricing")
+2. Identify the best-fit component — consider layout, fields, and visual match
+3. Present your finding to the user:
+
+```
+## shadcnblocks Match
+
+**Component found:** [name] — [URL]
+**Rationale:** [why this is a good fit — layout, fields, visual match]
+**Install command:** bunx shadcn add @shadcnblocks/[name]
+
+Shall I use this component as the base, or build a custom one?
+```
+
+4. Wait for user to confirm before proceeding
+5. If no good match found, note "No shadcnblocks match — will build custom" and continue
+
+> **Auth note:** Premium components require `SHADCNBLOCKS_API_KEY` in `.env.local` and the `@shadcnblocks` registry in `components.json` (already configured in this repo).
+
 ### 0a. Search for existing components
 
 ```
