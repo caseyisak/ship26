@@ -1,6 +1,6 @@
 ---
 name: contentful-block-discovery
-description: Discovery phase for new Contentful blocks. Finds existing static components, identifies patterns, and checks lessons learned before writing any code. Use when starting a new Contentful block (Milestone 0 / Phase 0), when user says "add a new block", "create a new section", "build a new Contentful component", "what existing components exist for X", or "start the block workflow". Do NOT use for writing code — use contentful-block-graphql-types, contentful-block-component, or contentful-block-live-preview for that.
+description: Starting point for all new Contentful block development. Run this before any other block skill — before writing GraphQL types, creating content types, or building React components — when the user's goal is to add a new block or section to the site. The key signal is NEW block work beginning, not which specific task they mention. Skip only when the user has confirmed discovery is already done, or the request is about fixing/debugging an existing block.
 metadata:
   author: metafi-project
   version: 1.0.0

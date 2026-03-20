@@ -1,6 +1,6 @@
 ---
 name: contentful-block-live-preview
-description: Add ID-based live preview support for a Contentful block — preview route, BY_ID query, get-by-ID service, and enable-draft branch. Use at Milestone 4 when user says "add live preview", "wire up preview route", "set up the preview URL", "add the BY_ID query", "enable direct preview from Contentful", or "Milestone 4". Do NOT use for page-level live preview issues (see page-content-live.tsx) or for verifying preview works (use contentful-live-preview-verify).
+description: Milestone 4 of the Contentful block workflow — run when it's time to wire up live preview for a new block (preview route, BY_ID query, get-by-ID service, enable-draft branch). Invoke when user says "add live preview", "wire up preview route", "set up the preview URL", "add the BY_ID query", "enable direct preview", or "Milestone 4". Skip for page-level live preview debugging (see page-content-live.tsx) or verifying preview works (use contentful-live-preview-verify).
 metadata:
   author: metafi-project
   version: 1.0.0

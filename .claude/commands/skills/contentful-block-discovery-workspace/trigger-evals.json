@@ -1,0 +1,82 @@
+[
+  {
+    "query": "i want to add a pricing section to the site — it'll be driven by contentful. where do we start?",
+    "should_trigger": true
+  },
+  {
+    "query": "let's build a testimonials block. check what we already have before we write anything",
+    "should_trigger": true
+  },
+  {
+    "query": "need a new 'team bios' section in contentful, can you do the discovery pass first",
+    "should_trigger": true
+  },
+  {
+    "query": "start a new block for a video hero. do phase 0 before anything else",
+    "should_trigger": true
+  },
+  {
+    "query": "we're adding a stats/metrics section to the homepage — check existing components and lessons first",
+    "should_trigger": true
+  },
+  {
+    "query": "what existing components do we have that might work for a social proof / quote carousel block?",
+    "should_trigger": true
+  },
+  {
+    "query": "kick off the workflow for a new feature comparison table block",
+    "should_trigger": true
+  },
+  {
+    "query": "before we start on the new blog post teaser block, do a full discovery pass — existing static components, patterns, applicable lessons",
+    "should_trigger": true
+  },
+  {
+    "query": "add a new contentful block for a CTA section. start with discovery so we know what patterns to follow",
+    "should_trigger": true
+  },
+  {
+    "query": "i need a new banner/announcement bar content type wired up to the site. check what's there first",
+    "should_trigger": true
+  },
+  {
+    "query": "add the graphql fragment and types.ts entry for the new pricing block — discovery is already done",
+    "should_trigger": false
+  },
+  {
+    "query": "create the react component for the features block, milestone 2",
+    "should_trigger": true
+  },
+  {
+    "query": "create the content type in contentful for the new stats block, use the mcp tools",
+    "should_trigger": true
+  },
+  {
+    "query": "live preview isn't updating when i edit the hero headline in contentful. can you debug it?",
+    "should_trigger": false
+  },
+  {
+    "query": "add the preview route and BY_ID query for the FAQ block",
+    "should_trigger": false
+  },
+  {
+    "query": "archive the data-viz milestone and update lessons learned",
+    "should_trigger": false
+  },
+  {
+    "query": "i already ran discovery — now wire up the graphql types for the pricing block",
+    "should_trigger": false
+  },
+  {
+    "query": "how does useLiveUpdates work in this project? walk me through the hero implementation",
+    "should_trigger": false
+  },
+  {
+    "query": "fix the typescript error in data-viz.tsx — Property 'chartData' does not exist on type 'DataVizFragment'",
+    "should_trigger": false
+  },
+  {
+    "query": "what does the features block graphql fragment look like? i just want to understand the pattern",
+    "should_trigger": false
+  }
+]

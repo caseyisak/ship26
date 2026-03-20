@@ -1,6 +1,6 @@
 ---
 name: contentful-block-component
-description: Create the React component and block config registration for a new Contentful block. Use at Milestone 2 when user says "create the component", "add the cms-component", "build the React component", "register the block", "wire up the component", or "Milestone 2". Do NOT use for GraphQL/types work (use contentful-block-graphql-types) or for creating content types in Contentful (use contentful-mcp-create-model).
+description: Milestone 2 of the Contentful block workflow — run when it's time to build the React component and register it in the block config. Invoke when user says "create the component", "build the React component", "add the cms-component", "register the block", "Milestone 2", or when types are done and the component is the next step. Skip for GraphQL/types work (use contentful-block-graphql-types) or creating Contentful content types (use contentful-mcp-create-model).
 metadata:
   author: metafi-project
   version: 1.0.0

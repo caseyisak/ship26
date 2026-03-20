@@ -1,6 +1,6 @@
 ---
 name: contentful-mcp-create-model
-description: Create content types and entries in Contentful using the Contentful Management MCP tools. Use at Milestone 3 when user says "create the content type", "create the content model", "add this to Contentful", "create sample entries", "set up Contentful", or "Milestone 3". Includes exact tool call sequence and locale wrapper format. Do NOT use for querying existing content (call mcp__contentful__get_content_type directly) or for adding GraphQL types in code (use contentful-block-graphql-types).
+description: Milestone 3 of the Contentful block workflow — run when it's time to create content types and sample entries in Contentful via MCP tools. Invoke when user says "create the content type", "create the content model", "add this to Contentful", "create sample entries", "set up Contentful", or "Milestone 3". Includes exact MCP tool sequence and locale wrapper format. Skip for querying existing content (call mcp__contentful__get_content_type directly) or adding GraphQL types in code (use contentful-block-graphql-types).
 metadata:
   author: metafi-project
   version: 1.0.0

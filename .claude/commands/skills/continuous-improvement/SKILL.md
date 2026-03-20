@@ -1,6 +1,6 @@
 ---
 name: continuous-improvement
-description: Post-run protocol to keep TASKS.md focused, archive completed work, and capture lessons learned. Use at the end of every task or milestone when user says "archive this", "update lessons learned", "clean up TASKS.md", "mark milestone complete", "end of milestone", or "run continuous improvement". Do NOT use mid-task — only after a milestone or discrete unit of work is complete.
+description: End-of-milestone housekeeping — run after any task or milestone completes to archive finished work, update lessons learned, and keep TASKS.md clean. Invoke when user says "archive this", "update lessons learned", "clean up TASKS.md", "mark milestone complete", "end of milestone", "we're done", or "run continuous improvement". Do NOT use mid-task — only after a milestone or discrete unit of work is fully done.
 metadata:
   author: metafi-project
   version: 1.0.0

@@ -1,6 +1,6 @@
 ---
 name: contentful-live-preview-verify
-description: Verify Contentful live preview works correctly by capturing browser diagnostics (console, network, screenshots) and matching against known error patterns. Use when live preview is broken, when user says "preview not working", "debug live preview", "check why preview isn't updating", "verify the preview", or at Milestone 5 of the add-contentful-block workflow. Do NOT use for adding live preview support to a new block (use contentful-block-live-preview).
+description: Browser-based debugging tool for broken Contentful live preview — captures console errors, network failures, and screenshots, then matches against LL-001–LL-008 known error patterns. Run when the preview iframe isn't updating, showing errors, or rendering incorrectly. Invoke when user says "preview not working", "debug live preview", "check why preview isn't updating", "verify the preview", or at Milestone 5. Skip for adding new preview support (use contentful-block-live-preview).
 allowed-tools: mcp__docker__browser_navigate, mcp__docker__browser_take_screenshot, mcp__docker__browser_console_messages, mcp__docker__browser_network_requests, mcp__docker__browser_wait_for, mcp__docker__browser_resize, mcp__docker__browser_evaluate, mcp__docker__browser_snapshot, Bash(lsof:*), Bash(curl:*)
 metadata:
   author: metafi-project

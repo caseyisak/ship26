@@ -1,0 +1,1646 @@
+Split: 13 train, 7 test (holdout=0.4)
+
+============================================================
+Iteration 1/5
+Description: Discovery phase for new Contentful blocks. Finds existing static components, identifies patterns, and checks lessons learned before writing any code. Use when starting a new Contentful block (Milestone 0 / Phase 0), when user says "add a new block", "create a new section", "build a new Contentful component", "what existing components exist for X", or "start the block workflow". Do NOT use for writing code — use contentful-block-graphql-types, contentful-block-component, or contentful-block-live-preview for that.
+============================================================
+Train: 15/39 correct, precision=100% recall=0% accuracy=38% (132.1s)
+  [FAIL] rate=0/3 expected=True: i need a new banner/announcement bar content type wired up t
+  [FAIL] rate=0/3 expected=True: kick off the workflow for a new feature comparison table blo
+  [FAIL] rate=0/3 expected=True: create the content type in contentful for the new stats bloc
+  [FAIL] rate=0/3 expected=True: start a new block for a video hero. do phase 0 before anythi
+  [FAIL] rate=0/3 expected=True: we're adding a stats/metrics section to the homepage — check
+  [FAIL] rate=0/3 expected=True: i want to add a pricing section to the site — it'll be drive
+  [FAIL] rate=0/3 expected=True: let's build a testimonials block. check what we already have
+  [FAIL] rate=0/3 expected=True: create the react component for the features block, milestone
+  [PASS] rate=0/3 expected=False: i already ran discovery — now wire up the graphql types for 
+  [PASS] rate=0/3 expected=False: live preview isn't updating when i edit the hero headline in
+  [PASS] rate=0/3 expected=False: fix the typescript error in data-viz.tsx — Property 'chartDa
+  [PASS] rate=0/3 expected=False: what does the features block graphql fragment look like? i j
+  [PASS] rate=0/3 expected=False: add the graphql fragment and types.ts entry for the new pric
+Test : 9/21 correct, precision=100% recall=0% accuracy=43% (0.0s)
+  [FAIL] rate=0/3 expected=True: before we start on the new blog post teaser block, do a full
+  [FAIL] rate=0/3 expected=True: what existing components do we have that might work for a so
+  [FAIL] rate=0/3 expected=True: need a new 'team bios' section in contentful, can you do the
+  [FAIL] rate=0/3 expected=True: add a new contentful block for a CTA section. start with dis
+  [PASS] rate=0/3 expected=False: archive the data-viz milestone and update lessons learned
+  [PASS] rate=0/3 expected=False: how does useLiveUpdates work in this project? walk me throug
+  [PASS] rate=0/3 expected=False: add the preview route and BY_ID query for the FAQ block
+
+Improving description...
+Proposed (15.7s): Use this skill at the START of any new Contentful block or section — before writing any code. Triggers on: "add a [X] block", "build a [X] section", "create a new [X] content type", "we need a [X] component", "wire up [X] to the site", "start the block workflow", "phase 0", "check what's there first", "check existing components", "kick off the workflow". Performs discovery: scans for existing static components, reviews cms-component patterns, checks lessons learned. Also triggers when the user wants to begin a multi-milestone block workflow without specifying a milestone. Do NOT use when a specific milestone is named (Milestone 1–5), when the user explicitly says "discovery already done", or when the request is about fixing/debugging an existing block.
+
+============================================================
+Iteration 2/5
+Description: Use this skill at the START of any new Contentful block or section — before writing any code. Triggers on: "add a [X] block", "build a [X] section", "create a new [X] content type", "we need a [X] component", "wire up [X] to the site", "start the block workflow", "phase 0", "check what's there first", "check existing components", "kick off the workflow". Performs discovery: scans for existing static components, reviews cms-component patterns, checks lessons learned. Also triggers when the user wants to begin a multi-milestone block workflow without specifying a milestone. Do NOT use when a specific milestone is named (Milestone 1–5), when the user explicitly says "discovery already done", or when the request is about fixing/debugging an existing block.
+============================================================
+Train: 15/39 correct, precision=100% recall=0% accuracy=38% (134.6s)
+  [FAIL] rate=0/3 expected=True: i need a new banner/announcement bar content type wired up t
+  [FAIL] rate=0/3 expected=True: create the content type in contentful for the new stats bloc
+  [FAIL] rate=0/3 expected=True: kick off the workflow for a new feature comparison table blo
+  [FAIL] rate=0/3 expected=True: start a new block for a video hero. do phase 0 before anythi
+  [FAIL] rate=0/3 expected=True: we're adding a stats/metrics section to the homepage — check
+  [FAIL] rate=0/3 expected=True: let's build a testimonials block. check what we already have
+  [FAIL] rate=0/3 expected=True: i want to add a pricing section to the site — it'll be drive
+  [FAIL] rate=0/3 expected=True: create the react component for the features block, milestone
+  [PASS] rate=0/3 expected=False: i already ran discovery — now wire up the graphql types for 
+  [PASS] rate=0/3 expected=False: fix the typescript error in data-viz.tsx — Property 'chartDa
+  [PASS] rate=0/3 expected=False: live preview isn't updating when i edit the hero headline in
+  [PASS] rate=0/3 expected=False: what does the features block graphql fragment look like? i j
+  [PASS] rate=0/3 expected=False: add the graphql fragment and types.ts entry for the new pric
+Test : 9/21 correct, precision=100% recall=0% accuracy=43% (0.0s)
+  [FAIL] rate=0/3 expected=True: before we start on the new blog post teaser block, do a full
+  [FAIL] rate=0/3 expected=True: what existing components do we have that might work for a so
+  [FAIL] rate=0/3 expected=True: need a new 'team bios' section in contentful, can you do the
+  [FAIL] rate=0/3 expected=True: add a new contentful block for a CTA section. start with dis
+  [PASS] rate=0/3 expected=False: archive the data-viz milestone and update lessons learned
+  [PASS] rate=0/3 expected=False: how does useLiveUpdates work in this project? walk me throug
+  [PASS] rate=0/3 expected=False: add the preview route and BY_ID query for the FAQ block
+
+Improving description...
+Proposed (52.8s): Invoke FIRST whenever a user wants to add, build, create, or start any new Contentful-backed block, section, or component — even if they also mention a specific milestone or next step. This is the mandatory entry point that scans existing components, reviews patterns, and checks lessons learned before any code is written. Covers: "add a [X] block", "build a [X] section", "create a content type for [X]", "wire up [X] to the site", "we need a [X] component", "kick off the workflow", "phase 0", "where do we start", "check what's there first". Skip only when the user has already run discovery and says so explicitly, or when the request is purely about debugging or fixing an existing block.
+
+============================================================
+Iteration 3/5
+Description: Invoke FIRST whenever a user wants to add, build, create, or start any new Contentful-backed block, section, or component — even if they also mention a specific milestone or next step. This is the mandatory entry point that scans existing components, reviews patterns, and checks lessons learned before any code is written. Covers: "add a [X] block", "build a [X] section", "create a content type for [X]", "wire up [X] to the site", "we need a [X] component", "kick off the workflow", "phase 0", "where do we start", "check what's there first". Skip only when the user has already run discovery and says so explicitly, or when the request is purely about debugging or fixing an existing block.
+============================================================
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Train: 15/39 correct, precision=100% recall=0% accuracy=38% (96.9s)
+  [FAIL] rate=0/3 expected=True: kick off the workflow for a new feature comparison table blo
+  [FAIL] rate=0/3 expected=True: i need a new banner/announcement bar content type wired up t
+  [FAIL] rate=0/3 expected=True: create the content type in contentful for the new stats bloc
+  [FAIL] rate=0/3 expected=True: start a new block for a video hero. do phase 0 before anythi
+  [FAIL] rate=0/3 expected=True: create the react component for the features block, milestone
+  [PASS] rate=0/3 expected=False: i already ran discovery — now wire up the graphql types for 
+  [PASS] rate=0/3 expected=False: live preview isn't updating when i edit the hero headline in
+  [PASS] rate=0/3 expected=False: fix the typescript error in data-viz.tsx — Property 'chartDa
+  [PASS] rate=0/3 expected=False: what does the features block graphql fragment look like? i j
+  [PASS] rate=0/3 expected=False: add the graphql fragment and types.ts entry for the new pric
+  [FAIL] rate=0/3 expected=True: we're adding a stats/metrics section to the homepage — check
+  [FAIL] rate=0/3 expected=True: i want to add a pricing section to the site — it'll be drive
+  [FAIL] rate=0/3 expected=True: let's build a testimonials block. check what we already have
+Test : 9/21 correct, precision=100% recall=0% accuracy=43% (0.0s)
+  [FAIL] rate=0/3 expected=True: before we start on the new blog post teaser block, do a full
+  [FAIL] rate=0/3 expected=True: what existing components do we have that might work for a so
+  [FAIL] rate=0/3 expected=True: need a new 'team bios' section in contentful, can you do the
+  [FAIL] rate=0/3 expected=True: add a new contentful block for a CTA section. start with dis
+  [PASS] rate=0/3 expected=False: archive the data-viz milestone and update lessons learned
+  [PASS] rate=0/3 expected=False: how does useLiveUpdates work in this project? walk me throug
+  [PASS] rate=0/3 expected=False: add the preview route and BY_ID query for the FAQ block
+
+Improving description...
+Proposed (35.1s): Mandatory first step before any new Contentful block is built. Run this before creating content types, writing components, or starting any milestone — it scans existing components and patterns so work isn't duplicated. Invoke when a user wants to add, build, or start any new Contentful block, section, or component, even if they also mention a specific milestone or next step (Milestone 1–5). Covers: "add a [X] block", "build a [X] section", "create a content type for [X]", "we need a [X] component", "phase 0", "kick off the workflow", "where do we start", "check what's there first", "check existing components". Skip only when the user explicitly says discovery is already done, or when the request is about debugging or fixing an existing block (not creating a new one).
+
+============================================================
+Iteration 4/5
+Description: Mandatory first step before any new Contentful block is built. Run this before creating content types, writing components, or starting any milestone — it scans existing components and patterns so work isn't duplicated. Invoke when a user wants to add, build, or start any new Contentful block, section, or component, even if they also mention a specific milestone or next step (Milestone 1–5). Covers: "add a [X] block", "build a [X] section", "create a content type for [X]", "we need a [X] component", "phase 0", "kick off the workflow", "where do we start", "check what's there first", "check existing components". Skip only when the user explicitly says discovery is already done, or when the request is about debugging or fixing an existing block (not creating a new one).
+============================================================
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Warning: query failed: [Errno 2] No such file or directory: 'claude'
+Train: 15/39 correct, precision=100% recall=0% accuracy=38% (49.0s)
+  [FAIL] rate=0/3 expected=True: i need a new banner/announcement bar content type wired up t
+  [FAIL] rate=0/3 expected=True: create the content type in contentful for the new stats bloc
+  [FAIL] rate=0/3 expected=True: kick off the workflow for a new feature comparison table blo
+  [FAIL] rate=0/3 expected=True: start a new block for a video hero. do phase 0 before anythi
+  [FAIL] rate=0/3 expected=True: let's build a testimonials block. check what we already have
+  [FAIL] rate=0/3 expected=True: create the react component for the features block, milestone
+  [PASS] rate=0/3 expected=False: i already ran discovery — now wire up the graphql types for 
+  [PASS] rate=0/3 expected=False: live preview isn't updating when i edit the hero headline in
+  [PASS] rate=0/3 expected=False: fix the typescript error in data-viz.tsx — Property 'chartDa
+  [PASS] rate=0/3 expected=False: what does the features block graphql fragment look like? i j
+  [PASS] rate=0/3 expected=False: add the graphql fragment and types.ts entry for the new pric
+  [FAIL] rate=0/3 expected=True: we're adding a stats/metrics section to the homepage — check
+  [FAIL] rate=0/3 expected=True: i want to add a pricing section to the site — it'll be drive
+Test : 9/21 correct, precision=100% recall=0% accuracy=43% (0.0s)
+  [FAIL] rate=0/3 expected=True: before we start on the new blog post teaser block, do a full
+  [FAIL] rate=0/3 expected=True: what existing components do we have that might work for a so
+  [FAIL] rate=0/3 expected=True: need a new 'team bios' section in contentful, can you do the
+  [FAIL] rate=0/3 expected=True: add a new contentful block for a CTA section. start with dis
+  [PASS] rate=0/3 expected=False: archive the data-viz milestone and update lessons learned
+  [PASS] rate=0/3 expected=False: how does useLiveUpdates work in this project? walk me throug
+  [PASS] rate=0/3 expected=False: add the preview route and BY_ID query for the FAQ block
+
+Improving description...
+Proposed (65.7s): Starting point for all new Contentful block development. Run this before any other block skill — before writing GraphQL types, creating content types, or building React components — when the user's goal is to add a new block or section to the site. The key signal is NEW block work beginning, not which specific task they mention. Skip only when the user has confirmed discovery is already done, or the request is about fixing/debugging an existing block.
+
+============================================================
+Iteration 5/5
+Description: Starting point for all new Contentful block development. Run this before any other block skill — before writing GraphQL types, creating content types, or building React components — when the user's goal is to add a new block or section to the site. The key signal is NEW block work beginning, not which specific task they mention. Skip only when the user has confirmed discovery is already done, or the request is about fixing/debugging an existing block.
+============================================================
+Train: 16/39 correct, precision=100% recall=4% accuracy=41% (131.2s)
+  [FAIL] rate=0/3 expected=True: start a new block for a video hero. do phase 0 before anythi
+  [FAIL] rate=0/3 expected=True: i need a new banner/announcement bar content type wired up t
+  [FAIL] rate=0/3 expected=True: create the content type in contentful for the new stats bloc
+  [FAIL] rate=0/3 expected=True: kick off the workflow for a new feature comparison table blo
+  [FAIL] rate=0/3 expected=True: we're adding a stats/metrics section to the homepage — check
+  [FAIL] rate=0/3 expected=True: i want to add a pricing section to the site — it'll be drive
+  [FAIL] rate=1/3 expected=True: let's build a testimonials block. check what we already have
+  [FAIL] rate=0/3 expected=True: create the react component for the features block, milestone
+  [PASS] rate=0/3 expected=False: i already ran discovery — now wire up the graphql types for 
+  [PASS] rate=0/3 expected=False: live preview isn't updating when i edit the hero headline in
+  [PASS] rate=0/3 expected=False: what does the features block graphql fragment look like? i j
+  [PASS] rate=0/3 expected=False: fix the typescript error in data-viz.tsx — Property 'chartDa
+  [PASS] rate=0/3 expected=False: add the graphql fragment and types.ts entry for the new pric
+Test : 9/21 correct, precision=100% recall=0% accuracy=43% (0.0s)
+  [FAIL] rate=0/3 expected=True: before we start on the new blog post teaser block, do a full
+  [FAIL] rate=0/3 expected=True: what existing components do we have that might work for a so
+  [FAIL] rate=0/3 expected=True: need a new 'team bios' section in contentful, can you do the
+  [FAIL] rate=0/3 expected=True: add a new contentful block for a CTA section. start with dis
+  [PASS] rate=0/3 expected=False: archive the data-viz milestone and update lessons learned
+  [PASS] rate=0/3 expected=False: how does useLiveUpdates work in this project? walk me throug
+  [PASS] rate=0/3 expected=False: add the preview route and BY_ID query for the FAQ block
+
+Max iterations reached (5).
+
+Exit reason: max_iterations (5)
+Best score: 3/7 (iteration 1)
+{
+  "exit_reason": "max_iterations (5)",
+  "original_description": "Discovery phase for new Contentful blocks. Finds existing static components, identifies patterns, and checks lessons learned before writing any code. Use when starting a new Contentful block (Milestone 0 / Phase 0), when user says \"add a new block\", \"create a new section\", \"build a new Contentful component\", \"what existing components exist for X\", or \"start the block workflow\". Do NOT use for writing code \u2014 use contentful-block-graphql-types, contentful-block-component, or contentful-block-live-preview for that.",
+  "best_description": "Discovery phase for new Contentful blocks. Finds existing static components, identifies patterns, and checks lessons learned before writing any code. Use when starting a new Contentful block (Milestone 0 / Phase 0), when user says \"add a new block\", \"create a new section\", \"build a new Contentful component\", \"what existing components exist for X\", or \"start the block workflow\". Do NOT use for writing code \u2014 use contentful-block-graphql-types, contentful-block-component, or contentful-block-live-preview for that.",
+  "best_score": "3/7",
+  "best_train_score": "5/13",
+  "best_test_score": "3/7",
+  "final_description": "Starting point for all new Contentful block development. Run this before any other block skill \u2014 before writing GraphQL types, creating content types, or building React components \u2014 when the user's goal is to add a new block or section to the site. The key signal is NEW block work beginning, not which specific task they mention. Skip only when the user has confirmed discovery is already done, or the request is about fixing/debugging an existing block.",
+  "iterations_run": 5,
+  "holdout": 0.4,
+  "train_size": 13,
+  "test_size": 7,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "Discovery phase for new Contentful blocks. Finds existing static components, identifies patterns, and checks lessons learned before writing any code. Use when starting a new Contentful block (Milestone 0 / Phase 0), when user says \"add a new block\", \"create a new section\", \"build a new Contentful component\", \"what existing components exist for X\", or \"start the block workflow\". Do NOT use for writing code \u2014 use contentful-block-graphql-types, contentful-block-component, or contentful-block-live-preview for that.",
+      "train_passed": 5,
+      "train_failed": 8,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "i need a new banner/announcement bar content type wired up to the site. check what's there first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "kick off the workflow for a new feature comparison table block",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the content type in contentful for the new stats block, use the mcp tools",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "start a new block for a video hero. do phase 0 before anything else",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "we're adding a stats/metrics section to the homepage \u2014 check existing components and lessons first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to add a pricing section to the site \u2014 it'll be driven by contentful. where do we start?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "let's build a testimonials block. check what we already have before we write anything",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the react component for the features block, milestone 2",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i already ran discovery \u2014 now wire up the graphql types for the pricing block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "live preview isn't updating when i edit the hero headline in contentful. can you debug it?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "fix the typescript error in data-viz.tsx \u2014 Property 'chartData' does not exist on type 'DataVizFragment'",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what does the features block graphql fragment look like? i just want to understand the pattern",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the graphql fragment and types.ts entry for the new pricing block \u2014 discovery is already done",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 3,
+      "test_failed": 4,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "before we start on the new blog post teaser block, do a full discovery pass \u2014 existing static components, patterns, applicable lessons",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what existing components do we have that might work for a social proof / quote carousel block?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "need a new 'team bios' section in contentful, can you do the discovery pass first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "add a new contentful block for a CTA section. start with discovery so we know what patterns to follow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "archive the data-viz milestone and update lessons learned",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "how does useLiveUpdates work in this project? walk me through the hero implementation",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the preview route and BY_ID query for the FAQ block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 5,
+      "failed": 8,
+      "total": 13,
+      "results": [
+        {
+          "query": "i need a new banner/announcement bar content type wired up to the site. check what's there first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "kick off the workflow for a new feature comparison table block",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the content type in contentful for the new stats block, use the mcp tools",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "start a new block for a video hero. do phase 0 before anything else",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "we're adding a stats/metrics section to the homepage \u2014 check existing components and lessons first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to add a pricing section to the site \u2014 it'll be driven by contentful. where do we start?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "let's build a testimonials block. check what we already have before we write anything",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the react component for the features block, milestone 2",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i already ran discovery \u2014 now wire up the graphql types for the pricing block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "live preview isn't updating when i edit the hero headline in contentful. can you debug it?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "fix the typescript error in data-viz.tsx \u2014 Property 'chartData' does not exist on type 'DataVizFragment'",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what does the features block graphql fragment look like? i just want to understand the pattern",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the graphql fragment and types.ts entry for the new pricing block \u2014 discovery is already done",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "description": "Use this skill at the START of any new Contentful block or section \u2014 before writing any code. Triggers on: \"add a [X] block\", \"build a [X] section\", \"create a new [X] content type\", \"we need a [X] component\", \"wire up [X] to the site\", \"start the block workflow\", \"phase 0\", \"check what's there first\", \"check existing components\", \"kick off the workflow\". Performs discovery: scans for existing static components, reviews cms-component patterns, checks lessons learned. Also triggers when the user wants to begin a multi-milestone block workflow without specifying a milestone. Do NOT use when a specific milestone is named (Milestone 1\u20135), when the user explicitly says \"discovery already done\", or when the request is about fixing/debugging an existing block.",
+      "train_passed": 5,
+      "train_failed": 8,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "i need a new banner/announcement bar content type wired up to the site. check what's there first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the content type in contentful for the new stats block, use the mcp tools",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "kick off the workflow for a new feature comparison table block",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "start a new block for a video hero. do phase 0 before anything else",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "we're adding a stats/metrics section to the homepage \u2014 check existing components and lessons first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "let's build a testimonials block. check what we already have before we write anything",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to add a pricing section to the site \u2014 it'll be driven by contentful. where do we start?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the react component for the features block, milestone 2",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i already ran discovery \u2014 now wire up the graphql types for the pricing block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "fix the typescript error in data-viz.tsx \u2014 Property 'chartData' does not exist on type 'DataVizFragment'",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "live preview isn't updating when i edit the hero headline in contentful. can you debug it?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what does the features block graphql fragment look like? i just want to understand the pattern",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the graphql fragment and types.ts entry for the new pricing block \u2014 discovery is already done",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 3,
+      "test_failed": 4,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "before we start on the new blog post teaser block, do a full discovery pass \u2014 existing static components, patterns, applicable lessons",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what existing components do we have that might work for a social proof / quote carousel block?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "need a new 'team bios' section in contentful, can you do the discovery pass first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "add a new contentful block for a CTA section. start with discovery so we know what patterns to follow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "archive the data-viz milestone and update lessons learned",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "how does useLiveUpdates work in this project? walk me through the hero implementation",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the preview route and BY_ID query for the FAQ block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 5,
+      "failed": 8,
+      "total": 13,
+      "results": [
+        {
+          "query": "i need a new banner/announcement bar content type wired up to the site. check what's there first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the content type in contentful for the new stats block, use the mcp tools",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "kick off the workflow for a new feature comparison table block",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "start a new block for a video hero. do phase 0 before anything else",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "we're adding a stats/metrics section to the homepage \u2014 check existing components and lessons first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "let's build a testimonials block. check what we already have before we write anything",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to add a pricing section to the site \u2014 it'll be driven by contentful. where do we start?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the react component for the features block, milestone 2",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i already ran discovery \u2014 now wire up the graphql types for the pricing block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "fix the typescript error in data-viz.tsx \u2014 Property 'chartData' does not exist on type 'DataVizFragment'",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "live preview isn't updating when i edit the hero headline in contentful. can you debug it?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what does the features block graphql fragment look like? i just want to understand the pattern",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the graphql fragment and types.ts entry for the new pricing block \u2014 discovery is already done",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "description": "Invoke FIRST whenever a user wants to add, build, create, or start any new Contentful-backed block, section, or component \u2014 even if they also mention a specific milestone or next step. This is the mandatory entry point that scans existing components, reviews patterns, and checks lessons learned before any code is written. Covers: \"add a [X] block\", \"build a [X] section\", \"create a content type for [X]\", \"wire up [X] to the site\", \"we need a [X] component\", \"kick off the workflow\", \"phase 0\", \"where do we start\", \"check what's there first\". Skip only when the user has already run discovery and says so explicitly, or when the request is purely about debugging or fixing an existing block.",
+      "train_passed": 5,
+      "train_failed": 8,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "kick off the workflow for a new feature comparison table block",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i need a new banner/announcement bar content type wired up to the site. check what's there first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the content type in contentful for the new stats block, use the mcp tools",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "start a new block for a video hero. do phase 0 before anything else",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the react component for the features block, milestone 2",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i already ran discovery \u2014 now wire up the graphql types for the pricing block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "live preview isn't updating when i edit the hero headline in contentful. can you debug it?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "fix the typescript error in data-viz.tsx \u2014 Property 'chartData' does not exist on type 'DataVizFragment'",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what does the features block graphql fragment look like? i just want to understand the pattern",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the graphql fragment and types.ts entry for the new pricing block \u2014 discovery is already done",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "we're adding a stats/metrics section to the homepage \u2014 check existing components and lessons first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to add a pricing section to the site \u2014 it'll be driven by contentful. where do we start?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "let's build a testimonials block. check what we already have before we write anything",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        }
+      ],
+      "test_passed": 3,
+      "test_failed": 4,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "before we start on the new blog post teaser block, do a full discovery pass \u2014 existing static components, patterns, applicable lessons",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what existing components do we have that might work for a social proof / quote carousel block?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "need a new 'team bios' section in contentful, can you do the discovery pass first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "add a new contentful block for a CTA section. start with discovery so we know what patterns to follow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "archive the data-viz milestone and update lessons learned",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "how does useLiveUpdates work in this project? walk me through the hero implementation",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the preview route and BY_ID query for the FAQ block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 5,
+      "failed": 8,
+      "total": 13,
+      "results": [
+        {
+          "query": "kick off the workflow for a new feature comparison table block",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i need a new banner/announcement bar content type wired up to the site. check what's there first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the content type in contentful for the new stats block, use the mcp tools",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "start a new block for a video hero. do phase 0 before anything else",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the react component for the features block, milestone 2",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i already ran discovery \u2014 now wire up the graphql types for the pricing block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "live preview isn't updating when i edit the hero headline in contentful. can you debug it?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "fix the typescript error in data-viz.tsx \u2014 Property 'chartData' does not exist on type 'DataVizFragment'",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what does the features block graphql fragment look like? i just want to understand the pattern",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the graphql fragment and types.ts entry for the new pricing block \u2014 discovery is already done",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "we're adding a stats/metrics section to the homepage \u2014 check existing components and lessons first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to add a pricing section to the site \u2014 it'll be driven by contentful. where do we start?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "let's build a testimonials block. check what we already have before we write anything",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        }
+      ]
+    },
+    {
+      "iteration": 4,
+      "description": "Mandatory first step before any new Contentful block is built. Run this before creating content types, writing components, or starting any milestone \u2014 it scans existing components and patterns so work isn't duplicated. Invoke when a user wants to add, build, or start any new Contentful block, section, or component, even if they also mention a specific milestone or next step (Milestone 1\u20135). Covers: \"add a [X] block\", \"build a [X] section\", \"create a content type for [X]\", \"we need a [X] component\", \"phase 0\", \"kick off the workflow\", \"where do we start\", \"check what's there first\", \"check existing components\". Skip only when the user explicitly says discovery is already done, or when the request is about debugging or fixing an existing block (not creating a new one).",
+      "train_passed": 5,
+      "train_failed": 8,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "i need a new banner/announcement bar content type wired up to the site. check what's there first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the content type in contentful for the new stats block, use the mcp tools",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "kick off the workflow for a new feature comparison table block",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "start a new block for a video hero. do phase 0 before anything else",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "let's build a testimonials block. check what we already have before we write anything",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the react component for the features block, milestone 2",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i already ran discovery \u2014 now wire up the graphql types for the pricing block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "live preview isn't updating when i edit the hero headline in contentful. can you debug it?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "fix the typescript error in data-viz.tsx \u2014 Property 'chartData' does not exist on type 'DataVizFragment'",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what does the features block graphql fragment look like? i just want to understand the pattern",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the graphql fragment and types.ts entry for the new pricing block \u2014 discovery is already done",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "we're adding a stats/metrics section to the homepage \u2014 check existing components and lessons first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to add a pricing section to the site \u2014 it'll be driven by contentful. where do we start?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        }
+      ],
+      "test_passed": 3,
+      "test_failed": 4,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "before we start on the new blog post teaser block, do a full discovery pass \u2014 existing static components, patterns, applicable lessons",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what existing components do we have that might work for a social proof / quote carousel block?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "need a new 'team bios' section in contentful, can you do the discovery pass first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "add a new contentful block for a CTA section. start with discovery so we know what patterns to follow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "archive the data-viz milestone and update lessons learned",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "how does useLiveUpdates work in this project? walk me through the hero implementation",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the preview route and BY_ID query for the FAQ block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 5,
+      "failed": 8,
+      "total": 13,
+      "results": [
+        {
+          "query": "i need a new banner/announcement bar content type wired up to the site. check what's there first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the content type in contentful for the new stats block, use the mcp tools",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "kick off the workflow for a new feature comparison table block",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "start a new block for a video hero. do phase 0 before anything else",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "let's build a testimonials block. check what we already have before we write anything",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the react component for the features block, milestone 2",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i already ran discovery \u2014 now wire up the graphql types for the pricing block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "live preview isn't updating when i edit the hero headline in contentful. can you debug it?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "fix the typescript error in data-viz.tsx \u2014 Property 'chartData' does not exist on type 'DataVizFragment'",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what does the features block graphql fragment look like? i just want to understand the pattern",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the graphql fragment and types.ts entry for the new pricing block \u2014 discovery is already done",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "we're adding a stats/metrics section to the homepage \u2014 check existing components and lessons first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to add a pricing section to the site \u2014 it'll be driven by contentful. where do we start?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        }
+      ]
+    },
+    {
+      "iteration": 5,
+      "description": "Starting point for all new Contentful block development. Run this before any other block skill \u2014 before writing GraphQL types, creating content types, or building React components \u2014 when the user's goal is to add a new block or section to the site. The key signal is NEW block work beginning, not which specific task they mention. Skip only when the user has confirmed discovery is already done, or the request is about fixing/debugging an existing block.",
+      "train_passed": 5,
+      "train_failed": 8,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "start a new block for a video hero. do phase 0 before anything else",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i need a new banner/announcement bar content type wired up to the site. check what's there first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the content type in contentful for the new stats block, use the mcp tools",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "kick off the workflow for a new feature comparison table block",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "we're adding a stats/metrics section to the homepage \u2014 check existing components and lessons first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to add a pricing section to the site \u2014 it'll be driven by contentful. where do we start?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "let's build a testimonials block. check what we already have before we write anything",
+          "should_trigger": true,
+          "trigger_rate": 0.3333333333333333,
+          "triggers": 1,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the react component for the features block, milestone 2",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i already ran discovery \u2014 now wire up the graphql types for the pricing block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "live preview isn't updating when i edit the hero headline in contentful. can you debug it?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what does the features block graphql fragment look like? i just want to understand the pattern",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "fix the typescript error in data-viz.tsx \u2014 Property 'chartData' does not exist on type 'DataVizFragment'",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the graphql fragment and types.ts entry for the new pricing block \u2014 discovery is already done",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 3,
+      "test_failed": 4,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "before we start on the new blog post teaser block, do a full discovery pass \u2014 existing static components, patterns, applicable lessons",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what existing components do we have that might work for a social proof / quote carousel block?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "need a new 'team bios' section in contentful, can you do the discovery pass first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "add a new contentful block for a CTA section. start with discovery so we know what patterns to follow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "archive the data-viz milestone and update lessons learned",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "how does useLiveUpdates work in this project? walk me through the hero implementation",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the preview route and BY_ID query for the FAQ block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 5,
+      "failed": 8,
+      "total": 13,
+      "results": [
+        {
+          "query": "start a new block for a video hero. do phase 0 before anything else",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i need a new banner/announcement bar content type wired up to the site. check what's there first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the content type in contentful for the new stats block, use the mcp tools",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "kick off the workflow for a new feature comparison table block",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "we're adding a stats/metrics section to the homepage \u2014 check existing components and lessons first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to add a pricing section to the site \u2014 it'll be driven by contentful. where do we start?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "let's build a testimonials block. check what we already have before we write anything",
+          "should_trigger": true,
+          "trigger_rate": 0.3333333333333333,
+          "triggers": 1,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create the react component for the features block, milestone 2",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i already ran discovery \u2014 now wire up the graphql types for the pricing block",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "live preview isn't updating when i edit the hero headline in contentful. can you debug it?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what does the features block graphql fragment look like? i just want to understand the pattern",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "fix the typescript error in data-viz.tsx \u2014 Property 'chartData' does not exist on type 'DataVizFragment'",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add the graphql fragment and types.ts entry for the new pricing block \u2014 discovery is already done",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}
+Report: /var/folders/2q/3yfkwsvs34xfvc_2jrzvv97w0000gp/T/skill_description_report_contentful-block-discovery_20260319_180841.html
+

@@ -1,6 +1,6 @@
 ---
 name: contentful-block-graphql-types
-description: Add GraphQL fragment types, queries, and page mappers for a new Contentful block. Use at Milestone 1 when user says "add types for the block", "add the GraphQL fragment", "wire up types.ts and queries.ts", "add the mapper", or "Milestone 1". Do NOT use for creating the React component (use contentful-block-component) or creating content types in Contentful (use contentful-mcp-create-model).
+description: Milestone 1 of the Contentful block workflow — run when it's time to add GraphQL fragment types, queries, and page mappers for a new block. Invoke when user says "add types", "add the GraphQL fragment", "wire up types.ts", "add the mapper", "Milestone 1", or when discovery is done and types are the next step. Skip for React component work (use contentful-block-component) or creating Contentful content types (use contentful-mcp-create-model).
 metadata:
   author: metafi-project
   version: 1.0.0
