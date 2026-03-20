@@ -21,6 +21,36 @@ This project uses **bun** for all package and script operations. Do not use npm,
 
 ---
 
+## Where to find things
+
+| What | Where |
+|------|-------|
+| Active tasks & roadmap | `TASKS.md` |
+| Completed/archived work | `archive/tasks-archive.md` ← check here before re-doing something |
+| Known error patterns (LL-001–LL-008) | `documentation/lessons-learned.md` |
+| Component docs & architecture | `documentation/` |
+| Session memory (persists across convos) | `.claude/projects/.../memory/MEMORY.md` |
+| Demo workflow rules | `memory/project_demo_workflow.md` |
+| Worktree helper | `scripts/worktree-add.sh` |
+
+**Before starting any new task:** check `TASKS.md` for current phase, `archive/tasks-archive.md` for prior art, and `documentation/lessons-learned.md` for known pitfalls.
+
+---
+
+## Multi-CC coordination
+
+This project sometimes runs **multiple Claude Code instances in parallel** (e.g. one on `main`, one on `feat/skill-creator`).
+
+Rules to prevent overwriting each other's work:
+
+- **One CC per branch.** Never have two CC instances on the same branch at the same time.
+- **TASKS.md:** Each CC only edits its own section. The "Active branches" table in TASKS.md shows who owns what.
+- **MEMORY.md:** Only the CC on `main` writes to MEMORY.md. Other branches note things locally; the main CC merges them in on PR.
+- **Before starting work:** run `git log --oneline -5` to see what the other CC may have committed.
+- **After a branch merges to main:** run `git pull` in all other open CC sessions before continuing.
+
+---
+
 ## Contentful Live Preview Debugging
 
 When debugging Contentful live preview issues, use this context.
