@@ -106,9 +106,7 @@ describe('BlockRenderer', () => {
       </LivePreviewProvider>,
     );
     expect(screen.getByText('Sales Data')).toBeTruthy();
-    expect(
-      screen.getByText('Quarterly sales by department'),
-    ).toBeTruthy();
+    expect(screen.getByText('Quarterly sales by department')).toBeTruthy();
   });
 
   it('renders Features with mock Features data', () => {

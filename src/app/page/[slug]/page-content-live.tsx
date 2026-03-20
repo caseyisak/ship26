@@ -48,7 +48,7 @@ function transformSection(item: any): PageSection | null {
                         question: faqItem.question ?? null,
                         answer: faqItem.answer ?? null,
                       }
-                    : null
+                    : null,
                 )
                 .filter(Boolean),
             }
@@ -78,7 +78,7 @@ function transformSection(item: any): PageSection | null {
                         href: tabItem.href ?? null,
                         buttonLabel: tabItem.buttonLabel ?? null,
                       }
-                    : null
+                    : null,
                 )
                 .filter(Boolean),
             }

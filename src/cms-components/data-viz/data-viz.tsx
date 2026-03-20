@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
 import Papa from 'papaparse';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -121,7 +121,11 @@ const DataViz = ({
   // Build chart config from headers (numeric columns become series)
   const { categoryKey, seriesKeys, chartConfig } = useMemo(() => {
     if (headers.length === 0 || chartData.length === 0) {
-      return { categoryKey: '', seriesKeys: [] as string[], chartConfig: {} as ChartConfig };
+      return {
+        categoryKey: '',
+        seriesKeys: [] as string[],
+        chartConfig: {} as ChartConfig,
+      };
     }
 
     const catKey = headers[0];
@@ -140,7 +144,11 @@ const DataViz = ({
       };
     });
 
-    return { categoryKey: catKey, seriesKeys: numericKeys, chartConfig: config };
+    return {
+      categoryKey: catKey,
+      seriesKeys: numericKeys,
+      chartConfig: config,
+    };
   }, [headers, chartData, colors]);
 
   // Initialize all series as visible when seriesKeys changes
@@ -183,7 +191,7 @@ const DataViz = ({
                 onClick={() => handleLegendClick(dataKey)}
                 className={cn(
                   'flex cursor-pointer items-center gap-1.5 transition-opacity',
-                  !isVisible && 'opacity-40'
+                  !isVisible && 'opacity-40',
                 )}
               >
                 <div
@@ -372,7 +380,10 @@ const DataViz = ({
           {showLegend && <ChartLegend content={<ChartLegendContent />} />}
           <Scatter name="Data" data={chartData} fill={colors[0]}>
             {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+              <Cell
+                key={`cell-${index}`}
+                fill={colors[index % colors.length]}
+              />
             ))}
           </Scatter>
         </ScatterChart>
@@ -438,7 +449,10 @@ const DataViz = ({
           <ChartTooltip content={<ChartTooltipContent />} />
           <Bar dataKey="value" radius={[0, 4, 4, 0]}>
             {funnelData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+              <Cell
+                key={`cell-${index}`}
+                fill={colors[index % colors.length]}
+              />
             ))}
             <LabelList
               dataKey="value"
