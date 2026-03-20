@@ -1,40 +1,25 @@
-import FeaturedPost from '@/components/sections/metafi-blog-featured';
 import MetafiBlogGrid from '@/components/sections/metafi-blog-grid';
-import type { BlogPost } from '@/lib/blog';
-import { getAllBlogs } from '@/lib/blog';
+import { getBlogPosts } from '@/services/contentful/blog';
 
-function extractChip(post: BlogPost): string {
-  const fromTagline =
-    typeof post.tagline === 'string' ? post.tagline.trim() : '';
-  const fromTags =
-    Array.isArray(post.tags) && typeof post.tags[0] === 'string'
-      ? post.tags[0].trim()
-      : '';
-  return fromTagline || fromTags || 'General';
+export const dynamic = 'force-dynamic';
+
+function toHttps(url: string | null | undefined): string {
+  if (!url) return '/images/blog/placeholder.webp';
+  return url.startsWith('//') ? `https:${url}` : url;
 }
 
-export default function BlogPage() {
-  const allPosts = getAllBlogs();
+export default async function BlogPage() {
+  const posts = await getBlogPosts();
 
-  const featured = allPosts.find((p) => p.featured) ?? null;
-
-  // grid cards
-  const gridPosts = allPosts.map((p) => ({
-    slug: p.slug,
-    title:
-      (typeof p.title === 'string' ? p.title.trim() : '') ||
-      p.slug.replace(/-/g, ' '),
-    tagline: extractChip(p),
-    intro: p.description ?? '',
-    author: p.author ?? '',
-    date: p.date ?? '',
-    coverImage: p.coverImage ?? '',
+  const gridPosts = posts.map((p) => ({
+    slug: p.slug ?? '',
+    title: p.title ?? p.slug ?? '',
+    tagline: p.tags?.[0] ?? 'General',
+    intro: p.excerpt ?? '',
+    author: p.author?.name ?? 'Metafi Team',
+    date: p.publishDate ?? '',
+    coverImage: toHttps(p.heroImage?.url),
   }));
 
-  return (
-    <>
-      {featured && <FeaturedPost post={featured} />}
-      <MetafiBlogGrid posts={gridPosts} />
-    </>
-  );
+  return <MetafiBlogGrid posts={gridPosts} />;
 }

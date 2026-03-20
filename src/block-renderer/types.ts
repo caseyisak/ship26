@@ -104,6 +104,27 @@ export type DataVizFragment = BlockData & {
   showLegend?: boolean | null;
 };
 
+/** Author (matches Contentful Author content type: name, bio). */
+export type AuthorFragment = {
+  __typename: 'Author';
+  sys: { id: string };
+  name?: string | null;
+  bio?: string | null;
+};
+
+/** BlogPost (matches Contentful BlogPost content type: title, slug, excerpt, publishDate, tags, heroImage, body, author). */
+export type BlogPostFragment = BlockData & {
+  __typename: 'BlogPost';
+  title?: string | null;
+  slug?: string | null;
+  excerpt?: string | null;
+  publishDate?: string | null;
+  tags?: string[] | null;
+  heroImage?: { url?: string; width?: number; height?: number } | null;
+  body?: { json: unknown } | null;
+  author?: AuthorFragment | null;
+};
+
 export type PersonalizedBlockData = BlockData & {
   ntExperiencesCollection?: { items: unknown[] };
 };

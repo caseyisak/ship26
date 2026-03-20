@@ -196,3 +196,81 @@ export const TABBED_CONTENT_BY_ID = `
     }
   }
 `;
+
+/** Author fragment: name and bio. */
+const AUTHOR_FIELDS = `
+  __typename
+  sys { id }
+  ... on Author {
+    name
+    bio
+  }
+`;
+
+/** BlogPost card fragment: all fields except body (for listing pages). */
+const BLOG_POST_CARD_FIELDS = `
+  __typename
+  sys { id }
+  ... on BlogPost {
+    title
+    slug
+    excerpt
+    publishDate
+    tags
+    heroImage { url width height }
+    author {
+      ${AUTHOR_FIELDS}
+    }
+  }
+`;
+
+/** BlogPost full fragment: includes body richtext JSON (for detail pages). */
+const BLOG_POST_FIELDS = `
+  __typename
+  sys { id }
+  ... on BlogPost {
+    title
+    slug
+    excerpt
+    publishDate
+    tags
+    heroImage { url width height }
+    body { json }
+    author {
+      ${AUTHOR_FIELDS}
+    }
+  }
+`;
+
+/** Fetch all blog posts for listing page (ordered newest first). */
+export const BLOG_POSTS = `
+  query BlogPosts($locale: String!, $preview: Boolean) {
+    blogPostCollection(locale: $locale, preview: $preview, limit: 20, order: publishDate_DESC) {
+      items {
+        ${BLOG_POST_CARD_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single blog post by slug. */
+export const BLOG_POST_BY_SLUG = `
+  query BlogPostBySlug($slug: String!, $locale: String!, $preview: Boolean) {
+    blogPostCollection(where: { slug: $slug }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${BLOG_POST_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single blog post by entry ID (for live preview). */
+export const BLOG_POST_BY_ID = `
+  query BlogPostById($id: String!, $locale: String!, $preview: Boolean) {
+    blogPostCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${BLOG_POST_FIELDS}
+      }
+    }
+  }
+`;

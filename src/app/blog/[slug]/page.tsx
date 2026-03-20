@@ -1,11 +1,17 @@
-import { compileMDX } from 'next-mdx-remote/rsc';
+import { notFound } from 'next/navigation';
 
-import MetafiBlogPost from '@/components/sections/metafi-blog-post';
-import { getBlogBySlug, getBlogSlugs } from '@/lib/blog';
+import {
+  getBlogPostBySlug,
+  getBlogPostSlugs,
+} from '@/services/contentful/blog';
+
+import { BlogPostLive } from './blog-post-live';
+
+export const dynamic = 'force-dynamic';
 
 export async function generateStaticParams() {
-  const slugs = getBlogSlugs();
-  return slugs.map((slug) => ({ slug: slug.replace(/\.mdx$/, '') }));
+  const slugs = await getBlogPostSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export default async function BlogPostPage({
@@ -14,23 +20,11 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getBlogBySlug(slug);
+  const post = await getBlogPostBySlug({ slug });
 
-  const { content } = await compileMDX<Record<string, unknown>>({
-    source: post.content,
-    options: { parseFrontmatter: false },
-  });
+  if (!post) {
+    notFound();
+  }
 
-  return (
-    <MetafiBlogPost
-      tagline={post.tagline}
-      title={post.title}
-      intro={post.description}
-      image={post.coverImage}
-      author={post.author}
-      published={post.date}
-    >
-      {content}
-    </MetafiBlogPost>
-  );
+  return <BlogPostLive data={post} />;
 }
