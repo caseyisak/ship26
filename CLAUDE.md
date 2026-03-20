@@ -37,6 +37,39 @@ This project uses **bun** for all package and script operations. Do not use npm,
 
 ---
 
+## Worktree-first workflow (IMPORTANT)
+
+**Every new phase, feature, or demo gets its own git worktree. Never switch branches mid-session.**
+
+### Starting new work
+
+1. Agree on a branch name (e.g. `feat/my-feature`, `demo/acme-2026-04`)
+2. From the main repo root, run:
+   ```bash
+   bash scripts/worktree-add.sh <branch-name>
+   ```
+3. Open a new Claude Code instance pointed at the worktree:
+   ```bash
+   claude /Users/casey.lisak/Dev/metafi-worktrees/<branch-slug>
+   ```
+4. Do all work in that CC instance. This session stays on its current branch.
+
+### Why
+
+- No branch switching = no risk of clobbering another agent's context or uncommitted changes
+- Each worktree is an isolated working copy — parallel CC instances can run safely
+- `node_modules` is symlinked (no reinstall needed), `.env.local` is pre-copied from main
+
+### Merging back
+
+When the worktree work is done: open a PR (or merge directly) to `main`, then the worktree can be removed:
+```bash
+git worktree remove /Users/casey.lisak/Dev/metafi-worktrees/<branch-slug>
+git branch -d <branch-name>
+```
+
+---
+
 ## Multi-CC coordination
 
 This project sometimes runs **multiple Claude Code instances in parallel** (e.g. one on `main`, one on `feat/skill-creator`).
