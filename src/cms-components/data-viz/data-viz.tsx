@@ -356,14 +356,14 @@ const DataViz = ({
           <XAxis
             type="number"
             dataKey={xKey}
-            name={chartConfig[xKey]?.label ?? xKey}
+            name={String(chartConfig[xKey]?.label ?? xKey)}
             tickLine={false}
             axisLine={false}
           />
           <YAxis
             type="number"
             dataKey={yKey}
-            name={chartConfig[yKey]?.label ?? yKey}
+            name={String(chartConfig[yKey]?.label ?? yKey)}
             tickLine={false}
             axisLine={false}
           />
@@ -371,7 +371,7 @@ const DataViz = ({
             type="number"
             dataKey={zKey}
             range={[60, 400]}
-            name={chartConfig[zKey]?.label ?? zKey}
+            name={String(chartConfig[zKey]?.label ?? zKey)}
           />
           <ChartTooltip
             content={<ChartTooltipContent />}
@@ -405,7 +405,7 @@ const DataViz = ({
           {seriesKeys.map((key, i) => (
             <Radar
               key={key}
-              name={chartConfig[key]?.label ?? key}
+              name={String(chartConfig[key]?.label ?? key)}
               dataKey={key}
               stroke={colors[i % colors.length]}
               fill={colors[i % colors.length]}

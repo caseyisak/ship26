@@ -23,13 +23,15 @@ export async function GET(request: NextRequest) {
 
   const base = request.nextUrl.origin;
 
-  // ID-based preview (e.g. Hero, TabbedContent, DataViz, BlogPost): redirect to /preview/[type]/[entryId]
+  // ID-based preview (e.g. Hero, TabbedContent, DataViz, BlogPost, Banner, SocialPost): redirect to /preview/[type]/[entryId]
   if (
     entryId &&
     (type === 'hero' ||
       type === 'tabbedContent' ||
       type === 'dataViz' ||
-      type === 'blogPost')
+      type === 'blogPost' ||
+      type === 'banner' ||
+      type === 'socialPost')
   ) {
     if (
       entryId.includes('entry.') ||
@@ -53,9 +55,17 @@ export async function GET(request: NextRequest) {
         { status: 400 },
       );
     }
-    // Map camelCase type to kebab-case route (e.g. blogPost → blog-post)
-    const routeSlug = type === 'blogPost' ? 'blog-post' : type;
-    const redirectUrl = `${base}/preview/${routeSlug}/${encodeURIComponent(entryId)}`;
+    // Map camelCase type params to kebab-case route segments
+    const typeToRoute: Record<string, string> = {
+      hero: 'hero',
+      tabbedContent: 'tabbed-content',
+      dataViz: 'data-viz',
+      blogPost: 'blog-post',
+      banner: 'banner',
+      socialPost: 'social-post',
+    };
+    const routeSegment = typeToRoute[type] ?? type;
+    const redirectUrl = `${base}/preview/${routeSegment}/${encodeURIComponent(entryId)}`;
     const res = NextResponse.redirect(redirectUrl);
     try {
       const draft = await draftMode();

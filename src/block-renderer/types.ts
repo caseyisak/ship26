@@ -125,6 +125,54 @@ export type BlogPostFragment = BlockData & {
   author?: AuthorFragment | null;
 };
 
+/** Game entry (source of truth for all gameday content). */
+export type GameFragment = {
+  __typename: 'Game';
+  sys: { id: string };
+  title?: string | null;
+  week?: number | null;
+  seasonYear?: number | null;
+  opponentName?: string | null;
+  homeAway?: string | null;
+  kickoffDateTime?: string | null;
+};
+
+/** Media Wrapper — one asset with per-channel and per-aspect-ratio metadata. */
+export type MediaWrapperFragment = {
+  __typename: 'MediaWrapper';
+  sys: { id: string };
+  internalName?: string | null;
+  asset?: { url?: string; width?: number; height?: number } | null;
+  channels?: string[] | null;
+  aspectRatios?: string[] | null;
+};
+
+/** Banner block — gameday banner rendered on web and mock mobile app. */
+export type BannerFragment = BlockData & {
+  __typename: 'Banner';
+  internalName?: string | null;
+  headline?: string | null;
+  subheadline?: string | null;
+  copy?: string | null;
+  ctaText?: string | null;
+  ctaUrl?: string | null;
+  game?: GameFragment | null;
+  media?: MediaWrapperFragment | null;
+};
+
+/** Social Post — one post per channel with channel-specific live preview card. */
+export type SocialPostFragment = BlockData & {
+  __typename: 'SocialPost';
+  internalName?: string | null;
+  channel?: 'x' | 'instagram' | 'facebook' | null;
+  postType?: string | null;
+  copy?: string | null;
+  hashtags?: string[] | null;
+  status?: string | null;
+  game?: GameFragment | null;
+  media?: MediaWrapperFragment | null;
+};
+
 export type PersonalizedBlockData = BlockData & {
   ntExperiencesCollection?: { items: unknown[] };
 };

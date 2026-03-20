@@ -11,7 +11,15 @@
 |-------------------|---------------|
 | `Page → Collection → Component` nesting | `Page → Component` direct |
 | Layout as separate content type | `variant` field on component |
-| 43 content types | ~25 content types |
+| 43 content types | ~26 content types |
+
+### Field type conventions (new content types)
+
+- **Rich Text:** User-facing content that may need formatting or embedded entries (headlines, subheadlines, body copy, excerpts, descriptions that render on the front end).
+- **Short Text (Symbol):** Internal names, slugs, identifiers, labels, short UI strings (e.g. button label, nav label), categories, tags.
+- **Avoid Long Text:** Use Short Text for identifiers and Rich Text for content; do not use Long Text for new types unless there is a documented exception.
+
+---
 
 ### Key Simplification: Variants Instead of Nesting
 
@@ -32,7 +40,7 @@ Page.sections → Features(variant: 2x2-grid, items: [Feature, Feature, Feature,
 
 ---
 
-## Content Types (25 total)
+## Content Types (26 total)
 
 ### Page Types (2)
 
@@ -54,10 +62,10 @@ Blog article (replaces current MDX).
 |-------|------|-------|
 | `title` | Symbol | Article title |
 | `slug` | Symbol | URL path |
-| `excerpt` | Text | Short description |
+| `excerpt` | Rich Text | Short description (supports embedded entries) |
 | `content` | Rich Text | Article body |
 | `featuredImage` | Asset | Hero image |
-| `author` | Symbol | Author name |
+| `author` | Reference | → `author` |
 | `publishedDate` | Date | Publication date |
 | `category` | Symbol | Category tag |
 | `seo` | Reference | → `seo` |
@@ -66,21 +74,23 @@ Blog article (replaces current MDX).
 
 ### Section Components (15)
 
-Each section has a `variant` field for visual variations.
+Many sections have a `variant` field (List/dropdown with layout-based or semantic values) for visual variations. Parent sections that accept only specific child entries use the naming pattern **Wrapper - [Content Type]** (e.g. Wrapper - FAQ, Wrapper - Features).
 
 #### `hero`
-Main hero section.
+Main hero section. Explicit **background** and **media** (or **image**) fields for editors; the Section Style Editor (styling app) edits **`sectionStyle`** (JSON) for layout, overlay, blur, and presentation—not for defining whether assets exist.
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `internalName` | Symbol | CMS organization |
-| `variant` | Symbol | `default`, `about`, `careers`, `features`, `integrations`, `pricing` |
+| `variant` | List (dropdown) | `heroStacked`, `heroSideBySide`, `heroOverlay`, `heroSplit` (layout-based) |
 | `eyebrow` | Symbol | Small text above headline |
-| `headline` | Symbol | Main headline (localized) |
-| `subheadline` | Text | Supporting text (localized) |
+| `headline` | Rich Text | Main headline (localized) |
+| `subheadline` | Rich Text | Supporting text (localized) |
 | `primaryCta` | Reference | → `button` |
 | `secondaryCta` | Reference | → `button` |
-| `image` | Asset | Hero image |
+| `background` | Asset | Hero background image |
+| `media` (or `image`) | Asset | Hero foreground/media image |
+| `sectionStyle` | JSON | Layout and styling (edited by Section Style Editor app) |
 | `ntExperiences` | References | → `ntExperience` (personalization) |
 
 #### `cta`
@@ -89,47 +99,46 @@ Call to action section.
 | Field | Type | Notes |
 |-------|------|-------|
 | `internalName` | Symbol | CMS organization |
-| `variant` | Symbol | `default`, `banner`, `card` |
-| `headline` | Symbol | CTA headline |
-| `subheadline` | Text | Supporting text |
+| `variant` | List (dropdown) | `default`, `banner`, `card`, `mission` |
+| `headline` | Rich Text | CTA headline |
+| `subheadline` | Rich Text | Supporting text |
 | `primaryCta` | Reference | → `button` |
 | `secondaryCta` | Reference | → `button` |
 | `ntExperiences` | References | → `ntExperience` |
 
-#### `features`
-Feature grid section.
+#### Wrapper - Features (`features`)
+Feature grid section. Accepts only `feature` items.
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `internalName` | Symbol | CMS organization |
-| `variant` | Symbol | `2x2`, `1-3`, `cards` |
+| `variant` | List (dropdown) | `2x2`, `1-3`, `cards`, `benefits`, `included-list` |
 | `eyebrow` | Symbol | Section label |
-| `headline` | Symbol | Section headline |
-| `subheadline` | Text | Supporting text |
+| `headline` | Rich Text | Section headline |
+| `subheadline` | Rich Text | Supporting text |
 | `features` | References | → `feature` items |
 | `ntExperiences` | References | → `ntExperience` |
 
 #### `feature`
-Individual feature card.
+Individual feature card. Animation/display options (e.g. animation key) are configured via the **Section Style Editor (styling app)** or a feature-style config field edited by that app—not on the content type.
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `title` | Symbol | Feature title |
-| `description` | Text | Feature description |
+| `description` | Rich Text | Feature description |
 | `icon` | Asset | Icon or illustration |
 | `image` | Asset | Feature image |
-| `animationType` | Symbol | `checkout`, `invoicing`, `payment-link`, `recurring` or none |
 
-#### `testimonials`
-Testimonials section.
+#### Wrapper - Testimonials (`testimonials`)
+Testimonials section. Accepts only `testimonial` items.
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `internalName` | Symbol | CMS organization |
-| `variant` | Symbol | `grid`, `carousel`, `featured` |
+| `variant` | List (dropdown) | `grid`, `carousel`, `featured` |
 | `eyebrow` | Symbol | Section label |
-| `headline` | Symbol | Section headline |
-| `subheadline` | Text | Supporting text |
+| `headline` | Rich Text | Section headline |
+| `subheadline` | Rich Text | Supporting text |
 | `testimonials` | References | → `testimonial` items |
 | `ntExperiences` | References | → `ntExperience` |
 
@@ -138,21 +147,21 @@ Individual testimonial.
 
 | Field | Type | Notes |
 |-------|------|-------|
-| `quote` | Text | Testimonial quote |
+| `quote` | Rich Text | Testimonial quote |
 | `name` | Symbol | Person's name |
 | `role` | Symbol | Job title |
 | `company` | Symbol | Company name |
 | `avatar` | Asset | Profile photo |
 
-#### `faq`
-FAQ section.
+#### Wrapper - FAQ (`faq`)
+FAQ section. Accepts only `faqItem` items.
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `internalName` | Symbol | CMS organization |
 | `eyebrow` | Symbol | Section label |
-| `headline` | Symbol | Section headline |
-| `subheadline` | Text | Supporting text |
+| `headline` | Rich Text | Section headline |
+| `subheadline` | Rich Text | Supporting text |
 | `items` | References | → `faqItem` |
 | `ntExperiences` | References | → `ntExperience` |
 
@@ -162,7 +171,7 @@ Individual FAQ item.
 | Field | Type | Notes |
 |-------|------|-------|
 | `question` | Symbol | Question text |
-| `answer` | Text | Answer text (supports markdown) |
+| `answer` | Rich Text | Answer text |
 
 #### `logos`
 Partner/customer logos section.
@@ -170,20 +179,20 @@ Partner/customer logos section.
 | Field | Type | Notes |
 |-------|------|-------|
 | `internalName` | Symbol | CMS organization |
-| `variant` | Symbol | `row`, `grid`, `marquee` |
+| `variant` | List (dropdown) | `row`, `grid`, `marquee` |
 | `headline` | Symbol | Optional headline |
 | `logos` | Assets | Logo images |
 | `ntExperiences` | References | → `ntExperience` |
 
-#### `pricing`
-Pricing section.
+#### Wrapper - Pricing (`pricing`)
+Pricing section. Accepts only `pricingPlan` items.
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `internalName` | Symbol | CMS organization |
 | `eyebrow` | Symbol | Section label |
-| `headline` | Symbol | Section headline |
-| `subheadline` | Text | Supporting text |
+| `headline` | Rich Text | Section headline |
+| `subheadline` | Rich Text | Supporting text |
 | `plans` | References | → `pricingPlan` |
 | `showToggle` | Boolean | Show monthly/yearly toggle |
 | `ntExperiences` | References | → `ntExperience` |
@@ -194,7 +203,7 @@ Individual pricing plan.
 | Field | Type | Notes |
 |-------|------|-------|
 | `name` | Symbol | Plan name |
-| `description` | Text | Plan description |
+| `description` | Rich Text | Plan description |
 | `monthlyPrice` | Symbol | e.g., "$22.99" |
 | `yearlyPrice` | Symbol | e.g., "$15.99" |
 | `priceUnit` | Symbol | e.g., "Per user / billed monthly" |
@@ -204,15 +213,15 @@ Individual pricing plan.
 | `highlighted` | Boolean | Is this the featured plan? |
 | `badge` | Symbol | Optional badge text |
 
-#### `team`
-Team section.
+#### Wrapper - Team (`team`)
+Team section. Accepts only `teamMember` items.
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `internalName` | Symbol | CMS organization |
 | `eyebrow` | Symbol | Section label |
-| `headline` | Symbol | Section headline |
-| `subheadline` | Text | Supporting text |
+| `headline` | Rich Text | Section headline |
+| `subheadline` | Rich Text | Supporting text |
 | `members` | References | → `teamMember` |
 
 #### `teamMember`
@@ -222,7 +231,7 @@ Individual team member.
 |-------|------|-------|
 | `name` | Symbol | Person's name |
 | `role` | Symbol | Job title |
-| `bio` | Text | Short bio |
+| `bio` | Rich Text | Short bio |
 | `photo` | Asset | Profile photo |
 | `socialLinks` | JSON | Social media links |
 
@@ -232,20 +241,20 @@ Contact form section.
 | Field | Type | Notes |
 |-------|------|-------|
 | `internalName` | Symbol | CMS organization |
-| `headline` | Symbol | Section headline |
-| `subheadline` | Text | Supporting text |
+| `headline` | Rich Text | Section headline |
+| `subheadline` | Rich Text | Supporting text |
 | `formFields` | JSON | Form configuration |
 | `ntExperiences` | References | → `ntExperience` |
 
-#### `integrations`
-Integrations grid section.
+#### Wrapper - Integrations (`integrations`)
+Integrations grid section. Accepts only `integration` items.
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `internalName` | Symbol | CMS organization |
 | `eyebrow` | Symbol | Section label |
-| `headline` | Symbol | Section headline |
-| `subheadline` | Text | Supporting text |
+| `headline` | Rich Text | Section headline |
+| `subheadline` | Rich Text | Supporting text |
 | `integrations` | References | → `integration` |
 
 #### `integration`
@@ -254,14 +263,23 @@ Individual integration card.
 | Field | Type | Notes |
 |-------|------|-------|
 | `name` | Symbol | Integration name |
-| `description` | Text | Integration description |
+| `description` | Rich Text | Integration description |
 | `logo` | Asset | Integration logo |
 | `category` | Symbol | Integration category |
 | `url` | Symbol | Link URL |
 
 ---
 
-### System Types (6)
+### System Types (7)
+
+#### `author`
+Author for blog posts (referenced by `blogPost`).
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `name` | Symbol | Author name |
+| `bio` | Rich Text | Author bio (or Symbol if short only) |
+| `picture` | Asset | Profile photo |
 
 #### `siteSettings`
 Global site configuration.
@@ -300,7 +318,7 @@ SEO metadata.
 | Field | Type | Notes |
 |-------|------|-------|
 | `title` | Symbol | Meta title |
-| `description` | Text | Meta description |
+| `description` | Symbol | Meta description (short) |
 | `ogImage` | Asset | Open Graph image |
 | `noIndex` | Boolean | Block indexing |
 
@@ -311,7 +329,7 @@ Reusable button/link.
 |-------|------|-------|
 | `label` | Symbol | Button text |
 | `url` | Symbol | Link URL |
-| `variant` | Symbol | `primary`, `secondary`, `outline`, `ghost` |
+| `variant` | List (dropdown) | `primary`, `secondary`, `outline`, `ghost` |
 | `openInNewTab` | Boolean | Target _blank |
 
 ---
@@ -324,7 +342,7 @@ Ninetailed audience definition.
 | Field | Type | Notes |
 |-------|------|-------|
 | `nt_name` | Symbol | Audience name |
-| `nt_description` | Text | Audience description |
+| `nt_description` | Rich Text | Audience description (or Symbol if short) |
 | `nt_audience_id` | Symbol | Ninetailed audience ID |
 | `nt_rules` | JSON | Audience rules |
 
@@ -334,7 +352,7 @@ Ninetailed experience/variant.
 | Field | Type | Notes |
 |-------|------|-------|
 | `nt_name` | Symbol | Experience name |
-| `nt_description` | Text | Experience description |
+| `nt_description` | Rich Text | Experience description (or Symbol if short) |
 | `nt_type` | Symbol | `nt_personalization` or `nt_experiment` |
 | `nt_audience` | Reference | → `ntAudience` |
 | `nt_variants` | References | → Any section component |
@@ -344,40 +362,45 @@ Ninetailed experience/variant.
 
 ## Component ↔ Content Type Mapping
 
-| React Component | Content Type | Variant Field Values |
-|----------------|--------------|---------------------|
-| `MetafiHero` | `hero` | `default` |
-| `MetafiAboutHero` | `hero` | `about` |
-| `MetafiCareersHero` | `hero` | `careers` |
-| `MetafiFeaturesSection` | `hero` | `features` |
-| `MetafiIntegrationsHero` | `hero` | `integrations` |
-| `MetafiPricingHero` | `hero` | `pricing` |
-| `MetafiCta` | `cta` | `default` |
-| `MetafiFeatures` | `features` | `2x2` |
-| `MetafiFeatureBenefits` | `features` | `benefits` |
-| `MetafiFeaturesIncluded` | `features` | `included-list` |
-| `MetafiTestimonials` | `testimonials` | `grid` |
-| `MetafiFaq` | `faq` | `default` |
-| `MetafiLogos` | `logos` | `row` |
-| `MetafiPartnerLogos` | `logos` | `grid` |
-| `MetafiTeam` | `team` | `default` |
-| `MetafiMission` | `cta` | `mission` |
-| `MetafiContact` | `contact` | `default` |
-| `MetafiIntegrations` | `integrations` | `grid` |
-| `MetafiAllIntegrations` | `integrations` | `full` |
-| `MetafiJobOpenings` | `careers` | `jobs` |
-| `MetafiPerks` | `careers` | `perks` |
-| `MetafiTabs` | `tabs` | `default` |
+Layout-based variant values (e.g. `heroStacked`, `heroSideBySide`) describe **how** the section looks and are reusable across pages. One content type per section; React components branch on `contentType + variant`.
+
+| Content Type | Variant (dropdown) | Layout / use |
+|--------------|--------------------|--------------|
+| `hero` | `heroStacked` | Stacked layout (headline above media) |
+| `hero` | `heroSideBySide` | Headline and media side by side |
+| `hero` | `heroOverlay` | Media with overlay text |
+| `hero` | `heroSplit` | Split layout (e.g. 50% / 33%) |
+| `cta` | `default` | Default CTA layout |
+| `cta` | `banner` | Banner-style CTA |
+| `cta` | `card` | Card-style CTA |
+| `cta` | `mission` | Mission-style CTA |
+| `features` | `2x2` | 2×2 grid |
+| `features` | `1-3` | 1–3 column layout |
+| `features` | `cards` | Card layout |
+| `features` | `benefits` | Benefits layout |
+| `features` | `included-list` | Included list layout |
+| `testimonials` | `grid` | Grid of testimonials |
+| `testimonials` | `carousel` | Carousel |
+| `testimonials` | `featured` | Featured testimonial |
+| `faq` | (single variant) | FAQ section |
+| `logos` | `row` | Row of logos |
+| `logos` | `grid` | Grid of logos |
+| `logos` | `marquee` | Marquee/scrolling |
+| `team` | (single variant) | Team section |
+| `contact` | (single variant) | Contact form |
+| `integrations` | `grid` | Integrations grid |
+| `integrations` | `full` | Full integrations list |
+| `pricing` | (single variant) | Pricing section |
 
 ---
 
 ## Summary
 
-**Total Content Types: 25**
+**Total Content Types: 26**
 
 - 2 Page types
 - 15 Section components
-- 6 System types
+- 7 System types (including `author`)
 - 2 Personalization types
 
 **Key Simplifications:**
