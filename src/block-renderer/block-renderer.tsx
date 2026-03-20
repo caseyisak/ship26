@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { Experience } from '@ninetailed/experience.js-react';
+
 import {
   getComponent,
   getComponentConfig,
@@ -9,8 +11,7 @@ import {
 } from '@/block-renderer/utils';
 import { logger } from '@/lib/logger';
 import XRay from '@/lib/x-ray';
-import { PersonalizedComponent } from '@/personalization/personalized-component';
-import { isPersonalized } from '@/personalization/utils';
+import { isPersonalized, mapExperiences } from '@/personalization/utils';
 
 import {
   ErrorComponent,
@@ -47,15 +48,20 @@ export const BlockRenderer = <Props extends BlockRendererDefaultProps>({
       return <UnsupportedLayoutError data={data} layoutType={layoutType} />;
     }
 
-    if (isPersonalized(data)) {
-      return (
-        <PersonalizedComponent {...props} data={data} layoutType={layoutType} />
-      );
-    }
+    const mappedExperiences = isPersonalized(data)
+      ? mapExperiences(data.ntExperiencesCollection?.items)
+      : [];
 
     return (
       <XRay data={data} layoutType={layoutType}>
-        <Component data={data} {...props} />
+        <Experience
+          {...props}
+          data={data}
+          id={data.sys.id}
+          component={Component}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          experiences={mappedExperiences as any}
+        />
       </XRay>
     );
   } catch (error) {

@@ -1,3 +1,75 @@
+/** Ninetailed audience fragment fields. */
+const NT_AUDIENCE_FIELDS = `
+  sys { id }
+  ntAudienceId
+  ntName
+  ntDescription
+`;
+
+/**
+ * Content fields for NT experience variant items.
+ * Includes inline fragments for all personalizable block types.
+ * Fetches scalar/media fields only (no nested itemsCollections) to stay
+ * within Contentful's 8192-byte query size limit.
+ * Most personalization use cases swap headlines/copy/media, not nested items.
+ * Intentionally excludes ntExperiencesCollection to avoid circular queries.
+ */
+const NT_VARIANT_FIELDS = `
+  __typename
+  sys { id }
+  ... on Hero {
+    internalName
+    headline
+    subheadline
+    background { url }
+    media { url }
+    ctaText
+    ctaUrl
+    sectionStyle
+    sectionStyleUpdatedAt
+    variant
+  }
+  ... on Faq {
+    internalName
+    title
+    description
+  }
+  ... on Features {
+    internalName
+    label
+    title
+    description
+  }
+  ... on Tabbedcontent {
+    internalName
+    tagline
+    title
+    description
+  }
+  ... on DataViz {
+    internalName
+    title
+    description
+    chartType
+    csvData { url }
+    colorScheme
+    showLegend
+  }
+`;
+
+/** Ninetailed experience fragment fields. */
+const NT_EXPERIENCE_FIELDS = `
+  sys { id }
+  ntExperienceId
+  ntName
+  ntType
+  ntConfig
+  ntAudience { ${NT_AUDIENCE_FIELDS} }
+  ntVariantsCollection(limit: 10) {
+    items { ${NT_VARIANT_FIELDS} }
+  }
+`;
+
 /** Hero fragment: all fields from Hero content type (internalName, headline, subheadline, background, media, ctaText, ctaUrl, sectionStyle, sectionStyleUpdatedAt, variant, nt_experiences). */
 const HERO_FIELDS = `
   __typename
@@ -14,7 +86,7 @@ const HERO_FIELDS = `
     sectionStyleUpdatedAt
     variant
     ntExperiencesCollection(limit: 10) {
-      items { __typename sys { id } }
+      items { ${NT_EXPERIENCE_FIELDS} }
     }
   }
 `;
@@ -43,6 +115,9 @@ const FAQ_FIELDS = `
         ${FAQ_ITEM_FIELDS}
       }
     }
+    ntExperiencesCollection(limit: 10) {
+      items { ${NT_EXPERIENCE_FIELDS} }
+    }
   }
 `;
 
@@ -60,7 +135,7 @@ const TABBED_CONTENT_ITEM_FIELDS = `
   }
 `;
 
-/** TabbedContent fragment: all fields from TabbedContent content type (internalName, tagline, title, description, itemsCollection, nt_experiences). */
+/** TabbedContent fragment: all fields from TabbedContent content type (internalName, tagline, title, description, itemsCollection, ntExperiences). */
 const TABBED_CONTENT_FIELDS = `
   __typename
   sys { id }
@@ -74,8 +149,8 @@ const TABBED_CONTENT_FIELDS = `
         ${TABBED_CONTENT_ITEM_FIELDS}
       }
     }
-    ntExperiencesCollectionCollection(limit: 10) {
-      items { __typename sys { id } }
+    ntExperiencesCollection(limit: 10) {
+      items { ${NT_EXPERIENCE_FIELDS} }
     }
   }
 `;
@@ -107,7 +182,7 @@ const FEATURES_FIELDS = `
       }
     }
     ntExperiencesCollection(limit: 10) {
-      items { __typename sys { id } }
+      items { ${NT_EXPERIENCE_FIELDS} }
     }
   }
 `;
@@ -124,6 +199,9 @@ const DATA_VIZ_FIELDS = `
     csvData { url }
     colorScheme
     showLegend
+    ntExperiencesCollection(limit: 10) {
+      items { ${NT_EXPERIENCE_FIELDS} }
+    }
   }
 `;
 
@@ -238,6 +316,9 @@ const BLOG_POST_FIELDS = `
     body { json }
     author {
       ${AUTHOR_FIELDS}
+    }
+    ntExperiencesCollection(limit: 10) {
+      items { ${NT_EXPERIENCE_FIELDS} }
     }
   }
 `;
@@ -359,6 +440,24 @@ export const SOCIAL_POST_BY_ID = `
       items {
         ${SOCIAL_POST_FIELDS}
       }
+    }
+  }
+`;
+
+/** Fetch all Ninetailed experiences (used by PersonalizationProvider). */
+export const GET_PERSONALIZATION_EXPERIENCES = `
+  query GetPersonalizationExperiences($preview: Boolean = false) {
+    ntExperienceCollection(preview: $preview, limit: 100) {
+      items { ${NT_EXPERIENCE_FIELDS} }
+    }
+  }
+`;
+
+/** Fetch all Ninetailed audiences (used by PersonalizationProvider). */
+export const GET_PERSONALIZATION_AUDIENCES = `
+  query GetPersonalizationAudiences($preview: Boolean = false) {
+    ntAudienceCollection(preview: $preview, limit: 100) {
+      items { ${NT_AUDIENCE_FIELDS} }
     }
   }
 `;

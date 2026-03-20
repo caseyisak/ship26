@@ -7,6 +7,28 @@ export type BlockData = {
   _serverError?: string;
 };
 
+export type NtAudienceFragment = {
+  sys: { id: string };
+  ntAudienceId: string;
+  ntName: string;
+  ntDescription?: string | null;
+};
+
+/** A single NT experience variant item — typed broadly to hold any block's fields. */
+export type NtVariantItem = { __typename?: string; sys: { id: string } } & Record<string, unknown>;
+
+export type NtExperienceFragment = {
+  sys: { id: string };
+  ntExperienceId: string;
+  ntName: string;
+  ntType: string;
+  ntConfig?: unknown;
+  ntAudience?: NtAudienceFragment | null;
+  ntVariantsCollection?: {
+    items: Array<NtVariantItem>;
+  } | null;
+};
+
 /** Hero section (matches Contentful Hero content type: internalName, headline, subheadline, background, media, ctaText, ctaUrl, sectionStyle, sectionStyleUpdatedAt, variant, nt_experiences). */
 export type HeroFragment = BlockData & {
   __typename: 'Hero';
@@ -21,8 +43,8 @@ export type HeroFragment = BlockData & {
   background?: { url?: string } | null;
   image?: { url?: string } | null;
   ntExperiencesCollection?: {
-    items: Array<{ __typename?: string; sys?: { id: string } }>;
-  };
+    items: Array<NtExperienceFragment>;
+  } | null;
 };
 
 /** FaqItem (matches Contentful FaqItem content type: internalName, question, answer). */
@@ -41,6 +63,9 @@ export type FaqFragment = BlockData & {
   title?: string | null;
   description?: string | null;
   itemsCollection?: { items: FaqItemFragment[] } | null;
+  ntExperiencesCollection?: {
+    items: Array<NtExperienceFragment>;
+  } | null;
 };
 
 /** TabbedContentItem (matches Contentful TabbedContentItem content type: label, body, image, imageAlt, href, buttonLabel). */
@@ -55,7 +80,7 @@ export type TabbedContentItemFragment = {
   buttonLabel?: string | null;
 };
 
-/** TabbedContent section (matches Contentful TabbedContent content type: internalName, tagline, title, description, itemsCollection, nt_experiences). */
+/** TabbedContent section (matches Contentful TabbedContent content type: internalName, tagline, title, description, itemsCollection, ntExperiences). */
 export type TabbedContentFragment = BlockData & {
   __typename: 'Tabbedcontent';
   internalName?: string | null;
@@ -64,8 +89,8 @@ export type TabbedContentFragment = BlockData & {
   description?: string | null;
   itemsCollection?: { items: TabbedContentItemFragment[] } | null;
   ntExperiencesCollection?: {
-    items: Array<{ __typename?: string; sys?: { id: string } }>;
-  };
+    items: Array<NtExperienceFragment>;
+  } | null;
 };
 
 /** Feature Item (matches Contentful Feature Item content type: title, description, media, animationKey). */
@@ -88,8 +113,8 @@ export type FeaturesFragment = BlockData & {
   description?: string | null;
   itemsCollection?: { items: FeatureItemFragment[] } | null;
   ntExperiencesCollection?: {
-    items: Array<{ __typename?: string; sys?: { id: string } }>;
-  };
+    items: Array<NtExperienceFragment>;
+  } | null;
 };
 
 /** DataViz section (matches Contentful DataViz content type: internalName, title, description, chartType, csvData, colorScheme, showLegend). */
@@ -102,6 +127,9 @@ export type DataVizFragment = BlockData & {
   csvData?: { url?: string } | null;
   colorScheme?: string | null;
   showLegend?: boolean | null;
+  ntExperiencesCollection?: {
+    items: Array<NtExperienceFragment>;
+  } | null;
 };
 
 /** Author (matches Contentful Author content type: name, bio). */
@@ -123,6 +151,9 @@ export type BlogPostFragment = BlockData & {
   heroImage?: { url?: string; width?: number; height?: number } | null;
   body?: { json: unknown } | null;
   author?: AuthorFragment | null;
+  ntExperiencesCollection?: {
+    items: Array<NtExperienceFragment>;
+  } | null;
 };
 
 /** Game entry (source of truth for all gameday content). */
@@ -174,7 +205,7 @@ export type SocialPostFragment = BlockData & {
 };
 
 export type PersonalizedBlockData = BlockData & {
-  ntExperiencesCollection?: { items: unknown[] };
+  ntExperiencesCollection?: { items: Array<NtExperienceFragment> };
 };
 
 export type InheritedProps = Record<string, unknown>;

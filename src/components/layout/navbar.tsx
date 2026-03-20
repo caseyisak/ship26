@@ -4,11 +4,32 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Settings } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 import { ThemeToggle } from '../ui/theme-toggle';
+
+function PersonalizationToggle({ className }: { className?: string }) {
+  const handleClick = () => {
+    if (typeof window !== 'undefined') {
+      (window as { ninetailed?: { plugins?: { preview?: { toggle?: () => void } } } })
+        .ninetailed?.plugins?.preview?.toggle?.();
+    }
+  };
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      onClick={handleClick}
+      className={cn('px-2', className)}
+      aria-label="Open personalization preview"
+    >
+      <Settings className="h-4 w-4" />
+    </Button>
+  );
+}
 
 const HEADER_HEIGHT = 80;
 
@@ -111,11 +132,7 @@ const Navbar = () => {
               Login
             </Button>
           </Link>
-          <Link href="/pricing" className={cn('hidden sm:block lg:block')}>
-            <Button size="sm" variant="default">
-              Get Started
-            </Button>
-          </Link>
+          <PersonalizationToggle className="hidden sm:flex lg:flex" />
 
           <div className="lg:block">
             <ThemeToggle />
@@ -212,11 +229,7 @@ const Navbar = () => {
                         Login
                       </Button>
                     </Link>
-                    <Link href="/pricing" onClick={() => setIsMenuOpen(false)}>
-                      <Button className="w-full" size="sm" variant="default">
-                        Get Started
-                      </Button>
-                    </Link>
+                    <PersonalizationToggle className="w-full" />
                   </div>
                 </nav>
               </div>

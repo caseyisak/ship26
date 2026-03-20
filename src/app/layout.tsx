@@ -7,6 +7,7 @@ import { ContentfulAppRedirect } from '@/components/contentful-app-redirect';
 import { ConditionalSiteChrome } from '@/components/layout/conditional-site-chrome';
 import { LivePreviewProviderWrapper } from '@/components/live-preview-provider';
 import { ThemeProvider } from '@/components/theme-provider';
+import { PersonalizationProvider } from '@/personalization/provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -93,12 +94,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <LivePreviewProviderWrapper
-            space={process.env.CONTENTFUL_SPACE_ID}
-            environment={process.env.CONTENTFUL_ENVIRONMENT ?? 'master'}
-          >
-            <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
-          </LivePreviewProviderWrapper>
+          <PersonalizationProvider>
+            <LivePreviewProviderWrapper
+              space={process.env.CONTENTFUL_SPACE_ID}
+              environment={process.env.CONTENTFUL_ENVIRONMENT ?? 'master'}
+            >
+              <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
+            </LivePreviewProviderWrapper>
+          </PersonalizationProvider>
         </ThemeProvider>
       </body>
     </html>
