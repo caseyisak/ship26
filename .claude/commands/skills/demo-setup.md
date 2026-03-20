@@ -82,15 +82,33 @@ If scraping fails or gives poor results, ask the user to provide:
 
 ## Phase 3 — Contentful environment
 
-1. Create a new Contentful environment named `[customer-slug]` (copy from `master`):
-   ```
-   mcp__contentful__create_environment { name: "[customer-slug]", sourceEnvironmentId: "master" }
-   ```
+**Space ID:** `uumzxfocy3ef`
 
-2. Remind the user to add the new environment to their Contentful API key:
-   > ⚠️ Go to Contentful → Settings → API Keys → [your key] → add `[customer-slug]` to the environments list. Otherwise content fetches will fail.
+1. **Create the environment** by calling the MCP tool directly:
+   ```
+   mcp__contentful__create_environment
+     spaceId: "uumzxfocy3ef"
+     name: "[customer-slug]"
+     sourceEnvironmentId: "master"
+   ```
+   Wait for confirmation that the environment was created before continuing.
 
-3. Update `branch.env` with the new environment name.
+2. **Verify** it exists:
+   ```
+   mcp__contentful__list_environments
+     spaceId: "uumzxfocy3ef"
+   ```
+   Confirm `[customer-slug]` appears in the list.
+
+3. **Remind the user to add the env to their API key** — this cannot be done via MCP:
+   > ⚠️ Manual step required: Go to **Contentful → Settings → API Keys → your key → Environments** and add `[customer-slug]`. The app won't be able to fetch content until this is done.
+
+4. **Update `branch.env`** in the worktree with:
+   ```
+   CONTENTFUL_ENVIRONMENT=[customer-slug]
+   NEXT_PUBLIC_BRAND=[customer-slug]
+   ```
+   Also copy the current `.env.local` values for `CONTENTFUL_SPACE_ID`, `CONTENTFUL_ACCESS_TOKEN`, `CONTENTFUL_PREVIEW_ACCESS_TOKEN`, `CONTENTFUL_PREVIEW_SECRET`, and `SHADCNBLOCKS_API_KEY`.
 
 ---
 
