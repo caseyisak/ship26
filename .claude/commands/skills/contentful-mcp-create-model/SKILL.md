@@ -1,6 +1,9 @@
 ---
 name: contentful-mcp-create-model
-description: Create content types and entries in Contentful using the Contentful Management MCP. Use at Milestone 3 to create the content model and sample entries. Includes exact tool call sequence and locale wrapper format.
+description: Create content types and entries in Contentful using the Contentful Management MCP tools. Use at Milestone 3 when user says "create the content type", "create the content model", "add this to Contentful", "create sample entries", "set up Contentful", or "Milestone 3". Includes exact tool call sequence and locale wrapper format. Do NOT use for querying existing content (call mcp__contentful__get_content_type directly) or for adding GraphQL types in code (use contentful-block-graphql-types).
+metadata:
+  author: metafi-project
+  version: 1.0.0
 ---
 
 # Contentful MCP: Create Content Model
@@ -105,47 +108,11 @@ Arguments:
 
 **Note:** If the MCP tool doesn't accept a `contentTypeId` parameter and auto-generates from `name`, ensure the `name` is PascalCase (e.g., `"Faq"` not `"faq"`) so the generated ID matches.
 
-### Field Type Reference
+> See [`references/field-types.md`](references/field-types.md) for the full field type reference.
 
-| Contentful Type | MCP `type` value | Additional config |
-|-----------------|------------------|-------------------|
-| Short text | `Symbol` | - |
-| Long text | `Text` | - |
-| Integer | `Integer` | - |
-| Decimal | `Number` | - |
-| Boolean | `Boolean` | - |
-| Date | `Date` | - |
-| Location | `Location` | - |
-| JSON | `Object` | - |
-| Media (single) | `Link` | `linkType: "Asset"` |
-| Reference (single) | `Link` | `linkType: "Entry"` |
-| Media (multiple) | `Array` | `items: { type: "Link", linkType: "Asset" }` |
-| Reference (multiple) | `Array` | `items: { type: "Link", linkType: "Entry" }` |
-| Rich Text | `RichText` | (if supported) or use `Text` |
+> See [`references/field-types.md`](references/field-types.md) for field naming conventions (media→image mapping).
 
-### Field Naming Conventions
-
-**Media/Image Fields:**
-| Use Case | Contentful Field ID | Mapped Name (TypeScript) |
-|----------|-------------------|-------------------------|
-| Main/foreground image | `media` | `image` |
-| Background image | `backgroundMedia` | `backgroundImage` |
-| Icon | `icon` | `icon` |
-| Logo | `logo` | `logo` |
-
-The mapper (`page.ts`, `hero.ts`) renames `media` → `image` and `backgroundMedia` → `backgroundImage`.
-
-**Why:** Contentful uses "media" for Asset fields; app uses "image" for React/CSS semantics.
-
-### IMPORTANT: Avoid "Collection" in Field IDs (LL-007)
-
-Contentful GraphQL automatically adds "Collection" suffix to array/reference fields:
-- Field ID `items` → GraphQL `itemsCollection` ✅
-- Field ID `itemsCollection` → GraphQL `itemsCollectionCollection` ❌
-
-**Best Practice:** Use simple names like `items`, `faqs`, `tabs` - NOT `itemsCollection`.
-
-See **LL-007** in lessons-learned.md.
+> See [`references/field-types.md`](references/field-types.md) for the Collection suffix rule (LL-007).
 
 ### Example: FAQ Content Type
 
@@ -384,22 +351,7 @@ If the Page content type needs to allow the new block type in its `sections` fie
 
 ## Common Errors
 
-**"Field value must include locale"**
-- Every field value needs `{ "en-US": value }` wrapper
-- Even boolean: `{ "en-US": true }` not just `true`
-
-**"Content type not found"**
-- The content type must be published before creating entries
-- Check the contentTypeId matches exactly (case-sensitive)
-
-**"Invalid link"**
-- The linked entry must exist and be published
-- Check the entry ID is correct
-- For reference arrays, use the full link structure
-
-**"Validation failed"**
-- Check the linked content type is allowed in the field's validations
-- Check required fields are provided
+See [`references/common-errors.md`](references/common-errors.md) for all common errors and solutions.
 
 ## Execution Order
 

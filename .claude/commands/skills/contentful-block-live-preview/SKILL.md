@@ -1,6 +1,9 @@
 ---
 name: contentful-block-live-preview
-description: Add ID-based live preview support for a Contentful block. Use at Milestone 4 to add preview route, BY_ID query, get-by-ID service, and enable-draft branch.
+description: Add ID-based live preview support for a Contentful block — preview route, BY_ID query, get-by-ID service, and enable-draft branch. Use at Milestone 4 when user says "add live preview", "wire up preview route", "set up the preview URL", "add the BY_ID query", "enable direct preview from Contentful", or "Milestone 4". Do NOT use for page-level live preview issues (see page-content-live.tsx) or for verifying preview works (use contentful-live-preview-verify).
+metadata:
+  author: metafi-project
+  version: 1.0.0
 ---
 
 # Contentful Block: Live Preview
@@ -24,154 +27,29 @@ Milestones 1-3 must be complete:
 
 ## Touch Point 6: BY_ID Query (`src/services/contentful/queries.ts`)
 
-Add the BY_ID query after the `*_FIELDS` constant:
+Add the BY_ID query after the `*_FIELDS` constant.
 
-```typescript
-/** Fetch a single [BlockName] entry by entry ID (for ID-based live preview). */
-export const [BLOCKNAME]_BY_ID = `
-  query [BlockName]ById($id: String!, $locale: String!, $preview: Boolean) {
-    [blockName]Collection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
-      items {
-        ${[BLOCKNAME]_FIELDS}
-      }
-    }
-  }
-`;
-```
+> See [`references/code-templates.md`](references/code-templates.md) for the full code template.
 
 **Note:** The collection name is `[blockName]Collection` (camelCase with Collection suffix).
 
 ## Touch Point 7: Get-by-ID Service (`src/services/contentful/<name>.ts`)
 
-Create a new service file:
+Create a new service file.
 
-```typescript
-import { draftMode } from 'next/headers';
-
-import type { [BlockName]Fragment } from '@/block-renderer/types';
-
-import { fetchGraphQL } from './client';
-import { [BLOCKNAME]_BY_ID } from './queries';
-
-// Copy the Raw type and mapper from page.ts or import if exported
-type Raw[BlockName] = {
-  __typename: string;
-  sys: { id: string };
-  // ... fields
-};
-
-type [BlockName]ByIdResponse = {
-  [blockName]Collection: {
-    items: Array<Raw[BlockName] | null>;
-  };
-};
-
-function map[BlockName](item: Raw[BlockName] | null): [BlockName]Fragment | null {
-  if (!item || item.__typename !== '[BlockName]') return null;
-  return {
-    __typename: '[BlockName]',
-    sys: { id: item.sys.id },
-    // ... map all fields
-  };
-}
-
-/** Fetch a single [BlockName] entry by ID for ID-based live preview. */
-export async function get[BlockName]ByEntryId({
-  entryId,
-  locale = 'en-US',
-}: {
-  entryId: string;
-  locale?: string;
-}): Promise<[BlockName]Fragment | null> {
-  try {
-    const { isEnabled } = await draftMode();
-    const data = await fetchGraphQL<[BlockName]ByIdResponse>({
-      query: [BLOCKNAME]_BY_ID,
-      variables: { id: entryId, locale, preview: isEnabled },
-      preview: isEnabled,
-    });
-    const item = data.[blockName]Collection?.items?.[0] ?? null;
-    return map[BlockName](item);
-  } catch {
-    return null;
-  }
-}
-```
+> See [`references/code-templates.md`](references/code-templates.md) for the full code template.
 
 ## Touch Point 8: Preview Route (`src/app/preview/<name>/[entryId]/page.tsx`)
 
-Create the preview route:
+Create the preview route.
 
-```typescript
-import { notFound } from 'next/navigation';
-
-import { BlockRenderer } from '@/block-renderer';
-import { get[BlockName]ByEntryId } from '@/services/contentful/[name]';
-
-type Props = {
-  params: Promise<{ entryId: string }>;
-  searchParams: Promise<{ locale?: string }>;
-};
-
-/**
- * ID-based live preview for [BlockName] entries (no page/slug).
- * Use in Contentful: set preview URL to your enable-draft URL with entryId and type=[name].
- */
-export default async function Preview[BlockName]Page({ params, searchParams }: Props) {
-  const { entryId } = await params;
-  const { locale } = await searchParams;
-
-  const [blockName] = await get[BlockName]ByEntryId({
-    entryId,
-    locale: locale ?? 'en-US',
-  });
-
-  if (![blockName]) {
-    notFound();
-  }
-
-  return <BlockRenderer data={[blockName]} />;
-}
-```
+> See [`references/code-templates.md`](references/code-templates.md) for the full code template.
 
 ## Touch Point 9: Enable-Draft Branch (`src/app/api/enable-draft/route.ts`)
 
-Add a branch for the new type. Find the existing Hero branch and add after it:
+Add a branch for the new type. Find the existing Hero branch and add after it.
 
-```typescript
-// ID-based preview for [BlockName]
-if (entryId && type === '[name]') {
-  // Validate entryId is not a placeholder
-  if (
-    entryId.includes('entry.') ||
-    entryId.includes('NOT_FOUND') ||
-    entryId.length < 10
-  ) {
-    return NextResponse.json(
-      {
-        error:
-          'Contentful did not substitute the entry ID. Fix in Contentful: Settings → Content preview → [BlockName] → set Preview URL and use the Entry ID merge tag.',
-        received: entryId,
-      },
-      { status: 400 },
-    );
-  }
-  const redirectUrl = `${base}/preview/[name]/${encodeURIComponent(entryId)}`;
-  const res = NextResponse.redirect(redirectUrl);
-  try {
-    const draft = await draftMode();
-    draft.enable();
-  } catch {
-    res.cookies.set('__prerender_bypass', '1', {
-      httpOnly: true,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60,
-    });
-  }
-  return res;
-}
-```
+> See [`references/code-templates.md`](references/code-templates.md) for the full code template.
 
 **Important:** The `type` value must be lowercase (e.g., `type === 'faq'` not `type === 'Faq'`).
 
@@ -233,29 +111,7 @@ After implementation, verify:
 
 ## Common Issues
 
-**404 on preview route**
-- Check the route file is at `src/app/preview/[name]/[entryId]/page.tsx`
-- Check `get[BlockName]ByEntryId` is returning data
-- Check the entry exists and is published (or draft mode is enabled)
-
-**`type` param not matched**
-- The enable-draft route must accept both `type` and `ctype` params
-- Check: `const type = searchParams.get('type') ?? searchParams.get('ctype');`
-
-**Merge tag not resolving**
-- `{entry.sys.id_NOT_FOUND}` means Contentful didn't substitute the variable
-- Use Contentful's "Insert variable" button in the Preview URL config
-
-**Draft content not showing**
-- Check `draftMode().isEnabled` is passed to the GraphQL query as `preview: true`
-- Check the preview access token is configured in `.env`
-
-**Images not updating in live preview (LL-008)**
-- `useLiveUpdates` returns raw Contentful field names (`media`), not mapped names (`image`)
-- Check both: `liveData.image?.url ?? liveData.media?.url`
-- Don't fall back to stale `data` - if `liveData.field` is `null`, the field was removed
-- For background images: check both `backgroundImage` and `backgroundMedia`
-- See LL-008 in lessons-learned.md
+See [`references/code-templates.md`](references/code-templates.md) for common issues and solutions.
 
 ## Test Enforcement (STRICT)
 

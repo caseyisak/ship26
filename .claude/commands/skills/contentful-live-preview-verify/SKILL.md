@@ -1,7 +1,10 @@
 ---
 name: contentful-live-preview-verify
-description: Verify Contentful live preview works correctly. Use for debugging or at Milestone 5 of add-contentful-block workflow.
+description: Verify Contentful live preview works correctly by capturing browser diagnostics (console, network, screenshots) and matching against known error patterns. Use when live preview is broken, when user says "preview not working", "debug live preview", "check why preview isn't updating", "verify the preview", or at Milestone 5 of the add-contentful-block workflow. Do NOT use for adding live preview support to a new block (use contentful-block-live-preview).
 allowed-tools: mcp__docker__browser_navigate, mcp__docker__browser_take_screenshot, mcp__docker__browser_console_messages, mcp__docker__browser_network_requests, mcp__docker__browser_wait_for, mcp__docker__browser_resize, mcp__docker__browser_evaluate, mcp__docker__browser_snapshot, Bash(lsof:*), Bash(curl:*)
+metadata:
+  author: metafi-project
+  version: 1.0.0
 ---
 
 # Contentful Live Preview Verification
@@ -165,31 +168,11 @@ mcp__docker__browser_take_screenshot()
 
 Compare captured **console messages**, **errors**, and **network requests** against `documentation/lessons-learned.md`:
 
-| Pattern to check                                                    | Lesson | Console/network signature                                        |
-| ------------------------------------------------------------------- | ------ | ---------------------------------------------------------------- |
-| Field name mismatch (e.g. query returns null, 404 on preview route) | LL-001 | 404 on `/preview/...`, null in logs                              |
-| Wrong component or config lookup                                    | LL-002 | "unknown type", typename mismatch in logs                        |
-| Collection shape                                                    | LL-003 | "Cannot read property 'items' of undefined"                      |
-| Draft not enabled                                                   | LL-004 | Preview shows published only, 404 for draft, enable-draft errors |
-| Rich Text rendered as object                                        | LL-005 | "[object Object]" in output or logs                              |
-| Content type ID / \_\_typename                                      | LL-006 | Block filtered out, mapSection returns null                      |
-| GraphQL collection suffix                                           | LL-007 | "Cannot query field X on type Y"                                 |
-| Live preview field names                                            | LL-008 | Stale images, old values, media vs image                         |
+> See [`references/lessons-patterns.md`](references/lessons-patterns.md) for the full LL-001–LL-008 pattern matching table.
 
 ### Live Preview Refresh Signals
 
-For debugging real-time refresh issues (sections not updating on save), check:
-
-| Signal | What it means |
-|--------|---------------|
-| `[PageContentLive] subscribed to edit` | Edit subscription registered |
-| `[PageContentLive] subscribed to save` | Save subscription registered |
-| `[PageContentLive] postMessage received {method: ENTRY_SAVED}` | Contentful sent save event |
-| `[PageContentLive] ENTRY_SAVED { match: true }` | Event is for current page |
-| `[PageContentLive] ENTRY_SAVED for this page → router.refresh()` | Refresh was triggered |
-| Missing `router.refresh()` log | Save handler didn't fire (check inspector mode tagging) |
-
-**Root cause pattern**: When inspector mode is enabled, the SDK's `subscribe('save')` callback only fires for "tagged" entries (those with `getProps()` applied). The Page entry itself may not be tagged. The fix is `window.addEventListener('message')` to listen for `ENTRY_SAVED` messages directly.
+See [`references/lessons-patterns.md`](references/lessons-patterns.md) for the full signal table and root cause pattern.
 
 Build a `lessons_matched` list: for each LL-XXX that matches, add a short description of the match.
 
@@ -222,58 +205,7 @@ diagnosis: "Summary of findings or 'No issues detected'"
 
 ## Complete Debugging Workflow Example
 
-Full workflow for debugging live preview refresh (sections not updating):
-
-### 1. Find port and navigate
-
-```bash
-lsof -i :3000 | grep LISTEN
-```
-
-```
-mcp__docker__browser_navigate(url: "http://localhost:3000/page/home")
-mcp__docker__browser_wait_for(time: 3000)
-mcp__docker__browser_resize(width: 1800, height: 1200)
-```
-
-### 2. Capture baseline
-
-```
-mcp__docker__browser_take_screenshot()
-mcp__docker__browser_console_messages()
-```
-
-Look for: `[PageContentLive] subscribed to edit` and `subscribed to save`
-
-### 3. User makes changes in Contentful
-
-Have the user add/remove/reorder a section in the Contentful editor and click Save (not Publish).
-
-### 4. Check console for ENTRY_SAVED
-
-```
-mcp__docker__browser_console_messages()
-```
-
-**Look for:**
-```
-[PageContentLive] postMessage received {method: ENTRY_SAVED, origin: https://app.contentful.com}
-[PageContentLive] ENTRY_SAVED { entityId: "...", pageId: "...", match: true }
-[PageContentLive] ENTRY_SAVED for this page → router.refresh()
-```
-
-If `match: false`, the save event was for a different entry (not the page).
-
-### 5. Capture final state
-
-```
-mcp__docker__browser_take_screenshot()
-mcp__docker__browser_network_requests()
-```
-
-### 6. Generate report
-
-Compare before/after console, determine root cause, check lessons-learned.
+See [`references/debugging-workflow.md`](references/debugging-workflow.md) for the full step-by-step debugging workflow with commands.
 
 ## Called by AddContentfulBlock Agent
 
@@ -287,10 +219,4 @@ At Milestone 5, the AddContentfulBlock agent invokes this skill with:
 
 ## Data Flow Inspection
 
-After capturing console/network, check these when building `diagnosis`:
-
-- **Embedded entries**: `[useFetchEmbeddedEntries]` logs; `/api/fetch-deferred-entries` status and payload.
-- **Entry ID consistency**: IDs in rich text JSON vs `content.links.entries`; missing IDs prevent rendering.
-- **SDK connection**: Live preview connection messages or errors in console.
-- **Preview mode**: `__prerender_bypass` cookie (check with `browser_evaluate(script: "document.cookie")`).
-- **Hydration**: React hydration warnings indicate server/client data mismatch.
+See [`references/lessons-patterns.md`](references/lessons-patterns.md) for data flow inspection checklist.

@@ -1,6 +1,9 @@
 ---
 name: contentful-block-graphql-types
-description: Add GraphQL fragment types, queries, and mappers for a new Contentful block. Use at Milestone 1 when adding types.ts, queries.ts, and page.ts modifications for a new block type.
+description: Add GraphQL fragment types, queries, and page mappers for a new Contentful block. Use at Milestone 1 when user says "add types for the block", "add the GraphQL fragment", "wire up types.ts and queries.ts", "add the mapper", or "Milestone 1". Do NOT use for creating the React component (use contentful-block-component) or creating content types in Contentful (use contentful-mcp-create-model).
+metadata:
+  author: metafi-project
+  version: 1.0.0
 ---
 
 # Contentful Block: GraphQL + Types
@@ -29,15 +32,7 @@ Fields:
   - fieldId (Type) → fieldId: type | null
 ```
 
-**Field type mapping:**
-- Symbol/Text → `string | null`
-- Integer/Number → `number | null`
-- Boolean → `boolean | null`
-- Media/Asset → `{ url?: string; width?: number; height?: number } | null`
-- Rich Text → `{ json: unknown } | null`
-- Reference (single) → `LinkedFragmentType | null`
-- Reference (many) → `{ items: LinkedFragmentType[] } | null`
-- JSON → `unknown` (parse at runtime)
+See [`references/field-type-mapping.md`](references/field-type-mapping.md) for the full field type → TypeScript type mapping.
 
 ## Touch Point 1: Fragment Type (`src/block-renderer/types.ts`)
 
@@ -93,15 +88,7 @@ sectionsCollection(limit: 20) {
 }
 ```
 
-**Collection Field Naming (LL-007):**
-- Contentful adds "Collection" suffix to all array/reference fields
-- Field ID `items` → Query as `itemsCollection`
-- Field ID `itemsCollection` → Query as `itemsCollectionCollection` (avoid this!)
-
-**Media Field Naming Convention:**
-- Use `media { url }` in GraphQL (matches Contentful field ID)
-- Use `backgroundMedia { url }` for background images
-- The mapper will rename these to `image` and `backgroundImage`
+> See [`references/field-type-mapping.md`](references/field-type-mapping.md) for collection naming rules (LL-007) and media field conventions.
 
 ## Touch Point 3: Page Mapper (`src/services/contentful/page.ts`)
 
@@ -158,13 +145,7 @@ Add the new Raw type to the sections array type.
 
 ## For Nested Types
 
-If the block has linked entries (like FAQ → FaqItem):
-
-1. Add `[LinkedType]Fragment` in types.ts
-2. Add `[LINKEDTYPE]_FIELDS` as a separate constant in queries.ts, include inside parent's `itemsCollection`
-3. Add `Raw[LinkedType]` type in page.ts
-4. Add `map[LinkedType]` function that returns `[LinkedType]Fragment | null`
-5. In parent mapper: `itemsCollection: item.itemsCollection ? { items: item.itemsCollection.items.map(map[LinkedType]).filter(Boolean) as [LinkedType]Fragment[] } : null`
+See [`references/field-type-mapping.md`](references/field-type-mapping.md) for the full nested type mapper pattern.
 
 ## Test Step
 

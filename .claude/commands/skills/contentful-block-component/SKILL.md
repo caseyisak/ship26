@@ -1,6 +1,9 @@
 ---
 name: contentful-block-component
-description: Create the React component and block config registration for a new Contentful block. Use at Milestone 2 when adding the cms-component and registering it in block-renderer configs.
+description: Create the React component and block config registration for a new Contentful block. Use at Milestone 2 when user says "create the component", "add the cms-component", "build the React component", "register the block", "wire up the component", or "Milestone 2". Do NOT use for GraphQL/types work (use contentful-block-graphql-types) or for creating content types in Contentful (use contentful-mcp-create-model).
+metadata:
+  author: metafi-project
+  version: 1.0.0
 ---
 
 # Contentful Block: Component + Config
@@ -69,57 +72,11 @@ export { [BlockName] };
 
 ### Key Patterns
 
-**Live Preview:**
-- `useLiveUpdates(data)` – Returns data that updates in real-time during Contentful preview
-- `useContentfulInspectorModeProps(data.sys.id)` – Returns a function to add click-to-edit props
-- Use `{...getProps({ fieldId: 'fieldName' })}` on elements that should be clickable in preview
-
-**Field Access:**
-- Use `liveData.fieldName` (not `data.fieldName`) for live preview support
-- Always provide fallback: `liveData.fieldName ?? 'Default'`
-
-**Live Preview Field Names (LL-008):**
-`useLiveUpdates` returns **raw Contentful data** with original field names, not mapped names:
-- Mapper converts `media` → `image` for initial data
-- But live updates return `media` directly
-
-In your component, check BOTH field names:
-```typescript
-// For image fields that have a media→image mapping:
-const rawImageUrl = (liveData as [BlockName]Fragment).image?.url ?? data.image?.url;
-
-// If live preview still shows stale images, also check raw field name:
-type RawLiveData = [BlockName]Fragment & { media?: { url?: string } | null };
-const imageUrl =
-  (liveData as [BlockName]Fragment).image?.url ??
-  ((liveData as RawLiveData).media?.url ?? undefined);
-```
-
-See **LL-008** in lessons-learned.md for full explanation.
-
-**Media Field Naming Convention:**
-| Contentful Field | TypeScript Type | Live Preview Check |
-|-----------------|-----------------|-------------------|
-| `media` | `image` | Check both `image` and `media` |
-| `backgroundMedia` | `backgroundImage` | Check both `backgroundImage` and `backgroundMedia` |
-
-**Nested Collections:**
-```typescript
-const items = liveData.itemsCollection?.items ?? [];
-{items.map((item) => (
-  <div key={item.sys.id}>
-    {item.fieldName}
-  </div>
-))}
-```
-
-**Rich Text:**
-```typescript
-// If using Rich Text, add dependency: bun add @contentful/rich-text-react-renderer
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
-
-{liveData.richTextField?.json && documentToReactComponents(liveData.richTextField.json)}
-```
+See [`references/live-preview-patterns.md`](references/live-preview-patterns.md) for:
+- Live preview hook usage (`useLiveUpdates`, `useContentfulInspectorModeProps`)
+- LL-008: media→image field name handling in live updates
+- Nested collections pattern
+- Rich text rendering
 
 ## Touch Point 4b: Index Export (`src/cms-components/<name>/index.ts`)
 
@@ -164,13 +121,7 @@ export const blockConfigs: BlockConfig<BlockData>[] = [
 
 ## Porting from Existing Component
 
-If porting from a metafi static component (e.g. `src/components/sections/metafi-faq.tsx`):
-
-1. Copy the JSX structure and styling
-2. Replace hardcoded data with `liveData.fieldName`
-3. Replace hardcoded arrays with `liveData.itemsCollection?.items ?? []`
-4. Add `{...getProps({ fieldId: 'fieldName' })}` to editable elements
-5. Keep all styling classes (they use the project's design tokens)
+See [`references/live-preview-patterns.md`](references/live-preview-patterns.md) for the porting checklist.
 
 ## Test Step
 
@@ -201,22 +152,7 @@ Run `bun test`. All tests must pass before proceeding.
 
 ## Common Issues
 
-**`Cannot find module '@/cms-components/[name]'`**
-- Check the directory name matches the import
-- Check index.ts exports the component
-
-**`typename 'X' not found in blockConfigs`**
-- The `typename` in config must match `__typename` exactly (case-sensitive)
-- Example: `typename: 'Faq'` not `typename: 'FAQ'` or `typename: 'faq'`
-
-**`Component is not a function`**
-- Check export is named export: `export { [BlockName] }` not `export default`
-- Check import matches: `import { [BlockName] }` not `import [BlockName]`
-
-**Test fails with undefined**
-- Mock data missing required fields
-- Add `sys: { id: 'test-1', spaceId: 'test' }`
-- Add `__typename: '[BlockName]' as const`
+See [`references/live-preview-patterns.md`](references/live-preview-patterns.md) for common issues and solutions.
 
 ## Test Enforcement (STRICT)
 
