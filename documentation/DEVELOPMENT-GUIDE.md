@@ -70,29 +70,24 @@ Route will be available at `/new-page`.
 
 ### Adding a Blog Post
 
-1. Create MDX file in `src/blog/`:
-   ```
-   src/blog/my-new-post.mdx
-   ```
+Blog posts are managed in **Contentful** — do not create MDX files.
 
-2. Add frontmatter:
-   ```yaml
-   ---
-   tagline: Category
-   title: 'Post Title'
-   description: 'Brief description'
-   author: 'Author Name'
-   date: '2024-01-15'
-   featured: false
-   latest: true
-   tags: ['Tag1', 'Tag2']
-   coverImage: '/images/blog/image.webp'
-   ---
-   ```
+1. In Contentful, create a new **Blog Post** entry with:
+   - `internalName` — internal label
+   - `title` — post title
+   - `slug` — URL slug (e.g. `my-new-post` → `/blog/my-new-post`)
+   - `excerpt` — short description
+   - `publishDate` — ISO date
+   - `tags` — array of tag strings
+   - `heroImage` — media asset (upload to Contentful, reference by asset link)
+   - `body` — rich text body
+   - `author` — link to an Author entry
 
-3. Write content in MDX below the frontmatter.
+2. Publish the entry. It will appear at `/blog/[slug]` automatically.
 
-4. Post will appear at `/blog/my-new-post`.
+The blog listing (`/blog`) and detail (`/blog/[slug]`) pages both fetch from Contentful via `src/services/contentful/blog.ts`.
+
+**Note:** There are legacy MDX files in `src/blog/` — these are being migrated to Contentful and will be removed. Do not add new MDX blog posts.
 
 ---
 

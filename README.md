@@ -130,6 +130,7 @@ NEXT_PUBLIC_BRAND=                     # set to customer name for themed demos
 
 - [Codebase Architecture](documentation/CODEBASE-ARCHITECTURE.md)
 - [Development Guide](documentation/DEVELOPMENT-GUIDE.md)
+- [Contentful Migration Plan](documentation/CONTENTFUL-MIGRATION.md) — what's static, what needs migrating
 - [Lessons Learned](documentation/lessons-learned.md) — error patterns and fixes
 - [Documentation Index](documentation/README.md) — for agents
 
