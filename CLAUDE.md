@@ -1,5 +1,14 @@
 # Project Instructions
 
+## CLI tool paths
+
+- **Homebrew / gh / other tools:** PATH may not include `/opt/homebrew/bin` in Claude Code sessions. Use full paths:
+  - `gh` → `/opt/homebrew/bin/gh`
+  - `brew` → `/opt/homebrew/bin/brew`
+- **GitHub:** repo is `https://github.com/caseyisak/metafi`, authenticated as `caseyisak`
+
+---
+
 ## Package Manager: Bun
 
 This project uses **bun** for all package and script operations. Do not use npm, yarn, or pnpm.
