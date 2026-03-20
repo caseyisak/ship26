@@ -98,15 +98,15 @@ Route will be available at `/new-page`.
 
 ### Adding a UI Component (shadcn/ui)
 
-Use the shadcn CLI:
+Use the shadcn CLI via bunx:
 
 ```bash
-npx shadcn-ui@latest add [component-name]
+bunx shadcn add [component-name]
 
 # Examples:
-npx shadcn-ui@latest add dialog
-npx shadcn-ui@latest add dropdown-menu
-npx shadcn-ui@latest add toast
+bunx shadcn add dialog
+bunx shadcn add dropdown-menu
+bunx shadcn add toast
 ```
 
 Components are added to `src/components/ui/`.
@@ -154,26 +154,45 @@ For footer links, edit `columns` array in `src/components/layout/footer.tsx`.
 
 ---
 
-### Adding Images
+### Media (Images, Video, Assets)
 
-1. Place images in `public/images/`:
-   - `public/images/blog/` - Blog cover images
-   - `public/images/homepage/` - Homepage assets
-   - `public/images/layout/` - Logo, icons
+All media is served from **Contentful's asset delivery API** — never hardcoded in the codebase.
 
-2. Reference in components:
-   ```tsx
-   import Image from 'next/image';
+Upload assets to Contentful (via the UI or MCP tools), then reference them via GraphQL:
 
-   <Image
-     src="/images/folder/image.webp"
-     alt="Description"
-     width={800}
-     height={600}
-   />
-   ```
+```graphql
+fragment MyBlockFragment on MyBlock {
+  media {
+    url
+    width
+    height
+    description
+  }
+}
+```
 
-**Note:** Project uses static export with unoptimized images.
+In the component, use the `url` from Contentful directly with Next.js `<Image>`:
+
+```tsx
+import Image from 'next/image';
+
+<Image
+  src={media.url}
+  alt={media.description ?? ''}
+  width={media.width ?? 1200}
+  height={media.height ?? 800}
+/>
+```
+
+Add `images.ctfassets.net` to `next.config.ts` if not already present:
+
+```ts
+images: {
+  remotePatterns: [{ hostname: 'images.ctfassets.net' }],
+}
+```
+
+**Field naming convention:** Image fields in Contentful use `media` (not `image`) as the field ID. The GraphQL fragment maps this to `image` for component use where needed. See `documentation/lessons-learned.md` LL-001.
 
 ---
 
@@ -281,9 +300,11 @@ import { motion } from 'motion/react';
 
 ```bash
 bun run dev
+# For HTTPS (required for Contentful Section Style Editor):
+bun run dev:https
 ```
 
-Uses Turbopack for fast refresh.
+**Note:** Turbopack is disabled — there's a manifest bug in Next.js 15.1.1.
 
 ---
 
@@ -348,13 +369,17 @@ TypeScript is configured in strict mode. All props and return types should be ty
 
 ## Environment
 
-No environment variables are currently required. The project runs entirely on static data.
-
-For future API integrations, create `.env.local`:
+Create `.env.local` with your Contentful credentials:
 
 ```bash
-# Example
-NEXT_PUBLIC_API_URL=https://api.example.com
+CONTENTFUL_SPACE_ID=uumzxfocy3ef
+CONTENTFUL_ENVIRONMENT=master
+CONTENTFUL_ACCESS_TOKEN=...
+CONTENTFUL_PREVIEW_ACCESS_TOKEN=...
+CONTENTFUL_PREVIEW_SECRET=kaz
+
+# For customer demos — activates [data-theme='customer'] CSS vars
+NEXT_PUBLIC_BRAND=
 ```
 
 ---

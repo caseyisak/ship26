@@ -1,69 +1,140 @@
-# Metafi NextJS Template
+# Metafi — Contentful Demo Site
 
-Metafi NextJS Template is a premium template built by https://www.shadcnblocks.com
+A Next.js 15 marketing site template used as a **live demo and sales tool for Contentful**. All content — pages, blocks, media — is driven by Contentful CMS with real-time live preview.
 
 - [Demo](https://Metafi-nextjs-template.vercel.app/)
-- [Documentation](https://docs.shadcnblocks.com/templates/getting-started)
 
-## Screenshot
+## Tech Stack
 
-![Metafi NextJS Template screenshot](./public/og-image.jpg)
+- Next.js 15 (App Router) + TypeScript
+- Tailwind CSS 4 + shadcn/ui
+- Contentful (GraphQL API, Live Preview SDK, Section Style Editor)
+- Bun (package manager)
+
+---
 
 ## Getting Started
 
-This project uses [Bun](https://bun.sh). Install Bun first (if needed):
+Install [Bun](https://bun.sh) if needed:
 
 ```bash
 curl -fsSL https://bun.sh/install | bash
 ```
 
-Then install dependencies and run:
-
 ```bash
 bun install
-```
-
-```bash
 bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Tech Stack
+---
 
-- Nextjs 15 / App Router
-- Tailwind 4
-- shadcn/ui
-- Contentful (GraphQL, live preview)
+## How We Work
 
-## Contentful & Section Style Editor
+### Branch + Worktree Model
 
-This template includes a **Contentful** integration and a custom **Section Style Editor** app.
+`main` is the clean sandbox with all blocks. Every customer demo and feature gets its own **git worktree** so multiple Claude Code instances can run in parallel without conflicts.
 
-- **Pages** are fetched by slug (`/page/[slug]`). Content types: **Page** (internalName, slug, sections, ntExperiencesCollection), **Hero**, **FAQ**, **TabbedContent**, **Features**, **DataViz**.
-- **Live preview:** Set your Contentful preview URL to your app’s enable-draft endpoint (with secret, slug or entryId+type). Enable-draft sets draft mode and redirects to `/page/[slug]` or `/preview/hero/[entryId]` for Hero-only preview. **When adding new components (e.g. Quote)** that need their own preview: see **[Component live preview (ID-based)](documentation/component-live-preview.md)** so you don’t hit field-name, `type`/`ctype`, or merge-tag issues.
-- **Section Style Editor** is a custom Contentful app at `/contentful-app` that edits a JSON `sectionStyle` field on Hero entries. The app is (or can be made) config-driven and assignable to multiple section types (e.g. Hero, CTA, Features) so one app controls layout and styling for any section that supports it. It provides:
-  - “Use style override” toggle
-  - Background (blur, color, overlay opacity) and Layout (overlay/split, content position, content width)
-  - Entry-field and entry-editor locations
+```
+main                        ← source of truth, all blocks
+feat/[feature]              ← feature work (worktree at metafi-worktrees/feat-[feature])
+demo/[customer]             ← customer demo (worktree at metafi-worktrees/demo-[customer])
+```
 
-**Setup:** Add `CONTENTFUL_SPACE_ID`, `CONTENTFUL_ACCESS_TOKEN`, `CONTENTFUL_PREVIEW_ACCESS_TOKEN`, and `CONTENTFUL_PREVIEW_SECRET` (and optionally `CONTENTFUL_ENVIRONMENT`) to `.env`. In Contentful, create an app pointing to `https://localhost:3000/contentful-app` (use `bun run dev:https` or a tunnel for HTTPS in the iframe). Assign the app to the Hero `sectionStyle` field.
+Create a new worktree:
+
+```bash
+bash scripts/worktree-add.sh feat/my-feature
+# Opens at: /Users/casey.lisak/Dev/metafi-worktrees/feat-my-feature
+```
+
+### Demo Branches
+
+Each customer demo branches off `main` and gets its own Contentful environment:
+
+- Brand tokens scraped → `[data-theme='customer']` CSS vars in `globals.css`
+- `NEXT_PUBLIC_BRAND=customer` in `.env.local`
+- Contentful environment: `CONTENTFUL_ENVIRONMENT=customer`
+- Demo content seeded via MCP tools
+
+### Claude Code + Skills
+
+All Contentful block work uses Claude Code with project skills in `.claude/commands/skills/`:
+
+| Skill | When to use |
+|-------|------------|
+| `contentful-block-discovery` | Start here — scan existing components before writing any code |
+| `contentful-block-graphql-types` | Milestone 1 — add GraphQL fragment, types.ts, mapper |
+| `contentful-block-component` | Milestone 2 — build React component + register in block config |
+| `contentful-mcp-create-model` | Milestone 3 — create content type + entries via MCP |
+| `contentful-block-live-preview` | Milestone 4 — wire up preview route + BY_ID query |
+| `contentful-live-preview-verify` | Milestone 5 — verify live preview with browser diagnostics |
+| `continuous-improvement` | End of milestone — archive tasks, update lessons learned |
+| `add-contentful-block` | Orchestrates all milestones end-to-end |
+
+The `skill-creator` toolkit (`.claude/commands/skills/skill-creator/`) is used to build and optimize skills.
+
+Before adding a new block, always run the `contentful-block-discovery` skill first.
+
+---
+
+## Contentful Architecture
+
+### How a page works
+
+```
+Contentful Page entry (slug, sections[])
+  → GraphQL PAGE_BY_SLUG query
+  → /page/[slug]/page.tsx (server: fetches raw GraphQL data)
+  → page-content-live.tsx (client: useLiveUpdates() + transformSection())
+  → <BlockRenderer> × N sections
+  → cms-component (Hero, FAQ, Features, TabbedContent, DataViz, Blog)
+```
+
+### Current blocks
+
+| Block | Content type | Status |
+|-------|-------------|--------|
+| Hero | `hero` | Done — section style editor, custom grid |
+| FAQ | `faq` + `faqItem` | Done |
+| TabbedContent | `tabbedContent` | Done |
+| Features | `features` + `feature` | Done — animation registry |
+| DataViz | `dataViz` | Done — 5 chart types, interactive legend |
+| Blog Post | `blogPost` | Done — rich text, sticky TOC, live preview |
+
+### All media served from Contentful
+
+Images and assets are **never hardcoded** in the codebase. All media comes from Contentful's asset delivery API (`images.ctfassets.net`). Reference media by the field name in the GraphQL fragment (e.g. `media { url }`).
+
+### Live preview
+
+- Draft mode: `/api/enable-draft?secret=kaz&slug=...` or `&entryId=...&type=...`
+- ID-based preview routes: `/preview/[blockType]/[entryId]`
+- Section Style Editor: custom Contentful app at `/contentful-app` (requires HTTPS — use `bun run dev:https`)
+
+### Environment variables
+
+```bash
+CONTENTFUL_SPACE_ID=uumzxfocy3ef
+CONTENTFUL_ENVIRONMENT=master          # or customer-specific env
+CONTENTFUL_ACCESS_TOKEN=...
+CONTENTFUL_PREVIEW_ACCESS_TOKEN=...
+CONTENTFUL_PREVIEW_SECRET=kaz
+NEXT_PUBLIC_BRAND=                     # set to customer name for themed demos
+```
+
+---
 
 ## Documentation
 
-- [Codebase Architecture](documentation/CODEBASE-ARCHITECTURE.md) — Project structure, tech stack, routes
-- [Component Reference](documentation/COMPONENT-REFERENCE.md) — Layout and section components
-- [Development Guide](documentation/DEVELOPMENT-GUIDE.md) — Adding pages, sections, blog posts
-- [Component Live Preview](documentation/component-live-preview.md) — ID-based preview for Contentful blocks
-- [Lessons Learned](documentation/lessons-learned.md) — Error patterns and fixes (for debugging)
-- [Documentation Index](documentation/README.md) — How to navigate and maintain docs (for agents)
+- [Codebase Architecture](documentation/CODEBASE-ARCHITECTURE.md)
+- [Development Guide](documentation/DEVELOPMENT-GUIDE.md)
+- [Lessons Learned](documentation/lessons-learned.md) — error patterns and fixes
+- [Documentation Index](documentation/README.md) — for agents
 
-## Cursor / Agent Setup
+---
 
-- **add-contentful-block** agent (`.cursor/agents/add-contentful-block.md`) — Orchestrates adding new Contentful blocks: discovery → content model proposal → implementation with milestones.
-- **Skills** — contentful-block-discovery, contentful-block-graphql-types, contentful-block-component, contentful-mcp-create-model, contentful-block-live-preview, contentful-live-preview-verify, continuous-improvement.
-- Before adding a block, read `documentation/lessons-learned.md` and follow the add-contentful-block workflow.
+## Deploy
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com)
+Deploy via [Vercel](https://vercel.com). Add all env vars from above in the Vercel project settings.
