@@ -123,6 +123,7 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
           style={{
             height: `calc(100% - ${NAV_HEIGHT}px)`,
             overflowY: 'auto',
+            scrollbarWidth: 'none',
             background: 'linear-gradient(180deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, black) 100%)',
           }}
         >

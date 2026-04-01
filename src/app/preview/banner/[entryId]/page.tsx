@@ -28,14 +28,6 @@ export default async function PreviewBannerPage({ params, searchParams }: Props)
       className="flex min-h-screen flex-col items-center justify-center gap-4 bg-gray-200 p-6"
       data-theme={process.env.NEXT_PUBLIC_BRAND}
     >
-      <div className="flex items-center gap-3">
-        <span className="rounded bg-gray-800 px-3 py-1 text-xs font-bold tracking-widest text-white uppercase">
-          Live Preview
-        </span>
-        <span className="text-sm font-semibold text-gray-600">
-          {banner.internalName}
-        </span>
-      </div>
       <DeviceFrame banner={banner} />
     </div>
   );
