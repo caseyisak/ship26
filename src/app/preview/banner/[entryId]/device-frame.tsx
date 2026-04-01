@@ -165,11 +165,6 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
             <SkeletonLine width={18} height={9} />
           </div>
 
-          {/* Top content area skeleton (above banner) */}
-          <div style={{ padding: '10px 12px 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <SkeletonCard />
-          </div>
-
           {/* Banner card */}
           <div
             style={{
