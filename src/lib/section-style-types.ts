@@ -4,6 +4,8 @@
  */
 
 export type SectionStyleLayout = 'overlay' | 'split' | 'customGrid';
+export type SectionStyleTextAlign = 'left' | 'center' | 'right';
+export type SectionStyleSpacing = 'sm' | 'md' | 'lg' | 'xl';
 export type SectionStyleContentPosition = 'center' | 'left' | 'right';
 export type SectionStyleContentWidth = '50%' | '33%';
 export type SectionStyleContentColor = 'light' | 'dark' | 'auto';
@@ -34,6 +36,16 @@ export interface SectionStyleConfig {
   gridColumns?: number; // fixed at 6
   gridRows?: number; // 2-6, default 3
   tiles?: SectionStyleTile[];
+  // Content Style (banner + future blocks)
+  textAlign?: SectionStyleTextAlign;
+  contentSpacing?: SectionStyleSpacing;
+  headlineColor?: string;
+  subheadlineColor?: string;
+  // Button Style (banner + future blocks)
+  buttonBgColor?: string;
+  buttonHoverColor?: string;
+  buttonSpacing?: SectionStyleSpacing;
+  buttonPlacement?: SectionStyleTextAlign;
 }
 
 /** Default grid dimensions for Custom Grid */
@@ -109,18 +121,18 @@ function parseTiles(arr: unknown): SectionStyleTile[] | undefined {
 }
 
 /**
- * Parse sectionStyle JSON from Contentful (string or null). Returns defaults when invalid/missing.
+ * Parse sectionStyle from Contentful. Accepts a JSON string, a pre-parsed object (Contentful
+ * GraphQL JSON fields return objects, not strings), or null/undefined. Returns defaults when
+ * invalid/missing.
  */
 export function parseSectionStyle(
-  json: string | null | undefined,
+  json: unknown,
 ): SectionStyleConfig {
   if (json == null || json === '') {
     return { ...DEFAULT_SECTION_STYLE_CONFIG };
   }
   try {
-    const parsed = JSON.parse(
-      typeof json === 'string' ? json : String(json),
-    ) as Record<string, unknown>;
+    const parsed = (typeof json === 'string' ? JSON.parse(json) : json) as Record<string, unknown>;
     if (parsed && typeof parsed === 'object') {
       const layout =
         parsed.layout === 'overlay' ||
@@ -166,6 +178,51 @@ export function parseSectionStyle(
             ? parsed.contentColor
             : DEFAULT_SECTION_STYLE_CONFIG.contentColor,
       };
+
+      // Content Style fields
+      if (
+        parsed.textAlign === 'left' ||
+        parsed.textAlign === 'center' ||
+        parsed.textAlign === 'right'
+      ) {
+        result.textAlign = parsed.textAlign;
+      }
+      if (
+        parsed.contentSpacing === 'sm' ||
+        parsed.contentSpacing === 'md' ||
+        parsed.contentSpacing === 'lg' ||
+        parsed.contentSpacing === 'xl'
+      ) {
+        result.contentSpacing = parsed.contentSpacing;
+      }
+      if (typeof parsed.headlineColor === 'string') {
+        result.headlineColor = parsed.headlineColor;
+      }
+      if (typeof parsed.subheadlineColor === 'string') {
+        result.subheadlineColor = parsed.subheadlineColor;
+      }
+      // Button Style fields
+      if (typeof parsed.buttonBgColor === 'string') {
+        result.buttonBgColor = parsed.buttonBgColor;
+      }
+      if (typeof parsed.buttonHoverColor === 'string') {
+        result.buttonHoverColor = parsed.buttonHoverColor;
+      }
+      if (
+        parsed.buttonSpacing === 'sm' ||
+        parsed.buttonSpacing === 'md' ||
+        parsed.buttonSpacing === 'lg' ||
+        parsed.buttonSpacing === 'xl'
+      ) {
+        result.buttonSpacing = parsed.buttonSpacing;
+      }
+      if (
+        parsed.buttonPlacement === 'left' ||
+        parsed.buttonPlacement === 'center' ||
+        parsed.buttonPlacement === 'right'
+      ) {
+        result.buttonPlacement = parsed.buttonPlacement;
+      }
 
       // Custom Grid fields
       if (layout === 'customGrid') {

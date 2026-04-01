@@ -115,11 +115,10 @@ export async function getBlogPostByEntryId({
   locale?: string;
 }): Promise<BlogPostFragment | null> {
   try {
-    const { isEnabled } = await draftMode();
     const data = await fetchGraphQL<BlogPostByIdResponse>({
       query: BLOG_POST_BY_ID,
-      variables: { id: entryId, locale, preview: isEnabled },
-      preview: isEnabled,
+      variables: { id: entryId, locale, preview: true },
+      preview: true,
     });
     const item = data.blogPostCollection?.items?.[0] ?? null;
     return mapBlogPost(item);

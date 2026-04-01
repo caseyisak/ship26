@@ -1,0 +1,13 @@
+#!/bin/sh
+# post-checkout: auto-sync branch.env → .env.local on branch switch
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+BRANCH_ENV="$REPO_ROOT/branch.env"
+ENV_LOCAL="$REPO_ROOT/.env.local"
+
+if [ -f "$BRANCH_ENV" ]; then
+  cp "$BRANCH_ENV" "$ENV_LOCAL"
+  echo "✔ .env.local updated from branch.env (branch: $(git branch --show-current))"
+else
+  echo "⚠ No branch.env found — .env.local not updated"
+fi

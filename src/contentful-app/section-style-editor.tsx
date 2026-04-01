@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, LayoutGrid, Palette } from 'lucide-react';
+import { AlignCenter, AlignLeft, AlignRight, ChevronDown, LayoutGrid, Palette, Type } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,8 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import type {
   SectionStyleConfig,
+  SectionStyleSpacing,
+  SectionStyleTextAlign,
   SectionStyleTile,
   SectionStyleTileId,
 } from '@/lib/section-style-types';
@@ -106,6 +108,8 @@ export function SectionStyleEditor({
   }));
   const [showBackground, setShowBackground] = useState(true);
   const [showLayout, setShowLayout] = useState(true);
+  const [showContentStyle, setShowContentStyle] = useState(true);
+  const [showButtonStyle, setShowButtonStyle] = useState(true);
   const [ready, setReady] = useState(false);
   const [hasBackgroundAsset, setHasBackgroundAsset] = useState(false);
 
@@ -438,6 +442,246 @@ export function SectionStyleEditor({
                 />
               </div>
             )}
+          </CollapsibleContent>
+        </Collapsible>
+      )}
+
+      {/* Content Style section */}
+      {config.useStyleOverride && (
+        <Collapsible open={showContentStyle} onOpenChange={setShowContentStyle}>
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-between rounded-[var(--border-radius-medium)] border-[var(--gray-300)] bg-[var(--gray-100)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-200)]"
+              type="button"
+            >
+              <span className="flex items-center gap-2">
+                <Type className="h-4 w-4" style={{ color: 'var(--gray-600)' }} />
+                Content Style
+              </span>
+              <ChevronDown
+                className={cn('h-4 w-4 transition-transform', showContentStyle && 'rotate-180')}
+                style={{ color: 'var(--gray-600)' }}
+              />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent
+            className="mt-2 space-y-4 rounded-[var(--border-radius-medium)] border p-3"
+            style={{ backgroundColor: 'var(--gray-100)', borderColor: 'var(--gray-200)' }}
+          >
+            {/* Text alignment */}
+            <div>
+              <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
+                Text alignment
+              </Label>
+              <div className="mt-1 flex gap-2">
+                {([['left', AlignLeft], ['center', AlignCenter], ['right', AlignRight]] as [SectionStyleTextAlign, React.ElementType][]).map(([val, Icon]) => (
+                  <button
+                    key={val}
+                    type="button"
+                    title={val}
+                    className={cn(
+                      'flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-small)] border transition-colors',
+                      config.textAlign === val
+                        ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white'
+                        : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)]',
+                    )}
+                    onClick={() => update({ textAlign: val })}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* Spacing */}
+            <div>
+              <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
+                Spacing
+              </Label>
+              <div className="mt-1 flex flex-wrap gap-2">
+                {(['sm', 'md', 'lg', 'xl'] as SectionStyleSpacing[]).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    className={cn(
+                      'rounded-[var(--border-radius-small)] border px-3 py-1.5 text-sm font-medium transition-colors',
+                      config.contentSpacing === s
+                        ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white'
+                        : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)]',
+                    )}
+                    onClick={() => update({ contentSpacing: s })}
+                  >
+                    {s.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* Headline color */}
+            <div>
+              <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
+                Headline color
+              </Label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {COLOR_TOKEN_OPTIONS.map(({ name, var: cssVar }) => (
+                  <button
+                    key={name}
+                    type="button"
+                    title={name}
+                    className={cn(
+                      'h-8 w-8 rounded-[var(--border-radius-small)] border-2 transition-all',
+                      config.headlineColor === cssVar || config.headlineColor === name
+                        ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
+                        : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
+                    )}
+                    style={{ backgroundColor: `var(--${name})` }}
+                    onClick={() => update({ headlineColor: cssVar })}
+                  />
+                ))}
+              </div>
+            </div>
+            {/* Subheadline color */}
+            <div>
+              <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
+                Subheadline color
+              </Label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {COLOR_TOKEN_OPTIONS.map(({ name, var: cssVar }) => (
+                  <button
+                    key={name}
+                    type="button"
+                    title={name}
+                    className={cn(
+                      'h-8 w-8 rounded-[var(--border-radius-small)] border-2 transition-all',
+                      config.subheadlineColor === cssVar || config.subheadlineColor === name
+                        ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
+                        : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
+                    )}
+                    style={{ backgroundColor: `var(--${name})` }}
+                    onClick={() => update({ subheadlineColor: cssVar })}
+                  />
+                ))}
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      )}
+
+      {/* Button Style section */}
+      {config.useStyleOverride && (
+        <Collapsible open={showButtonStyle} onOpenChange={setShowButtonStyle}>
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-between rounded-[var(--border-radius-medium)] border-[var(--gray-300)] bg-[var(--gray-100)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-200)]"
+              type="button"
+            >
+              <span className="flex items-center gap-2">
+                <Palette className="h-4 w-4" style={{ color: 'var(--gray-600)' }} />
+                Button Style
+              </span>
+              <ChevronDown
+                className={cn('h-4 w-4 transition-transform', showButtonStyle && 'rotate-180')}
+                style={{ color: 'var(--gray-600)' }}
+              />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent
+            className="mt-2 space-y-4 rounded-[var(--border-radius-medium)] border p-3"
+            style={{ backgroundColor: 'var(--gray-100)', borderColor: 'var(--gray-200)' }}
+          >
+            {/* Button bg color */}
+            <div>
+              <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
+                Button background color
+              </Label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {COLOR_TOKEN_OPTIONS.map(({ name, var: cssVar }) => (
+                  <button
+                    key={name}
+                    type="button"
+                    title={name}
+                    className={cn(
+                      'h-8 w-8 rounded-[var(--border-radius-small)] border-2 transition-all',
+                      config.buttonBgColor === cssVar || config.buttonBgColor === name
+                        ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
+                        : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
+                    )}
+                    style={{ backgroundColor: `var(--${name})` }}
+                    onClick={() => update({ buttonBgColor: cssVar })}
+                  />
+                ))}
+              </div>
+            </div>
+            {/* Button hover color */}
+            <div>
+              <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
+                Button hover color
+              </Label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {COLOR_TOKEN_OPTIONS.map(({ name, var: cssVar }) => (
+                  <button
+                    key={name}
+                    type="button"
+                    title={name}
+                    className={cn(
+                      'h-8 w-8 rounded-[var(--border-radius-small)] border-2 transition-all',
+                      config.buttonHoverColor === cssVar || config.buttonHoverColor === name
+                        ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
+                        : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
+                    )}
+                    style={{ backgroundColor: `var(--${name})` }}
+                    onClick={() => update({ buttonHoverColor: cssVar })}
+                  />
+                ))}
+              </div>
+            </div>
+            {/* Button spacing */}
+            <div>
+              <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
+                Button spacing
+              </Label>
+              <div className="mt-1 flex flex-wrap gap-2">
+                {(['sm', 'md', 'lg', 'xl'] as SectionStyleSpacing[]).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    className={cn(
+                      'rounded-[var(--border-radius-small)] border px-3 py-1.5 text-sm font-medium transition-colors',
+                      config.buttonSpacing === s
+                        ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white'
+                        : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)]',
+                    )}
+                    onClick={() => update({ buttonSpacing: s })}
+                  >
+                    {s.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* Button placement */}
+            <div>
+              <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
+                Button placement
+              </Label>
+              <div className="mt-1 flex gap-2">
+                {([['left', AlignLeft], ['center', AlignCenter], ['right', AlignRight]] as [SectionStyleTextAlign, React.ElementType][]).map(([val, Icon]) => (
+                  <button
+                    key={val}
+                    type="button"
+                    title={val}
+                    className={cn(
+                      'flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-small)] border transition-colors',
+                      config.buttonPlacement === val
+                        ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white'
+                        : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)]',
+                    )}
+                    onClick={() => update({ buttonPlacement: val })}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </button>
+                ))}
+              </div>
+            </div>
           </CollapsibleContent>
         </Collapsible>
       )}

@@ -26,7 +26,7 @@ export async function fetchGraphQL<T>({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ query, variables }),
+    body: JSON.stringify({ query: query.replace(/\s+/g, ' ').trim(), variables }),
     next: { revalidate: preview ? 0 : 60 },
   });
   if (!res.ok) {

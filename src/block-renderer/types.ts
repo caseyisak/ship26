@@ -12,6 +12,7 @@ export type NtAudienceFragment = {
   ntAudienceId: string;
   ntName: string;
   ntDescription?: string | null;
+  ntRules?: unknown;
 };
 
 /** A single NT experience variant item — typed broadly to hold any block's fields. */
@@ -29,7 +30,7 @@ export type NtExperienceFragment = {
   } | null;
 };
 
-/** Hero section (matches Contentful Hero content type: internalName, headline, subheadline, background, media, ctaText, ctaUrl, sectionStyle, sectionStyleUpdatedAt, variant, nt_experiences). */
+/** Hero section (matches Contentful Hero content type: internalName, headline, subheadline, background, media, ctaText, ctaUrl, sectionStyle, variant, nt_experiences). */
 export type HeroFragment = BlockData & {
   __typename: 'Hero';
   internalName?: string | null;
@@ -39,7 +40,6 @@ export type HeroFragment = BlockData & {
   ctaUrl?: string | null;
   variant?: string | null;
   sectionStyle?: string | null;
-  sectionStyleUpdatedAt?: number | null;
   background?: { url?: string } | null;
   image?: { url?: string } | null;
   ntExperiencesCollection?: {
@@ -191,17 +191,30 @@ export type BannerFragment = BlockData & {
   media?: MediaWrapperFragment | null;
 };
 
-/** Social Post — one post per channel with channel-specific live preview card. */
+/** Social Post — one post for one or more channels with stacked live preview cards. */
 export type SocialPostFragment = BlockData & {
   __typename: 'SocialPost';
   internalName?: string | null;
   channel?: 'x' | 'instagram' | 'facebook' | null;
+  channels?: Array<'x' | 'instagram' | 'facebook'> | null;
   postType?: string | null;
   copy?: string | null;
   hashtags?: string[] | null;
   status?: string | null;
   game?: GameFragment | null;
   media?: MediaWrapperFragment | null;
+};
+
+/** Blog Posts Section — curated list of blog posts embeddable on any page. */
+export type BlogPostsSectionFragment = BlockData & {
+  __typename: 'BlogPostsSection';
+  internalName?: string | null;
+  title?: string | null;
+  description?: string | null;
+  limit?: number | null;
+  postsCollection?: {
+    items: Array<BlogPostFragment>;
+  } | null;
 };
 
 export type PersonalizedBlockData = BlockData & {

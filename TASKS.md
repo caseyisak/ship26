@@ -39,6 +39,12 @@ All blocks are committed to `main`. This is the source of truth.
 - [ ] DEMO_SCRIPT.md template per demo
 - [ ] Link to contentful-pptx skill for auto-deck generation
 
+**Phase 5 — Skill references cleanup**
+- [ ] Extract heavy content from skill SKILL.md files into `references/` subdirectories
+- [ ] Priority: `contentful-block-discovery` (225L, no refs) — extract Discovery Report Template + Common Patterns
+- [ ] Audit: `contentful-block-graphql-types`, `contentful-block-component`, `contentful-mcp-create-model` for additional extraction
+- [ ] `continuous-improvement` (97L) — evaluate if split is needed
+
 ---
 
 ## Active branches

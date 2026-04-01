@@ -1,5 +1,3 @@
-import { draftMode } from 'next/headers';
-
 import type { SocialPostFragment } from '@/block-renderer/types';
 
 import { fetchGraphQL } from './client';
@@ -12,6 +10,7 @@ type SocialPostByIdResponse = {
       sys: { id: string };
       internalName?: string | null;
       channel?: string | null;
+      channels?: string[] | null;
       postType?: string | null;
       copy?: string | null;
       hashtags?: string[] | null;
@@ -46,11 +45,10 @@ export async function getSocialPostByEntryId({
   locale: string;
 }): Promise<SocialPostFragment | null> {
   try {
-    const { isEnabled } = await draftMode();
     const data = await fetchGraphQL<SocialPostByIdResponse>({
       query: SOCIAL_POST_BY_ID,
-      variables: { id: entryId, locale, preview: isEnabled },
-      preview: isEnabled,
+      variables: { id: entryId, locale, preview: true },
+      preview: true,
     });
     const raw = data.socialPostCollection?.items?.[0];
     if (!raw) return null;
@@ -60,6 +58,7 @@ export async function getSocialPostByEntryId({
       sys: raw.sys,
       internalName: raw.internalName,
       channel: raw.channel as SocialPostFragment['channel'],
+      channels: raw.channels as SocialPostFragment['channels'],
       postType: raw.postType,
       copy: raw.copy,
       hashtags: raw.hashtags,

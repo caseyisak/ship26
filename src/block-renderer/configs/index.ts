@@ -2,6 +2,7 @@ import type {
   BannerFragment,
   BlockConfig,
   BlockData,
+  BlogPostsSectionFragment,
   DataVizFragment,
   FaqFragment,
   FeaturesFragment,
@@ -9,6 +10,7 @@ import type {
   TabbedContentFragment,
 } from '@/block-renderer/types';
 import { Banner } from '@/cms-components/banner';
+import { BlogPostsSection } from '@/cms-components/blog-posts-section';
 import { DataViz } from '@/cms-components/data-viz';
 import { Faq } from '@/cms-components/faq';
 import { Features } from '@/cms-components/features';
@@ -57,6 +59,13 @@ const bannerConfig: BlockConfig<BannerFragment> = {
   },
 };
 
+const blogPostsSectionConfig: BlockConfig<BlogPostsSectionFragment> = {
+  typename: 'BlogPostsSection',
+  layouts: {
+    default: () => BlogPostsSection,
+  },
+};
+
 export const blockConfigs: BlockConfig<BlockData>[] = [
   heroConfig as BlockConfig<BlockData>,
   faqConfig as BlockConfig<BlockData>,
@@ -64,4 +73,5 @@ export const blockConfigs: BlockConfig<BlockData>[] = [
   featuresConfig as BlockConfig<BlockData>,
   dataVizConfig as BlockConfig<BlockData>,
   bannerConfig as BlockConfig<BlockData>,
+  blogPostsSectionConfig as BlockConfig<BlockData>,
 ];

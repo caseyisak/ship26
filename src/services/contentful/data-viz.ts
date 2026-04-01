@@ -1,5 +1,3 @@
-import { draftMode } from 'next/headers';
-
 import type { DataVizFragment } from '@/block-renderer/types';
 
 import { fetchGraphQL } from './client';
@@ -47,11 +45,10 @@ export async function getDataVizByEntryId({
   locale?: string;
 }): Promise<DataVizFragment | null> {
   try {
-    const { isEnabled } = await draftMode();
     const data = await fetchGraphQL<DataVizByIdResponse>({
       query: DATA_VIZ_BY_ID,
-      variables: { id: entryId, locale, preview: isEnabled },
-      preview: isEnabled,
+      variables: { id: entryId, locale, preview: true },
+      preview: true,
     });
     const item = data.dataVizCollection?.items?.[0] ?? null;
     return mapDataViz(item);

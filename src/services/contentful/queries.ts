@@ -4,6 +4,7 @@ const NT_AUDIENCE_FIELDS = `
   ntAudienceId
   ntName
   ntDescription
+  ntRules
 `;
 
 /**
@@ -26,7 +27,6 @@ const NT_VARIANT_FIELDS = `
     ctaText
     ctaUrl
     sectionStyle
-    sectionStyleUpdatedAt
     variant
   }
   ... on Faq {
@@ -83,7 +83,6 @@ const HERO_FIELDS = `
     ctaText
     ctaUrl
     sectionStyle
-    sectionStyleUpdatedAt
     variant
     ntExperiencesCollection(limit: 10) {
       items { ${NT_EXPERIENCE_FIELDS} }
@@ -205,6 +204,34 @@ const DATA_VIZ_FIELDS = `
   }
 `;
 
+/** BlogPostsSection fragment: section header + curated post cards (no body).
+ *  Note: inlines post card fields to avoid forward-reference to BLOG_POST_CARD_FIELDS. */
+const BLOG_POSTS_SECTION_FIELDS = `
+  __typename
+  sys { id }
+  ... on BlogPostsSection {
+    internalName
+    title
+    description
+    limit
+    postsCollection(limit: 12) {
+      items {
+        __typename
+        sys { id }
+        ... on BlogPost {
+          title
+          slug
+          excerpt
+          publishDate
+          tags
+          heroImage { url width height }
+          author { __typename sys { id } ... on Author { name bio } }
+        }
+      }
+    }
+  }
+`;
+
 export const PAGE_BY_SLUG = `
   query PageBySlug($slug: String!, $locale: String!, $preview: Boolean) {
     pageCollection(where: { slug: $slug }, locale: $locale, preview: $preview, limit: 1) {
@@ -222,6 +249,7 @@ export const PAGE_BY_SLUG = `
             ${TABBED_CONTENT_FIELDS}
             ${FEATURES_FIELDS}
             ${DATA_VIZ_FIELDS}
+            ${BLOG_POSTS_SECTION_FIELDS}
           }
         }
         ntExperiencesCollection(limit: 10) {
@@ -369,13 +397,14 @@ const BANNER_FIELDS = `
   }
 `;
 
-/** SocialPost fragment: one social post per channel. */
+/** SocialPost fragment: one post for one or more channels. */
 const SOCIAL_POST_FIELDS = `
   __typename
   sys { id }
   ... on SocialPost {
     internalName
     channel
+    channels
     postType
     copy
     hashtags
@@ -439,6 +468,17 @@ export const SOCIAL_POST_BY_ID = `
     socialPostCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${SOCIAL_POST_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single BlogPostsSection entry by entry ID (for ID-based live preview). */
+export const BLOG_POSTS_SECTION_BY_ID = `
+  query BlogPostsSectionById($id: String!, $locale: String!, $preview: Boolean) {
+    blogPostsSectionCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${BLOG_POSTS_SECTION_FIELDS}
       }
     }
   }

@@ -48,5 +48,6 @@ export function mapAudiences(audiences?: Array<NtAudienceFragment | null>) {
       id: a.ntAudienceId,
       name: a.ntName,
       description: a.ntDescription ?? undefined,
+      rules: a.ntRules,
     }));
 }

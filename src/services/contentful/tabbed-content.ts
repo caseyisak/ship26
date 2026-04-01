@@ -1,5 +1,3 @@
-import { draftMode } from 'next/headers';
-
 import type { TabbedContentFragment } from '@/block-renderer/types';
 
 import { fetchGraphQL } from './client';
@@ -87,11 +85,10 @@ export async function getTabbedContentByEntryId({
   locale?: string;
 }): Promise<TabbedContentFragment | null> {
   try {
-    const { isEnabled } = await draftMode();
     const data = await fetchGraphQL<TabbedContentByIdResponse>({
       query: TABBED_CONTENT_BY_ID,
-      variables: { id: entryId, locale, preview: isEnabled },
-      preview: isEnabled,
+      variables: { id: entryId, locale, preview: true },
+      preview: true,
     });
     const item = data.tabbedContentCollection?.items?.[0] ?? null;
     return mapTabbedContent(item);

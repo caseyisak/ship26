@@ -31,7 +31,8 @@ export async function GET(request: NextRequest) {
       type === 'dataViz' ||
       type === 'blogPost' ||
       type === 'banner' ||
-      type === 'socialPost')
+      type === 'socialPost' ||
+      type === 'blogPostsSection')
   ) {
     if (
       entryId.includes('entry.') ||
@@ -63,6 +64,7 @@ export async function GET(request: NextRequest) {
       blogPost: 'blog-post',
       banner: 'banner',
       socialPost: 'social-post',
+      blogPostsSection: 'blog-posts-section',
     };
     const routeSegment = typeToRoute[type] ?? type;
     const redirectUrl = `${base}/preview/${routeSegment}/${encodeURIComponent(entryId)}`;

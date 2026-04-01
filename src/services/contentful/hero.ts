@@ -1,5 +1,3 @@
-import { draftMode } from 'next/headers';
-
 import type { HeroFragment } from '@/block-renderer/types';
 
 import { fetchGraphQL } from './client';
@@ -57,11 +55,10 @@ export async function getHeroByEntryId({
   locale?: string;
 }): Promise<HeroFragment | null> {
   try {
-    const { isEnabled } = await draftMode();
     const data = await fetchGraphQL<HeroByIdResponse>({
       query: HERO_BY_ID,
-      variables: { id: entryId, locale, preview: isEnabled },
-      preview: isEnabled,
+      variables: { id: entryId, locale, preview: true },
+      preview: true,
     });
     const item = data.heroCollection?.items?.[0] ?? null;
     return mapHero(item);

@@ -1,5 +1,3 @@
-import { draftMode } from 'next/headers';
-
 import type { BannerFragment } from '@/block-renderer/types';
 
 import { fetchGraphQL } from './client';
@@ -46,11 +44,10 @@ export async function getBannerByEntryId({
   locale: string;
 }): Promise<BannerFragment | null> {
   try {
-    const { isEnabled } = await draftMode();
     const data = await fetchGraphQL<BannerByIdResponse>({
       query: BANNER_BY_ID,
-      variables: { id: entryId, locale, preview: isEnabled },
-      preview: isEnabled,
+      variables: { id: entryId, locale, preview: true },
+      preview: true,
     });
     const raw = data.bannerCollection?.items?.[0];
     if (!raw) return null;
