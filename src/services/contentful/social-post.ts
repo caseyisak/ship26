@@ -9,22 +9,10 @@ type SocialPostByIdResponse = {
       __typename: string;
       sys: { id: string };
       internalName?: string | null;
-      channel?: string | null;
       channels?: string[] | null;
-      postType?: string | null;
       copy?: string | null;
       hashtags?: string[] | null;
       status?: string | null;
-      game?: {
-        __typename: string;
-        sys: { id: string };
-        title?: string | null;
-        week?: number | null;
-        seasonYear?: number | null;
-        opponentName?: string | null;
-        homeAway?: string | null;
-        kickoffDateTime?: string | null;
-      } | null;
       media?: {
         __typename: string;
         sys: { id: string };
@@ -57,13 +45,11 @@ export async function getSocialPostByEntryId({
       __typename: 'SocialPost',
       sys: raw.sys,
       internalName: raw.internalName,
-      channel: raw.channel as SocialPostFragment['channel'],
       channels: raw.channels as SocialPostFragment['channels'],
-      postType: raw.postType,
       copy: raw.copy,
       hashtags: raw.hashtags,
       status: raw.status,
-      game: raw.game ? { ...raw.game, __typename: 'Game' as const } : null,
+      game: null,
       media: raw.media
         ? { ...raw.media, __typename: 'MediaWrapper' as const }
         : null,

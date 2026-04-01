@@ -35,17 +35,13 @@ function ChannelCard({
   channel,
   copy,
   hashtags,
-  game,
   media,
-  postType,
   status,
 }: {
   channel: Channel;
   copy?: string | null;
   hashtags?: string[] | null;
-  game?: SocialPostFragment['game'];
   media?: SocialPostFragment['media'];
-  postType?: string | null;
   status?: string | null;
 }) {
   const meta = CHANNEL_META[channel];
@@ -67,17 +63,9 @@ function ChannelCard({
           className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold uppercase"
           style={{
             backgroundColor:
-              status === 'approved'
-                ? '#dcfce7'
-                : status === 'ready_for_review'
-                  ? '#fef9c3'
-                  : '#f3f4f6',
+              status === 'approved' ? '#dcfce7' : status === 'ready_for_review' ? '#fef9c3' : '#f3f4f6',
             color:
-              status === 'approved'
-                ? '#166534'
-                : status === 'ready_for_review'
-                  ? '#854d0e'
-                  : '#6b7280',
+              status === 'approved' ? '#166534' : status === 'ready_for_review' ? '#854d0e' : '#6b7280',
           }}
         >
           {status ?? 'draft'}
@@ -96,14 +84,14 @@ function ChannelCard({
         >
           <div
             className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-black text-white"
-            style={{ backgroundColor: '#0B1F41' }}
+            style={{ backgroundColor: '#334155' }}
           >
-            C
+            B
           </div>
           <div className="flex-1">
-            <p className="text-sm font-bold text-gray-900">Chicago Bears</p>
+            <p className="text-sm font-bold text-gray-900">Your Brand</p>
             <p className="text-xs text-gray-500">
-              @ChicagoBears
+              @yourbrand
               {channel === 'x' && ' · Just now'}
             </p>
           </div>
@@ -127,36 +115,21 @@ function ChannelCard({
           </div>
         ) : (
           <div
-            className="flex w-full items-center justify-center"
-            style={{
-              aspectRatio: channel === 'instagram' ? '1/1' : '16/9',
-              background: 'linear-gradient(135deg, #0B1F41, #1a3a6b)',
-            }}
+            className="flex w-full items-center justify-center bg-gray-100"
+            style={{ aspectRatio: channel === 'instagram' ? '1/1' : '16/9' }}
           >
-            <div className="text-center text-white/40">
-              <p className="text-4xl">🏈</p>
-              <p className="mt-2 text-xs">No image uploaded</p>
-            </div>
+            <p className="text-xs text-gray-400 italic">No image uploaded</p>
           </div>
         )}
 
         {/* Copy */}
         <div className="px-4 py-3">
-          {game && (
-            <p className="mb-2 text-xs font-semibold" style={{ color: '#C83803' }}>
-              {game.homeAway === 'home' ? '🏟 Home' : '✈️ Away'} · Wk {game.week} vs{' '}
-              {game.opponentName}
-            </p>
-          )}
           {fullCopy ? (
             <p className="text-sm leading-relaxed whitespace-pre-line text-gray-900">{fullCopy}</p>
           ) : (
             <p className="text-sm text-gray-400 italic">
               No copy yet — start typing in Contentful…
             </p>
-          )}
-          {postType && (
-            <p className="mt-1 text-xs text-gray-400">{postType}</p>
           )}
         </div>
 
@@ -200,15 +173,11 @@ function ChannelCard({
 
 export function SocialCardPreview({ data: rawData }: { data: SocialPostFragment }) {
   const data = useLiveUpdates(rawData);
-  const { channel, channels, copy, hashtags, game, media, postType, status } = data;
+  const { channels, copy, hashtags, media, status } = data;
 
-  // Prefer the multi-select `channels` field; fall back to legacy single `channel`
-  const activeChannels: Channel[] =
-    channels && channels.length > 0
-      ? (channels as Channel[])
-      : channel
-        ? [channel as Channel]
-        : [];
+  const activeChannels = (channels ?? []).filter((ch): ch is Channel =>
+    ch === 'x' || ch === 'instagram' || ch === 'facebook'
+  );
 
   const aspectRatios = media?.aspectRatios ?? [];
 
@@ -221,15 +190,15 @@ export function SocialCardPreview({ data: rawData }: { data: SocialPostFragment 
           <p className="text-xs text-gray-500">
             {activeChannels.length > 0
               ? `${activeChannels.length} channel${activeChannels.length > 1 ? 's' : ''} selected`
-              : 'No channels selected'}
+              : 'No channels selected — add channels in Contentful to preview'}
           </p>
         </div>
-        <span className="rounded bg-[#0B1F41] px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
+        <span className="rounded bg-gray-700 px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
           Live Preview
         </span>
       </div>
 
-      {/* Stacked channel cards */}
+      {/* One card per selected channel, stacked */}
       {activeChannels.length > 0 ? (
         <div className="flex flex-col gap-8">
           {activeChannels.map((ch) => (
@@ -238,9 +207,7 @@ export function SocialCardPreview({ data: rawData }: { data: SocialPostFragment 
               channel={ch}
               copy={copy}
               hashtags={hashtags}
-              game={game}
               media={media}
-              postType={postType}
               status={status}
             />
           ))}
@@ -248,7 +215,7 @@ export function SocialCardPreview({ data: rawData }: { data: SocialPostFragment 
       ) : (
         <div className="mx-auto max-w-xl rounded-xl bg-white p-8 text-center shadow-sm">
           <p className="text-gray-400">
-            No channels selected — add channels in Contentful to see previews.
+            Select one or more channels in the Channels field to see previews here.
           </p>
         </div>
       )}
@@ -256,37 +223,28 @@ export function SocialCardPreview({ data: rawData }: { data: SocialPostFragment 
       {/* Media wrapper info */}
       {media && (
         <div className="mx-auto mt-8 max-w-xl rounded-xl bg-white p-4 shadow-sm">
-          <p className="mb-3 text-xs font-bold tracking-widest text-gray-500 uppercase">
-            Media Wrapper — {media.internalName}
-          </p>
-          <p className="mb-2 text-xs text-gray-600">
-            One image → multiple channels and aspect ratios
+          <p className="mb-2 text-xs font-bold tracking-widest text-gray-500 uppercase">
+            Media — {media.internalName}
           </p>
           <div className="flex flex-wrap gap-2">
             {(media.channels ?? []).map((ch) => (
               <span
                 key={ch}
                 className="rounded-full px-2 py-0.5 text-[10px] font-semibold text-white uppercase"
-                style={{
-                  backgroundColor: CHANNEL_META[ch as Channel]?.color ?? '#666',
-                }}
+                style={{ backgroundColor: CHANNEL_META[ch as Channel]?.color ?? '#666' }}
               >
                 {ch}
               </span>
             ))}
+            {aspectRatios.map((ratio) => (
+              <span
+                key={ratio}
+                className="rounded border border-gray-200 px-2 py-0.5 font-mono text-[10px] text-gray-600"
+              >
+                {ratio}
+              </span>
+            ))}
           </div>
-          {aspectRatios.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {aspectRatios.map((ratio) => (
-                <span
-                  key={ratio}
-                  className="rounded border border-gray-200 px-2 py-0.5 font-mono text-[10px] text-gray-600"
-                >
-                  {ratio}
-                </span>
-              ))}
-            </div>
-          )}
         </div>
       )}
     </div>

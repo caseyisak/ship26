@@ -191,13 +191,11 @@ export type BannerFragment = BlockData & {
   media?: MediaWrapperFragment | null;
 };
 
-/** Social Post — one post for one or more channels with stacked live preview cards. */
+/** Social Post — multi-channel post with stacked live preview cards per selected channel. */
 export type SocialPostFragment = BlockData & {
   __typename: 'SocialPost';
   internalName?: string | null;
-  channel?: 'x' | 'instagram' | 'facebook' | null;
   channels?: Array<'x' | 'instagram' | 'facebook'> | null;
-  postType?: string | null;
   copy?: string | null;
   hashtags?: string[] | null;
   status?: string | null;

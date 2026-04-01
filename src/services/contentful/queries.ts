@@ -70,7 +70,7 @@ const NT_EXPERIENCE_FIELDS = `
   }
 `;
 
-/** Hero fragment: all fields from Hero content type (internalName, headline, subheadline, background, media, ctaText, ctaUrl, sectionStyle, sectionStyleUpdatedAt, variant, nt_experiences). */
+/** Hero fragment: all fields from Hero content type (internalName, headline, subheadline, background, media, ctaText, ctaUrl, sectionStyle, variant, nt_experiences). */
 const HERO_FIELDS = `
   __typename
   sys { id }
@@ -363,20 +363,6 @@ const MEDIA_WRAPPER_FIELDS = `
   }
 `;
 
-/** Game fragment: core game metadata used by Banner and SocialPost. */
-const GAME_FIELDS = `
-  __typename
-  sys { id }
-  ... on Game {
-    title
-    week
-    seasonYear
-    opponentName
-    homeAway
-    kickoffDateTime
-  }
-`;
-
 /** Banner fragment: gameday banner for web + mobile surfaces.
  *  Note: game field omitted — Game content type is not in master schema (bears-only). */
 const BANNER_FIELDS = `
@@ -395,16 +381,13 @@ const BANNER_FIELDS = `
   }
 `;
 
-/** SocialPost fragment: one post for one or more channels.
- *  Note: game field omitted — Game content type is not in master schema (bears-only). */
+/** SocialPost fragment: channels (multi-select), copy, hashtags, status, media. */
 const SOCIAL_POST_FIELDS = `
   __typename
   sys { id }
   ... on SocialPost {
     internalName
-    channel
     channels
-    postType
     copy
     hashtags
     status

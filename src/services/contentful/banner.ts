@@ -14,16 +14,6 @@ type BannerByIdResponse = {
       copy?: string | null;
       ctaText?: string | null;
       ctaUrl?: string | null;
-      game?: {
-        __typename: string;
-        sys: { id: string };
-        title?: string | null;
-        week?: number | null;
-        seasonYear?: number | null;
-        opponentName?: string | null;
-        homeAway?: string | null;
-        kickoffDateTime?: string | null;
-      } | null;
       media?: {
         __typename: string;
         sys: { id: string };
@@ -61,7 +51,7 @@ export async function getBannerByEntryId({
       copy: raw.copy,
       ctaText: raw.ctaText,
       ctaUrl: raw.ctaUrl,
-      game: raw.game ? { ...raw.game, __typename: 'Game' as const } : null,
+      game: null,
       media: raw.media
         ? { ...raw.media, __typename: 'MediaWrapper' as const }
         : null,
