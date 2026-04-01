@@ -1,120 +1,83 @@
-# Session Handoff — 2026-03-19
+# Session Handoff — 2026-03-27
 
 ## Branch
-`feat/skill-creator`
+`main` (all work happens here; new branch `feat/aio-aeo-geo-demo` to be created at start of next session)
 
-## What was accomplished this session
+## What was decided this session
 
-### 1. Skill Creator installed
-- Downloaded all 17 files from `anthropics/skills` repo into `.claude/commands/skills/skill-creator/`
-- Includes eval scripts (`run_loop.py`, `run_eval.py`, `aggregate_benchmark.py`), viewer HTML, grader/comparator/analyzer agents
+### Initiative: AIO / AEO / GEO Demo Loop
 
-### 2. All 7 Cursor skills migrated to Claude Code
-Copied from `.cursor/skills/` → `.claude/commands/skills/` with these fixes:
-- `contentful-mcp-create-model`: replaced `user-contentful-management-mcp-server` with `mcp__contentful__*` tool table
-- `contentful-live-preview-verify`: rewrote all `agent-browser` commands to `mcp__docker__browser_*`
+Full planning session for an AI Answer Optimization demo built on top of the existing FAQ block. The goal: show prospects how Contentful-structured content with governance metadata becomes the single source of truth that feeds Google AI Overviews, ChatGPT citations, and any AI channel — consistently.
 
-### 3. Anthropic best practices applied (commit `18a4f77`)
-- All 7 descriptions updated with natural trigger phrases + negative triggers
-- `metadata: author/version` added to all frontmatter
-- References extracted to `references/` subdirectories for progressive disclosure:
-  - `contentful-block-component/references/live-preview-patterns.md`
-  - `contentful-block-graphql-types/references/field-type-mapping.md`
-  - `contentful-block-live-preview/references/code-templates.md`
-  - `contentful-mcp-create-model/references/field-types.md` + `common-errors.md`
-  - `contentful-live-preview-verify/references/debugging-workflow.md` + `lessons-patterns.md`
+**The demo story:** One governed FAQ entry in Contentful → consistent answers across all AI surfaces. Change the answer once → every channel updates. This is the "one source of truth" narrative made visible.
 
-## In-progress: Description optimization for `contentful-block-discovery`
+---
 
-### What's running
-`run_loop.py` is running in the background (or may have just finished):
+## Everything you need to know to execute
+
+### Source material (read these if context feels thin)
+- **PRD** (already written): `~/Dev/kaz glean/project/prd/faq-aio-aeo-demo.md` — the V1 spec, file map, demo script, success criteria
+- **Glean synthesis**: `~/Dev/kaz glean/project/context/glean-aio-aeo-synthesis.md` — AIO/AEO thesis + Contentful angles
+- **SE Standards**: `~/Documents/SE Discovery, Demo & POC Standards.md` — Tell-Show-Tell framework, guardrails, objection scripts
+- **VMF**: `~/Documents/Contentful Value Messaging Framework.md` — 4 value drivers, proof points, trap-setting Qs
+- **Discovery framework**: `~/Documents/AE → SE Discovery Framework_ Getting to a Demo That Matters.md`
+- **Spec + tasks**: `.claude/specs/001-aio-aeo-geo-demo/` (written this session — start here)
+
+### The "Before" panel already exists
+`src/components/sections/metafi-faq.tsx` — hardcoded static FAQ with no Contentful connection. **Use as-is** for the Before state. Zero extra work.
+
+### The "After" panel is what we're building
+`src/cms-components/faq/faq.tsx` — already Contentful-connected with live preview. Extend with:
+- `aioAeoGeo` governance link field on each `faqitem`
+- `FAQPage` JSON-LD emitted from live data
+- `AioAeoPreviewPanel` — simulated AI Overview + governance badges + JSON-LD drawer
+
+### The demo moment
+SE has Contentful open (entry editor) and `/demo/faq-aeo` open in another tab. Edit FAQ answer in Contentful → accordion on the After panel updates live + AI Overview simulation updates. "One change. Every surface."
+
+---
+
+## Reconciled plan (PRD V1 + governance layer from this session)
+
+The PRD said "no content model changes for V1" — but the governance metadata (`aioAeoGeo` content type) is what makes the "metadata made a difference" story land. We're building both together.
+
+**The key architectural decision:** The Before panel intentionally has NO governance metadata. The After panel has the structured FAQ + `aioAeoGeo` metadata. The AI simulation on the left is vague/hedged; on the right it's confident and citable. The contrast is the demo.
+
+---
+
+## Milestones (execution order)
+
+| # | What | Where | Notes |
+|---|------|--------|-------|
+| M1 | Create `aioAeoGeo` content type | Contentful MCP | 5 fields: internalName, topic, ownerTeam, lastUpdated, region |
+| M2 | Add `aioAeoGeo` link field to `faqitem` | Contentful MCP | Array, linkContentType: aioAeoGeo, max 1 |
+| M3 | Seed 4 governance entries + 6 FAQ entries (generic topics) | Contentful MCP | Generic topics: data_privacy, pricing, product_support, compliance |
+| M4 | `AIO_AEO_GEO_FIELDS` GraphQL fragment + TypeScript types | `queries.ts`, `types.ts` | Extend FAQ_ITEM_FIELDS, add AioAeoGeoFragment |
+| M5 | `/demo/faq-aeo` page — Before/After split layout | `src/app/demo/faq-aeo/page.tsx` | Left: metafi-faq.tsx, Right: Faq CMS component |
+| M6 | Extend `faq.tsx` — FAQPage JSON-LD that updates live | `src/cms-components/faq/faq.tsx` | Derived from liveData items, updates via useLiveUpdates |
+| M7 | `AioAeoPreviewPanel` component | `src/components/demo/` | AI Overview mock + governance badges + JSON-LD drawer |
+| M8 | `demo-loops/` standard + `aio-aeo-geo/` bundle | `demo-loops/` | SE README, AI-CONTEXT, DEMO_SCRIPT, schema JSONs, seed JSONs |
+
+Full tasks with validation steps: `.claude/specs/001-aio-aeo-geo-demo/tasks.md`
+
+---
+
+## Key decisions already made
+
+- **No vertical lock-in**: Content type fields and FAQ topics are generic (data_privacy, pricing, etc.) — swappable for any prospect vertical without code changes
+- **Before side is honest**: Left panel uses real static component, not fabricated. Right panel is live Contentful data. Same answer text, different structure.
+- **JSON-LD is generated, not stored**: Dynamic from live entry data in a collapsible drawer. No separate field for editors to manage.
+- **Contentful live preview (iframe mode)**: Default approach. SE shows Contentful entry editor with the preview panel. Real-time updates, no polling.
+- **`SchemaStatusBadge` folded into `AioAeoPreviewPanel`**: Keeps component count low.
+- **`demo-loops/README.md`** establishes the standard for all future demo loops (this is Loop 1).
+- **Demo OS integration is a fast-follow**: The `demo-loops/` directory in metafi is the technical asset library; a separate `~/Dev/demo-os/` repo will be the playbook/assembly layer. Not blocking this build.
+
+---
+
+## How to start next session
+
 ```
-cd .claude/commands/skills/skill-creator
-python3 -m scripts.run_loop \
-  --eval-set .claude/commands/skills/contentful-block-discovery-workspace/trigger-evals.json \
-  --skill-path .claude/commands/skills/contentful-block-discovery \
-  --model claude-sonnet-4-6 \
-  --max-iterations 5 \
-  --verbose \
-  > .claude/commands/skills/contentful-block-discovery-workspace/run_loop.log 2>&1
-```
-
-Log: `.claude/commands/skills/contentful-block-discovery-workspace/run_loop.log`
-
-### Results so far (4/5 iterations complete)
-```
-Iter 1: Train 38% / Test 43%  (precision=100%, recall=0%)
-Iter 2: Train 38% / Test 43%  (precision=100%, recall=0%)
-Iter 3: Train 38% / Test 43%  (precision=100%, recall=0%)
-Iter 4: Train 38% / Test 43%  (precision=100%, recall=0%)
-```
-
-### KEY FINDING: Recall stuck at 0%
-Despite the optimizer producing much better descriptions each iteration (going from passive "Use when..." phrasing to "Invoke FIRST whenever..." imperative style), **recall never improves**. All should-trigger queries are failing at 0/3 rate.
-
-This is likely NOT a description quality problem — the descriptions are genuinely getting better. The issue is almost certainly that `run_eval.py` tests triggering via `claude -p` single-shot CLI invocations, and skills don't auto-trigger in that context the same way they do in interactive Claude Code sessions.
-
-**Recommendation**: The optimized description candidates are still valuable — apply the best one (iteration 2 or 3, which used the imperative "Invoke FIRST" structure) to the skill even if the eval scores look flat. The real-world trigger behavior in interactive CC sessions will be different from what `run_eval.py` measures.
-
-### Best candidate description (from iter 2/3)
-```
-Invoke FIRST whenever a user wants to add, build, create, or start any new
-Contentful-backed block, section, or component — even if they also mention a
-specific milestone or next step. This is the mandatory entry point that scans
-existing components, reviews patterns, and checks lessons learned before any
-code is written. Covers: "add a [X] block", "build a [X] section", "create a
-content type for [X]", "wire up [X] to the site", "we need a [X] component",
-"kick off the workflow", "phase 0", "where do we start", "check what's there
-first". Skip only when the user has already run discovery and says so explicitly,
-or when the request is purely about debugging or fixing an existing block.
-```
-
-## Next tasks (to run in parallel agents)
-
-### Task A: Apply optimized description to `contentful-block-discovery`
-1. Read final output from run_loop.log: `grep "best_description" .claude/commands/skills/contentful-block-discovery-workspace/run_loop.log`
-2. If no `best_description` line yet, use the iter 2/3 candidate above
-3. Update `description:` field in `.claude/commands/skills/contentful-block-discovery/SKILL.md`
-4. Commit on `feat/skill-creator`
-
-### Task B: Run description optimization for the remaining 6 skills
-Use the same pattern as contentful-block-discovery. For each skill:
-1. Generate 20 eval queries (10 should-trigger, 10 should-not-trigger near-misses)
-2. Save to `<skill-name>-workspace/trigger-evals.json`
-3. Run `run_loop.py` from `.claude/commands/skills/skill-creator/` directory
-4. Apply best_description to the skill's SKILL.md
-
-Skills to optimize (in priority order):
-- `contentful-block-graphql-types`
-- `contentful-block-component`
-- `contentful-mcp-create-model`
-- `contentful-block-live-preview`
-- `contentful-live-preview-verify`
-- `continuous-improvement`
-
-### Task C: Commit everything and open PR
-After all optimizations applied:
-```
-git add .claude/commands/skills/
-git commit -m "feat(skills): optimize trigger descriptions via run_loop.py"
-git push -u origin feat/skill-creator
-gh pr create --base main
+/piv prime
 ```
 
-## Key paths
-- Skills: `.claude/commands/skills/`
-- Skill creator: `.claude/commands/skills/skill-creator/`
-- Discovery workspace: `.claude/commands/skills/contentful-block-discovery-workspace/`
-- run_loop.py invocation: must `cd` to `skill-creator/` dir first, then `python3 -m scripts.run_loop`
-- Model to use: `claude-sonnet-4-6`
-
-## Eval file format
-```json
-[{"query": "...", "should_trigger": true/false}]
-```
-20 queries per skill. Should-not-trigger should be NEAR-MISSES (same domain, different milestone or intent), not obviously irrelevant queries.
-
-## Commits on this branch
-- `0ebcc85` — initial migration of all skills
-- `18a4f77` — Anthropic best practices (descriptions, metadata, references/)
-- Next commit: apply optimized descriptions
+Then: "Let's execute the AIO/AEO/GEO demo — start with M1." Tasks are in `.claude/specs/001-aio-aeo-geo-demo/tasks.md`. Create branch `feat/aio-aeo-geo-demo` via worktree before starting any code.

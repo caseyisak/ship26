@@ -130,6 +130,7 @@ NEXT_PUBLIC_BRAND=                     # set to customer name for themed demos
 
 - [Codebase Architecture](documentation/CODEBASE-ARCHITECTURE.md)
 - [Development Guide](documentation/DEVELOPMENT-GUIDE.md)
+- [Demo Workflow](documentation/demo-workflow.md) — how to spin up, run, and clean up a prospect demo
 - [Contentful Migration Plan](documentation/CONTENTFUL-MIGRATION.md) — what's static, what needs migrating
 - [Lessons Learned](documentation/lessons-learned/index.md) — error patterns and fixes (one file per lesson)
 - [Documentation Index](documentation/README.md) — for agents

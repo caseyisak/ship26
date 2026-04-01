@@ -1,5 +1,26 @@
 # Current State & Roadmap
 
+## 🔥 Active Initiative — AIO / AEO / GEO Demo Loop
+
+**Branch to create:** `feat/aio-aeo-geo-demo` (worktree off main)
+**Spec + tasks:** `.claude/specs/001-aio-aeo-geo-demo/`
+**Handoff doc:** `documentation/handoff-2026-03-30-bears-worktrees-agents-orientation.md`
+
+Quick-start: `/piv prime` → read handoff doc → `bash scripts/worktree-add.sh feat/aio-aeo-geo-demo` → execute tasks
+
+| Milestone | What | Status |
+|-----------|------|--------|
+| M1 | Create `aioAeoGeo` content type (Contentful MCP) | ⬜ |
+| M2 | Add `aioAeoGeo` field to `faqitem` (Contentful MCP) | ⬜ |
+| M3 | Seed 4 governance entries + 6 FAQ entries | ⬜ |
+| M4 | GraphQL fragment + TypeScript types | ⬜ |
+| M5 | `/demo/faq-aeo` page — Before/After split layout | ⬜ |
+| M6 | FAQPage JSON-LD in `faq.tsx` (live-updating) | ⬜ |
+| M7 | `AioAeoPreviewPanel` component | ⬜ |
+| M8 | `demo-loops/` standard + `aio-aeo-geo/` bundle | ⬜ |
+
+---
+
 ## Main branch — what's in it (as of 2026-03-19)
 
 All blocks are committed to `main`. This is the source of truth.

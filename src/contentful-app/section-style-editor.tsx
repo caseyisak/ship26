@@ -1,6 +1,6 @@
 'use client';
 
-import { AlignCenter, AlignLeft, AlignRight, ChevronDown, LayoutGrid, Palette, Type } from 'lucide-react';
+import { AlignCenter, AlignLeft, AlignRight, Ban, ChevronDown, LayoutGrid, Palette, Type } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -748,6 +748,20 @@ export function SectionStyleEditor({
                 Background / overlay color
               </Label>
               <div className="mt-2 flex flex-wrap gap-2">
+                {/* No-color option — removes overlay entirely */}
+                <button
+                  type="button"
+                  title="No overlay"
+                  className={cn(
+                    'flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-small)] border-2 bg-white transition-all',
+                    !config.backgroundColor
+                      ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
+                      : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
+                  )}
+                  onClick={() => update({ backgroundColor: undefined, overlayOpacity: 0 })}
+                >
+                  <Ban className="h-4 w-4 text-red-400" />
+                </button>
                 {COLOR_TOKEN_OPTIONS.map(({ name, var: cssVar }) => (
                   <button
                     key={name}

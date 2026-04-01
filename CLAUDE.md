@@ -79,6 +79,35 @@ git branch -d <branch-name>
 
 ---
 
+## Git commit format
+
+Every commit must follow this format — **both parts are required**:
+
+```
+<type>(<scope>): <what> — <why/operational detail>
+```
+
+The `— <why>` suffix is not optional. It's what allows future Claude sessions to reconstruct intent from `git log` without reading every file.
+
+**Good:**
+```
+feat(faq): add aioAeoGeo link field — governance metadata enables AEO story in demo
+fix(data-viz): clamp bubble radius — was overflowing container at small viewport widths
+refactor(block-renderer): extract layout types — prep for multi-layout support in M3
+```
+
+**Not good (missing why):**
+```
+feat(faq): add aioAeoGeo link field
+fix(data-viz): clamp bubble radius
+```
+
+### Context drift rule
+
+Conversations can branch across multiple topics. If it's unclear what the current focus is — or if git log lacks the "why" context needed to understand recent changes — **ask at the start of the session** before diving into work. Don't guess. One clarifying question up front prevents wasted effort on the wrong thing.
+
+---
+
 ## Multi-CC coordination
 
 This project sometimes runs **multiple Claude Code instances in parallel** (e.g. one on `main`, one on `feat/skill-creator`).
