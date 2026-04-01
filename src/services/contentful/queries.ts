@@ -363,8 +363,7 @@ const MEDIA_WRAPPER_FIELDS = `
   }
 `;
 
-/** Banner fragment: gameday banner for web + mobile surfaces.
- *  Note: game field omitted — Game content type is not in master schema (bears-only). */
+/** Banner fragment: web + mobile surfaces. */
 const BANNER_FIELDS = `
   __typename
   sys { id }
@@ -375,6 +374,9 @@ const BANNER_FIELDS = `
     copy
     ctaText
     ctaUrl
+    variant
+    contentType
+    sectionStyle
     media {
       ${MEDIA_WRAPPER_FIELDS}
     }

@@ -178,7 +178,7 @@ export type MediaWrapperFragment = {
   aspectRatios?: string[] | null;
 };
 
-/** Banner block — gameday banner rendered on web and mock mobile app. */
+/** Banner block — web + mobile app surfaces. */
 export type BannerFragment = BlockData & {
   __typename: 'Banner';
   internalName?: string | null;
@@ -187,6 +187,9 @@ export type BannerFragment = BlockData & {
   copy?: string | null;
   ctaText?: string | null;
   ctaUrl?: string | null;
+  variant?: 'light' | 'dark' | 'alt' | null;
+  contentType?: 'internal' | 'sponsored' | null;
+  sectionStyle?: unknown;
   game?: GameFragment | null;
   media?: MediaWrapperFragment | null;
 };

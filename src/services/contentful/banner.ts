@@ -14,6 +14,9 @@ type BannerByIdResponse = {
       copy?: string | null;
       ctaText?: string | null;
       ctaUrl?: string | null;
+      variant?: string | null;
+      contentType?: string | null;
+      sectionStyle?: unknown;
       media?: {
         __typename: string;
         sys: { id: string };
@@ -51,6 +54,9 @@ export async function getBannerByEntryId({
       copy: raw.copy,
       ctaText: raw.ctaText,
       ctaUrl: raw.ctaUrl,
+      variant: raw.variant as BannerFragment['variant'],
+      contentType: raw.contentType as BannerFragment['contentType'],
+      sectionStyle: raw.sectionStyle,
       game: null,
       media: raw.media
         ? { ...raw.media, __typename: 'MediaWrapper' as const }

@@ -71,6 +71,21 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
   const [device, setDevice] = useState<Device>(DEVICES[1]);
   const data = useLiveUpdates(banner);
 
+  // variant drives banner card colours in the phone frame
+  const variant = data.variant ?? 'dark';
+  const cardBg =
+    variant === 'light' ? 'var(--background, #f5f5f5)'
+    : variant === 'alt'  ? 'var(--accent)'
+    :                       'var(--primary)';
+  const cardText =
+    variant === 'light' ? 'var(--foreground, #111)' : 'var(--primary-foreground, #fff)';
+  const cardTextMuted =
+    variant === 'light' ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.65)';
+  const ctaBg =
+    variant === 'light' ? 'var(--primary)' : 'var(--background, #fff)';
+  const ctaText =
+    variant === 'light' ? 'var(--primary-foreground, #fff)' : 'var(--primary)';
+
   return (
     <div className="flex flex-col items-center gap-4">
       {/* Device selector */}
@@ -168,7 +183,7 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
           {/* Banner card */}
           <div
             style={{
-              backgroundColor: 'var(--accent)',
+              backgroundColor: cardBg,
               margin: '10px 12px 0',
               borderRadius: 8,
               padding: '12px 14px',
@@ -179,29 +194,19 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
               boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
             }}
           >
-            <div style={{ flex: 1, minWidth: 0 }}>
+            {data.contentType === 'sponsored' && (
+              <p style={{ position: 'absolute', top: 4, left: 14, fontSize: 8, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: cardTextMuted, margin: 0 }}>
+                Sponsored
+              </p>
+            )}
+            <div style={{ flex: 1, minWidth: 0, paddingTop: data.contentType === 'sponsored' ? 10 : 0 }}>
               {data.headline && (
-                <p
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 700,
-                    color: 'var(--accent-foreground, #fff)',
-                    lineHeight: 1.3,
-                    margin: 0,
-                  }}
-                >
+                <p style={{ fontSize: 13, fontWeight: 700, color: cardText, lineHeight: 1.3, margin: 0 }}>
                   {data.headline}
                 </p>
               )}
               {data.subheadline && (
-                <p
-                  style={{
-                    fontSize: 10,
-                    color: 'rgba(255,255,255,0.75)',
-                    marginTop: 3,
-                    marginBottom: 0,
-                  }}
-                >
+                <p style={{ fontSize: 10, color: cardTextMuted, marginTop: 3, marginBottom: 0 }}>
                   {data.subheadline}
                 </p>
               )}
@@ -215,33 +220,12 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
             {data.ctaText && (
               <a
                 href={data.ctaUrl ?? '#'}
-                style={{
-                  backgroundColor: 'var(--primary)',
-                  color: 'var(--primary-foreground, #fff)',
-                  fontSize: 11,
-                  fontWeight: 700,
-                  padding: '8px 12px',
-                  borderRadius: 999,
-                  textDecoration: 'none',
-                  whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                }}
+                style={{ backgroundColor: ctaBg, color: ctaText, fontSize: 11, fontWeight: 700, padding: '8px 12px', borderRadius: 999, textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}
               >
                 {data.ctaText}
               </a>
             )}
-            {/* Dismiss */}
-            <div
-              style={{
-                position: 'absolute',
-                top: 5,
-                right: 8,
-                fontSize: 12,
-                color: 'rgba(255,255,255,0.5)',
-                cursor: 'pointer',
-                lineHeight: 1,
-              }}
-            >
+            <div style={{ position: 'absolute', top: 5, right: 8, fontSize: 12, color: cardTextMuted, cursor: 'pointer', lineHeight: 1 }}>
               ✕
             </div>
           </div>
