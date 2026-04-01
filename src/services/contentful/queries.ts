@@ -377,7 +377,8 @@ const GAME_FIELDS = `
   }
 `;
 
-/** Banner fragment: gameday banner for web + mobile surfaces. */
+/** Banner fragment: gameday banner for web + mobile surfaces.
+ *  Note: game field omitted — Game content type is not in master schema (bears-only). */
 const BANNER_FIELDS = `
   __typename
   sys { id }
@@ -388,16 +389,14 @@ const BANNER_FIELDS = `
     copy
     ctaText
     ctaUrl
-    game {
-      ${GAME_FIELDS}
-    }
     media {
       ${MEDIA_WRAPPER_FIELDS}
     }
   }
 `;
 
-/** SocialPost fragment: one post for one or more channels. */
+/** SocialPost fragment: one post for one or more channels.
+ *  Note: game field omitted — Game content type is not in master schema (bears-only). */
 const SOCIAL_POST_FIELDS = `
   __typename
   sys { id }
@@ -409,9 +408,6 @@ const SOCIAL_POST_FIELDS = `
     copy
     hashtags
     status
-    game {
-      ${GAME_FIELDS}
-    }
     media {
       ${MEDIA_WRAPPER_FIELDS}
     }
