@@ -15,27 +15,10 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
   const getProps = useContentfulInspectorModeProps(rawData.sys.id);
   const [isVisible, setIsVisible] = useState(true);
 
-  const { headline, subheadline, ctaText, ctaUrl, game } = data;
+  const { headline, subheadline, ctaText, ctaUrl } = data;
 
-  const title =
-    headline ?? (game ? `Bears vs ${game.opponentName}` : 'Chicago Bears');
-
-  const gameContext = game?.kickoffDateTime
-    ? new Date(game.kickoffDateTime).toLocaleDateString('en-US', {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZoneName: 'short',
-      })
-    : null;
-
-  const description =
-    subheadline ??
-    (gameContext
-      ? `${game?.homeAway === 'home' ? 'Home' : 'Away'} · Wk ${game?.week} · ${gameContext}`
-      : '');
+  const title = headline ?? '';
+  const description = subheadline ?? '';
 
   if (!isVisible) return null;
 
