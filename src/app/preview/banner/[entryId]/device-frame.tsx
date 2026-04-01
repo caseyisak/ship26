@@ -118,8 +118,9 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
           />
         )}
 
-        {/* Scrollable viewport */}
+        {/* Scrollable viewport — [&::-webkit-scrollbar]:hidden hides scrollbar in Chrome/Safari */}
         <div
+          className="[&::-webkit-scrollbar]:hidden"
           style={{
             height: `calc(100% - ${NAV_HEIGHT}px)`,
             overflowY: 'auto',
