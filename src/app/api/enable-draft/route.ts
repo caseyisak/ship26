@@ -67,7 +67,14 @@ export async function GET(request: NextRequest) {
       blogPostsSection: 'blog-posts-section',
     };
     const routeSegment = typeToRoute[type] ?? type;
-    const redirectUrl = `${base}/preview/${routeSegment}/${encodeURIComponent(entryId)}`;
+    // Forward passthrough params (view, locale, preview) to the preview page
+    const passthrough = new URLSearchParams();
+    for (const key of ['view', 'locale', 'preview']) {
+      const val = searchParams.get(key);
+      if (val) passthrough.set(key, val);
+    }
+    const qs = passthrough.toString();
+    const redirectUrl = `${base}/preview/${routeSegment}/${encodeURIComponent(entryId)}${qs ? `?${qs}` : ''}`;
     const res = NextResponse.redirect(redirectUrl);
     try {
       const draft = await draftMode();
