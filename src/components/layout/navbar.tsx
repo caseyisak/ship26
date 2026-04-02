@@ -5,10 +5,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Settings } from 'lucide-react';
+import { useNinetailed } from '@ninetailed/experience.js-react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useSettings } from '@/personalization/settings-context';
 
+import { LoginModal } from './login-modal';
 import { ThemeToggle } from '../ui/theme-toggle';
 
 function PersonalizationToggle({ className }: { className?: string }) {
@@ -31,11 +34,61 @@ function PersonalizationToggle({ className }: { className?: string }) {
   );
 }
 
+function LoginButton({ className, afterAction }: { className?: string; afterAction?: () => void }) {
+  const ninetailed = useNinetailed();
+  const settings = useSettings();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const metadata = settings?.loggedInMetadata as Record<string, unknown> | null | undefined;
+  const firstName = (metadata?.firstName as string) ?? 'Account';
+  const initials =
+    [metadata?.firstName, metadata?.lastName]
+      .filter(Boolean)
+      .map((n) => (n as string)[0].toUpperCase())
+      .join('') || 'U';
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setModalOpen(false);
+    afterAction?.();
+  };
+
+  const handleLogout = () => {
+    ninetailed.reset();
+    setIsLoggedIn(false);
+    afterAction?.();
+  };
+
+  if (isLoggedIn) {
+    return (
+      <div className={cn('flex items-center gap-2', className)}>
+        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
+          {initials}
+        </div>
+        <span className="text-sm font-medium text-foreground hidden sm:inline">{firstName}</span>
+        <Button size="sm" variant="outline" onClick={handleLogout}>Log Out</Button>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <Button size="sm" variant="outline" onClick={() => setModalOpen(true)} className={className}>
+        Login
+      </Button>
+      <LoginModal open={modalOpen} onOpenChange={setModalOpen} onLogin={handleLogin} />
+    </>
+  );
+}
+
 const HEADER_HEIGHT = 80;
 
 const Navbar = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const settings = useSettings();
+  const siteIcon = settings?.siteIcon;
 
   useEffect(() => {
     document.body.classList.toggle('overflow-hidden', isMenuOpen);
@@ -101,14 +154,23 @@ const Navbar = () => {
     <header className="bg-background border-border relative z-50 h-20 border-b px-2.5 lg:px-0">
       <div className="container flex h-20 items-center justify-between lg:grid lg:grid-cols-[auto_1fr_auto]">
         <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/images/layout/logo.svg"
-            alt="Metafi"
-            width={129}
-            height={32}
-            className="invert-0 dark:invert"
-            priority
-          />
+          {siteIcon?.url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={siteIcon.url.startsWith('//') ? `https:${siteIcon.url}` : siteIcon.url}
+              alt="Site logo"
+              className="h-10 w-auto object-contain"
+            />
+          ) : (
+            <Image
+              src="/images/layout/logo.svg"
+              alt="Metafi"
+              width={129}
+              height={32}
+              className="invert-0 dark:invert"
+              priority
+            />
+          )}
         </Link>
 
         <nav className="hidden items-center justify-center gap-8 lg:flex">
@@ -127,11 +189,7 @@ const Navbar = () => {
         </nav>
 
         <div className="flex items-center gap-2.5">
-          <Link href="/login" className={cn('hidden sm:block lg:block')}>
-            <Button size="sm" variant="outline">
-              Login
-            </Button>
-          </Link>
+          <LoginButton className="hidden sm:flex lg:flex" />
           <PersonalizationToggle className="hidden sm:flex lg:flex" />
 
           <div className="lg:block">
@@ -224,11 +282,7 @@ const Navbar = () => {
                   </div>
 
                   <div className="mt-4 mb-6 flex flex-col gap-3">
-                    <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                      <Button className="w-full" size="sm" variant="outline">
-                        Login
-                      </Button>
-                    </Link>
+                    <LoginButton className="w-full" afterAction={() => setIsMenuOpen(false)} />
                     <PersonalizationToggle className="w-full" />
                   </div>
                 </nav>

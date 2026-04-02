@@ -8,6 +8,8 @@ import { ConditionalSiteChrome } from '@/components/layout/conditional-site-chro
 import { LivePreviewProviderWrapper } from '@/components/live-preview-provider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { PersonalizationProvider } from '@/personalization/provider';
+import { SettingsProvider } from '@/personalization/settings-context';
+import { getSettings, themeToStyle } from '@/services/contentful/settings';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -72,11 +74,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const settings = await getSettings();
+  const themeStyle = themeToStyle(settings?.theme);
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {themeStyle && (
+          <style dangerouslySetInnerHTML={{ __html: themeStyle }} />
+        )}
+      </head>
       <body
         className={`h-screen ${inter.variable} antialiased`}
         data-theme={process.env.NEXT_PUBLIC_BRAND}
@@ -94,14 +104,16 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <PersonalizationProvider>
-            <LivePreviewProviderWrapper
-              space={process.env.CONTENTFUL_SPACE_ID}
-              environment={process.env.CONTENTFUL_ENVIRONMENT ?? 'master'}
-            >
-              <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
-            </LivePreviewProviderWrapper>
-          </PersonalizationProvider>
+          <SettingsProvider settings={settings}>
+            <PersonalizationProvider>
+              <LivePreviewProviderWrapper
+                space={process.env.CONTENTFUL_SPACE_ID}
+                environment={process.env.CONTENTFUL_ENVIRONMENT ?? 'master'}
+              >
+                <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
+              </LivePreviewProviderWrapper>
+            </PersonalizationProvider>
+          </SettingsProvider>
         </ThemeProvider>
       </body>
     </html>
