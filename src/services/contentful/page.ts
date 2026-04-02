@@ -1,6 +1,8 @@
 import { draftMode } from 'next/headers';
 
 import type {
+  BannerFragment,
+  BlogPostsSectionFragment,
   DataVizFragment,
   FaqFragment,
   FaqItemFragment,
@@ -17,10 +19,12 @@ import { PAGE_BY_SLUG, PAGE_SLUGS } from './queries';
 
 export type PageSection =
   | HeroFragment
+  | BannerFragment
   | FaqFragment
   | TabbedContentFragment
   | FeaturesFragment
-  | DataVizFragment;
+  | DataVizFragment
+  | BlogPostsSectionFragment;
 
 export type PageData = {
   __typename?: string;

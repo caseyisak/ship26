@@ -113,6 +113,33 @@ function transformSection(item: any): PageSection | null {
         showLegend: item.showLegend ?? null,
       };
     }
+    if (item.__typename === 'Banner') {
+      return {
+        __typename: 'Banner',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        headline: item.headline ?? null,
+        subheadline: item.subheadline ?? null,
+        copy: item.copy ?? null,
+        ctaText: item.ctaText ?? null,
+        ctaUrl: item.ctaUrl ?? null,
+        variant: item.variant ?? null,
+        sectionStyle: item.sectionStyle ?? null,
+        game: null,
+        media: item.media ? { ...item.media, __typename: 'MediaWrapper' as const } : null,
+      };
+    }
+    if (item.__typename === 'BlogPostsSection') {
+      return {
+        __typename: 'BlogPostsSection',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        title: item.title ?? null,
+        description: item.description ?? null,
+        limit: item.limit ?? null,
+        postsCollection: item.postsCollection ?? null,
+      };
+    }
     return null;
   } catch (error) {
     console.error('[transformSection] Error:', error);
