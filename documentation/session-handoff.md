@@ -1,83 +1,110 @@
-# Session Handoff — 2026-03-27
+# Session Handoff — 2026-04-01
 
-## Branch
-`main` (all work happens here; new branch `feat/aio-aeo-geo-demo` to be created at start of next session)
+## What was done this session
 
-## What was decided this session
+All bears bug fixes merged to `main` via PR #15. Settings, login modal, banner previews, and social post multi-channel preview built and shipped. `main` is clean and demo-ready.
 
-### Initiative: AIO / AEO / GEO Demo Loop
-
-Full planning session for an AI Answer Optimization demo built on top of the existing FAQ block. The goal: show prospects how Contentful-structured content with governance metadata becomes the single source of truth that feeds Google AI Overviews, ChatGPT citations, and any AI channel — consistently.
-
-**The demo story:** One governed FAQ entry in Contentful → consistent answers across all AI surfaces. Change the answer once → every channel updates. This is the "one source of truth" narrative made visible.
+**Closed:** #9 (Settings CT + login modal + NT identify), #10 (ntRules), #11 (preview token), #12 (query minification), #13 (cancelled), #14 (pivoted to BlogPostsSection)
 
 ---
 
-## Everything you need to know to execute
+## Current sandbox state
 
-### Source material (read these if context feels thin)
-- **PRD** (already written): `~/Dev/kaz glean/project/prd/faq-aio-aeo-demo.md` — the V1 spec, file map, demo script, success criteria
-- **Glean synthesis**: `~/Dev/kaz glean/project/context/glean-aio-aeo-synthesis.md` — AIO/AEO thesis + Contentful angles
-- **SE Standards**: `~/Documents/SE Discovery, Demo & POC Standards.md` — Tell-Show-Tell framework, guardrails, objection scripts
-- **VMF**: `~/Documents/Contentful Value Messaging Framework.md` — 4 value drivers, proof points, trap-setting Qs
-- **Discovery framework**: `~/Documents/AE → SE Discovery Framework_ Getting to a Demo That Matters.md`
-- **Spec + tasks**: `.claude/specs/001-aio-aeo-geo-demo/` (written this session — start here)
-
-### The "Before" panel already exists
-`src/components/sections/metafi-faq.tsx` — hardcoded static FAQ with no Contentful connection. **Use as-is** for the Before state. Zero extra work.
-
-### The "After" panel is what we're building
-`src/cms-components/faq/faq.tsx` — already Contentful-connected with live preview. Extend with:
-- `aioAeoGeo` governance link field on each `faqitem`
-- `FAQPage` JSON-LD emitted from live data
-- `AioAeoPreviewPanel` — simulated AI Overview + governance badges + JSON-LD drawer
-
-### The demo moment
-SE has Contentful open (entry editor) and `/demo/faq-aeo` open in another tab. Edit FAQ answer in Contentful → accordion on the After panel updates live + AI Overview simulation updates. "One change. Every surface."
+| Thing | Status |
+|-------|--------|
+| `main` branch | Clean — all fixes shipped, server running on localhost:3000 |
+| Contentful master env | Settings CT + entry (Metafi defaults), Banner CT (variant/sectionStyle/contentType), Hero CT (sectionStyleUpdatedAt), socialPost CT (channels multi-select) |
+| Settings entry `2cgyEdELIF1EbwlLLdSZgR` | Published — Metafi theme defaults in `theme` JSON, demo user in `loggedInMetadata` |
+| Login modal | Working — triggers `ninetailed.identify({ isLoggedIn: true, ...loggedInMetadata })` |
+| Banner preview | `/preview/banner/[entryId]` = web bare; `?view=mobile` = phone frame |
+| Social post preview | `/preview/social-post/[entryId]` — stacked cards per selected channel |
+| BlogPostsSection | New CT + block — drop on any page, renders blog post card grid |
 
 ---
 
-## Reconciled plan (PRD V1 + governance layer from this session)
-
-The PRD said "no content model changes for V1" — but the governance metadata (`aioAeoGeo` content type) is what makes the "metadata made a difference" story land. We're building both together.
-
-**The key architectural decision:** The Before panel intentionally has NO governance metadata. The After panel has the structured FAQ + `aioAeoGeo` metadata. The AI simulation on the left is vague/hedged; on the right it's confident and citable. The contrast is the demo.
+## Open issues — ordered by priority for Punchbowl News demo
 
 ---
 
-## Milestones (execution order)
-
-| # | What | Where | Notes |
-|---|------|--------|-------|
-| M1 | Create `aioAeoGeo` content type | Contentful MCP | 5 fields: internalName, topic, ownerTeam, lastUpdated, region |
-| M2 | Add `aioAeoGeo` link field to `faqitem` | Contentful MCP | Array, linkContentType: aioAeoGeo, max 1 |
-| M3 | Seed 4 governance entries + 6 FAQ entries (generic topics) | Contentful MCP | Generic topics: data_privacy, pricing, product_support, compliance |
-| M4 | `AIO_AEO_GEO_FIELDS` GraphQL fragment + TypeScript types | `queries.ts`, `types.ts` | Extend FAQ_ITEM_FIELDS, add AioAeoGeoFragment |
-| M5 | `/demo/faq-aeo` page — Before/After split layout | `src/app/demo/faq-aeo/page.tsx` | Left: metafi-faq.tsx, Right: Faq CMS component |
-| M6 | Extend `faq.tsx` — FAQPage JSON-LD that updates live | `src/cms-components/faq/faq.tsx` | Derived from liveData items, updates via useLiveUpdates |
-| M7 | `AioAeoPreviewPanel` component | `src/components/demo/` | AI Overview mock + governance badges + JSON-LD drawer |
-| M8 | `demo-loops/` standard + `aio-aeo-geo/` bundle | `demo-loops/` | SE README, AI-CONTEXT, DEMO_SCRIPT, schema JSONs, seed JSONs |
-
-Full tasks with validation steps: `.claude/specs/001-aio-aeo-geo-demo/tasks.md`
+### #6 — Contentful-driven color injection *(partial — foundation done)*
+**Status:** `settings.theme` JSON field exists. `layout.tsx` reads it and injects `<style>:root { ... }`. **Gap:** components still use hardcoded oklch vars; need to confirm the injected vars actually override them end-to-end.
+- **Next step:** Create a Punchbowl settings entry with brand colors in `theme`. Check `var(--primary)` picks up the injected values. If not, update component CSS var references to match injected key names.
+- **Files:** `src/services/contentful/settings.ts` (`themeToStyle()`), `src/app/layout.tsx`
+- **Relates to:** #8 — once injection is confirmed working, remove the `[data-theme]` CSS blocks
 
 ---
 
-## Key decisions already made
-
-- **No vertical lock-in**: Content type fields and FAQ topics are generic (data_privacy, pricing, etc.) — swappable for any prospect vertical without code changes
-- **Before side is honest**: Left panel uses real static component, not fabricated. Right panel is live Contentful data. Same answer text, different structure.
-- **JSON-LD is generated, not stored**: Dynamic from live entry data in a collapsible drawer. No separate field for editors to manage.
-- **Contentful live preview (iframe mode)**: Default approach. SE shows Contentful entry editor with the preview panel. Real-time updates, no polling.
-- **`SchemaStatusBadge` folded into `AioAeoPreviewPanel`**: Keeps component count low.
-- **`demo-loops/README.md`** establishes the standard for all future demo loops (this is Loop 1).
-- **Demo OS integration is a fast-follow**: The `demo-loops/` directory in metafi is the technical asset library; a separate `~/Dev/demo-os/` repo will be the playbook/assembly layer. Not blocking this build.
+### #8 — Remove hardcoded `[data-theme]` CSS blocks *(depends on #6)*
+Once #6 is confirmed end-to-end:
+1. Delete all `[data-theme='bears']`, `[data-theme='punchbowl']` etc. blocks from `globals.css`
+2. Remove `data-theme={process.env.NEXT_PUBLIC_BRAND}` from `layout.tsx` and all page wrappers
+3. Remove `NEXT_PUBLIC_BRAND` from `.env`, `branch.env` files, and CLAUDE.md
+4. Update memory notes re: theme system
+- **File:** `src/app/globals.css`, `src/app/layout.tsx`
 
 ---
 
-## How to start next session
+### #2 — Section style app: per-content-type panel visibility
+The editor (`/contentful-app`) shows all panels (Layout, Content Style, Button Style, Background) to every entry. They should be scoped by content type.
+- **Approach:** Read `sdk.entry.getSys().contentType.sys.id` in the app, map to a config that defines visible panels. No new API calls needed.
+- **Config:** `hero` → Layout + Background; `banner` → Content Style + Button Style + Background; others → all panels
+- **File:** `src/contentful-app/section-style-editor.tsx` — add `CONTENT_TYPE_PANELS` map at top, gate each `<Collapsible>` block on it
 
+---
+
+### #7 — Nav and footer content types + CMS-driven navigation
+Editors can't change nav links without a code deploy. Need three new CTs:
+- `navLink` — label (Symbol), url (Symbol), page (Reference → page, optional)
+- `nav` — internalName, logo (Asset, overrides settings siteIcon), links (Array → navLink)
+- `footer` — internalName, tagline (Symbol), logo (Asset), links (Array → navLink)
+
+Nav component fetches active `nav` entry, falls back to current hardcoded `ITEMS` array if none exists.
+- **File:** `src/components/layout/navbar.tsx`
+
+---
+
+### #4 — Rename `features`/`featureItem` CT IDs to `cardsWrapper`/`card`
+Bears display names were changed but underlying IDs weren't (Contentful can't rename IDs in-place).
+1. Create new CTs `cardsWrapper` + `card` (copy fields from `features`/`featureItem`)
+2. Migrate all existing entries via CMA script
+3. Update Page entries that reference `features` in `sections`
+4. Delete old `features` + `featureItem` CTs
+5. Code: rename `src/cms-components/features/` → `cards-wrapper/`, update types/queries/mappers/block config
+- **Risk:** Medium — do in a dedicated branch with a migration script. Don't merge until all entries are migrated.
+
+---
+
+### #5 — newsWrapper content type + dynamic news feed block
+A section that shows a pinned + dynamic feed of blog posts (newsArticle = blogPost, same schema).
+- **CT fields:** internalName, label, title, description, filterCategory (Symbol enum), sortOrder (Symbol enum: newest_first/oldest_first), maxItems (Integer 1–24), priorityItems (Array → blogPost), ntExperiencesCollection
+- **Service logic:** fetch pinned by ID + dynamic by category/order, dedup, slice to maxItems
+- **Pattern to follow:** `src/cms-components/features/features.tsx`, `FEATURES_FIELDS` in `queries.ts`
+
+---
+
+### #3 — Process: syncing infra commits from main to active demo branches
+No formal process exists. When infra commits (CT changes, query updates, layout changes) land on `main`, active demo branches silently fall behind and hit conflicts.
+- **Minimal fix:** Add to `CLAUDE.md`: "Before starting any demo milestone, run `git log HEAD..main --oneline` to check for infra commits to merge in"
+- **Better fix:** Tag infra PRs with a label; after merge, add a note to active branch task lists
+
+---
+
+## For Punchbowl News — what to do first
+
+```bash
+# 1. Create the worktree
+bash scripts/worktree-add.sh demo/punchbowl
+
+# 2. Open a new CC instance in it
+claude /Users/casey.lisak/Dev/metafi-worktrees/demo-punchbowl
 ```
-/piv prime
-```
 
-Then: "Let's execute the AIO/AEO/GEO demo — start with M1." Tasks are in `.claude/specs/001-aio-aeo-geo-demo/tasks.md`. Create branch `feat/aio-aeo-geo-demo` via worktree before starting any code.
+Then in the new session:
+1. Create `punchbowl` Contentful environment (clone from master)
+2. Set `branch.env` → `CONTENTFUL_ENVIRONMENT=punchbowl`
+3. Create a `settings` entry with Punchbowl brand colors in `theme` JSON — this tests #6
+4. Upload Punchbowl logo to `siteIcon` — navbar picks it up automatically
+5. Update `loggedInMetadata` with a Punchbowl-appropriate user persona for NT demo
+6. Run `bun run dev` — the site should adopt Punchbowl colors from Contentful with no code changes
+
+**Issues safe to skip for first Punchbowl demo:** #4 (cardsWrapper rename), #5 (newsWrapper), #7 (CMS nav), #8 (remove data-theme — wait until #6 is fully validated)
