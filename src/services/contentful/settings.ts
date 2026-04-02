@@ -12,6 +12,7 @@ export interface SiteSettings {
   loggedInMetadata: Record<string, unknown> | null;
   siteIcon: SettingsAsset | null;
   theme: Record<string, string> | null;
+  navItems: Array<{ label: string; href: string }> | null;
 }
 
 const SETTINGS_QUERY = `
@@ -22,6 +23,7 @@ const SETTINGS_QUERY = `
         loggedInMetadata
         siteIcon { url title width height }
         theme
+        navItems
       }
     }
   }
@@ -34,6 +36,7 @@ type SettingsResponse = {
       loggedInMetadata: Record<string, unknown> | null;
       siteIcon: SettingsAsset | null;
       theme: Record<string, string> | null;
+      navItems: Array<{ label: string; href: string }> | null;
     }>;
   };
 };
@@ -54,6 +57,7 @@ export async function getSettings({
       loggedInMetadata: raw.loggedInMetadata ?? null,
       siteIcon: raw.siteIcon ?? null,
       theme: raw.theme ?? null,
+      navItems: raw.navItems ?? null,
     };
   } catch {
     return null;

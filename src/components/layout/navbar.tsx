@@ -89,6 +89,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const settings = useSettings();
   const siteIcon = settings?.siteIcon;
+  const navItems = settings?.navItems ?? null;
 
   useEffect(() => {
     document.body.classList.toggle('overflow-hidden', isMenuOpen);
@@ -141,7 +142,7 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', onResize);
   }, [isMenuOpen, panelHeight]);
 
-  const ITEMS = [
+  const ITEMS = navItems ?? [
     { label: 'Features', href: '/features' },
     { label: 'Integrations', href: '/integrations' },
     { label: 'About Us', href: '/about' },
