@@ -1,8 +1,24 @@
 'use client';
 
+// crypto.randomUUID is only available in secure contexts (HTTPS).
+// In HTTP dev environments, polyfill it so the Ninetailed SDK doesn't crash.
+if (
+  typeof globalThis.crypto !== 'undefined' &&
+  typeof globalThis.crypto.randomUUID !== 'function'
+) {
+  (globalThis.crypto as typeof globalThis.crypto & { randomUUID: () => `${string}-${string}-${string}-${string}-${string}` }).randomUUID =
+    function () {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+      }) as `${string}-${string}-${string}-${string}-${string}`;
+    };
+}
+
 import {
   NinetailedProvider as ReactNinetailedProvider,
   useNinetailed,
+  type ExperienceConfiguration,
 } from '@ninetailed/experience.js-react';
 import { NinetailedPreviewPlugin } from '@ninetailed/experience.js-plugin-preview';
 import { usePathname } from 'next/navigation';
@@ -46,7 +62,7 @@ export function NinetailedProvider({
       environment={environment}
       plugins={[
         new NinetailedPreviewPlugin({
-          experiences: mapExperiences(experiences) ?? [],
+          experiences: (mapExperiences(experiences) ?? []) as ExperienceConfiguration[],
           audiences: mapAudiences(audiences) ?? [],
           onOpenExperienceEditor: (exp) =>
             window.open(

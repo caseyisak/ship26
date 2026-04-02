@@ -11,6 +11,7 @@ import type {
   HeroFragment,
   TabbedContentFragment,
   TabbedContentItemFragment,
+  TwoAcrossFragment,
 } from '@/block-renderer/types';
 import { logger } from '@/lib/logger';
 
@@ -24,6 +25,7 @@ export type PageSection =
   | TabbedContentFragment
   | FeaturesFragment
   | DataVizFragment
+  | TwoAcrossFragment
   | BlogPostsSectionFragment;
 
 export type PageData = {

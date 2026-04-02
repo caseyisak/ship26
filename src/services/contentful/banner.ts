@@ -56,7 +56,7 @@ export async function getBannerByEntryId({
       ctaUrl: raw.ctaUrl,
       variant: raw.variant as BannerFragment['variant'],
       contentType: raw.contentType as BannerFragment['contentType'],
-      sectionStyle: raw.sectionStyle,
+      sectionStyle: raw.sectionStyle as string | null | undefined,
       game: null,
       media: raw.media
         ? { ...raw.media, __typename: 'MediaWrapper' as const }

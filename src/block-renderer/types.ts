@@ -104,13 +104,14 @@ export type FeatureItemFragment = {
   animationKey?: string | null;
 };
 
-/** Features section (matches Contentful Features content type: internalName, label, title, description, items, ntExperiences). */
+/** Features section (matches Contentful Features content type: internalName, label, title, description, mediaPosition, items, ntExperiences). */
 export type FeaturesFragment = BlockData & {
   __typename: 'Features';
   internalName?: string | null;
   label?: string | null;
   title?: string | null;
   description?: string | null;
+  mediaPosition?: 'top' | 'bottom' | 'left' | 'right' | null;
   itemsCollection?: { items: FeatureItemFragment[] } | null;
   ntExperiencesCollection?: {
     items: Array<NtExperienceFragment>;
@@ -140,14 +141,14 @@ export type AuthorFragment = {
   bio?: string | null;
 };
 
-/** BlogPost (matches Contentful BlogPost content type: title, slug, excerpt, publishDate, tags, heroImage, body, author). */
+/** BlogPost (matches Contentful BlogPost content type: title, slug, excerpt, publishDate, contentfulMetadata, heroImage, body, author). */
 export type BlogPostFragment = BlockData & {
   __typename: 'BlogPost';
   title?: string | null;
   slug?: string | null;
   excerpt?: string | null;
   publishDate?: string | null;
-  tags?: string[] | null;
+  contentfulMetadata?: { tags: Array<{ id: string; name: string }> } | null;
   heroImage?: { url?: string; width?: number; height?: number } | null;
   body?: { json: unknown } | null;
   author?: AuthorFragment | null;
@@ -187,9 +188,10 @@ export type BannerFragment = BlockData & {
   copy?: string | null;
   ctaText?: string | null;
   ctaUrl?: string | null;
-  variant?: 'light' | 'dark' | 'alt' | null;
+  variant?: string | null;
+  colorVariant?: 'light' | 'dark' | 'alt' | 'primary' | 'secondary' | null;
   contentType?: 'internal' | 'sponsored' | null;
-  sectionStyle?: unknown;
+  sectionStyle?: string | null;
   game?: GameFragment | null;
   media?: MediaWrapperFragment | null;
 };
@@ -204,6 +206,22 @@ export type SocialPostFragment = BlockData & {
   status?: string | null;
   game?: GameFragment | null;
   media?: MediaWrapperFragment | null;
+};
+
+/** Two Across — 2-column text + media section block with mediaPosition toggle. */
+export type TwoAcrossFragment = BlockData & {
+  __typename: 'TwoAcross';
+  internalName?: string | null;
+  eyebrow?: string | null;
+  heading?: string | null;
+  body?: { json: unknown } | null;
+  media?: { url?: string } | null;
+  mediaAltText?: string | null;
+  mediaPosition?: 'left' | 'right' | null;
+  ctaLabel?: string | null;
+  ctaUrl?: string | null;
+  sectionStyle?: string | null;
+  colorVariant?: 'light' | 'dark' | 'primary' | 'secondary' | 'alt' | null;
 };
 
 /** Blog Posts Section — curated list of blog posts embeddable on any page. */

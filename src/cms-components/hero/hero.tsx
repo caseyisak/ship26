@@ -3,7 +3,6 @@
 import type { HeroFragment } from '@/block-renderer/types';
 import { BlockProps } from '@/block-renderer/types';
 import { Button } from '@/components/ui/button';
-import { GridBackground } from '@/components/ui/grid-background';
 import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
@@ -115,15 +114,11 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-x-0 bottom-0 h-[530px] md:h-[686px]">
             {backgroundUrl && (
-              <>
-                <div
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
-                  style={{ backgroundImage: `url(${backgroundUrl})` }}
-                  {...getProps({ fieldId: 'background' })}
-                />
-                <GridBackground className="[background-size:calc(var(--square-size,64px))_calc(var(--square-size,64px))]" />
-                <div className="from-background to-background/0 absolute inset-x-0 top-0 h-40 bg-gradient-to-b" />
-              </>
+              <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
+                style={{ backgroundImage: `url(${backgroundUrl})` }}
+                {...getProps({ fieldId: 'background' })}
+              />
             )}
           </div>
         </div>
@@ -282,19 +277,13 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
                 zIndex: 10,
               }}
             >
-              {imageUrl ? (
+              {imageUrl && (
                 // eslint-disable-next-line @next/next/no-img-element -- Contentful URL; next/image requires remotePatterns
                 <img
                   src={imageUrl}
                   alt=""
                   className="h-full w-full object-cover"
                 />
-              ) : (
-                <div className="bg-muted flex h-full w-full items-center justify-center">
-                  <span className="text-muted-foreground text-sm">
-                    No image
-                  </span>
-                </div>
               )}
             </div>
           )}
@@ -378,7 +367,7 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
             mediaColSpan,
           )}
         >
-          {imageUrl ? (
+          {imageUrl && (
             // eslint-disable-next-line @next/next/no-img-element -- Contentful URL; next/image requires remotePatterns
             <img
               src={imageUrl}
@@ -386,10 +375,6 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
               className="h-full w-full object-cover"
               {...getProps({ fieldId: 'media' })}
             />
-          ) : (
-            <div className="bg-muted flex h-full min-h-[280px] w-full items-center justify-center md:min-h-[400px]">
-              <span className="text-muted-foreground text-sm">No image</span>
-            </div>
           )}
         </div>
       </div>

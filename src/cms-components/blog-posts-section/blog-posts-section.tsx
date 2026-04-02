@@ -62,16 +62,16 @@ export function BlogPostsSection({ data }: { data: BlogPostsSectionFragment }) {
                     </div>
                   )}
                   <div className="flex flex-1 flex-col p-5">
-                    {post.tags?.[0] && (
+                    {post.contentfulMetadata?.tags?.[0] && (
                       <span className="mb-2 text-xs font-semibold uppercase tracking-wide text-blue-600">
-                        {post.tags[0]}
+                        {post.contentfulMetadata.tags[0].name}
                       </span>
                     )}
                     <h3 className="mb-2 text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                       {post.title}
                     </h3>
                     {post.excerpt && (
-                      <p className="mb-4 flex-1 text-sm text-gray-500 line-clamp-3">
+                      <p className="mb-4 text-sm text-gray-500 line-clamp-3 overflow-hidden">
                         {post.excerpt}
                       </p>
                     )}

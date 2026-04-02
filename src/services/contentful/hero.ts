@@ -42,7 +42,7 @@ function mapHero(item: RawHero | null): HeroFragment | null {
     sectionStyle: item.sectionStyle ?? null,
     background: item.background ?? null,
     image: item.media ?? null,
-    ntExperiencesCollection: item.ntExperiencesCollection ?? undefined,
+    ntExperiencesCollection: item.ntExperiencesCollection as { items: import('@/block-renderer/types').NtExperienceFragment[] } | null | undefined ?? undefined,
   };
 }
 

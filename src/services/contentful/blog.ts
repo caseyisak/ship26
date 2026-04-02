@@ -19,7 +19,7 @@ type RawBlogPost = {
   slug?: string | null;
   excerpt?: string | null;
   publishDate?: string | null;
-  tags?: string[] | null;
+  contentfulMetadata?: { tags: Array<{ id: string; name: string }> } | null;
   heroImage?: { url?: string; width?: number; height?: number } | null;
   body?: { json: unknown } | null;
   author?: RawAuthor | null;
@@ -56,7 +56,7 @@ function mapBlogPost(raw: RawBlogPost | null): BlogPostFragment | null {
     slug: raw.slug ?? null,
     excerpt: raw.excerpt ?? null,
     publishDate: raw.publishDate ?? null,
-    tags: raw.tags ?? null,
+    contentfulMetadata: raw.contentfulMetadata ?? null,
     heroImage: raw.heroImage ?? null,
     body: raw.body ?? null,
     author: mapAuthor(raw.author),

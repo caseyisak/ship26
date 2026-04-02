@@ -25,7 +25,7 @@ export function mapExperiences(experiences?: Array<NtExperienceFragment | null>)
       id: exp.ntExperienceId,
       name: exp.ntName,
       type: exp.ntType,
-      config: exp.ntConfig,
+      config: exp.ntConfig as { distribution?: number[]; traffic?: number; components?: unknown[]; sticky?: boolean } | undefined,
       ...(exp.ntAudience?.ntAudienceId
         ? { audience: { id: exp.ntAudience.ntAudienceId, name: exp.ntAudience.ntName } }
         : {}),

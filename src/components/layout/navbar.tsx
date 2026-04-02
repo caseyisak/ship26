@@ -12,7 +12,6 @@ import { cn } from '@/lib/utils';
 import { useSettings } from '@/personalization/settings-context';
 
 import { LoginModal } from './login-modal';
-import { ThemeToggle } from '../ui/theme-toggle';
 
 function PersonalizationToggle({ className }: { className?: string }) {
   const handleClick = () => {
@@ -88,8 +87,13 @@ const Navbar = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const settings = useSettings();
-  const siteIcon = settings?.siteIcon;
-  const navItems = settings?.navItems ?? null;
+  const nav = settings?.nav ?? null;
+
+  // Logo: use nav-level logo only
+  const navLogo = nav?.logo ?? null;
+
+  // Nav links from CMS — no hardcoded fallback
+  const navLinks = nav?.linksCollection?.items ?? [];
 
   useEffect(() => {
     document.body.classList.toggle('overflow-hidden', isMenuOpen);
@@ -142,23 +146,14 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', onResize);
   }, [isMenuOpen, panelHeight]);
 
-  const ITEMS = navItems ?? [
-    { label: 'Features', href: '/features' },
-    { label: 'Integrations', href: '/integrations' },
-    { label: 'About Us', href: '/about' },
-    { label: 'Pricing', href: '/pricing' },
-    { label: 'Blog', href: '/blog' },
-    { label: 'Contact', href: '/contact' },
-  ];
-
   return (
     <header className="bg-background border-border relative z-50 h-20 border-b px-2.5 lg:px-0">
       <div className="container flex h-20 items-center justify-between lg:grid lg:grid-cols-[auto_1fr_auto]">
         <Link href="/" className="flex items-center gap-2">
-          {siteIcon?.url ? (
+          {navLogo?.url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={siteIcon.url.startsWith('//') ? `https:${siteIcon.url}` : siteIcon.url}
+              src={navLogo.url.startsWith('//') ? `https:${navLogo.url}` : navLogo.url}
               alt="Site logo"
               className="h-10 w-auto object-contain"
             />
@@ -175,27 +170,26 @@ const Navbar = () => {
         </Link>
 
         <nav className="hidden items-center justify-center gap-8 lg:flex">
-          {ITEMS.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className={cn(
-                'text-muted-foreground hover:text-foreground text-sm font-medium transition-colors',
-                pathname === link.href && 'text-foreground',
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const href = link.page ? `/page/${link.page.slug}` : (link.url ?? '#');
+            return (
+              <Link
+                key={link.label}
+                href={href}
+                className={cn(
+                  'text-muted-foreground hover:text-foreground text-sm font-medium transition-colors',
+                  pathname === href && 'text-foreground',
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2.5">
           <LoginButton className="hidden sm:flex lg:flex" />
           <PersonalizationToggle className="hidden sm:flex lg:flex" />
-
-          <div className="lg:block">
-            <ThemeToggle />
-          </div>
 
           <button
             className="text-muted-foreground relative flex size-8 lg:hidden"
@@ -265,21 +259,24 @@ const Navbar = () => {
                   )}
                 >
                   <div className="flex flex-col gap-6">
-                    {ITEMS.map((link) => (
-                      <Link
-                        key={link.label}
-                        href={link.href}
-                        className={cn(
-                          'text-lg tracking-[-0.36px]',
-                          pathname === link.href
-                            ? 'text-foreground'
-                            : 'text-muted-foreground',
-                        )}
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
+                    {navLinks.map((link) => {
+                      const href = link.page ? `/page/${link.page.slug}` : (link.url ?? '#');
+                      return (
+                        <Link
+                          key={link.label}
+                          href={href}
+                          className={cn(
+                            'text-lg tracking-[-0.36px]',
+                            pathname === href
+                              ? 'text-foreground'
+                              : 'text-muted-foreground',
+                          )}
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {link.label}
+                        </Link>
+                      );
+                    })}
                   </div>
 
                   <div className="mt-4 mb-6 flex flex-col gap-3">

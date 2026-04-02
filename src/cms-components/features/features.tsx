@@ -14,14 +14,20 @@ import {
 } from '@/lib/live-preview';
 import { cn } from '@/lib/utils';
 
-function FeatureCard({ item }: { item: FeatureItemFragment }) {
+function FeatureCard({
+  item,
+  mediaPosition = 'top',
+}: {
+  item: FeatureItemFragment;
+  mediaPosition?: 'top' | 'bottom' | 'left' | 'right' | null;
+}) {
   // Apply live updates to RAW Contentful data
   const liveItem = useLiveUpdates(item) as any;
   const getItemProps = useContentfulInspectorModeProps(item.sys.id);
 
   // Extract fields from raw Contentful data (using 'media' not 'image')
   const title = liveItem.title ?? '';
-  const description = liveItem.description ?? null;
+  const description = liveItem.description ?? liveItem.excerpt ?? null;
   const animationKey = liveItem.animationKey ?? null;
 
   // Use raw Contentful field name 'media', not mapped 'image'
@@ -32,8 +38,101 @@ function FeatureCard({ item }: { item: FeatureItemFragment }) {
     ? getFeatureVisualComponent(animationKey)
     : null;
 
+  const pos = mediaPosition ?? 'top';
+  const isSideBySide = pos === 'left' || pos === 'right';
+
+  // For side-by-side layouts the image fills the card height; for stacked it uses fixed heights
+  const visualInner = isSideBySide ? (
+    <div className="bg-accent relative h-[200px] w-full md:h-full md:min-h-[180px]">
+      {VisualComponent ? (
+        <VisualComponent className="absolute inset-0" />
+      ) : imageUrl ? (
+        <Image
+          src={imageUrl}
+          alt={title || 'Feature'}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 40vw"
+          priority={false}
+          {...getItemProps({ fieldId: 'media' })}
+        />
+      ) : null}
+    </div>
+  ) : (
+    <div className="bg-accent relative h-[220px] w-full sm:h-[260px] md:h-[300px]">
+      {VisualComponent ? (
+        <VisualComponent className="absolute inset-0" />
+      ) : imageUrl ? (
+        <Image
+          src={imageUrl}
+          alt={title || 'Feature'}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 50vw"
+          priority={false}
+          {...getItemProps({ fieldId: 'media' })}
+        />
+      ) : null}
+    </div>
+  );
+
+  const visual = (VisualComponent || imageUrl) ? (
+    <div
+      className={cn(
+        'relative overflow-hidden rounded-[12px]',
+        isSideBySide ? 'w-full md:w-2/5' : 'w-full',
+      )}
+    >
+      {visualInner}
+    </div>
+  ) : null;
+
+  const textBlock = (
+    <div
+      className={cn(
+        'flex flex-col justify-center',
+        pos === 'left' && 'md:w-3/5 md:pl-6',
+        pos === 'right' && 'md:w-3/5 md:pr-6',
+      )}
+    >
+      {title && (
+        <h3
+          className="text-foreground text-lg font-medium sm:text-xl"
+          {...getItemProps({ fieldId: 'title' })}
+        >
+          {title}
+        </h3>
+      )}
+      {description && (
+        <p
+          className="text-muted-foreground mt-2 text-sm sm:text-base"
+          {...getItemProps({ fieldId: 'description' })}
+        >
+          {description}
+        </p>
+      )}
+    </div>
+  );
+
+  if (isSideBySide) {
+    return (
+      <div
+        className={cn(
+          'bg-card border-border-light relative flex rounded-[16px] border p-6 text-left shadow-[0_2px_8px_-1px_rgba(13,13,18,0.04)]',
+          'flex-col md:items-stretch',
+          pos === 'left' ? 'md:flex-row' : 'md:flex-row-reverse',
+        )}
+      >
+        {visual}
+        {textBlock}
+      </div>
+    );
+  }
+
   return (
     <div className="bg-card border-border-light relative flex flex-col rounded-[16px] border p-6 text-left shadow-[0_2px_8px_-1px_rgba(13,13,18,0.04)]">
+      {pos === 'top' && visual && <div className="mb-4">{visual}</div>}
+
       {title && (
         <h3
           className="text-foreground text-lg font-medium sm:text-xl"
@@ -51,25 +150,7 @@ function FeatureCard({ item }: { item: FeatureItemFragment }) {
         </p>
       )}
 
-      {(VisualComponent || imageUrl) && (
-        <div className="relative mt-6 w-full overflow-hidden rounded-[12px]">
-          <div className="bg-accent relative h-[220px] w-full sm:h-[260px] md:h-[300px]">
-            {VisualComponent ? (
-              <VisualComponent className="absolute inset-0" />
-            ) : (
-              <Image
-                src={imageUrl!}
-                alt={title || 'Feature'}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-                priority={false}
-                {...getItemProps({ fieldId: 'media' })}
-              />
-            )}
-          </div>
-        </div>
-      )}
+      {pos === 'bottom' && visual && <div className="mt-4">{visual}</div>}
     </div>
   );
 }
@@ -85,6 +166,7 @@ const Features = ({
   const label = liveData.label ?? null;
   const title = liveData.title ?? null;
   const description = liveData.description ?? null;
+  const mediaPosition = (liveData as FeaturesFragment).mediaPosition ?? 'top';
   const items = liveData.itemsCollection?.items ?? [];
 
   return (
@@ -131,7 +213,7 @@ const Features = ({
             )}
           >
             {items.map((item) => (
-              <FeatureCard key={item.sys.id} item={item} />
+              <FeatureCard key={item.sys.id} item={item} mediaPosition={mediaPosition} />
             ))}
           </div>
         )}

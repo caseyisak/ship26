@@ -124,9 +124,27 @@ function transformSection(item: any): PageSection | null {
         ctaText: item.ctaText ?? null,
         ctaUrl: item.ctaUrl ?? null,
         variant: item.variant ?? null,
+        colorVariant: item.colorVariant ?? null,
         sectionStyle: item.sectionStyle ?? null,
         game: null,
         media: item.media ? { ...item.media, __typename: 'MediaWrapper' as const } : null,
+      };
+    }
+    if (item.__typename === 'TwoAcross') {
+      return {
+        __typename: 'TwoAcross',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        eyebrow: item.eyebrow ?? null,
+        heading: item.heading ?? null,
+        body: item.body ? { json: item.body.json } : null,
+        media: item.media ?? null,
+        mediaAltText: item.mediaAltText ?? null,
+        mediaPosition: item.mediaPosition ?? null,
+        ctaLabel: item.ctaLabel ?? null,
+        ctaUrl: item.ctaUrl ?? null,
+        sectionStyle: item.sectionStyle ?? null,
+        colorVariant: item.colorVariant ?? null,
       };
     }
     if (item.__typename === 'BlogPostsSection') {

@@ -32,7 +32,9 @@ export async function GET(request: NextRequest) {
       type === 'blogPost' ||
       type === 'banner' ||
       type === 'socialPost' ||
-      type === 'blogPostsSection')
+      type === 'blogPostsSection' ||
+      type === 'newsletterIssue' ||
+      type === 'newsletter')
   ) {
     if (
       entryId.includes('entry.') ||
@@ -65,6 +67,8 @@ export async function GET(request: NextRequest) {
       banner: 'banner',
       socialPost: 'social-post',
       blogPostsSection: 'blog-posts-section',
+      newsletterIssue: 'newsletter',
+      newsletter: 'newsletter',
     };
     const routeSegment = typeToRoute[type] ?? type;
     // Forward passthrough params (view, locale, preview) to the preview page

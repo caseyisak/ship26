@@ -1,7 +1,7 @@
 'use client';
 
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
-import type { Document, Node } from '@contentful/rich-text-types';
+import type { Block, Document, Node } from '@contentful/rich-text-types';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { Fragment, useEffect, useState } from 'react';
 
@@ -34,7 +34,7 @@ function extractHeadings(doc: unknown): Heading[] {
       node.nodeType === BLOCKS.HEADING_2 ||
       node.nodeType === BLOCKS.HEADING_3
     ) {
-      const text = node.content
+      const text = (node as Block).content
         .filter((n) => n.nodeType === 'text')
         .map((n) => (n as { value: string }).value)
         .join('');
@@ -208,7 +208,7 @@ const BlogPostCms = ({ data, className }: BlogPostCmsProps) => {
   const title = liveData.title ?? '';
   const excerpt = liveData.excerpt ?? '';
   const publishDate = liveData.publishDate ?? null;
-  const tags = liveData.tags ?? [];
+  const tags = liveData.contentfulMetadata?.tags ?? [];
   const heroImageUrl = liveData.heroImage?.url ?? null;
   const bodyJson = liveData.body?.json ?? null;
   const author = liveData.author;
@@ -299,10 +299,10 @@ const BlogPostCms = ({ data, className }: BlogPostCmsProps) => {
                   <div className="flex flex-wrap items-center justify-center gap-2">
                     {tags.map((tag) => (
                       <span
-                        key={tag}
+                        key={tag.id}
                         className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium"
                       >
-                        {tag}
+                        {tag.name}
                       </span>
                     ))}
                   </div>

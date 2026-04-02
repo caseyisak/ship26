@@ -8,6 +8,7 @@ import type {
   FeaturesFragment,
   HeroFragment,
   TabbedContentFragment,
+  TwoAcrossFragment,
 } from '@/block-renderer/types';
 import { Banner } from '@/cms-components/banner';
 import { BlogPostsSection } from '@/cms-components/blog-posts-section';
@@ -16,6 +17,7 @@ import { Faq } from '@/cms-components/faq';
 import { Features } from '@/cms-components/features';
 import { Hero } from '@/cms-components/hero';
 import { TabbedContent } from '@/cms-components/tabbed-content';
+import { TwoAcross } from '@/cms-components/two-across/two-across';
 
 const heroConfig: BlockConfig<HeroFragment> = {
   typename: 'Hero',
@@ -66,6 +68,13 @@ const blogPostsSectionConfig: BlockConfig<BlogPostsSectionFragment> = {
   },
 };
 
+const twoAcrossConfig: BlockConfig<TwoAcrossFragment> = {
+  typename: 'TwoAcross',
+  layouts: {
+    default: () => TwoAcross,
+  },
+};
+
 export const blockConfigs: BlockConfig<BlockData>[] = [
   heroConfig as BlockConfig<BlockData>,
   faqConfig as BlockConfig<BlockData>,
@@ -74,4 +83,5 @@ export const blockConfigs: BlockConfig<BlockData>[] = [
   dataVizConfig as BlockConfig<BlockData>,
   bannerConfig as BlockConfig<BlockData>,
   blogPostsSectionConfig as BlockConfig<BlockData>,
+  twoAcrossConfig as BlockConfig<BlockData>,
 ];

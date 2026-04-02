@@ -166,7 +166,7 @@ const FEATURE_ITEM_FIELDS = `
   }
 `;
 
-/** Features fragment: all fields from Features content type (internalName, label, title, description, items, ntExperiences). */
+/** Features fragment: all fields from Features content type (internalName, label, title, description, mediaPosition, items, ntExperiences). */
 const FEATURES_FIELDS = `
   __typename
   sys { id }
@@ -175,6 +175,7 @@ const FEATURES_FIELDS = `
     label
     title
     description
+    mediaPosition
     itemsCollection(limit: 20) {
       items {
         ${FEATURE_ITEM_FIELDS}
@@ -204,6 +205,25 @@ const DATA_VIZ_FIELDS = `
   }
 `;
 
+/** TwoAcross fragment: all fields from TwoAcross content type (internalName, eyebrow, heading, body, media, mediaAltText, mediaPosition, ctaLabel, ctaUrl, sectionStyle). */
+const TWO_ACROSS_FIELDS = `
+  __typename
+  sys { id }
+  ... on TwoAcross {
+    internalName
+    eyebrow
+    heading
+    body { json }
+    media { url }
+    mediaAltText
+    mediaPosition
+    ctaLabel
+    ctaUrl
+    sectionStyle
+    colorVariant
+  }
+`;
+
 /** BlogPostsSection fragment: section header + curated post cards (no body).
  *  Note: inlines post card fields to avoid forward-reference to BLOG_POST_CARD_FIELDS. */
 const BLOG_POSTS_SECTION_FIELDS = `
@@ -223,7 +243,7 @@ const BLOG_POSTS_SECTION_FIELDS = `
           slug
           excerpt
           publishDate
-          tags
+          contentfulMetadata { tags { id name } }
           heroImage { url width height }
           author { __typename sys { id } ... on Author { name bio } }
         }
@@ -255,6 +275,7 @@ const BANNER_FIELDS = `
     ctaText
     ctaUrl
     variant
+    colorVariant
     sectionStyle
     media {
       ${MEDIA_WRAPPER_FIELDS}
@@ -280,6 +301,7 @@ export const PAGE_BY_SLUG = `
             ${TABBED_CONTENT_FIELDS}
             ${FEATURES_FIELDS}
             ${DATA_VIZ_FIELDS}
+            ${TWO_ACROSS_FIELDS}
             ${BLOG_POSTS_SECTION_FIELDS}
           }
         }
@@ -353,7 +375,7 @@ const BLOG_POST_CARD_FIELDS = `
     slug
     excerpt
     publishDate
-    tags
+    contentfulMetadata { tags { id name } }
     heroImage { url width height }
     author {
       ${AUTHOR_FIELDS}
@@ -370,7 +392,7 @@ const BLOG_POST_FIELDS = `
     slug
     excerpt
     publishDate
-    tags
+    contentfulMetadata { tags { id name } }
     heroImage { url width height }
     body { json }
     author {

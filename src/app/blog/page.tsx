@@ -14,7 +14,7 @@ export default async function BlogPage() {
   const gridPosts = posts.map((p) => ({
     slug: p.slug ?? '',
     title: p.title ?? p.slug ?? '',
-    tagline: p.tags?.[0] ?? 'General',
+    tagline: p.contentfulMetadata?.tags?.[0]?.name ?? 'General',
     intro: p.excerpt ?? '',
     author: p.author?.name ?? 'Metafi Team',
     date: p.publishDate ?? '',
