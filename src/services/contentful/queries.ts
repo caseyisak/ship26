@@ -232,6 +232,36 @@ const BLOG_POSTS_SECTION_FIELDS = `
   }
 `;
 
+const MEDIA_WRAPPER_FIELDS = `
+  __typename
+  sys { id }
+  ... on MediaWrapper {
+    internalName
+    asset { url width height }
+    channels
+    aspectRatios
+  }
+`;
+
+/** Banner fragment: web + mobile surfaces. */
+const BANNER_FIELDS = `
+  __typename
+  sys { id }
+  ... on Banner {
+    internalName
+    headline
+    subheadline
+    copy
+    ctaText
+    ctaUrl
+    variant
+    sectionStyle
+    media {
+      ${MEDIA_WRAPPER_FIELDS}
+    }
+  }
+`;
+
 export const PAGE_BY_SLUG = `
   query PageBySlug($slug: String!, $locale: String!, $preview: Boolean) {
     pageCollection(where: { slug: $slug }, locale: $locale, preview: $preview, limit: 1) {
@@ -245,6 +275,7 @@ export const PAGE_BY_SLUG = `
             __typename
             sys { id }
             ${HERO_FIELDS}
+            ${BANNER_FIELDS}
             ${FAQ_FIELDS}
             ${TABBED_CONTENT_FIELDS}
             ${FEATURES_FIELDS}
@@ -351,37 +382,6 @@ const BLOG_POST_FIELDS = `
   }
 `;
 
-/** MediaWrapper fragment: asset URL + channel/aspect-ratio metadata. */
-const MEDIA_WRAPPER_FIELDS = `
-  __typename
-  sys { id }
-  ... on MediaWrapper {
-    internalName
-    asset { url width height }
-    channels
-    aspectRatios
-  }
-`;
-
-/** Banner fragment: web + mobile surfaces. */
-const BANNER_FIELDS = `
-  __typename
-  sys { id }
-  ... on Banner {
-    internalName
-    headline
-    subheadline
-    copy
-    ctaText
-    ctaUrl
-    variant
-    contentType
-    sectionStyle
-    media {
-      ${MEDIA_WRAPPER_FIELDS}
-    }
-  }
-`;
 
 /** SocialPost fragment: channels (multi-select), copy, hashtags, status, media. */
 const SOCIAL_POST_FIELDS = `
