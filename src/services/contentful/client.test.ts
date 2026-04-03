@@ -44,7 +44,9 @@ describe('fetchGraphQL', () => {
 
     const [, init] = mockFetch.mock.calls[0];
     const body = JSON.parse(init.body as string);
-    expect(body.query).toBe('query TestQuery { pageCollection { items { slug } } }');
+    expect(body.query).toBe(
+      'query TestQuery { pageCollection { items { slug } } }',
+    );
     expect(body.query).not.toMatch(/\n/);
     expect(body.query).not.toMatch(/\s{2,}/);
   });

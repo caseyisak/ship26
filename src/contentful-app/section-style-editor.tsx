@@ -1,6 +1,15 @@
 'use client';
 
-import { AlignCenter, AlignLeft, AlignRight, Ban, ChevronDown, LayoutGrid, Palette, Type } from 'lucide-react';
+import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Ban,
+  ChevronDown,
+  LayoutGrid,
+  Palette,
+  Type,
+} from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -456,18 +465,27 @@ export function SectionStyleEditor({
               type="button"
             >
               <span className="flex items-center gap-2">
-                <Type className="h-4 w-4" style={{ color: 'var(--gray-600)' }} />
+                <Type
+                  className="h-4 w-4"
+                  style={{ color: 'var(--gray-600)' }}
+                />
                 Content Style
               </span>
               <ChevronDown
-                className={cn('h-4 w-4 transition-transform', showContentStyle && 'rotate-180')}
+                className={cn(
+                  'h-4 w-4 transition-transform',
+                  showContentStyle && 'rotate-180',
+                )}
                 style={{ color: 'var(--gray-600)' }}
               />
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent
             className="mt-2 space-y-4 rounded-[var(--border-radius-medium)] border p-3"
-            style={{ backgroundColor: 'var(--gray-100)', borderColor: 'var(--gray-200)' }}
+            style={{
+              backgroundColor: 'var(--gray-100)',
+              borderColor: 'var(--gray-200)',
+            }}
           >
             {/* Text alignment */}
             <div>
@@ -475,7 +493,13 @@ export function SectionStyleEditor({
                 Text alignment
               </Label>
               <div className="mt-1 flex gap-2">
-                {([['left', AlignLeft], ['center', AlignCenter], ['right', AlignRight]] as [SectionStyleTextAlign, React.ElementType][]).map(([val, Icon]) => (
+                {(
+                  [
+                    ['left', AlignLeft],
+                    ['center', AlignCenter],
+                    ['right', AlignRight],
+                  ] as [SectionStyleTextAlign, React.ElementType][]
+                ).map(([val, Icon]) => (
                   <button
                     key={val}
                     type="button"
@@ -499,21 +523,23 @@ export function SectionStyleEditor({
                 Spacing
               </Label>
               <div className="mt-1 flex flex-wrap gap-2">
-                {(['sm', 'md', 'lg', 'xl'] as SectionStyleSpacing[]).map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    className={cn(
-                      'rounded-[var(--border-radius-small)] border px-3 py-1.5 text-sm font-medium transition-colors',
-                      config.contentSpacing === s
-                        ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white'
-                        : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)]',
-                    )}
-                    onClick={() => update({ contentSpacing: s })}
-                  >
-                    {s.toUpperCase()}
-                  </button>
-                ))}
+                {(['sm', 'md', 'lg', 'xl'] as SectionStyleSpacing[]).map(
+                  (s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      className={cn(
+                        'rounded-[var(--border-radius-small)] border px-3 py-1.5 text-sm font-medium transition-colors',
+                        config.contentSpacing === s
+                          ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white'
+                          : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)]',
+                      )}
+                      onClick={() => update({ contentSpacing: s })}
+                    >
+                      {s.toUpperCase()}
+                    </button>
+                  ),
+                )}
               </div>
             </div>
             {/* Headline color */}
@@ -529,7 +555,8 @@ export function SectionStyleEditor({
                     title={name}
                     className={cn(
                       'h-8 w-8 rounded-[var(--border-radius-small)] border-2 transition-all',
-                      config.headlineColor === cssVar || config.headlineColor === name
+                      config.headlineColor === cssVar ||
+                        config.headlineColor === name
                         ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
                         : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
                     )}
@@ -552,7 +579,8 @@ export function SectionStyleEditor({
                     title={name}
                     className={cn(
                       'h-8 w-8 rounded-[var(--border-radius-small)] border-2 transition-all',
-                      config.subheadlineColor === cssVar || config.subheadlineColor === name
+                      config.subheadlineColor === cssVar ||
+                        config.subheadlineColor === name
                         ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
                         : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
                     )}
@@ -576,18 +604,27 @@ export function SectionStyleEditor({
               type="button"
             >
               <span className="flex items-center gap-2">
-                <Palette className="h-4 w-4" style={{ color: 'var(--gray-600)' }} />
+                <Palette
+                  className="h-4 w-4"
+                  style={{ color: 'var(--gray-600)' }}
+                />
                 Button Style
               </span>
               <ChevronDown
-                className={cn('h-4 w-4 transition-transform', showButtonStyle && 'rotate-180')}
+                className={cn(
+                  'h-4 w-4 transition-transform',
+                  showButtonStyle && 'rotate-180',
+                )}
                 style={{ color: 'var(--gray-600)' }}
               />
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent
             className="mt-2 space-y-4 rounded-[var(--border-radius-medium)] border p-3"
-            style={{ backgroundColor: 'var(--gray-100)', borderColor: 'var(--gray-200)' }}
+            style={{
+              backgroundColor: 'var(--gray-100)',
+              borderColor: 'var(--gray-200)',
+            }}
           >
             {/* Button bg color */}
             <div>
@@ -602,7 +639,8 @@ export function SectionStyleEditor({
                     title={name}
                     className={cn(
                       'h-8 w-8 rounded-[var(--border-radius-small)] border-2 transition-all',
-                      config.buttonBgColor === cssVar || config.buttonBgColor === name
+                      config.buttonBgColor === cssVar ||
+                        config.buttonBgColor === name
                         ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
                         : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
                     )}
@@ -625,7 +663,8 @@ export function SectionStyleEditor({
                     title={name}
                     className={cn(
                       'h-8 w-8 rounded-[var(--border-radius-small)] border-2 transition-all',
-                      config.buttonHoverColor === cssVar || config.buttonHoverColor === name
+                      config.buttonHoverColor === cssVar ||
+                        config.buttonHoverColor === name
                         ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
                         : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
                     )}
@@ -641,21 +680,23 @@ export function SectionStyleEditor({
                 Button spacing
               </Label>
               <div className="mt-1 flex flex-wrap gap-2">
-                {(['sm', 'md', 'lg', 'xl'] as SectionStyleSpacing[]).map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    className={cn(
-                      'rounded-[var(--border-radius-small)] border px-3 py-1.5 text-sm font-medium transition-colors',
-                      config.buttonSpacing === s
-                        ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white'
-                        : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)]',
-                    )}
-                    onClick={() => update({ buttonSpacing: s })}
-                  >
-                    {s.toUpperCase()}
-                  </button>
-                ))}
+                {(['sm', 'md', 'lg', 'xl'] as SectionStyleSpacing[]).map(
+                  (s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      className={cn(
+                        'rounded-[var(--border-radius-small)] border px-3 py-1.5 text-sm font-medium transition-colors',
+                        config.buttonSpacing === s
+                          ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white'
+                          : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)]',
+                      )}
+                      onClick={() => update({ buttonSpacing: s })}
+                    >
+                      {s.toUpperCase()}
+                    </button>
+                  ),
+                )}
               </div>
             </div>
             {/* Button placement */}
@@ -664,7 +705,13 @@ export function SectionStyleEditor({
                 Button placement
               </Label>
               <div className="mt-1 flex gap-2">
-                {([['left', AlignLeft], ['center', AlignCenter], ['right', AlignRight]] as [SectionStyleTextAlign, React.ElementType][]).map(([val, Icon]) => (
+                {(
+                  [
+                    ['left', AlignLeft],
+                    ['center', AlignCenter],
+                    ['right', AlignRight],
+                  ] as [SectionStyleTextAlign, React.ElementType][]
+                ).map(([val, Icon]) => (
                   <button
                     key={val}
                     type="button"
@@ -758,7 +805,9 @@ export function SectionStyleEditor({
                       ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
                       : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
                   )}
-                  onClick={() => update({ backgroundColor: undefined, overlayOpacity: 0 })}
+                  onClick={() =>
+                    update({ backgroundColor: undefined, overlayOpacity: 0 })
+                  }
                 >
                   <Ban className="h-4 w-4 text-red-400" />
                 </button>

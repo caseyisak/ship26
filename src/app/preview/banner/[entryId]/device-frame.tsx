@@ -6,17 +6,64 @@ import { useState } from 'react';
 import type { BannerFragment } from '@/block-renderer/types';
 import { useLiveUpdates } from '@/lib/live-preview';
 
+function rtToPlainText(doc: unknown): string {
+  if (!doc || typeof doc !== 'object') return '';
+  const node = doc as {
+    nodeType?: string;
+    value?: string;
+    content?: unknown[];
+  };
+  if (node.nodeType === 'text') return node.value ?? '';
+  return (node.content ?? []).map(rtToPlainText).join('');
+}
+
 const DEVICES = [
-  { label: 'iPhone SE',          width: 300, height: 534, borderRadius: '2rem',   notch: true  },
-  { label: 'iPhone 15',          width: 340, height: 736, borderRadius: '2.5rem', notch: true  },
-  { label: 'iPhone 15 Plus',     width: 365, height: 790, borderRadius: '2.75rem',notch: true  },
-  { label: 'Samsung Galaxy S24', width: 360, height: 780, borderRadius: '2.25rem',notch: false },
-  { label: 'iPad Mini',          width: 520, height: 680, borderRadius: '1.5rem', notch: false },
+  {
+    label: 'iPhone SE',
+    width: 300,
+    height: 534,
+    borderRadius: '2rem',
+    notch: true,
+  },
+  {
+    label: 'iPhone 15',
+    width: 340,
+    height: 736,
+    borderRadius: '2.5rem',
+    notch: true,
+  },
+  {
+    label: 'iPhone 15 Plus',
+    width: 365,
+    height: 790,
+    borderRadius: '2.75rem',
+    notch: true,
+  },
+  {
+    label: 'Samsung Galaxy S24',
+    width: 360,
+    height: 780,
+    borderRadius: '2.25rem',
+    notch: false,
+  },
+  {
+    label: 'iPad Mini',
+    width: 520,
+    height: 680,
+    borderRadius: '1.5rem',
+    notch: false,
+  },
 ] as const;
 
 type Device = (typeof DEVICES)[number];
 
-function SkeletonLine({ width = '100%', height = 8 }: { width?: string | number; height?: number }) {
+function SkeletonLine({
+  width = '100%',
+  height = 8,
+}: {
+  width?: string | number;
+  height?: number;
+}) {
   return (
     <div
       style={{
@@ -50,7 +97,9 @@ function SkeletonCard() {
           flexShrink: 0,
         }}
       />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <div
+        style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}
+      >
         <SkeletonLine width="60%" height={9} />
         <SkeletonLine width="40%" height={7} />
       </div>
@@ -59,10 +108,10 @@ function SkeletonCard() {
 }
 
 const NAV_ITEMS = [
-  { label: 'Home',     Icon: Home },
+  { label: 'Home', Icon: Home },
   { label: 'Schedule', Icon: CalendarDays },
-  { label: 'News',     Icon: Newspaper },
-  { label: 'Shop',     Icon: ShoppingBag },
+  { label: 'News', Icon: Newspaper },
+  { label: 'Shop', Icon: ShoppingBag },
 ] as const;
 
 const NAV_HEIGHT = 52;
@@ -74,11 +123,15 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
   // variant drives banner card colours in the phone frame
   const variant = data.variant ?? 'dark';
   const cardBg =
-    variant === 'light' ? 'var(--background, #f5f5f5)'
-    : variant === 'alt'  ? 'var(--accent)'
-    :                       'var(--primary)';
+    variant === 'light'
+      ? 'var(--background, #f5f5f5)'
+      : variant === 'alt'
+        ? 'var(--accent)'
+        : 'var(--primary)';
   const cardText =
-    variant === 'light' ? 'var(--foreground, #111)' : 'var(--primary-foreground, #fff)';
+    variant === 'light'
+      ? 'var(--foreground, #111)'
+      : 'var(--primary-foreground, #fff)';
   const cardTextMuted =
     variant === 'light' ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.65)';
   const ctaBg =
@@ -91,7 +144,9 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
       {/* Device selector */}
       <select
         value={device.label}
-        onChange={(e) => setDevice(DEVICES.find((d) => d.label === e.target.value)!)}
+        onChange={(e) =>
+          setDevice(DEVICES.find((d) => d.label === e.target.value)!)
+        }
         className="cursor-pointer rounded-full border border-gray-300 bg-white px-4 py-1.5 text-xs font-semibold text-gray-700 shadow-sm"
       >
         {DEVICES.map((d) => (
@@ -140,7 +195,8 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
             height: `calc(100% - ${NAV_HEIGHT}px)`,
             overflowY: 'auto',
             scrollbarWidth: 'none',
-            background: 'linear-gradient(180deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, black) 100%)',
+            background:
+              'linear-gradient(180deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, black) 100%)',
           }}
         >
           {/* Status bar skeleton */}
@@ -195,23 +251,58 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
             }}
           >
             {data.contentType === 'sponsored' && (
-              <p style={{ position: 'absolute', top: 4, left: 14, fontSize: 8, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: cardTextMuted, margin: 0 }}>
+              <p
+                style={{
+                  position: 'absolute',
+                  top: 4,
+                  left: 14,
+                  fontSize: 8,
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  color: cardTextMuted,
+                  margin: 0,
+                }}
+              >
                 Sponsored
               </p>
             )}
-            <div style={{ flex: 1, minWidth: 0, paddingTop: data.contentType === 'sponsored' ? 10 : 0 }}>
-              {data.headline && (
-                <p style={{ fontSize: 13, fontWeight: 700, color: cardText, lineHeight: 1.3, margin: 0 }}>
-                  {data.headline}
+            <div
+              style={{
+                flex: 1,
+                minWidth: 0,
+                paddingTop: data.contentType === 'sponsored' ? 10 : 0,
+              }}
+            >
+              {data.headlineRt && (
+                <p
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: cardText,
+                    lineHeight: 1.3,
+                    margin: 0,
+                  }}
+                >
+                  {rtToPlainText(data.headlineRt.json)}
                 </p>
               )}
-              {data.subheadline && (
-                <p style={{ fontSize: 10, color: cardTextMuted, marginTop: 3, marginBottom: 0 }}>
-                  {data.subheadline}
+              {data.subheadlineRt && (
+                <p
+                  style={{
+                    fontSize: 10,
+                    color: cardTextMuted,
+                    marginTop: 3,
+                    marginBottom: 0,
+                  }}
+                >
+                  {rtToPlainText(data.subheadlineRt.json)}
                 </p>
               )}
-              {!data.headline && !data.subheadline && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+              {!data.headlineRt && !data.subheadlineRt && (
+                <div
+                  style={{ display: 'flex', flexDirection: 'column', gap: 5 }}
+                >
                   <SkeletonLine width="70%" height={10} />
                   <SkeletonLine width="50%" height={7} />
                 </div>
@@ -220,18 +311,45 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
             {data.ctaText && (
               <a
                 href={data.ctaUrl ?? '#'}
-                style={{ backgroundColor: ctaBg, color: ctaText, fontSize: 11, fontWeight: 700, padding: '8px 12px', borderRadius: 999, textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}
+                style={{
+                  backgroundColor: ctaBg,
+                  color: ctaText,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  padding: '8px 12px',
+                  borderRadius: 999,
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                }}
               >
                 {data.ctaText}
               </a>
             )}
-            <div style={{ position: 'absolute', top: 5, right: 8, fontSize: 12, color: cardTextMuted, cursor: 'pointer', lineHeight: 1 }}>
+            <div
+              style={{
+                position: 'absolute',
+                top: 5,
+                right: 8,
+                fontSize: 12,
+                color: cardTextMuted,
+                cursor: 'pointer',
+                lineHeight: 1,
+              }}
+            >
               ✕
             </div>
           </div>
 
           {/* Feed skeleton (below banner) */}
-          <div style={{ padding: '10px 12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div
+            style={{
+              padding: '10px 12px 16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 8,
+            }}
+          >
             <SkeletonCard />
             <SkeletonCard />
             <SkeletonCard />
@@ -270,7 +388,9 @@ export function DeviceFrame({ banner }: { banner: BannerFragment }) {
                 <Icon
                   size={17}
                   strokeWidth={isActive ? 2 : 1.5}
-                  style={{ color: isActive ? 'var(--accent)' : 'rgba(255,255,255,0.4)' }}
+                  style={{
+                    color: isActive ? 'var(--accent)' : 'rgba(255,255,255,0.4)',
+                  }}
                 />
                 <span
                   style={{

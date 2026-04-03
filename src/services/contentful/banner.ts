@@ -9,8 +9,8 @@ type BannerByIdResponse = {
       __typename: string;
       sys: { id: string };
       internalName?: string | null;
-      headline?: string | null;
-      subheadline?: string | null;
+      headlineRt?: { json: unknown } | null;
+      subheadlineRt?: { json: unknown } | null;
       copy?: string | null;
       ctaText?: string | null;
       ctaUrl?: string | null;
@@ -49,8 +49,8 @@ export async function getBannerByEntryId({
       __typename: 'Banner',
       sys: raw.sys,
       internalName: raw.internalName,
-      headline: raw.headline,
-      subheadline: raw.subheadline,
+      headlineRt: raw.headlineRt,
+      subheadlineRt: raw.subheadlineRt,
       copy: raw.copy,
       ctaText: raw.ctaText,
       ctaUrl: raw.ctaUrl,

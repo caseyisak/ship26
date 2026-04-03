@@ -36,14 +36,19 @@ describe('getSocialPostByEntryId', () => {
     });
 
     const { getSocialPostByEntryId } = await import('./social-post');
-    const result = await getSocialPostByEntryId({ entryId: 'sp-123', locale: 'en-US' });
+    const result = await getSocialPostByEntryId({
+      entryId: 'sp-123',
+      locale: 'en-US',
+    });
 
     expect(result).not.toBeNull();
     expect(mockFetch).toHaveBeenCalledOnce();
 
     const callArgs = mockFetch.mock.calls[0][0];
     expect(callArgs.preview).toBe(true);
-    expect((callArgs.variables as Record<string, unknown>)['preview']).toBe(true);
+    expect((callArgs.variables as Record<string, unknown>)['preview']).toBe(
+      true,
+    );
   });
 
   it('returns null when entry is not found', async () => {
@@ -54,7 +59,10 @@ describe('getSocialPostByEntryId', () => {
     });
 
     const { getSocialPostByEntryId } = await import('./social-post');
-    const result = await getSocialPostByEntryId({ entryId: 'missing', locale: 'en-US' });
+    const result = await getSocialPostByEntryId({
+      entryId: 'missing',
+      locale: 'en-US',
+    });
 
     expect(result).toBeNull();
   });

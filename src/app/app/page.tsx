@@ -54,7 +54,7 @@ export default function MockAppPage() {
             {brand.slice(0, 1).toUpperCase()}
           </div>
           <div>
-            <p className="text-sm font-bold capitalize text-white">{brand}</p>
+            <p className="text-sm font-bold text-white capitalize">{brand}</p>
             <p className="text-xs text-white/70">Official App</p>
           </div>
         </div>
@@ -67,7 +67,9 @@ export default function MockAppPage() {
               'linear-gradient(135deg, var(--primary) 60%, color-mix(in oklch, var(--primary), transparent 30%))',
           }}
         >
-          <p className="text-2xl font-extrabold uppercase tracking-wide">Latest News</p>
+          <p className="text-2xl font-extrabold tracking-wide uppercase">
+            Latest News
+          </p>
           <p className="text-sm text-white/80">Powered by Contentful</p>
         </div>
 

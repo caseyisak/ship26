@@ -9,6 +9,7 @@ type Props = {
 };
 
 /** Transform raw GraphQL section data to our internal format */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function transformSection(item: any): PageSection | null {
   if (!item || !item.__typename) return null;
 
@@ -39,6 +40,7 @@ function transformSection(item: any): PageSection | null {
         itemsCollection: item.itemsCollection
           ? {
               items: item.itemsCollection.items
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .map((faqItem: any) =>
                   faqItem && faqItem.__typename === 'Faqitem'
                     ? {
@@ -66,6 +68,7 @@ function transformSection(item: any): PageSection | null {
         itemsCollection: item.itemsCollectionCollection
           ? {
               items: item.itemsCollectionCollection.items
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .map((tabItem: any) =>
                   tabItem && tabItem.__typename === 'Tabbedcontentitem'
                     ? {
@@ -118,8 +121,8 @@ function transformSection(item: any): PageSection | null {
         __typename: 'Banner',
         sys: { id: item.sys.id },
         internalName: item.internalName ?? null,
-        headline: item.headline ?? null,
-        subheadline: item.subheadline ?? null,
+        headlineRt: item.headlineRt ?? null,
+        subheadlineRt: item.subheadlineRt ?? null,
         copy: item.copy ?? null,
         ctaText: item.ctaText ?? null,
         ctaUrl: item.ctaUrl ?? null,
@@ -127,7 +130,9 @@ function transformSection(item: any): PageSection | null {
         colorVariant: item.colorVariant ?? null,
         sectionStyle: item.sectionStyle ?? null,
         game: null,
-        media: item.media ? { ...item.media, __typename: 'MediaWrapper' as const } : null,
+        media: item.media
+          ? { ...item.media, __typename: 'MediaWrapper' as const }
+          : null,
       };
     }
     if (item.__typename === 'TwoAcross') {
@@ -160,6 +165,7 @@ function transformSection(item: any): PageSection | null {
     }
     return null;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('[transformSection] Error:', error);
     return null;
   }
@@ -177,6 +183,7 @@ function transformSection(item: any): PageSection | null {
  */
 export function PageContentLive({ page }: Props) {
   // Apply live updates to the RAW GraphQL data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const livePage = useLiveUpdates(page) as any;
 
   // Transform the live-updated sections

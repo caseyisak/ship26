@@ -30,7 +30,10 @@ export const FEATURE_VISUAL_KEYS = [
 
 export type FeatureVisualKey = (typeof FEATURE_VISUAL_KEYS)[number];
 
-const REGISTRY: Record<FeatureVisualKey, ComponentType<{ className?: string }>> = {
+const REGISTRY: Record<
+  FeatureVisualKey,
+  ComponentType<{ className?: string }>
+> = {
   'fade-up': AnimationFadeUp,
   'fade-down': AnimationFadeDown,
   'fade-left': AnimationFadeLeft,
@@ -42,6 +45,7 @@ const REGISTRY: Record<FeatureVisualKey, ComponentType<{ className?: string }>> 
 export function getFeatureVisualComponent(
   key: string | null | undefined,
 ): ComponentType<{ className?: string }> | null {
-  if (!key || !FEATURE_VISUAL_KEYS.includes(key as FeatureVisualKey)) return null;
+  if (!key || !FEATURE_VISUAL_KEYS.includes(key as FeatureVisualKey))
+    return null;
   return REGISTRY[key as FeatureVisualKey] ?? null;
 }

@@ -63,22 +63,24 @@ export function BlogPostsSection({ data }: { data: BlogPostsSectionFragment }) {
                   )}
                   <div className="flex flex-1 flex-col p-5">
                     {post.contentfulMetadata?.tags?.[0] && (
-                      <span className="mb-2 text-xs font-semibold uppercase tracking-wide text-blue-600">
+                      <span className="mb-2 text-xs font-semibold tracking-wide text-blue-600 uppercase">
                         {post.contentfulMetadata.tags[0].name}
                       </span>
                     )}
-                    <h3 className="mb-2 text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                    <h3 className="mb-2 text-lg font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
                       {post.title}
                     </h3>
                     {post.excerpt && (
-                      <p className="mb-4 text-sm text-gray-500 line-clamp-3 overflow-hidden">
+                      <p className="mb-4 line-clamp-3 overflow-hidden text-sm text-gray-500">
                         {post.excerpt}
                       </p>
                     )}
                     <div className="mt-auto flex items-center gap-2 text-xs text-gray-400">
                       {post.author?.name && <span>{post.author.name}</span>}
                       {post.author?.name && post.publishDate && <span>·</span>}
-                      {post.publishDate && <span>{formatDate(post.publishDate)}</span>}
+                      {post.publishDate && (
+                        <span>{formatDate(post.publishDate)}</span>
+                      )}
                     </div>
                   </div>
                 </Link>

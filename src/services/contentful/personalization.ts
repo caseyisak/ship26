@@ -1,4 +1,7 @@
-import type { NtAudienceFragment, NtExperienceFragment } from '@/block-renderer/types';
+import type {
+  NtAudienceFragment,
+  NtExperienceFragment,
+} from '@/block-renderer/types';
 
 import { fetchGraphQL } from './client';
 import {
@@ -12,7 +15,11 @@ export async function getPersonalizationExperiences({
   try {
     const data = await fetchGraphQL<{
       ntExperienceCollection?: { items: NtExperienceFragment[] };
-    }>({ query: GET_PERSONALIZATION_EXPERIENCES, variables: { preview }, preview });
+    }>({
+      query: GET_PERSONALIZATION_EXPERIENCES,
+      variables: { preview },
+      preview,
+    });
     return data?.ntExperienceCollection?.items ?? [];
   } catch {
     return [];
@@ -25,7 +32,11 @@ export async function getPersonalizationAudiences({
   try {
     const data = await fetchGraphQL<{
       ntAudienceCollection?: { items: NtAudienceFragment[] };
-    }>({ query: GET_PERSONALIZATION_AUDIENCES, variables: { preview }, preview });
+    }>({
+      query: GET_PERSONALIZATION_AUDIENCES,
+      variables: { preview },
+      preview,
+    });
     return data?.ntAudienceCollection?.items ?? [];
   } catch {
     return [];

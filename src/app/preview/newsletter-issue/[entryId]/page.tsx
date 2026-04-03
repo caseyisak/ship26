@@ -1,6 +1,7 @@
-import { notFound } from 'next/navigation';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import type { Document } from '@contentful/rich-text-types';
+import { notFound } from 'next/navigation';
+
 import { fetchGraphQL } from '@/services/contentful/client';
 
 type Props = { params: Promise<{ entryId: string }> };
@@ -34,9 +35,14 @@ const QUERY = `
 export default async function PreviewNewsletterIssuePage({ params }: Props) {
   const { entryId } = await params;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let data: any;
   try {
-    data = await fetchGraphQL({ query: QUERY, variables: { id: entryId, preview: true }, preview: true });
+    data = await fetchGraphQL({
+      query: QUERY,
+      variables: { id: entryId, preview: true },
+      preview: true,
+    });
   } catch {
     notFound();
   }
@@ -52,37 +58,64 @@ export default async function PreviewNewsletterIssuePage({ params }: Props) {
   return (
     <div className="min-h-screen bg-[#f6f8fc]">
       {/* Comparison banner */}
-      <div className="bg-amber-100 border-b border-amber-300 px-6 py-3 text-sm text-amber-900">
-        <strong>Static preview — old newsletterIssue CT</strong> · This is the previous model: no inline body, just a lead story reference. Compare with the <a href={`/preview/newsletter/37WN7tUtlOtfWsYRx1RrFo`} className="underline font-semibold">new Newsletter entry</a>.
+      <div className="border-b border-amber-300 bg-amber-100 px-6 py-3 text-sm text-amber-900">
+        <strong>Static preview — old newsletterIssue CT</strong> · This is the
+        previous model: no inline body, just a lead story reference. Compare
+        with the{' '}
+        <a
+          href={`/preview/newsletter/37WN7tUtlOtfWsYRx1RrFo`}
+          className="font-semibold underline"
+        >
+          new Newsletter entry
+        </a>
+        .
       </div>
 
       <div className="mx-auto max-w-3xl px-4 py-8">
         <div className="overflow-hidden rounded-xl bg-white shadow-sm">
           {/* Issue header */}
           <div className="border-b border-gray-200 px-8 py-6">
-            <div className="flex items-center gap-3 mb-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#CB4697]">
+            <div className="mb-1 flex items-center gap-3">
+              <span className="text-[10px] font-bold tracking-widest text-[#CB4697] uppercase">
                 Punchbowl {issue.edition}
               </span>
               {issue.publishDate && (
                 <span className="text-xs text-gray-400">
-                  {new Date(issue.publishDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  {new Date(issue.publishDate).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
                 </span>
               )}
             </div>
-            <h1 className="text-2xl font-bold text-[#282C71] leading-tight">{issue.subjectLine}</h1>
+            <h1 className="text-2xl leading-tight font-bold text-[#282C71]">
+              {issue.subjectLine}
+            </h1>
           </div>
 
           {/* Lead story */}
           {article ? (
             <div className="px-8 py-6">
-              <div className="mb-4 text-[10px] font-bold uppercase tracking-widest text-[#282C71]">Lead Story</div>
+              <div className="mb-4 text-[10px] font-bold tracking-widest text-[#282C71] uppercase">
+                Lead Story
+              </div>
               {imgUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={imgUrl} alt={article.title ?? ''} className="w-full h-56 object-cover rounded mb-4" />
+                <img
+                  src={imgUrl}
+                  alt={article.title ?? ''}
+                  className="mb-4 h-56 w-full rounded object-cover"
+                />
               )}
-              <h2 className="text-xl font-bold text-[#282C71] mb-2">{article.title}</h2>
-              {article.excerpt && <p className="text-sm text-gray-600 mb-4 leading-relaxed">{article.excerpt}</p>}
+              <h2 className="mb-2 text-xl font-bold text-[#282C71]">
+                {article.title}
+              </h2>
+              {article.excerpt && (
+                <p className="mb-4 text-sm leading-relaxed text-gray-600">
+                  {article.excerpt}
+                </p>
+              )}
               {article.body?.json && (
                 <div className="prose prose-sm max-w-none text-gray-700">
                   {documentToReactComponents(article.body.json as Document)}
@@ -90,12 +123,18 @@ export default async function PreviewNewsletterIssuePage({ params }: Props) {
               )}
             </div>
           ) : (
-            <div className="px-8 py-6 text-sm text-gray-400 italic">No lead story linked.</div>
+            <div className="px-8 py-6 text-sm text-gray-400 italic">
+              No lead story linked.
+            </div>
           )}
 
           {/* Diff callout */}
           <div className="mx-8 mb-8 rounded border border-amber-200 bg-amber-50 p-4 text-xs text-amber-800">
-            <strong>Why the new model is better:</strong> This entry has no inline content — everything depends on the linked article. The new <code>newsletter</code> CT has a RichText body you write directly, plus optional leadStory + promoSlot reference slots. Editors control the full newsletter in one entry.
+            <strong>Why the new model is better:</strong> This entry has no
+            inline content — everything depends on the linked article. The new{' '}
+            <code>newsletter</code> CT has a RichText body you write directly,
+            plus optional leadStory + promoSlot reference slots. Editors control
+            the full newsletter in one entry.
           </div>
         </div>
       </div>

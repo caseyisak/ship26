@@ -1,3 +1,4 @@
+import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('next/headers', () => ({
@@ -21,7 +22,7 @@ describe('GET /api/enable-draft', () => {
   it('returns 400 when secret is missing', async () => {
     process.env.CONTENTFUL_PREVIEW_SECRET = 'expected-secret';
     const { GET } = await import('./route');
-    const request = new Request(
+    const request = new NextRequest(
       'http://localhost:3000/api/enable-draft?slug=home',
     );
     const response = await GET(request);
@@ -33,7 +34,7 @@ describe('GET /api/enable-draft', () => {
   it('returns 400 when slug is missing', async () => {
     process.env.CONTENTFUL_PREVIEW_SECRET = 'test-secret';
     const { GET } = await import('./route');
-    const request = new Request(
+    const request = new NextRequest(
       'http://localhost:3000/api/enable-draft?secret=test-secret',
     );
     const response = await GET(request);
@@ -44,7 +45,7 @@ describe('GET /api/enable-draft', () => {
 
   it('returns 400 when no query params', async () => {
     const { GET } = await import('./route');
-    const request = new Request('http://localhost:3000/api/enable-draft');
+    const request = new NextRequest('http://localhost:3000/api/enable-draft');
     const response = await GET(request);
     expect(response.status).to.equal(400);
   });
@@ -52,7 +53,7 @@ describe('GET /api/enable-draft', () => {
   it('returns 400 when slug is unresolved Contentful placeholder', async () => {
     process.env.CONTENTFUL_PREVIEW_SECRET = 'kaz';
     const { GET } = await import('./route');
-    const request = new Request(
+    const request = new NextRequest(
       'http://localhost:3000/api/enable-draft?secret=kaz&slug=entry.fields.slug_NOT_FOUND&locale=en-US&ctype=page',
     );
     const response = await GET(request);

@@ -5,12 +5,9 @@ import type {
   BlogPostsSectionFragment,
   DataVizFragment,
   FaqFragment,
-  FaqItemFragment,
-  FeatureItemFragment,
   FeaturesFragment,
   HeroFragment,
   TabbedContentFragment,
-  TabbedContentItemFragment,
   TwoAcrossFragment,
 } from '@/block-renderer/types';
 import { logger } from '@/lib/logger';

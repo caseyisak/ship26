@@ -83,9 +83,9 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {themeStyle && (
+        {themeStyle ? (
           <style dangerouslySetInnerHTML={{ __html: themeStyle }} />
-        )}
+        ) : null}
       </head>
       <body
         className={`h-screen ${inter.variable} antialiased`}

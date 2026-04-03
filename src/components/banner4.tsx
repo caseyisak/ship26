@@ -1,11 +1,10 @@
-"use client";
+'use client';
 
-import { X } from "lucide-react";
-import { useState } from "react";
+import { X } from 'lucide-react';
+import { useState } from 'react';
 
-import { cn } from "@/lib/utils";
-
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface Banner4Props {
   title: string;
@@ -17,8 +16,8 @@ interface Banner4Props {
 }
 
 const Banner4 = ({
-  title = "Black Friday Sale! 🎉",
-  description = "Up to 70% off on all components. Limited time only!",
+  title = 'Black Friday Sale! 🎉',
+  description = 'Up to 70% off on all components. Limited time only!',
   defaultVisible = true,
   className,
 }: Banner4Props) => {
@@ -31,7 +30,7 @@ const Banner4 = ({
   if (!isVisible) return null;
 
   return (
-    <section className={cn("w-full bg-primary p-4", className)}>
+    <section className={cn('bg-primary w-full p-4', className)}>
       <div className="container">
         <div className="relative flex flex-col gap-4 text-center md:flex-row md:items-center md:justify-center">
           <Button
@@ -43,10 +42,10 @@ const Banner4 = ({
             <X className="h-4 w-4" />
           </Button>
 
-          <div className="flex flex-col items-center gap-3 pt-2 text-primary-foreground md:flex-row md:items-center md:pt-0">
+          <div className="text-primary-foreground flex flex-col items-center gap-3 pt-2 md:flex-row md:items-center md:pt-0">
             <div className="flex flex-col gap-1 md:flex-row md:items-center">
               <p className="text-sm font-medium">{title}</p>
-              <p className="text-sm text-primary-foreground/80">
+              <p className="text-primary-foreground/80 text-sm">
                 {description}
               </p>
             </div>

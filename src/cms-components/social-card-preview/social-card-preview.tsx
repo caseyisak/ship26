@@ -7,7 +7,10 @@ import { useLiveUpdates } from '@/lib/live-preview';
 
 type Channel = 'x' | 'instagram' | 'facebook';
 
-const CHANNEL_META: Record<Channel, { label: string; color: string; icon: string; bg: string; border: string }> = {
+const CHANNEL_META: Record<
+  Channel,
+  { label: string; color: string; icon: string; bg: string; border: string }
+> = {
   x: {
     label: 'X (Twitter)',
     color: '#000',
@@ -58,14 +61,24 @@ function ChannelCard({
         >
           {meta.icon}
         </span>
-        <span className="text-sm font-semibold text-gray-700">{meta.label}</span>
+        <span className="text-sm font-semibold text-gray-700">
+          {meta.label}
+        </span>
         <span
           className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold uppercase"
           style={{
             backgroundColor:
-              status === 'approved' ? '#dcfce7' : status === 'ready_for_review' ? '#fef9c3' : '#f3f4f6',
+              status === 'approved'
+                ? '#dcfce7'
+                : status === 'ready_for_review'
+                  ? '#fef9c3'
+                  : '#f3f4f6',
             color:
-              status === 'approved' ? '#166534' : status === 'ready_for_review' ? '#854d0e' : '#6b7280',
+              status === 'approved'
+                ? '#166534'
+                : status === 'ready_for_review'
+                  ? '#854d0e'
+                  : '#6b7280',
           }}
         >
           {status ?? 'draft'}
@@ -108,10 +121,19 @@ function ChannelCard({
             className="relative w-full overflow-hidden bg-gray-200"
             style={{
               aspectRatio:
-                channel === 'instagram' ? '4/5' : channel === 'facebook' ? '1.91/1' : '16/9',
+                channel === 'instagram'
+                  ? '4/5'
+                  : channel === 'facebook'
+                    ? '1.91/1'
+                    : '16/9',
             }}
           >
-            <Image src={imageUrl} alt="Social post image" fill className="object-cover" />
+            <Image
+              src={imageUrl}
+              alt="Social post image"
+              fill
+              className="object-cover"
+            />
           </div>
         ) : (
           <div
@@ -125,7 +147,9 @@ function ChannelCard({
         {/* Copy */}
         <div className="px-4 py-3">
           {fullCopy ? (
-            <p className="text-sm leading-relaxed whitespace-pre-line text-gray-900">{fullCopy}</p>
+            <p className="text-sm leading-relaxed whitespace-pre-line text-gray-900">
+              {fullCopy}
+            </p>
           ) : (
             <p className="text-sm text-gray-400 italic">
               No copy yet — start typing in Contentful…
@@ -171,12 +195,17 @@ function ChannelCard({
   );
 }
 
-export function SocialCardPreview({ data: rawData }: { data: SocialPostFragment }) {
+export function SocialCardPreview({
+  data: rawData,
+}: {
+  data: SocialPostFragment;
+}) {
   const data = useLiveUpdates(rawData);
   const { channels, copy, hashtags, media, status } = data;
 
-  const activeChannels = (channels ?? []).filter((ch): ch is Channel =>
-    ch === 'x' || ch === 'instagram' || ch === 'facebook'
+  const activeChannels = (channels ?? []).filter(
+    (ch): ch is Channel =>
+      ch === 'x' || ch === 'instagram' || ch === 'facebook',
   );
 
   const aspectRatios = media?.aspectRatios ?? [];
@@ -184,9 +213,11 @@ export function SocialCardPreview({ data: rawData }: { data: SocialPostFragment 
   return (
     <div className="min-h-screen p-6" style={{ backgroundColor: '#e8eaed' }}>
       {/* Page header */}
-      <div className="mx-auto mb-6 max-w-xl flex items-center justify-between">
+      <div className="mx-auto mb-6 flex max-w-xl items-center justify-between">
         <div>
-          <p className="text-sm font-bold text-gray-800">{data.internalName ?? 'Social Post'}</p>
+          <p className="text-sm font-bold text-gray-800">
+            {data.internalName ?? 'Social Post'}
+          </p>
           <p className="text-xs text-gray-500">
             {activeChannels.length > 0
               ? `${activeChannels.length} channel${activeChannels.length > 1 ? 's' : ''} selected`
@@ -215,7 +246,8 @@ export function SocialCardPreview({ data: rawData }: { data: SocialPostFragment 
       ) : (
         <div className="mx-auto max-w-xl rounded-xl bg-white p-8 text-center shadow-sm">
           <p className="text-gray-400">
-            Select one or more channels in the Channels field to see previews here.
+            Select one or more channels in the Channels field to see previews
+            here.
           </p>
         </div>
       )}
@@ -231,7 +263,9 @@ export function SocialCardPreview({ data: rawData }: { data: SocialPostFragment 
               <span
                 key={ch}
                 className="rounded-full px-2 py-0.5 text-[10px] font-semibold text-white uppercase"
-                style={{ backgroundColor: CHANNEL_META[ch as Channel]?.color ?? '#666' }}
+                style={{
+                  backgroundColor: CHANNEL_META[ch as Channel]?.color ?? '#666',
+                }}
               >
                 {ch}
               </span>

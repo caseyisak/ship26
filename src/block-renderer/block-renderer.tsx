@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
-
 import { Experience } from '@ninetailed/experience.js-react';
+import React from 'react';
 
 import {
   getComponent,

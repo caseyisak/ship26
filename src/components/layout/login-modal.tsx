@@ -11,9 +11,9 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useSettings } from '@/personalization/settings-context';
@@ -34,8 +34,7 @@ export function LoginModal({ open, onOpenChange, onLogin }: LoginModalProps) {
     | null
     | undefined;
 
-  const prefillEmail =
-    (metadata?.email as string) ?? 'casey@chicagobears.com';
+  const prefillEmail = (metadata?.email as string) ?? 'casey@chicagobears.com';
   const userId = (metadata?.userId as string) ?? 'demo-stm-user';
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -115,7 +114,9 @@ export function LoginModal({ open, onOpenChange, onLogin }: LoginModalProps) {
                   />
                   <button
                     type="button"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-label={
+                      showPassword ? 'Hide password' : 'Show password'
+                    }
                     className="text-muted-foreground/80 hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 rounded p-1"
                     onClick={() => setShowPassword((s) => !s)}
                   >

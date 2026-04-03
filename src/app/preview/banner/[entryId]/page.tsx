@@ -20,11 +20,17 @@ type Props = {
  *   Web:    http://localhost:3000/preview/banner/{{entry.sys.id}}?locale={{locale}}
  *   Mobile: http://localhost:3000/preview/banner/{{entry.sys.id}}?view=mobile&locale={{locale}}
  */
-export default async function PreviewBannerPage({ params, searchParams }: Props) {
+export default async function PreviewBannerPage({
+  params,
+  searchParams,
+}: Props) {
   const { entryId } = await params;
   const { locale, view } = await searchParams;
 
-  const banner = await getBannerByEntryId({ entryId, locale: locale ?? 'en-US' });
+  const banner = await getBannerByEntryId({
+    entryId,
+    locale: locale ?? 'en-US',
+  });
 
   if (!banner) notFound();
 

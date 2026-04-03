@@ -13,11 +13,15 @@ export function isPersonalized(
   return (
     !!data &&
     'ntExperiencesCollection' in data &&
-    Boolean((data as PersonalizedBlockData).ntExperiencesCollection?.items?.length)
+    Boolean(
+      (data as PersonalizedBlockData).ntExperiencesCollection?.items?.length,
+    )
   );
 }
 
-export function mapExperiences(experiences?: Array<NtExperienceFragment | null>) {
+export function mapExperiences(
+  experiences?: Array<NtExperienceFragment | null>,
+) {
   if (!experiences?.length) return [];
   return experiences
     .filter((exp): exp is NtExperienceFragment => Boolean(exp))
@@ -25,9 +29,21 @@ export function mapExperiences(experiences?: Array<NtExperienceFragment | null>)
       id: exp.ntExperienceId,
       name: exp.ntName,
       type: exp.ntType,
-      config: exp.ntConfig as { distribution?: number[]; traffic?: number; components?: unknown[]; sticky?: boolean } | undefined,
+      config: exp.ntConfig as
+        | {
+            distribution?: number[];
+            traffic?: number;
+            components?: unknown[];
+            sticky?: boolean;
+          }
+        | undefined,
       ...(exp.ntAudience?.ntAudienceId
-        ? { audience: { id: exp.ntAudience.ntAudienceId, name: exp.ntAudience.ntName } }
+        ? {
+            audience: {
+              id: exp.ntAudience.ntAudienceId,
+              name: exp.ntAudience.ntName,
+            },
+          }
         : {}),
       // Wrap variant content in `data` to match our BlockProps<T> = { data: T } component shape.
       // Ninetailed merges variant props over baseline props, so { data: variantEntry }

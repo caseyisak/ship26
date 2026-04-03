@@ -22,6 +22,7 @@ function FeatureCard({
   mediaPosition?: 'top' | 'bottom' | 'left' | 'right' | null;
 }) {
   // Apply live updates to RAW Contentful data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const liveItem = useLiveUpdates(item) as any;
   const getItemProps = useContentfulInspectorModeProps(item.sys.id);
 
@@ -76,16 +77,17 @@ function FeatureCard({
     </div>
   );
 
-  const visual = (VisualComponent || imageUrl) ? (
-    <div
-      className={cn(
-        'relative overflow-hidden rounded-[12px]',
-        isSideBySide ? 'w-full md:w-2/5' : 'w-full',
-      )}
-    >
-      {visualInner}
-    </div>
-  ) : null;
+  const visual =
+    VisualComponent || imageUrl ? (
+      <div
+        className={cn(
+          'relative overflow-hidden rounded-[12px]',
+          isSideBySide ? 'w-full md:w-2/5' : 'w-full',
+        )}
+      >
+        {visualInner}
+      </div>
+    ) : null;
 
   const textBlock = (
     <div
@@ -213,7 +215,11 @@ const Features = ({
             )}
           >
             {items.map((item) => (
-              <FeatureCard key={item.sys.id} item={item} mediaPosition={mediaPosition} />
+              <FeatureCard
+                key={item.sys.id}
+                item={item}
+                mediaPosition={mediaPosition}
+              />
             ))}
           </div>
         )}

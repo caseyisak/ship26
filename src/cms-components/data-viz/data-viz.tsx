@@ -8,7 +8,6 @@ import {
   CartesianGrid,
   Cell,
   LabelList,
-  Legend,
   PolarAngleAxis,
   PolarGrid,
   PolarRadiusAxis,
@@ -172,6 +171,7 @@ const DataViz = ({
   };
 
   // Custom legend content with click handlers
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ClickableLegendContent = (props: any) => {
     const { payload } = props;
     if (!payload?.length) return null;
@@ -179,7 +179,9 @@ const DataViz = ({
     return (
       <div className="flex items-center justify-center gap-4 pt-3">
         {payload
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .filter((item: any) => item.type !== 'none')
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .map((item: any) => {
             const dataKey = item.dataKey || item.value;
             const isVisible = visibleSeries.has(dataKey);
@@ -274,6 +276,7 @@ const DataViz = ({
       fill: colors[i % colors.length],
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const CustomContent = (props: any) => {
       const { x, y, width, height, name, size } = props;
       const xNum = Number(x);

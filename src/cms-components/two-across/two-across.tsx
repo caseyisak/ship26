@@ -2,7 +2,6 @@
 
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, MARKS } from '@contentful/rich-text-types';
-import Image from 'next/image';
 
 import type { TwoAcrossFragment } from '@/block-renderer/types';
 import { BlockProps } from '@/block-renderer/types';
@@ -25,7 +24,9 @@ const richTextOptions = {
       </p>
     ),
     [BLOCKS.HEADING_2]: (_node: unknown, children: React.ReactNode) => (
-      <h2 className="text-foreground mb-3 text-2xl font-semibold">{children}</h2>
+      <h2 className="text-foreground mb-3 text-2xl font-semibold">
+        {children}
+      </h2>
     ),
     [BLOCKS.HEADING_3]: (_node: unknown, children: React.ReactNode) => (
       <h3 className="text-foreground mb-2 text-xl font-semibold">{children}</h3>
@@ -34,7 +35,9 @@ const richTextOptions = {
       <ul className="text-muted-foreground mb-4 list-disc pl-6">{children}</ul>
     ),
     [BLOCKS.OL_LIST]: (_node: unknown, children: React.ReactNode) => (
-      <ol className="text-muted-foreground mb-4 list-decimal pl-6">{children}</ol>
+      <ol className="text-muted-foreground mb-4 list-decimal pl-6">
+        {children}
+      </ol>
     ),
     [BLOCKS.LIST_ITEM]: (_node: unknown, children: React.ReactNode) => (
       <li className="mb-1">{children}</li>
@@ -42,7 +45,11 @@ const richTextOptions = {
   },
 };
 
-const TwoAcross = ({ data, className, ...props }: BlockProps<TwoAcrossFragment>) => {
+const TwoAcross = ({
+  data,
+  className,
+  ...props
+}: BlockProps<TwoAcrossFragment>) => {
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
 
@@ -55,13 +62,15 @@ const TwoAcross = ({ data, className, ...props }: BlockProps<TwoAcrossFragment>)
   const colorVariant = (liveData as TwoAcrossFragment).colorVariant ?? null;
 
   const COLOR_VARIANT_CLASSES: Record<string, string> = {
-    light:     'bg-white text-gray-900',
-    dark:      'bg-foreground text-background',
-    primary:   'bg-primary text-primary-foreground',
+    light: 'bg-white text-gray-900',
+    dark: 'bg-foreground text-background',
+    primary: 'bg-primary text-primary-foreground',
     secondary: 'bg-secondary text-secondary-foreground',
-    alt:       'bg-muted text-foreground',
+    alt: 'bg-muted text-foreground',
   };
-  const variantClass = colorVariant ? (COLOR_VARIANT_CLASSES[colorVariant] ?? '') : 'bg-background';
+  const variantClass = colorVariant
+    ? (COLOR_VARIANT_CLASSES[colorVariant] ?? '')
+    : 'bg-background';
 
   // Normalize Contentful image URL (protocol-relative → https)
   type RawLiveData = TwoAcrossFragment & { media?: { url?: string } | null };
@@ -79,7 +88,7 @@ const TwoAcross = ({ data, className, ...props }: BlockProps<TwoAcrossFragment>)
     <div className="flex flex-col justify-center gap-4">
       {eyebrow && (
         <p
-          className="text-primary text-sm font-semibold uppercase tracking-widest"
+          className="text-primary text-sm font-semibold tracking-widest uppercase"
           {...getProps({ fieldId: 'eyebrow' })}
         >
           {eyebrow}
@@ -87,7 +96,7 @@ const TwoAcross = ({ data, className, ...props }: BlockProps<TwoAcrossFragment>)
       )}
       {heading && (
         <h2
-          className="text-foreground text-3xl font-bold leading-tight tracking-tight text-balance sm:text-4xl"
+          className="text-foreground text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl"
           {...getProps({ fieldId: 'heading' })}
         >
           {heading}

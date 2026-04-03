@@ -154,7 +154,7 @@ export async function getSettings({
 
 const CORNER_RADIUS: Record<string, string> = {
   square: '0px',
-  rounded: '0.375rem',    // 6px
+  rounded: '0.375rem', // 6px
   'rounded-lg': '0.75rem', // 12px
   pill: '9999px',
 };
@@ -165,7 +165,9 @@ const CORNER_RADIUS: Record<string, string> = {
  * Keys like "primaryForeground" → "--primary-foreground".
  * Special key "cornerStyle" maps to "--radius" via CORNER_RADIUS lookup.
  */
-export function themeToStyle(theme: Record<string, string> | null | undefined): string {
+export function themeToStyle(
+  theme: Record<string, string> | null | undefined,
+): string {
   if (!theme || Object.keys(theme).length === 0) return '';
   const styles: Record<string, string> = {};
 

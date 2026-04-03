@@ -1,11 +1,11 @@
 'use client';
 
+import { useNinetailed } from '@ninetailed/experience.js-react';
+import { Settings } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Settings } from 'lucide-react';
-import { useNinetailed } from '@ninetailed/experience.js-react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -16,8 +16,11 @@ import { LoginModal } from './login-modal';
 function PersonalizationToggle({ className }: { className?: string }) {
   const handleClick = () => {
     if (typeof window !== 'undefined') {
-      (window as { ninetailed?: { plugins?: { preview?: { toggle?: () => void } } } })
-        .ninetailed?.plugins?.preview?.toggle?.();
+      (
+        window as {
+          ninetailed?: { plugins?: { preview?: { toggle?: () => void } } };
+        }
+      ).ninetailed?.plugins?.preview?.toggle?.();
     }
   };
   return (
@@ -33,13 +36,22 @@ function PersonalizationToggle({ className }: { className?: string }) {
   );
 }
 
-function LoginButton({ className, afterAction }: { className?: string; afterAction?: () => void }) {
+function LoginButton({
+  className,
+  afterAction,
+}: {
+  className?: string;
+  afterAction?: () => void;
+}) {
   const ninetailed = useNinetailed();
   const settings = useSettings();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const metadata = settings?.loggedInMetadata as Record<string, unknown> | null | undefined;
+  const metadata = settings?.loggedInMetadata as
+    | Record<string, unknown>
+    | null
+    | undefined;
   const firstName = (metadata?.firstName as string) ?? 'Account';
   const initials =
     [metadata?.firstName, metadata?.lastName]
@@ -62,21 +74,34 @@ function LoginButton({ className, afterAction }: { className?: string; afterActi
   if (isLoggedIn) {
     return (
       <div className={cn('flex items-center gap-2', className)}>
-        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
+        <div className="bg-primary text-primary-foreground flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold">
           {initials}
         </div>
-        <span className="text-sm font-medium text-foreground hidden sm:inline">{firstName}</span>
-        <Button size="sm" variant="outline" onClick={handleLogout}>Log Out</Button>
+        <span className="text-foreground hidden text-sm font-medium sm:inline">
+          {firstName}
+        </span>
+        <Button size="sm" variant="outline" onClick={handleLogout}>
+          Log Out
+        </Button>
       </div>
     );
   }
 
   return (
     <>
-      <Button size="sm" variant="outline" onClick={() => setModalOpen(true)} className={className}>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => setModalOpen(true)}
+        className={className}
+      >
         Login
       </Button>
-      <LoginModal open={modalOpen} onOpenChange={setModalOpen} onLogin={handleLogin} />
+      <LoginModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onLogin={handleLogin}
+      />
     </>
   );
 }
@@ -153,7 +178,11 @@ const Navbar = () => {
           {navLogo?.url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={navLogo.url.startsWith('//') ? `https:${navLogo.url}` : navLogo.url}
+              src={
+                navLogo.url.startsWith('//')
+                  ? `https:${navLogo.url}`
+                  : navLogo.url
+              }
               alt="Site logo"
               className="h-10 w-auto object-contain"
             />
@@ -171,7 +200,9 @@ const Navbar = () => {
 
         <nav className="hidden items-center justify-center gap-8 lg:flex">
           {navLinks.map((link) => {
-            const href = link.page ? `/page/${link.page.slug}` : (link.url ?? '#');
+            const href = link.page
+              ? `/page/${link.page.slug}`
+              : (link.url ?? '#');
             return (
               <Link
                 key={link.label}
@@ -260,7 +291,9 @@ const Navbar = () => {
                 >
                   <div className="flex flex-col gap-6">
                     {navLinks.map((link) => {
-                      const href = link.page ? `/page/${link.page.slug}` : (link.url ?? '#');
+                      const href = link.page
+                        ? `/page/${link.page.slug}`
+                        : (link.url ?? '#');
                       return (
                         <Link
                           key={link.label}
@@ -280,7 +313,10 @@ const Navbar = () => {
                   </div>
 
                   <div className="mt-4 mb-6 flex flex-col gap-3">
-                    <LoginButton className="w-full" afterAction={() => setIsMenuOpen(false)} />
+                    <LoginButton
+                      className="w-full"
+                      afterAction={() => setIsMenuOpen(false)}
+                    />
                     <PersonalizationToggle className="w-full" />
                   </div>
                 </nav>

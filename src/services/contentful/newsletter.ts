@@ -181,7 +181,9 @@ const NEWSLETTER_BY_ID = `
 
 // ─── Mapper ───────────────────────────────────────────────────────────────────
 
-function mapNewsletter(raw: RawNewsletter | null | undefined): Newsletter | null {
+function mapNewsletter(
+  raw: RawNewsletter | null | undefined,
+): Newsletter | null {
   if (!raw) return null;
   return {
     __typename: 'Newsletter',

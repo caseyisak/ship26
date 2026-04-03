@@ -16,7 +16,10 @@ export type NtAudienceFragment = {
 };
 
 /** A single NT experience variant item — typed broadly to hold any block's fields. */
-export type NtVariantItem = { __typename?: string; sys: { id: string } } & Record<string, unknown>;
+export type NtVariantItem = {
+  __typename?: string;
+  sys: { id: string };
+} & Record<string, unknown>;
 
 export type NtExperienceFragment = {
   sys: { id: string };
@@ -183,8 +186,8 @@ export type MediaWrapperFragment = {
 export type BannerFragment = BlockData & {
   __typename: 'Banner';
   internalName?: string | null;
-  headline?: string | null;
-  subheadline?: string | null;
+  headlineRt?: { json: unknown } | null;
+  subheadlineRt?: { json: unknown } | null;
   copy?: string | null;
   ctaText?: string | null;
   ctaUrl?: string | null;

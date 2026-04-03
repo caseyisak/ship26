@@ -10,6 +10,13 @@ vi.mock('@/lib/feature-visual-registry', () => ({
   getFeatureVisualComponent: () => null,
 }));
 
+vi.mock('@ninetailed/experience.js-react', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Experience: ({ component: Comp, ...props }: any) =>
+    Comp ? React.createElement(Comp, props) : null,
+  useNinetailed: () => ({ track: vi.fn(), identify: vi.fn() }),
+}));
+
 describe('BlockRenderer', () => {
   it('can be imported and rendered', () => {
     expect(BlockRenderer).toBeDefined();

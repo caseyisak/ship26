@@ -125,14 +125,14 @@ function parseTiles(arr: unknown): SectionStyleTile[] | undefined {
  * GraphQL JSON fields return objects, not strings), or null/undefined. Returns defaults when
  * invalid/missing.
  */
-export function parseSectionStyle(
-  json: unknown,
-): SectionStyleConfig {
+export function parseSectionStyle(json: unknown): SectionStyleConfig {
   if (json == null || json === '') {
     return { ...DEFAULT_SECTION_STYLE_CONFIG };
   }
   try {
-    const parsed = (typeof json === 'string' ? JSON.parse(json) : json) as Record<string, unknown>;
+    const parsed = (
+      typeof json === 'string' ? JSON.parse(json) : json
+    ) as Record<string, unknown>;
     if (parsed && typeof parsed === 'object') {
       const layout =
         parsed.layout === 'overlay' ||

@@ -12,7 +12,12 @@ describe('mapAudiences', () => {
   });
 
   it('includes ntRules as rules in the mapped output', () => {
-    const ntRules = { type: 'trait', trait: 'isLoggedIn', operator: 'equals', value: true };
+    const ntRules = {
+      type: 'trait',
+      trait: 'isLoggedIn',
+      operator: 'equals',
+      value: true,
+    };
     const result = mapAudiences([
       {
         sys: { id: 'sys-1' },
