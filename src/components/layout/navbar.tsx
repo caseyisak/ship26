@@ -16,11 +16,7 @@ import { LoginModal } from './login-modal';
 function PersonalizationToggle({ className }: { className?: string }) {
   const handleClick = () => {
     if (typeof window !== 'undefined') {
-      (
-        window as {
-          ninetailed?: { plugins?: { preview?: { toggle?: () => void } } };
-        }
-      ).ninetailed?.plugins?.preview?.toggle?.();
+      (window as { __ntPanel?: { toggle?: () => void } }).__ntPanel?.toggle?.();
     }
   };
   return (
@@ -29,7 +25,7 @@ function PersonalizationToggle({ className }: { className?: string }) {
       variant="outline"
       onClick={handleClick}
       className={cn('px-2', className)}
-      aria-label="Open personalization preview"
+      aria-label="Open personalization panel"
     >
       <Settings className="h-4 w-4" />
     </Button>

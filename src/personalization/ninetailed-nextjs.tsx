@@ -27,6 +27,7 @@ import {
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
+import { PersonalizationPanelHost } from '@/components/layout/personalization-panel';
 import type {
   NtAudienceFragment,
   NtExperienceFragment,
@@ -62,6 +63,8 @@ export function NinetailedProvider({
   clientId: string;
   environment: string;
 }) {
+  const mappedAudiences = mapAudiences(audiences) ?? [];
+
   return (
     <ReactNinetailedProvider
       clientId={clientId}
@@ -70,7 +73,7 @@ export function NinetailedProvider({
         new NinetailedPreviewPlugin({
           experiences: (mapExperiences(experiences) ??
             []) as ExperienceConfiguration[],
-          audiences: mapAudiences(audiences) ?? [],
+          audiences: mappedAudiences,
           onOpenExperienceEditor: (exp) =>
             window.open(
               `https://app.contentful.com/spaces/${SPACE_ID}/entries/${exp.id}`,
@@ -86,6 +89,7 @@ export function NinetailedProvider({
       ]}
     >
       <Tracker />
+      <PersonalizationPanelHost audienceDefinitions={mappedAudiences} />
       {children}
     </ReactNinetailedProvider>
   );
