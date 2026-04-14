@@ -5,6 +5,8 @@
   "private": true,
   "packageManager": "bun@1.1.38",
   "scripts": {
+    "check-env": "bun run scripts/check-env.ts",
+    "predev": "bun run check-env",
     "dev": "next dev",
     "dev:turbo": "next dev --turbopack",
     "dev:https": "next dev --experimental-https",

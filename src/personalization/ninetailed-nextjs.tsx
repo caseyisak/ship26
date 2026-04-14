@@ -27,12 +27,13 @@ import {
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
-import { PersonalizationPanelHost } from '@/components/layout/personalization-panel';
 import type {
   NtAudienceFragment,
   NtExperienceFragment,
 } from '@/block-renderer/types';
+import { PersonalizationPanelHost } from '@/components/layout/personalization-panel';
 
+import { LocalAudienceEvaluator } from './local-audience-evaluator';
 import { mapAudiences, mapExperiences } from './utils';
 
 const SPACE_ID = 'uumzxfocy3ef';
@@ -63,16 +64,18 @@ export function NinetailedProvider({
   clientId: string;
   environment: string;
 }) {
+  const mappedExperiences = (mapExperiences(experiences) ??
+    []) as ExperienceConfiguration[];
   const mappedAudiences = mapAudiences(audiences) ?? [];
 
   return (
     <ReactNinetailedProvider
       clientId={clientId}
       environment={environment}
+      useSDKEvaluation={true}
       plugins={[
         new NinetailedPreviewPlugin({
-          experiences: (mapExperiences(experiences) ??
-            []) as ExperienceConfiguration[],
+          experiences: mappedExperiences,
           audiences: mappedAudiences,
           onOpenExperienceEditor: (exp) =>
             window.open(
@@ -90,6 +93,7 @@ export function NinetailedProvider({
     >
       <Tracker />
       <PersonalizationPanelHost audienceDefinitions={mappedAudiences} />
+      <LocalAudienceEvaluator audiences={mappedAudiences} />
       {children}
     </ReactNinetailedProvider>
   );
