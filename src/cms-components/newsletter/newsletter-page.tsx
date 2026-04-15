@@ -124,6 +124,36 @@ function buildRichTextOptions(linkedEntries: Array<EmbeddedEntry | null> = []) {
           );
         }
 
+        // ── Banner embed ─────────────────────────────────────────────────────
+        if (entry.__typename === 'Banner') {
+          return (
+            <div className="my-6 rounded-lg border border-border bg-primary px-6 py-8">
+              <div className="flex flex-wrap items-center justify-between gap-6">
+                <div>
+                  {entry.headline && (
+                    <p className="text-lg leading-tight font-bold text-primary-foreground">
+                      {entry.headline}
+                    </p>
+                  )}
+                  {entry.subheadline && (
+                    <p className="mt-1 text-sm text-primary-foreground/80">
+                      {entry.subheadline}
+                    </p>
+                  )}
+                </div>
+                {entry.ctaText && entry.ctaUrl && (
+                  <a
+                    href={entry.ctaUrl}
+                    className="flex-shrink-0 rounded bg-tagline px-5 py-2 text-sm font-semibold text-white no-underline hover:opacity-90"
+                  >
+                    {entry.ctaText}
+                  </a>
+                )}
+              </div>
+            </div>
+          );
+        }
+
         // ── TwoAcross embed ──────────────────────────────────────────────────
         if (entry.__typename === 'TwoAcross') {
           const mediaUrl = entry.media?.url?.startsWith('//')

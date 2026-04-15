@@ -20,12 +20,13 @@ export type EmbeddedEntry = {
   ctaLabel?: string | null;
   ctaUrl?: string | null;
   colorVariant?: string | null;
-  // Hero fields
+  // Hero + Banner fields
   headline?: string | null;
   subheadline?: string | null;
   ctaText?: string | null;
   background?: { url?: string | null } | null;
   image?: { url?: string | null } | null;
+  variant?: string | null;
 };
 
 export type NewsletterLinkedEntry = {
@@ -155,6 +156,14 @@ const NEWSLETTER_FIELDS = `
             ctaUrl
             background { url }
             media { url }
+          }
+          ... on Banner {
+            headline
+            subheadline
+            ctaText
+            ctaUrl
+            variant
+            colorVariant
           }
         }
       }
