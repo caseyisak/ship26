@@ -375,6 +375,17 @@ export const TABBED_CONTENT_BY_ID = `
   }
 `;
 
+/** Fetch a single FAQ entry by entry ID (for ID-based live preview). */
+export const FAQ_BY_ID = `
+  query FaqById($id: String!, $locale: String!, $preview: Boolean) {
+    faqCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${FAQ_FIELDS}
+      }
+    }
+  }
+`;
+
 /** Author fragment: name and bio. */
 const AUTHOR_FIELDS = `
   __typename
