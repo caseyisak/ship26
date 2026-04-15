@@ -115,7 +115,6 @@ const NEWSLETTER_FIELDS = `
   subjectLine
   date
   teaser
-  slug
   leadStory {
     ... on Entry { sys { id } __typename }
     ... on BlogPost { title slug excerpt heroImage { url } }
@@ -124,7 +123,7 @@ const NEWSLETTER_FIELDS = `
     ... on Entry { sys { id } __typename }
     ... on BlogPost { title slug excerpt heroImage { url } }
     ... on TwoAcross { eyebrow heading media { url } ctaLabel ctaUrl colorVariant }
-    ... on Banner { headline subheadline ctaText ctaUrl colorVariant }
+    ... on Banner { headlineRt { json } subheadlineRt { json } ctaText ctaUrl colorVariant }
   }
   content {
     json

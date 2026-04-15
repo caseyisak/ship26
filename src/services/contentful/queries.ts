@@ -55,6 +55,26 @@ const NT_VARIANT_FIELDS = `
     colorScheme
     showLegend
   }
+  ... on Banner {
+    internalName
+    headlineRt { json }
+    subheadlineRt { json }
+    ctaText
+    ctaUrl
+    variant
+    colorVariant
+    sectionStyle
+  }
+  ... on TwoAcross {
+    internalName
+    eyebrow
+    heading
+    media { url }
+    ctaLabel
+    ctaUrl
+    colorVariant
+    sectionStyle
+  }
 `;
 
 /** Ninetailed experience fragment fields. */
@@ -243,6 +263,25 @@ const MEDIA_WRAPPER_FIELDS = `
   }
 `;
 
+/** TwoAcross fragment: 2-column text + media section. */
+const TWO_ACROSS_FIELDS = `
+  __typename
+  sys { id }
+  ... on TwoAcross {
+    internalName
+    eyebrow
+    heading
+    body { json }
+    media { url }
+    mediaAltText
+    mediaPosition
+    ctaLabel
+    ctaUrl
+    sectionStyle
+    colorVariant
+  }
+`;
+
 /** Banner fragment: web + mobile surfaces. */
 const BANNER_FIELDS = `
   __typename
@@ -281,6 +320,7 @@ export const PAGE_BY_SLUG = `
             ${TABBED_CONTENT_FIELDS}
             ${FEATURES_FIELDS}
             ${DATA_VIZ_FIELDS}
+            ${TWO_ACROSS_FIELDS}
             ${BLOG_POSTS_SECTION_FIELDS}
           }
         }

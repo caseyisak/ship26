@@ -42,8 +42,8 @@ setup_minutes: 5
 
 ## Show — Click Path
 
-1. [Contentful] Open **AM Newsletter – April 10** → click **Open live preview** (or navigate to preview URL)
-2. [Browser] Navigate to **http://localhost:3000/preview/newsletter/[AM-newsletter-entry-id]**
+1. [Contentful] Open **Punchbowl PM — April 10** → click **Open live preview** (or navigate to preview URL)
+2. [Browser] Navigate to **http://localhost:3000/preview/newsletter/37WN7tUtlOtfWsYRx1RrFo**
 3. [Browser] Show the split-pane:
    - **Left:** Gmail-style chrome — Inbox badge, sender, subject line header, preheader bar, lead story hero image, article body, embedded section blocks, ad banner
    - **Right:** Same lead story rendered as a site article
@@ -63,10 +63,11 @@ setup_minutes: 5
 
 ## Entry Reference
 
-| Entry | Content Type | ID | Preview URL |
-|-------|-------------|-----|------------|
-| AM Newsletter – April 10 | newsletter | [Contentful entry ID] | http://localhost:3000/preview/newsletter/[entryId] |
-| Senate Defense Hearing | blogPost | [Contentful entry ID] | — |
+| Entry | Content Type | Env | ID | Preview URL |
+|-------|-------------|-----|-----|------------|
+| Punchbowl PM — April 10 | newsletter | punchbowl | `37WN7tUtlOtfWsYRx1RrFo` | `http://localhost:3000/preview/newsletter/37WN7tUtlOtfWsYRx1RrFo` |
+| Punchbowl AM — April 10 | newsletter | punchbowl | `5I9CRAru22PeGk8A6s7xjo` | `http://localhost:3000/preview/newsletter/5I9CRAru22PeGk8A6s7xjo` |
+| Senate Defense hearing erupts over budget projections | blogPost | punchbowl | `6s8LjUAtFwGPaa7e5ZJMdu` | — |
 
 ---
 

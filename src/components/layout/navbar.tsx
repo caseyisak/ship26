@@ -15,9 +15,11 @@ import { LoginModal } from './login-modal';
 
 function PersonalizationToggle({ className }: { className?: string }) {
   const handleClick = () => {
-    if (typeof window !== 'undefined') {
-      (window as { __ntPanel?: { toggle?: () => void } }).__ntPanel?.toggle?.();
-    }
+    (
+      window as unknown as {
+        ninetailed?: { plugins?: { preview?: { toggle?: () => void } } };
+      }
+    ).ninetailed?.plugins?.preview?.toggle?.();
   };
   return (
     <Button

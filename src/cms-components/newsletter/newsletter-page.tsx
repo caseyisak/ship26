@@ -26,47 +26,47 @@ function buildRichTextOptions(linkedEntries: Array<EmbeddedEntry | null> = []) {
       [MARKS.ITALIC]: (text: React.ReactNode) => <em>{text}</em>,
       [MARKS.UNDERLINE]: (text: React.ReactNode) => <u>{text}</u>,
       [MARKS.CODE]: (text: React.ReactNode) => (
-        <code className="rounded bg-gray-100 px-1 py-0.5 font-mono text-sm">
+        <code className="rounded bg-secondary px-1 py-0.5 font-mono text-sm">
           {text}
         </code>
       ),
     },
     renderNode: {
       [BLOCKS.HEADING_1]: (_: unknown, children: React.ReactNode) => (
-        <h1 className="mt-8 mb-4 text-3xl font-extrabold text-gray-900">
+        <h1 className="mt-8 mb-4 text-3xl font-extrabold text-foreground">
           {children}
         </h1>
       ),
       [BLOCKS.HEADING_2]: (_: unknown, children: React.ReactNode) => (
-        <h2 className="mt-7 mb-3 text-2xl font-bold text-gray-900">
+        <h2 className="mt-7 mb-3 text-2xl font-bold text-foreground">
           {children}
         </h2>
       ),
       [BLOCKS.HEADING_3]: (_: unknown, children: React.ReactNode) => (
-        <h3 className="mt-6 mb-2 text-xl font-semibold text-gray-800">
+        <h3 className="mt-6 mb-2 text-xl font-semibold text-foreground">
           {children}
         </h3>
       ),
       [BLOCKS.PARAGRAPH]: (_: unknown, children: React.ReactNode) => (
-        <p className="mb-4 text-base leading-relaxed text-gray-700">
+        <p className="mb-4 text-base leading-relaxed text-foreground">
           {children}
         </p>
       ),
       [BLOCKS.UL_LIST]: (_: unknown, children: React.ReactNode) => (
-        <ul className="mb-4 list-disc pl-5 text-gray-700">{children}</ul>
+        <ul className="mb-4 list-disc pl-5 text-foreground">{children}</ul>
       ),
       [BLOCKS.OL_LIST]: (_: unknown, children: React.ReactNode) => (
-        <ol className="mb-4 list-decimal pl-5 text-gray-700">{children}</ol>
+        <ol className="mb-4 list-decimal pl-5 text-foreground">{children}</ol>
       ),
       [BLOCKS.LIST_ITEM]: (_: unknown, children: React.ReactNode) => (
         <li className="mb-1">{children}</li>
       ),
       [BLOCKS.QUOTE]: (_: unknown, children: React.ReactNode) => (
-        <blockquote className="mb-4 border-l-4 border-gray-300 pl-4 text-gray-600 italic">
+        <blockquote className="mb-4 border-l-4 border-border pl-4 text-muted-foreground italic">
           {children}
         </blockquote>
       ),
-      [BLOCKS.HR]: () => <hr className="my-6 border-gray-200" />,
+      [BLOCKS.HR]: () => <hr className="my-6 border-border" />,
       [BLOCKS.EMBEDDED_ENTRY]: (node: unknown) => {
         const n = node as { data?: { target?: { sys?: { id?: string } } } };
         const id = n?.data?.target?.sys?.id;
@@ -83,29 +83,29 @@ function buildRichTextOptions(linkedEntries: Array<EmbeddedEntry | null> = []) {
             ? `https:${entry.image.url}`
             : entry.image?.url;
           return (
-            <div className="relative my-6 overflow-hidden rounded-none bg-[#282C71] text-white">
+            <div className="relative my-6 overflow-hidden rounded-none bg-primary text-primary-foreground">
               {bgUrl && (
                 <div
-                  className="absolute inset-0 bg-cover bg-center opacity-30"
+                  className="absolute inset-0 bg-cover bg-center opacity-20"
                   style={{ backgroundImage: `url(${bgUrl})` }}
                 />
               )}
               <div className="relative flex items-center gap-6 px-6 py-8">
                 <div className="flex-1">
                   {entry.headline && (
-                    <h2 className="mb-2 text-2xl leading-tight font-bold text-white">
+                    <h2 className="mb-2 text-2xl leading-tight font-bold text-primary-foreground">
                       {entry.headline}
                     </h2>
                   )}
                   {entry.subheadline && (
-                    <p className="mb-4 text-sm text-white/80">
+                    <p className="mb-4 text-sm text-primary-foreground/80">
                       {entry.subheadline}
                     </p>
                   )}
                   {entry.ctaText && entry.ctaUrl && (
                     <a
                       href={entry.ctaUrl}
-                      className="inline-block bg-[#CB4697] px-4 py-2 text-sm font-semibold text-white no-underline hover:opacity-90"
+                      className="inline-block bg-tagline px-4 py-2 text-sm font-semibold text-white no-underline hover:opacity-90"
                     >
                       {entry.ctaText}
                     </a>
@@ -131,7 +131,7 @@ function buildRichTextOptions(linkedEntries: Array<EmbeddedEntry | null> = []) {
             : entry.media?.url;
           const imageLeft = entry.mediaPosition === 'left';
           return (
-            <div className="my-6 overflow-hidden border-l-4 border-[#282C71] bg-white shadow-sm">
+            <div className="my-6 overflow-hidden border-l-4 border-primary bg-card shadow-sm">
               <div
                 className={`flex ${imageLeft ? 'flex-row' : 'flex-row-reverse'}`}
               >
@@ -147,19 +147,19 @@ function buildRichTextOptions(linkedEntries: Array<EmbeddedEntry | null> = []) {
                 )}
                 <div className="flex flex-col justify-center gap-2 px-4 py-4">
                   {entry.eyebrow && (
-                    <span className="text-[10px] font-bold tracking-widest text-[#CB4697] uppercase">
+                    <span className="text-[10px] font-bold tracking-widest text-tagline uppercase">
                       {entry.eyebrow}
                     </span>
                   )}
                   {entry.heading && (
-                    <p className="text-base leading-snug font-bold text-[#282C71]">
+                    <p className="text-base leading-snug font-bold text-foreground">
                       {entry.heading}
                     </p>
                   )}
                   {entry.ctaLabel && entry.ctaUrl && (
                     <a
                       href={entry.ctaUrl}
-                      className="mt-1 inline-block text-xs font-semibold text-[#CB4697] underline"
+                      className="mt-1 inline-block text-xs font-semibold text-tagline underline"
                     >
                       {entry.ctaLabel} →
                     </a>
@@ -177,7 +177,7 @@ function buildRichTextOptions(linkedEntries: Array<EmbeddedEntry | null> = []) {
         return (
           <a
             href={entry.slug ? `/blog/${entry.slug}` : '#'}
-            className="my-6 flex overflow-hidden rounded-lg border border-gray-200 bg-gray-50 no-underline transition-colors hover:bg-gray-100"
+            className="my-6 flex overflow-hidden rounded-lg border border-border bg-muted no-underline transition-colors hover:bg-secondary"
           >
             {imgUrl && (
               <div className="w-48 flex-shrink-0 self-stretch">
@@ -191,12 +191,12 @@ function buildRichTextOptions(linkedEntries: Array<EmbeddedEntry | null> = []) {
             )}
             <div className="flex flex-col justify-center gap-1 px-4 py-4">
               {entry.title && (
-                <p className="text-sm font-semibold text-gray-900">
+                <p className="text-sm font-semibold text-foreground">
                   {entry.title}
                 </p>
               )}
               {entry.excerpt && (
-                <p className="line-clamp-2 text-xs text-gray-500">
+                <p className="line-clamp-2 text-xs text-muted-foreground">
                   {entry.excerpt}
                 </p>
               )}
@@ -228,7 +228,7 @@ function buildRichTextOptions(linkedEntries: Array<EmbeddedEntry | null> = []) {
             href={n?.data?.uri ?? '#'}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-[var(--color-primary,#1a2b4a)] underline"
+            className="font-medium text-tagline underline"
           >
             {children}
           </a>
@@ -278,15 +278,15 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
     : '';
 
   return (
-    <main className="min-h-screen bg-[#f6f8fc]">
+    <main className="min-h-screen bg-muted">
       <div className="mx-auto max-w-5xl px-4 pt-8 pb-4 sm:px-6">
         {/* Gmail inbox row — shows how this email looks in the inbox list */}
-        <div className="mb-3 flex items-center gap-3 rounded-lg border border-gray-100 bg-white px-4 py-3 text-sm shadow-sm select-none">
+        <div className="mb-3 flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm shadow-sm select-none">
           {/* Checkbox + star placeholder */}
           <div className="flex flex-shrink-0 items-center gap-2">
-            <div className="h-4 w-4 rounded-sm border border-gray-300" />
+            <div className="h-4 w-4 rounded-sm border border-border" />
             <svg
-              className="h-4 w-4 text-gray-300"
+              className="h-4 w-4 text-muted-foreground"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -294,33 +294,35 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
             </svg>
           </div>
           {/* Sender */}
-          <span className="w-36 flex-shrink-0 truncate font-semibold text-gray-900">
-            {sender ?? 'Punchbowl News'}
+          <span className="w-36 flex-shrink-0 truncate font-semibold text-foreground">
+            {sender ?? 'Metafi Editorial'}
           </span>
           {/* Inbox badge */}
-          <span className="flex-shrink-0 rounded bg-gray-200 px-1.5 py-0.5 text-[10px] font-medium text-gray-600">
+          <span className="flex-shrink-0 rounded bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-secondary-foreground">
             Inbox
           </span>
           {/* Subject + teaser */}
-          <span className="min-w-0 flex-1 truncate text-gray-800">
+          <span className="min-w-0 flex-1 truncate text-foreground">
             <span className="font-semibold">{subjectLine ?? title}</span>
-            {teaser && <span className="text-gray-400"> &mdash; {teaser}</span>}
+            {teaser && (
+              <span className="text-muted-foreground"> &mdash; {teaser}</span>
+            )}
           </span>
           {/* Time */}
           {displayTime && (
-            <span className="flex-shrink-0 text-xs font-medium text-gray-500">
+            <span className="flex-shrink-0 text-xs font-medium text-muted-foreground">
               {displayTime}
             </span>
           )}
         </div>
 
         {/* Email content card */}
-        <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+        <div className="overflow-hidden rounded-xl bg-card shadow-sm">
           <div className="px-6 py-8 sm:px-10">
             {/* Subject as email title */}
             {(title ?? subjectLine) && (
               <h1
-                className="mb-6 text-3xl leading-tight font-extrabold text-gray-900 md:text-4xl"
+                className="mb-6 text-3xl leading-tight font-extrabold text-foreground md:text-4xl"
                 {...getProps({ fieldId: 'title' })}
               >
                 {title ?? subjectLine}
@@ -337,7 +339,7 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                 return (
                   <a
                     href={leadStory.slug ? `/blog/${leadStory.slug}` : '#'}
-                    className="mb-6 flex overflow-hidden border-l-4 border-[#CB4697] bg-gray-50 no-underline transition-colors hover:bg-gray-100"
+                    className="mb-6 flex overflow-hidden border-l-4 border-tagline bg-muted no-underline transition-colors hover:bg-secondary"
                     style={{ textDecoration: 'none' }}
                   >
                     {img && (
@@ -350,16 +352,16 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                       </div>
                     )}
                     <div className="flex flex-col justify-center gap-1 px-4 py-4">
-                      <span className="text-[10px] font-bold tracking-widest text-[#CB4697] uppercase">
+                      <span className="text-[10px] font-bold tracking-widest text-tagline uppercase">
                         Lead Story
                       </span>
                       {leadStory.title && (
-                        <p className="text-base leading-snug font-bold text-[#282C71]">
+                        <p className="text-base leading-snug font-bold text-foreground">
                           {leadStory.title}
                         </p>
                       )}
                       {leadStory.excerpt && (
-                        <p className="mt-0.5 line-clamp-2 text-sm text-gray-500">
+                        <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
                           {leadStory.excerpt}
                         </p>
                       )}
@@ -369,7 +371,7 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
               })()}
 
             {/* Divider */}
-            <hr className="mb-8 border-gray-200" />
+            <hr className="mb-8 border-border" />
 
             {/* Rich text body */}
             {bodyJson && (
@@ -394,7 +396,7 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                   return (
                     <a
                       href={promoSlot.slug ? `/blog/${promoSlot.slug}` : '#'}
-                      className="mt-8 flex overflow-hidden border-l-4 border-[#282C71] bg-gray-50 no-underline transition-colors hover:bg-gray-100"
+                      className="mt-8 flex overflow-hidden border-l-4 border-primary bg-muted no-underline transition-colors hover:bg-secondary"
                       style={{ textDecoration: 'none' }}
                     >
                       {img && (
@@ -407,16 +409,16 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                         </div>
                       )}
                       <div className="flex flex-col justify-center gap-1 px-4 py-4">
-                        <span className="text-[10px] font-bold tracking-widest text-[#282C71] uppercase">
+                        <span className="text-[10px] font-bold tracking-widest text-foreground uppercase">
                           Promo
                         </span>
                         {promoSlot.title && (
-                          <p className="text-base leading-snug font-bold text-[#282C71]">
+                          <p className="text-base leading-snug font-bold text-foreground">
                             {promoSlot.title}
                           </p>
                         )}
                         {promoSlot.excerpt && (
-                          <p className="mt-0.5 line-clamp-2 text-sm text-gray-500">
+                          <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
                             {promoSlot.excerpt}
                           </p>
                         )}
@@ -429,7 +431,7 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                     ? `https:${promoSlot.media.url}`
                     : promoSlot.media?.url;
                   return (
-                    <div className="mt-8 flex overflow-hidden border-l-4 border-[#282C71] bg-white shadow-sm">
+                    <div className="mt-8 flex overflow-hidden border-l-4 border-primary bg-card shadow-sm">
                       {mediaUrl && (
                         <div className="w-48 flex-shrink-0 self-stretch">
                           <img
@@ -441,19 +443,19 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                       )}
                       <div className="flex flex-col justify-center gap-2 px-4 py-4">
                         {promoSlot.eyebrow && (
-                          <span className="text-[10px] font-bold tracking-widest text-[#282C71] uppercase">
+                          <span className="text-[10px] font-bold tracking-widest text-foreground uppercase">
                             {promoSlot.eyebrow}
                           </span>
                         )}
                         {promoSlot.heading && (
-                          <p className="text-base font-bold text-[#282C71]">
+                          <p className="text-base font-bold text-foreground">
                             {promoSlot.heading}
                           </p>
                         )}
                         {promoSlot.ctaLabel && promoSlot.ctaUrl && (
                           <a
                             href={promoSlot.ctaUrl}
-                            className="text-xs font-semibold text-[#CB4697] underline"
+                            className="text-xs font-semibold text-tagline underline"
                           >
                             {promoSlot.ctaLabel} →
                           </a>
@@ -463,43 +465,17 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                   );
                 }
                 if (promoSlot.__typename === 'Banner') {
-                  const COLOR_MAP: Record<
-                    string,
-                    { bg: string; text: string; btn: string }
-                  > = {
-                    primary: { bg: '#CB4697', text: '#ffffff', btn: '#282C71' },
-                    secondary: {
-                      bg: '#282C71',
-                      text: '#ffffff',
-                      btn: '#CB4697',
-                    },
-                    alt: { bg: '#1a1a2e', text: '#ffffff', btn: '#CB4697' },
-                    light: { bg: '#FAF9F8', text: '#282C71', btn: '#CB4697' },
-                    dark: { bg: '#0d0d1a', text: '#ffffff', btn: '#CB4697' },
-                  };
-                  const colors =
-                    COLOR_MAP[promoSlot.colorVariant ?? ''] ??
-                    COLOR_MAP.secondary;
                   return (
-                    <div
-                      className="mt-8 px-6 py-8"
-                      style={{ backgroundColor: colors.bg }}
-                    >
+                    <div className="mt-8 rounded-lg border border-border bg-primary px-6 py-8">
                       <div className="flex flex-wrap items-center justify-between gap-6">
                         <div>
                           {promoSlot.headline && (
-                            <p
-                              className="text-lg leading-tight font-bold"
-                              style={{ color: colors.text }}
-                            >
+                            <p className="text-lg leading-tight font-bold text-primary-foreground">
                               {promoSlot.headline}
                             </p>
                           )}
                           {promoSlot.subheadline && (
-                            <p
-                              className="mt-1 text-sm opacity-80"
-                              style={{ color: colors.text }}
-                            >
+                            <p className="mt-1 text-sm text-primary-foreground/80">
                               {promoSlot.subheadline}
                             </p>
                           )}
@@ -507,11 +483,7 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                         {promoSlot.ctaText && promoSlot.ctaUrl && (
                           <a
                             href={promoSlot.ctaUrl}
-                            className="flex-shrink-0 px-5 py-2 text-sm font-semibold no-underline"
-                            style={{
-                              backgroundColor: colors.btn,
-                              color: '#ffffff',
-                            }}
+                            className="flex-shrink-0 rounded bg-tagline px-5 py-2 text-sm font-semibold text-white no-underline hover:opacity-90"
                           >
                             {promoSlot.ctaText}
                           </a>

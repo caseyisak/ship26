@@ -2,6 +2,7 @@
 
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, MARKS } from '@contentful/rich-text-types';
+import * as React from 'react';
 
 import type { TwoAcrossFragment } from '@/block-renderer/types';
 import { BlockProps } from '@/block-renderer/types';
@@ -10,6 +11,7 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { parseSectionStyle } from '@/lib/section-style-types';
 import { cn } from '@/lib/utils';
 
 const richTextOptions = {
@@ -61,6 +63,19 @@ const TwoAcross = ({
   const mediaPosition = liveData.mediaPosition ?? 'right';
   const colorVariant = (liveData as TwoAcrossFragment).colorVariant ?? null;
 
+  // Parse sectionStyle — live preview may return object or string
+  const rawSectionStyle = (liveData as TwoAcrossFragment).sectionStyle;
+  const sectionStyle = parseSectionStyle(
+    rawSectionStyle == null
+      ? null
+      : typeof rawSectionStyle === 'string'
+        ? rawSectionStyle
+        : typeof rawSectionStyle === 'object'
+          ? JSON.stringify(rawSectionStyle)
+          : String(rawSectionStyle),
+  );
+  const useOverride = sectionStyle.useStyleOverride;
+
   const COLOR_VARIANT_CLASSES: Record<string, string> = {
     light: 'bg-white text-gray-900',
     dark: 'bg-foreground text-background',
@@ -68,9 +83,32 @@ const TwoAcross = ({
     secondary: 'bg-secondary text-secondary-foreground',
     alt: 'bg-muted text-foreground',
   };
-  const variantClass = colorVariant
-    ? (COLOR_VARIANT_CLASSES[colorVariant] ?? '')
-    : 'bg-background';
+  const variantClass =
+    useOverride && sectionStyle.backgroundColor
+      ? ''
+      : colorVariant
+        ? (COLOR_VARIANT_CLASSES[colorVariant] ?? '')
+        : 'bg-background';
+
+  const sectionStyleInline: React.CSSProperties =
+    useOverride && sectionStyle.backgroundColor
+      ? { backgroundColor: sectionStyle.backgroundColor }
+      : {};
+
+  const headlineStyle: React.CSSProperties =
+    useOverride && sectionStyle.headlineColor
+      ? { color: sectionStyle.headlineColor }
+      : {};
+
+  const eyebrowStyle: React.CSSProperties =
+    useOverride && sectionStyle.headlineColor
+      ? { color: sectionStyle.headlineColor }
+      : {};
+
+  const bodyStyle: React.CSSProperties =
+    useOverride && sectionStyle.subheadlineColor
+      ? { color: sectionStyle.subheadlineColor }
+      : {};
 
   // Normalize Contentful image URL (protocol-relative → https)
   type RawLiveData = TwoAcrossFragment & { media?: { url?: string } | null };
@@ -89,6 +127,7 @@ const TwoAcross = ({
       {eyebrow && (
         <p
           className="text-primary text-sm font-semibold tracking-widest uppercase"
+          style={eyebrowStyle}
           {...getProps({ fieldId: 'eyebrow' })}
         >
           {eyebrow}
@@ -97,6 +136,7 @@ const TwoAcross = ({
       {heading && (
         <h2
           className="text-foreground text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl"
+          style={headlineStyle}
           {...getProps({ fieldId: 'heading' })}
         >
           {heading}
@@ -105,6 +145,7 @@ const TwoAcross = ({
       {!!body?.json && (
         <div
           className="prose prose-sm max-w-none"
+          style={bodyStyle}
           {...getProps({ fieldId: 'body' })}
         >
           {documentToReactComponents(
@@ -152,6 +193,7 @@ const TwoAcross = ({
         variantClass,
         className ?? '',
       )}
+      style={sectionStyleInline}
       {...props}
     >
       <div className="container mx-auto">

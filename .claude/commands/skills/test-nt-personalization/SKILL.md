@@ -1,195 +1,184 @@
 ---
 name: test-nt-personalization
-description: Test Ninetailed personalization flows visually using Playwright. Reads NT audience and nav config from the active Contentful environment, builds the correct click-path test, runs it headfully, and visually confirms hero/banner variants change with NT state validation. Invoke when user says "test personalization", "verify NT", "check if personalization works", "test the demo flow", or "does the variant swap work".
-version: 1.0.0
+description: Comprehensive Ninetailed personalization verification agent. Uses Playwright MCP to visually confirm variant swaps, monitors NT API network calls, cross-references Contentful entry config, and supports both nav-trigger and direct profile injection test paths. Invoke when user says "test personalization", "verify NT", "check if personalization works", "test the demo flow", "does the variant swap work", or "debug Ninetailed".
+version: 2.0.0
 author: casey-lisak
 ---
 
-# Test NT Personalization Skill
+# Test NT Personalization Skill (v2)
 
-Verifies that NT personalization variant swaps work end-to-end using the actual demo navigation flow. Reads config from Contentful — does not assume anything hardcoded.
+End-to-end Ninetailed verification. Reads config from Contentful, validates entries are wired correctly, then runs visual browser tests using Playwright MCP. Does not assume anything hardcoded.
 
-**Do not skip any phase. Do not run with headless: true. Visual confirmation is mandatory.**
-
----
-
-## Phase 0 — Pre-flight check
-
-Before doing anything else:
-
-1. Confirm the dev server is running: `lsof -ti :3000` — if no PID, tell the user to start it with `bun dev` (or `bun rf` to clear cache first).
-2. Confirm Playwright is available: `cd ~/Dev/scraper/gpt-crawler && node -e "require('playwright')" 2>&1` — if missing, `cd ~/Dev/scraper/gpt-crawler && bun add playwright`.
-3. Read `.env.local` from the active worktree to get `CONTENTFUL_ENVIRONMENT` and `CONTENTFUL_SPACE_ID`.
+**Do not skip any phase. Do not run headless. Visual confirmation is required.**
 
 ---
 
-## Phase 1 — Read NT config from Contentful
+## ⚠️ Known blocker: Gear icon sidebar
 
-Use Contentful MCP with the space + env from Phase 0 to fetch:
+The personalization preview sidebar (gear icon, bottom-right of page) is currently broken — reset button does nothing, no green audience indicator shows. Cannot use it to tab baseline ↔ variant until GH #37/#36 is fixed.
 
-**1a. Nav links** — find the `nav` content type entry, read its `links` collection. For each link, note: `label`, `url`, `page.slug`. The effective href is `link.url || (link.page ? /page/${slug} : #)`.
+Workaround: Use `browser_evaluate` to call `window.ninetailed.reset()` and `window.ninetailed.identify({...})` directly, then reload and observe. This is more reliable for automation anyway.
 
-**1b. NT audiences** — search for entries with `content_type: nt_audience`. For each, extract:
-- `sys.id` (= audience ID used in `activateAudience`)
-- `nt_audience_id` (should equal `sys.id`)
-- `nt_name`
-- `nt_rules.any[].all` — find the `type: 'identify'` condition(s). Extract `key` and `value` (e.g. `interest: 'fiber'`).
-- The nav URL that triggers this audience (look for the `type: 'page'` condition `value` in `nt_rules`, match to a nav link href).
+---
 
-**1c. Build the scenario map** — for each audience that has BOTH an identify rule AND a page URL condition:
+## Phase 0 — Pre-flight
 
+1. Confirm dev server is running: `lsof -ti :3000` — if empty, tell user to run `bun run dev` and wait.
+2. Read `.env.local` from the active worktree. Extract:
+   - `CONTENTFUL_SPACE_ID`
+   - `CONTENTFUL_ENVIRONMENT`
+   - `NEXT_PUBLIC_NINETAILED_API_KEY`
+   - `NEXT_PUBLIC_NINETAILED_ENVIRONMENT`
+3. Confirm `NEXT_PUBLIC_NINETAILED_ENVIRONMENT` matches the Contentful environment name — mismatch here causes silent NT failures.
+
+---
+
+## Phase 1 — Contentful config cross-reference (catches config bugs before browser)
+
+Use Contentful MCP to validate everything is wired correctly before touching the browser.
+
+**1a. Fetch all NT experiences**
+`search_entries: content_type = nt_experience`
+For each experience, check:
+- `ntAudience` is linked (not null)
+- `ntVariantsCollection` has at least 1 item
+- The variant item's `sys.id` resolves to a real published entry
+
+**1b. Fetch all NT audiences**
+`search_entries: content_type = nt_audience`
+For each audience, extract:
+- `ntAudienceId` — must equal `sys.id` (mismatch breaks SDK matching silently)
+- `ntRules` — find `type: 'identify'` conditions: extract `key` and `value`
+- `ntRules` — find `type: 'page'` or `type: 'url'` conditions: extract the trigger URL
+
+**1c. Fetch the baseline component entry being personalized** (e.g. the Hero)
+- Confirm `ntExperiencesCollection` has the experience linked
+- Note the baseline field values (headline, ctaText, etc.) — compare against after swap
+
+**1d. Fetch each variant entry**
+- Note the variant field values — these are what you expect to see after audience activates
+
+**1e. Build the scenario map**
+For each audience with both an identify rule AND a trigger URL:
 ```
-scenario: {
-  label: "Fiber Internet",
-  navHref: "/fiber-internet",       // URL from page rule
-  identifyTrait: { interest: 'fiber' },  // from identify rule
-  audienceId: "56oWuinrUlYervWj6b5GlO", // sys.id
-  audienceName: "Fiber Interest"
+{
+  label: "Fiber Interest",
+  triggerPath: "/fiber-internet",        // from page/url rule
+  identifyTraits: { interest: "fiber" }, // from identify rule
+  audienceId: "56oWuinrUlYervWj6b5GlO", // ntAudienceId
+  experienceId: "abc123",               // nt_experience sys.id
+  baselineValue: "Fast, reliable internet for everyone",
+  variantValue: "Fiber just arrived in your neighborhood"
 }
 ```
 
-Only include audiences with identify rules (type: 'identify'). Skip logged-in or page-only audiences.
-
-Present the scenario map to the user and confirm before running the test.
+Present the scenario map. If any scenario is missing trigger URL or identify traits, flag it as a config bug before running the browser test.
 
 ---
 
-## Phase 2 — Generate and run the Playwright test
+## Phase 2 — Visual browser test (Playwright MCP)
 
-Generate a test script at `~/Dev/scraper/gpt-crawler/nt-personalization-test.mjs` using this template, substituting the real scenario data from Phase 1:
+Use `mcp__playwright__browser_navigate`, `mcp__playwright__browser_evaluate`, `mcp__playwright__browser_snapshot`, `mcp__playwright__browser_take_screenshot`, `mcp__playwright__browser_network_requests`, and `mcp__playwright__browser_console_messages`.
 
-```js
-import { chromium } from 'playwright';
-
-const HOME = 'http://localhost:3000/page/home'; // adjust if demo uses different home route
-const getHero = (page) => page.locator('h1, h2').first().innerText().catch(() => 'none');
-const getNTState = (page) => page.evaluate(() => {
-  const p = window.ninetailed?.plugins?.preview;
-  return p ? {
-    activeAudiences: p.activeAudiences,
-    experienceIndexes: p.experienceVariantIndexes
-  } : null;
-});
-
-const scenarios = [
-  // GENERATED FROM CONTENTFUL — one entry per audience scenario
-  {
-    label: 'Fiber Interest',
-    navHref: '/fiber-internet',
-    homeNavHref: '/page/home',
-    audienceId: '56oWuinrUlYervWj6b5GlO',
-  },
-  // ... additional scenarios
-];
-
-const browser = await chromium.launch({ channel: 'chrome', headless: false });
-const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-const page = await ctx.newPage();
-page.setDefaultTimeout(25000);
-
-const results = [];
-
-try {
-  // BASELINE — clean slate
-  await page.goto(HOME, { waitUntil: 'networkidle', timeout: 30000 });
-  await page.evaluate(() => window.ninetailed?.reset());
-  await page.waitForTimeout(500);
-  await page.reload({ waitUntil: 'networkidle' });
-  await page.waitForTimeout(2000);
-  const baselineHero = await getHero(page);
-  const baselineState = await getNTState(page);
-  console.log('BASELINE hero:', baselineHero);
-  await page.screenshot({ path: '/tmp/nt-test-00-baseline.png' });
-
-  // Run each scenario sequentially — NO reset between scenarios
-  // Each identify() call naturally overwrites previous traits
-  for (let i = 0; i < scenarios.length; i++) {
-    const s = scenarios[i];
-    console.log(`\n--- Scenario: ${s.label} ---`);
-
-    // Navigate to trigger page via nav link
-    await page.click(`nav a[href="${s.navHref}"]`);
-    await page.waitForURL(`**${s.navHref}`, { timeout: 10000 });
-    await page.waitForTimeout(2000);
-
-    const onPageState = await getNTState(page);
-    const audienceActive = onPageState?.activeAudiences?.includes(s.audienceId);
-    console.log(`On ${s.navHref}: audience active = ${audienceActive}`);
-    await page.screenshot({ path: `/tmp/nt-test-${String(i+1).padStart(2,'0')}-on-${s.label.toLowerCase().replace(/\s+/g,'-')}.png` });
-
-    // Navigate home via Home nav link (client-side nav — preview plugin state persists)
-    await page.click(`nav a[href="${s.homeNavHref}"]`);
-    await page.waitForURL(`**${s.homeNavHref.replace('/page/','').replace('home','')}*`, { timeout: 10000 });
-    await page.waitForTimeout(2000);
-
-    const homeHero = await getHero(page);
-    const homeState = await getNTState(page);
-    const variantActive = homeState?.activeAudiences?.includes(s.audienceId);
-    const experienceSwapped = homeState?.experienceIndexes &&
-      Object.values(homeState.experienceIndexes).some(v => v > 0);
-
-    console.log(`Homepage hero: ${homeHero}`);
-    console.log(`Audience still active: ${variantActive}, experience swapped: ${experienceSwapped}`);
-    await page.screenshot({ path: `/tmp/nt-test-${String(i+1).padStart(2,'0')}-home-after-${s.label.toLowerCase().replace(/\s+/g,'-')}.png` });
-
-    results.push({
-      scenario: s.label,
-      audienceActive,
-      variantActive,
-      experienceSwapped,
-      hero: homeHero,
-      pass: variantActive && experienceSwapped,
-    });
-  }
-
-} catch(e) {
-  console.error('Test error:', e.message);
-} finally {
-  await browser.close();
-}
-
-// Summary
-console.log('\n====== RESULTS ======');
-for (const r of results) {
-  const status = r.pass ? '✅ PASS' : '❌ FAIL';
-  console.log(`${status}  ${r.scenario}: hero="${r.hero}" | audience=${r.audienceActive} | swapped=${r.experienceSwapped}`);
-}
+### Step 2a — Baseline capture
+```
+browser_navigate: http://localhost:3000/page/home
+browser_evaluate: window.ninetailed?.reset()
+browser_wait_for: { time: 1500 }
+browser_navigate: http://localhost:3000/page/home   ← reload to apply reset
+browser_wait_for: { time: 2000 }
+browser_take_screenshot → /tmp/nt-baseline.png
+browser_evaluate: document.querySelector('h1, h2')?.innerText   ← capture baseline hero text
+browser_evaluate: window.ninetailed?.plugins?.preview?.activeAudiences  ← should be []
 ```
 
-Run it: `cd ~/Dev/scraper/gpt-crawler && node nt-personalization-test.mjs 2>&1`
+### Step 2b — Network monitoring
+```
+browser_network_requests
+```
+Look for calls to `*.ninetailed.io`. Confirm:
+- Status 200
+- Response contains `experiences` array
+- The relevant `experienceId` is present
+
+If NT API calls fail or return empty experiences → key or environment mismatch. Check `NEXT_PUBLIC_NINETAILED_API_KEY` and `NEXT_PUBLIC_NINETAILED_ENVIRONMENT`.
+
+### Step 2c — Console error check
+```
+browser_console_messages
+```
+Look for errors containing: `ninetailed`, `experience`, `audience`, `variant`, `profile`. Any errors indicate SDK misconfiguration.
+
+### Step 2d — For each scenario: Nav-trigger path
+```
+# Navigate to trigger page via nav link (client-side nav preserves NT state)
+browser_click: nav a[href="{triggerPath}"]
+browser_wait_for: { url: "**{triggerPath}", time: 2000 }
+browser_evaluate: window.ninetailed?.plugins?.preview?.activeAudiences
+  → should now include audienceId
+browser_take_screenshot → /tmp/nt-on-{label}.png
+
+# Navigate home — client-side nav so NT state persists
+browser_click: nav a[href="/page/home"] (or home nav link)
+browser_wait_for: { time: 2000 }
+browser_evaluate: document.querySelector('h1, h2')?.innerText  ← should match variantValue
+browser_evaluate: window.ninetailed?.plugins?.preview?.experienceVariantIndexes
+  → values > 0 = variant is active
+browser_take_screenshot → /tmp/nt-home-after-{label}.png
+```
+
+### Step 2e — Direct profile injection path (use if nav trigger fails or for faster iteration)
+```
+browser_navigate: http://localhost:3000/page/home
+browser_evaluate: window.ninetailed?.identify("test-user", { ...identifyTraits })
+browser_wait_for: { time: 2000 }
+browser_navigate: http://localhost:3000/page/home   ← reload to pick up profile
+browser_wait_for: { time: 2000 }
+browser_evaluate: document.querySelector('h1, h2')?.innerText  ← should match variantValue
+browser_take_screenshot → /tmp/nt-inject-{label}.png
+```
+
+If nav-trigger fails but injection works → bug is in PageTracker or nav wiring, not NT config.
+If injection also fails → bug is in NT config, Contentful entries, or environment keys.
 
 ---
 
-## Phase 3 — Evaluate results and report
+## Phase 3 — Results table
 
-For each scenario, report:
+| Scenario | Config Valid | NT API 200 | Audience Active | Variant Rendered | Hero Matches Expected | Status |
+|----------|-------------|-----------|----------------|-----------------|----------------------|--------|
+| Fiber Interest | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ PASS |
 
-| Scenario | Audience Active | Experience Swapped | Hero Text | Status |
-|----------|----------------|-------------------|-----------|--------|
-| Fiber Interest | ✅ | ✅ | "Fiber just arrived..." | ✅ PASS |
-| Streaming Interest | ✅ | ✅ | "Stream everything..." | ✅ PASS |
-
-Show the screenshot paths for visual review.
-
-**If a scenario FAILS**, run this diagnostic checklist before declaring a bug:
-
-1. **Is the audience `evaluateRules` returning false?** — Check `local-audience-evaluator.tsx`. The condition `if (cond.type !== 'identify') return false` must be `false` not `true`.
-2. **Is the nav link href correct?** — The trigger page nav link must use `link.url` not the page slug route.
-3. **Does the trigger page have a `PageTracker` component?** — Check `src/app/[trigger-slug]/page.tsx`. It must render `<PageTracker traits={{ [key]: '[value]' }} />`.
-4. **Does the homepage hero entry have the experience in `nt_experiences`?** — Fetch the baseline hero entry from Contentful. Confirm the experience is linked.
-5. **Does the experience entry have the right `nt_audience` sys.id?** — Confirm `nt_audience.ntAudienceId === audience sys.id`.
-6. **Is `NEXT_PUBLIC_NINETAILED_ENVIRONMENT` set correctly in `.env.local`?** — Must match the Contentful environment name.
+Screenshot paths for each step.
 
 ---
 
-## Phase 4 — Post-test checklist
+## Phase 4 — Failure diagnosis checklist
 
-After all scenarios pass:
+Work through in order — most bugs are config, not code:
 
-- [ ] All hero texts confirmed changed from baseline
-- [ ] All audience IDs present in `activeAudiences` on homepage return
-- [ ] All `experienceVariantIndexes` show index > 0 for relevant experiences
-- [ ] Screenshots captured for each scenario
-- [ ] No scenarios used `ninetailed.reset()` between runs (reset breaks preview plugin state)
+1. **ntAudienceId ≠ sys.id** — the NT SDK uses `ntAudienceId` to match audiences. If it doesn't equal `sys.id`, the SDK silently never matches. Fix in Contentful entry.
+2. **Environment mismatch** — `NEXT_PUBLIC_NINETAILED_ENVIRONMENT` in `.env.local` must exactly match the NT environment name (e.g. `main`).
+3. **NT API empty experiences** — Network shows 200 but experiences array is empty. Confirm experiences are published in the NT dashboard under the correct environment.
+4. **Experience not linked to baseline entry** — Fetch the baseline Hero/Banner from Contentful. If `ntExperiencesCollection` is empty, the experience was never attached. Fix in Contentful UI.
+5. **Variant entry unpublished** — NT fetches variants by entry ID. If the variant entry is draft-only, NT skips it. Publish it.
+6. **PageTracker missing on trigger page** — Check `src/app/[trigger-slug]/page.tsx`. Must render `<PageTracker traits={{ [key]: '[value]' }} />`. Missing = audience never activates via nav.
+7. **LocalAudienceEvaluator bug** — Check `src/personalization/local-audience-evaluator.tsx`. The identify condition check must return `true` when `cond.type === 'identify'`, not `false`.
+8. **ntRules shape malformed** — NT SDK expects `{ any: [{ all: [condition] }] }`. Malformed rules evaluate silently to false.
+9. **Gear icon sidebar broken** — Cannot use for visual confirmation until #37/#36 is fixed. Use `window.ninetailed.plugins.preview` via `browser_evaluate` instead.
 
-Report final status. If everything passes, say: "Personalization verified — all [N] scenarios pass."
+---
+
+## Phase 5 — Post-test checklist
+
+- [ ] All baseline hero texts captured and confirmed
+- [ ] All variant hero texts confirmed different from baseline and matching Contentful entry values
+- [ ] All audience IDs present in `activeAudiences` after trigger
+- [ ] All `experienceVariantIndexes` show index > 0
+- [ ] NT API calls returning 200 with experience data in network log
+- [ ] No NT errors in console
+- [ ] Screenshots saved for all scenarios + baseline
+- [ ] Both nav-trigger AND injection paths tested when debugging
+
+If all pass: **"Personalization verified — all [N] scenarios pass."**
+If any fail: Report exact failure point from Phase 4 diagnosis checklist.

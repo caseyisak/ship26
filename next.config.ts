@@ -4,6 +4,13 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   eslint: { ignoreDuringBuilds: true },
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+  webpack: (config) => {
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: ['**/node_modules/**', '**/.playwright-mcp/**', '**/.claude/worktrees/**'],
+    };
+    return config;
+  },
   images: {
     remotePatterns: [
       {

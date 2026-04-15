@@ -1,6 +1,6 @@
 # Demo-OS — Metafi Sandbox Index
 
-**Version:** 2.0 | **Last updated:** 2026-04-02 | **Maintained by:** CC on merge, SE on promotion status changes
+**Version:** 2.1 | **Last updated:** 2026-04-03 | **Maintained by:** CC on merge, SE on promotion status changes
 
 This file is passed to the Glean Demo-OS agent. It answers: *what can the metafi sandbox demonstrate, and which demo moments are relevant for a given opportunity?*
 
@@ -234,6 +234,76 @@ Industry: Media & Publishing / Political News | Personas: MT (product), Kalyn (P
 
 ---
 
+### WOW Internet Demo — ISP Personalization (2026)
+
+Industry: Telecommunications / Cable & ISP | Personas: Marketing Manager, Digital VP, CMO, VP Customer Experience, Head of Retention
+
+| Loop | One-line | Build type | Personas | Promotion | Complexity |
+|---|---|---|---|---|---|
+| [Loop 1 — Acquisition Homepage](#wow-loop-1) | Browse the fiber page → return to homepage → hero and banner swap to fiber context with no login required | net-new | Marketing manager, digital VP | demo-only | Medium |
+| [Loop 2 — Logged-In Dashboard NBO](#wow-loop-2) | Login as a specific persona → dashboard hero + NBO tiles immediately reflect account context (speed tier, TV eligibility, autopay status) | net-new | Digital VP, VP CX | demo-only | Medium |
+| [Loop 3 — Retention Save Offer](#wow-loop-3) | At-risk customer logs in → proactive loyalty offer appears in the dashboard hero slot before they call to cancel | net-new | VP CX, Head of Retention | demo-only | Medium |
+
+---
+
+### WOW Loop 1 — Acquisition Homepage {#wow-loop-1}
+
+**Pain signals:** "Our homepage shows the same thing to every visitor", "We can't personalize without a dev deploy", "We're running campaigns for fiber and TV but they all land on the same page", "We need to react to what someone looked at before they got to the homepage"
+
+**What it shows:** A visitor browses the Fiber Internet page. When they return to the homepage, the hero and banner have already updated to reflect their interest — with no login, no cookie prompt, no backend change. Change the subject to YouTube TV: same pattern, different variant.
+
+**Key demo moment:** NT overlay ⚙️ → show "fiber-interest" audience matched → open Hero entry → Ninetailed tab → 2 experiences linked, no code. "Marketing makes the call. IT is not in the loop."
+
+**Content types:** `hero`, `banner`, `features`, `page`, `nt_experience`, `nt_audience` | **OOTB:** Ninetailed Personalization, Live Preview
+
+---
+
+### WOW Loop 2 — Logged-In Dashboard NBO {#wow-loop-2}
+
+**Pain signals:** "Our logged-in portal is generic — everyone sees the same dashboard", "We have upsell offers but marketing can't get them into the app without a sprint", "Our promotional slots should be content-driven, not hardcoded strings", "We need to show the right NBO to the right customer without involving dev"
+
+**What it shows:** A customer logs in and the dashboard immediately reflects their account context. A 300 Mbps customer sees a speed upgrade offer. A TV-eligible customer sees a YouTube TV bundle. The NBO tiles in the dashboard are Contentful `banner` entries — personalized by NT based on traits passed at login. The app chrome stays yours; only the promotional slots are content-driven.
+
+**Key demo moment:** Open **WOW Settings** entry → show `dashboardHeroEntryId` + `dashboardNboTileIds` fields. "These two fields are the only coupling between your app and Contentful. Swap an entry ID, the entire experience changes — no deploy."
+
+**Content types:** `hero`, `banner`, `settings`, `nt_experience`, `nt_audience` | **OOTB:** Ninetailed Personalization
+
+---
+
+### WOW Loop 3 — Retention Save Offer {#wow-loop-3}
+
+**Pain signals:** "By the time we identify at-risk customers, they've already called to cancel", "We have save offers but they're buried in the call center script", "We can't surface a loyalty offer in the portal without a dev cycle", "Our churn rate is improving but our digital channel doesn't reflect our retention strategy"
+
+**What it shows:** An at-risk customer logs in and immediately sees a proactive loyalty save offer in their dashboard — a specific "We value your loyalty" message with a real dollar amount, served by Contentful, triggered by a CRM trait, with no dev involvement. The retention team controls the headline, the dollar figure, and the urgency framing. When the offer expires, they swap it in 2 minutes.
+
+**Key demo moment:** Show NT audience "Logged In — At Risk" — the rule is `isLoggedIn: true AND at_risk: true`. "This is a data contract between your CRM and Contentful. Your system passes the trait on login. Ninetailed matches it. The editor owns the message."
+
+**Content types:** `hero`, `nt_experience`, `nt_audience`, `settings` | **OOTB:** Ninetailed Personalization
+
+---
+
+### CARD Demo — Healthcare Content Governance (2026-04-03)
+
+Industry: Healthcare / Behavioral Health / ABA Therapy | Personas: Clinical Content Manager, Compliance Officer, VP Operations
+
+| Loop | One-line | Build type | Personas | Promotion | Complexity |
+|---|---|---|---|---|---|
+| [Loop 1 — Structured Content Governance](#card-loop-1) | FAQ sections tagged by care stage (Welcome/Onboarding/Treatment) via faqMetadata wrapper — compliance reviewers audit by workflowStep, not by reading every entry | net-new | Content manager, compliance officer | candidate | Low |
+
+---
+
+### CARD Loop 1 — Structured Content Governance {#card-loop-1}
+
+**Pain signals:** "Compliance reviewers can't tell what's been audited without reading every entry", "Our clinical and marketing content has no governance structure", "We want to tag content by care stage but our CMS doesn't have the structure for it", "Content governance lives in a policy doc, not in the system"
+
+**What it shows:** Three patient-facing FAQ sections — Scheduling (Welcome stage), New Patient Intake (Onboarding stage), Progress Tracking (Treatment stage) — each linked to a `faqMetadata` entry carrying workflowStep classification, keyword synonyms, searchable flag, and compliance reviewer contextNotes. Governance is in the data model, not a spreadsheet.
+
+**Key demo moment:** Open faqMetadata → show `workflowStep = Treatment`, `searchable = true`, `contextNotes` with reviewer guidance. "A compliance auditor can filter all Treatment-stage searchable content in one query. No spreadsheet required."
+
+**Content types:** `faq`, `faqMetadata`, `faqitem` | **OOTB:** Content modeling, Workflows, Entry references
+
+---
+
 ## Promotion Pipeline
 
 | Item | Type | Status | GH Issue |
@@ -254,6 +324,8 @@ Industry: Media & Publishing / Political News | Personas: MT (product), Kalyn (P
 | `game` CT | CT | demo-only | — (sports-domain only) |
 | Mock mobile app UI | component | demo-only | — (bears-specific chrome) |
 | `socialPost` CT | CT | demo-only | — (promote when building social workflow loop for main) |
+| WOW NT homepage personalization (PageTracker + identify) | code + NT pattern | demo-only | — (wow env only) |
+| `faqMetadata` CT + faq governance pattern | CT + pattern | candidate | — (from CARD; applicable to any multi-stage content journey) |
 
 ---
 
@@ -292,8 +364,13 @@ Agent prompt template: `MEMORY/PIPELINE/[opp]/scraping-agent-brief.md`
 | Sports / media / entertainment | Bears LA + LB + LC + LD |
 | Brand with social + web presence | Bears LA + LC + Punchbowl L4 |
 | Publisher wanting full lifecycle | Bears LB (mobile) + Punchbowl L1 (newsletter) + Bears LA (social) |
-| Anyone asking about personalization | Bears LD or Punchbowl L4 + Bears LD |
+| Anyone asking about personalization | WOW L1 + L2 or Bears LD |
+| ISP / telecom / subscription product | WOW L1 + L2 + L3 (acquisition → active → retention arc) |
+| Anyone asking about logged-in / portal personalization | WOW L2 + L3 |
+| Anyone asking about retention / churn | WOW L3 |
 | Anyone asking about workflow/approvals | Bears LC or Punchbowl L3 (or both) |
+| Healthcare / compliance-heavy org | CARD L1 |
+| Any org with multi-stage content journeys (onboarding, CS, legal) | CARD L1 (faqMetadata governance pattern) |
 
 ---
 

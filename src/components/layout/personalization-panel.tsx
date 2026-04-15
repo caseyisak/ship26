@@ -95,7 +95,7 @@ function PersonalizationPanel({
       {/* Panel */}
       <div
         className={cn(
-          'fixed right-0 top-0 z-[9999] h-full w-72 shadow-xl',
+          'fixed top-0 right-0 z-[9999] h-full w-72 shadow-xl',
           'bg-background border-border flex flex-col border-l',
         )}
         role="dialog"
@@ -117,7 +117,7 @@ function PersonalizationPanel({
         <div className="flex-1 overflow-y-auto px-4 py-4">
           <div className="mb-3 flex items-center gap-2">
             <Users className="text-muted-foreground h-4 w-4" />
-            <span className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+            <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
               Active Audiences
             </span>
           </div>
