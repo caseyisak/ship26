@@ -25,13 +25,12 @@ import {
   useNinetailed,
 } from '@ninetailed/experience.js-react';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import type {
   NtAudienceFragment,
   NtExperienceFragment,
 } from '@/block-renderer/types';
-import { PersonalizationPanelHost } from '@/components/layout/personalization-panel';
 
 import { LocalAudienceEvaluator } from './local-audience-evaluator';
 import { mapAudiences, mapExperiences } from './utils';
@@ -64,9 +63,18 @@ export function NinetailedProvider({
   clientId: string;
   environment: string;
 }) {
-  const mappedExperiences = (mapExperiences(experiences) ??
-    []) as ExperienceConfiguration[];
-  const mappedAudiences = mapAudiences(audiences) ?? [];
+  // useMemo prevents new array references on every render, which would
+  // cause LocalAudienceEvaluator's useEffect to re-subscribe on every cycle.
+  const mappedExperiences = useMemo(
+    () => (mapExperiences(experiences) ?? []) as ExperienceConfiguration[],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [experiences.map((e) => e.sys.id).join(',')],
+  );
+  const mappedAudiences = useMemo(
+    () => mapAudiences(audiences) ?? [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [audiences.map((a) => a.sys.id).join(',')],
+  );
 
   return (
     <ReactNinetailedProvider
@@ -87,12 +95,13 @@ export function NinetailedProvider({
               `https://app.contentful.com/spaces/${SPACE_ID}/entries/${aud.id}`,
               '_blank',
             ),
+          // Hide the native purple floating button — gear icon in nav triggers
+          // toggle() directly via window.ninetailed.plugins.preview.toggle()
           ui: { opener: { hide: true } },
         }),
       ]}
     >
       <Tracker />
-      <PersonalizationPanelHost audienceDefinitions={mappedAudiences} />
       <LocalAudienceEvaluator audiences={mappedAudiences} />
       {children}
     </ReactNinetailedProvider>

@@ -1,5 +1,6 @@
 'use client';
 
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { X } from 'lucide-react';
 import * as React from 'react';
 import { useState } from 'react';
@@ -12,17 +13,6 @@ import {
 } from '@/lib/live-preview';
 import { parseSectionStyle } from '@/lib/section-style-types';
 import { cn } from '@/lib/utils';
-
-function rtToPlainText(doc: unknown): string {
-  if (!doc || typeof doc !== 'object') return '';
-  const node = doc as {
-    nodeType?: string;
-    value?: string;
-    content?: unknown[];
-  };
-  if (node.nodeType === 'text') return node.value ?? '';
-  return (node.content ?? []).map(rtToPlainText).join('');
-}
 
 const SPACING_MAP = {
   sm: 'p-2',
@@ -41,18 +31,43 @@ function isDarkColor(hex: string): boolean {
   const r = parseInt(clean.slice(0, 2), 16) / 255;
   const g = parseInt(clean.slice(2, 4), 16) / 255;
   const b = parseInt(clean.slice(4, 6), 16) / 255;
-  // Perceived luminance formula
   const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
   return luminance < 0.5;
 }
+
+// ── colorVariant → always-contrasting text class ─────────────────────────────
+// Each entry guarantees readable text on its background. No light-on-light.
+const COLOR_VARIANT_TEXT: Record<string, string> = {
+  light: 'text-foreground',
+  dark: 'text-background',
+  alt: 'text-secondary-foreground',
+  primary: 'text-primary-foreground',
+  secondary: 'text-secondary-foreground',
+};
+
+const COLOR_VARIANT_BG: Record<string, string> = {
+  light: 'bg-background',
+  dark: 'bg-foreground',
+  alt: 'bg-secondary',
+  primary: 'bg-primary',
+  secondary: 'bg-secondary',
+};
+
+// ── Style variant → layout + padding ─────────────────────────────────────────
+const VARIANT_CLASSES: Record<string, { width: string; padding: string }> = {
+  'full-width':    { width: 'w-full px-8',                padding: 'py-4' },
+  container:       { width: 'max-w-7xl mx-auto px-8',     padding: 'py-4' },
+  slim:            { width: 'max-w-7xl mx-auto px-8',     padding: 'py-3' },
+  'large-callout': { width: 'w-full px-8',                padding: 'py-24' },
+  default:         { width: 'max-w-7xl mx-auto px-8',     padding: 'py-4' },
+};
 
 export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
   const data = useLiveUpdates(rawData);
   const getProps = useContentfulInspectorModeProps(rawData.sys.id);
   const [isVisible, setIsVisible] = useState(true);
 
-  const { headlineRt, subheadlineRt, ctaText, ctaUrl, variant, colorVariant } =
-    data as BannerFragment;
+  const { headline, subheadline, headlineRt, subheadlineRt, ctaText, ctaUrl, variant, colorVariant } = data;
 
   // Parse sectionStyle — live preview may return object or string
   const rawSectionStyle = (data as BannerFragment).sectionStyle;
@@ -67,56 +82,35 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
   );
   const useOverride = sectionStyle.useStyleOverride;
 
-  const title = rtToPlainText(headlineRt?.json);
-  const description = rtToPlainText(subheadlineRt?.json);
-
   if (!isVisible) return null;
 
-  // ── Variant-based layout ──────────────────────────────────────────────────
-  // variant controls outer wrapper width + padding; sectionStyle controls colors.
-  const variantClasses: Record<string, string> = {
-    'full-width': 'w-full px-8',
-    container: 'max-w-7xl mx-auto px-8',
-    slim: 'max-w-7xl mx-auto px-8 py-3',
-    'large-callout': 'w-full px-8 py-24',
-    default: 'max-w-7xl mx-auto px-8',
-  };
-  const layoutClass =
-    variantClasses[variant ?? 'default'] ?? variantClasses['default'];
+  // ── Layout ────────────────────────────────────────────────────────────────
+  const variantLayout = VARIANT_CLASSES[variant ?? 'default'] ?? VARIANT_CLASSES['default'];
+  const { width: widthClass, padding: paddingClass } = variantLayout;
 
-  // ── colorVariant class map (only applied when sectionStyle override is NOT active) ──
-  const COLOR_VARIANT_MAP: Record<string, string> = {
-    light: 'bg-background text-foreground',
-    dark: 'bg-foreground text-background',
-    alt: 'bg-secondary text-secondary-foreground',
-    primary: 'bg-primary text-primary-foreground',
-    secondary: 'bg-secondary text-secondary-foreground',
-  };
-  const colorVariantClass =
-    !useOverride && colorVariant ? (COLOR_VARIANT_MAP[colorVariant] ?? '') : '';
+  // ── colorVariant classes (only when sectionStyle override is NOT active) ──
+  const resolvedColorVariant = colorVariant ?? 'primary';
+  const colorBgClass = !useOverride
+    ? (COLOR_VARIANT_BG[resolvedColorVariant] ?? 'bg-primary')
+    : '';
+  const colorTextClass = !useOverride
+    ? (COLOR_VARIANT_TEXT[resolvedColorVariant] ?? 'text-primary-foreground')
+    : '';
 
   // ── Section-level color overrides ─────────────────────────────────────────
-  const sectionStyle_inline: React.CSSProperties =
-    useOverride && sectionStyle.backgroundColor
-      ? { backgroundColor: sectionStyle.backgroundColor }
-      : {};
+  const sectionStyle_inline: React.CSSProperties = useOverride && sectionStyle.backgroundColor
+    ? { backgroundColor: sectionStyle.backgroundColor }
+    : {};
 
   const textAlign = useOverride ? sectionStyle.textAlign : undefined;
-  const spacingClass =
-    useOverride && sectionStyle.contentSpacing
-      ? SPACING_MAP[sectionStyle.contentSpacing]
-      : variant === 'slim' || variant === 'large-callout'
-        ? '' // padding already baked into layoutClass for these variants
-        : 'p-4';
+  const spacingClass = useOverride && sectionStyle.contentSpacing
+    ? SPACING_MAP[sectionStyle.contentSpacing]
+    : '';
 
-  // ── Text contrast enforcement ─────────────────────────────────────────────
-  // When a backgroundColor override is set but no explicit headline/subheadline
-  // color, default to white on dark backgrounds and navy on light backgrounds.
+  // ── Text contrast enforcement for sectionStyle overrides ──────────────────
   const bgColor = useOverride ? sectionStyle.backgroundColor : undefined;
   const defaultTextColor = bgColor
-    ? isDarkColor(bgColor)
-      ? '#ffffff'
-      : '#1a1a2e'
+    ? isDarkColor(bgColor) ? '#ffffff' : '#1a1a2e'
     : undefined;
 
   const headlineStyle: React.CSSProperties =
@@ -133,31 +127,26 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
         ? { color: defaultTextColor, opacity: 0.8 }
         : {};
 
-  // ── CTA button contrast enforcement ──────────────────────────────────────
-  // Button text is always white when a buttonBgColor is set (primary/accent bg).
-  // If no override, use default accent styling.
+  // ── CTA button ────────────────────────────────────────────────────────────
   const ctaStyle: React.CSSProperties = {};
   if (useOverride && sectionStyle.buttonBgColor) {
     ctaStyle.backgroundColor = sectionStyle.buttonBgColor;
   }
-  const ctaTextClass =
-    useOverride && sectionStyle.buttonBgColor
-      ? 'text-white'
-      : 'text-accent-foreground';
+  const ctaTextClass = useOverride && sectionStyle.buttonBgColor
+    ? 'text-white'
+    : 'text-accent-foreground';
+
+  // ── Dismiss button — always contrasting ───────────────────────────────────
+  const dismissClass = useOverride
+    ? (defaultTextColor === '#ffffff' ? 'text-white' : 'text-foreground')
+    : colorTextClass;
 
   return (
     <section
-      className={cn(
-        'w-full',
-        colorVariantClass
-          ? colorVariantClass
-          : !useOverride || !sectionStyle.backgroundColor
-            ? 'bg-primary'
-            : '',
-      )}
+      className={cn('w-full', colorBgClass)}
       style={sectionStyle_inline}
     >
-      <div className={cn(layoutClass, spacingClass)}>
+      <div className={cn(widthClass, paddingClass, spacingClass)}>
         <div
           className={cn(
             'relative flex flex-col gap-4 md:flex-row md:items-center',
@@ -171,34 +160,34 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
           <Button
             variant="ghost"
             size="icon"
-            className="text-primary-foreground absolute top-0 right-0 h-8 w-8 md:hidden"
+            className={cn('absolute top-0 right-0 h-8 w-8 md:hidden', dismissClass)}
             onClick={() => setIsVisible(false)}
           >
             <X className="h-4 w-4" />
           </Button>
 
-          <div className="text-primary-foreground flex flex-col items-center gap-3 pt-2 md:flex-row md:items-center md:pt-0">
+          <div className={cn('flex flex-col items-center gap-3 pt-2 md:flex-row md:items-center md:pt-0', colorTextClass)}>
             <div className="flex flex-col gap-1 md:flex-row md:items-center">
-              <p
-                className={cn(
-                  'text-sm font-medium',
-                  !useOverride && !bgColor ? 'text-primary-foreground' : '',
-                )}
+              {/* Headline — prefer rich text, fall back to legacy string */}
+              <div
+                className="text-sm font-medium"
                 style={headlineStyle}
                 {...getProps({ fieldId: 'headlineRt' })}
               >
-                {title}
-              </p>
-              <p
-                className={cn(
-                  'text-sm',
-                  !useOverride && !bgColor ? 'text-primary-foreground/80' : '',
-                )}
+                {headlineRt?.json
+                  ? documentToReactComponents(headlineRt.json as unknown as Parameters<typeof documentToReactComponents>[0])
+                  : (headline ?? '')}
+              </div>
+              {/* Subheadline — prefer rich text, fall back to legacy string */}
+              <div
+                className="text-sm"
                 style={subheadlineStyle}
                 {...getProps({ fieldId: 'subheadlineRt' })}
               >
-                {description}
-              </p>
+                {subheadlineRt?.json
+                  ? documentToReactComponents(subheadlineRt.json as unknown as Parameters<typeof documentToReactComponents>[0])
+                  : (subheadline ?? '')}
+              </div>
             </div>
           </div>
 
@@ -220,7 +209,7 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-primary-foreground hidden h-8 w-8 md:inline-flex"
+                className={cn('hidden h-8 w-8 md:inline-flex', dismissClass)}
                 onClick={() => setIsVisible(false)}
               >
                 <X className="h-4 w-4" />
