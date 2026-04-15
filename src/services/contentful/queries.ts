@@ -174,12 +174,12 @@ const TABBED_CONTENT_FIELDS = `
   }
 `;
 
-/** Feature Item fragment: all fields from Feature Item content type (title, description, media, animationKey). */
+/** Feature Item fragment: all fields from Feature Item content type (titleRt, description, media, animationKey). */
 const FEATURE_ITEM_FIELDS = `
   __typename
   sys { id }
   ... on FeatureItem {
-    title
+    titleRt { json }
     description
     media { url }
     animationKey
@@ -500,6 +500,118 @@ export const BLOG_POSTS_SECTION_BY_ID = `
     blogPostsSectionCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${BLOG_POSTS_SECTION_FIELDS}
+      }
+    }
+  }
+`;
+
+// ── Dashboard Page queries ────────────────────────────────────────────────────
+
+const DASHBOARD_SLOT_FIELDS = `
+  __typename
+  ... on Entry { sys { id } }
+  ... on Banner {
+    internalName
+    headlineRt { json }
+    subheadlineRt { json }
+    copy
+    ctaText
+    ctaUrl
+    variant
+    colorVariant
+    sectionStyle
+  }
+  ... on FeatureItem {
+    titleRt {
+      json
+      links {
+        entries {
+          inline {
+            sys { id }
+            ... on NtMergetag {
+              ntMergetagId
+              ntFallback
+            }
+          }
+        }
+      }
+    }
+    description
+    media { url }
+    animationKey
+    mediaPlacement
+    sectionStyle
+  }
+  ... on Faq {
+    internalName
+    title
+    description
+    itemsCollection(limit: 50) {
+      items {
+        __typename
+        sys { id }
+        ... on Faqitem {
+          internalName
+          question
+          answer
+        }
+      }
+    }
+  }
+`;
+
+/** Fetch a DashboardPage entry by entry ID (used for live preview). */
+export const DASHBOARD_PAGE_BY_ID = `
+  query DashboardPageById($id: String!, $locale: String!, $preview: Boolean) {
+    dashboardPageCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        __typename
+        sys { id }
+        internalName
+        title
+        slug
+        pageType
+        top { ${DASHBOARD_SLOT_FIELDS} }
+        middle { ${DASHBOARD_SLOT_FIELDS} }
+        bottom { ${DASHBOARD_SLOT_FIELDS} }
+      }
+    }
+  }
+`;
+
+/** Fetch a DashboardPage entry by pageType (dashboard-home | upgrades | checkout). */
+export const DASHBOARD_PAGE_BY_TYPE = `
+  query DashboardPageByType($pageType: String!, $locale: String!, $preview: Boolean) {
+    dashboardPageCollection(where: { pageType: $pageType }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        __typename
+        sys { id }
+        internalName
+        title
+        slug
+        pageType
+        top { ${DASHBOARD_SLOT_FIELDS} }
+        middle { ${DASHBOARD_SLOT_FIELDS} }
+        bottom { ${DASHBOARD_SLOT_FIELDS} }
+      }
+    }
+  }
+`;
+
+/** Fetch a DashboardPage entry by slug. */
+export const DASHBOARD_PAGE_BY_SLUG = `
+  query DashboardPageBySlug($slug: String!, $locale: String!, $preview: Boolean) {
+    dashboardPageCollection(where: { slug: $slug }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        __typename
+        sys { id }
+        internalName
+        title
+        slug
+        pageType
+        top { ${DASHBOARD_SLOT_FIELDS} }
+        middle { ${DASHBOARD_SLOT_FIELDS} }
+        bottom { ${DASHBOARD_SLOT_FIELDS} }
       }
     }
   }

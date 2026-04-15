@@ -100,11 +100,26 @@ export type TabbedContentFragment = BlockData & {
 export type FeatureItemFragment = {
   __typename: 'FeatureItem';
   sys: { id: string };
-  title?: string | null;
+  title?: string | null; // legacy symbol field — kept for backwards compat
+  titleRt?: {
+    json: Record<string, unknown>;
+    links?: {
+      entries?: {
+        inline?: Array<{
+          sys: { id: string };
+          __typename?: string;
+          ntMergetagId?: string | null;
+          ntFallback?: string | null;
+        } | null>;
+      };
+    };
+  } | null;
   description?: string | null;
   image?: { url?: string } | null; // Mapped field name (legacy)
   media?: { url?: string } | null; // Raw Contentful field name
   animationKey?: string | null;
+  mediaPlacement?: 'top' | 'bottom' | 'left' | 'right' | null;
+  sectionStyle?: Record<string, string> | null;
 };
 
 /** Features section (matches Contentful Features content type: internalName, label, title, description, mediaPosition, items, ntExperiences). */
