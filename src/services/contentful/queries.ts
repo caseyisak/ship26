@@ -634,3 +634,41 @@ export const GET_PERSONALIZATION_AUDIENCES = `
     }
   }
 `;
+
+/** News Article fragment: all fields from NewsArticle content type. */
+const NEWS_ARTICLE_FIELDS = `
+  __typename
+  sys { id }
+  ... on NewsArticle {
+    internalName
+    title
+    slug
+    excerpt
+    publishedDate
+    category
+    media { url width height }
+  }
+`;
+
+/** Fetch a collection of NewsArticle entries (for news grid). */
+export const NEWS_ARTICLES_COLLECTION = `
+  query NewsArticlesCollection($locale: String!, $preview: Boolean, $limit: Int, $skip: Int) {
+    newsArticleCollection(locale: $locale, preview: $preview, limit: $limit, skip: $skip, order: publishedDate_DESC) {
+      total
+      items {
+        ${NEWS_ARTICLE_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single NewsArticle entry by entry ID. */
+export const NEWS_ARTICLE_BY_ID = `
+  query NewsArticleById($id: String!, $locale: String!, $preview: Boolean) {
+    newsArticleCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${NEWS_ARTICLE_FIELDS}
+      }
+    }
+  }
+`;
