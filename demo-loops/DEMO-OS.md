@@ -79,6 +79,8 @@ Current surfaces: web homepage, email newsletter preview (Gmail-style), mobile a
 | Blog/News Grid | `blogPost` | Card grid with image, excerpt, tags, date, author | candidate |
 | CMS-Driven Nav + Footer | `nav`, `footer`, `navLink` | Nav links and footer columns managed from Contentful — no code change per demo | candidate |
 | Settings + Login Modal | `settings` | Site logo, brand colors (CSS vars from theme JSON), NT trait injection on sign-in, cornerStyle → border-radius | candidate |
+| CTA Section | `ctaSection` | Full-width CTA block, colorVariant (6 options incl. background image), dual CTAs, dot-pattern overlay, NT personalization | candidate |
+| Pricing Section | `pricingSection` | Plan tier cards with monthly/yearly toggle, highlight card, feature checklist, NT merge tags per feature bullet | candidate |
 
 ---
 
@@ -104,6 +106,10 @@ Current surfaces: web homepage, email newsletter preview (Gmail-style), mobile a
 | `footer` | Footer | Site footer with navLink references | candidate |
 | `navLink` | Nav Link | Label + URL or page reference | candidate |
 | `socialPost` | Social Post | Channel-specific social post with copy, hashtags, media | candidate |
+| `ctaSection` | CTA Section | Full-width CTA with colorVariant, backgroundImage, dual CTAs, sectionStyle, NT experiences | candidate |
+| `pricingSection` | Pricing Section | Pricing tier section — headline, plan cards, colorVariant, sectionStyle, NT experiences | candidate |
+| `pricingPlan` | Pricing Plan | Individual plan card — name, price (monthly/annual), blurb, features, CTA, isHighlighted, badge | candidate |
+| `pricingPlanFeature` | Pricing Plan Feature | Single feature bullet with RichText label — supports NT merge tags | candidate |
 | `game` | Game | Sports matchup: opponent, week, kickoff, home/away | demo-only (bears) |
 | `nt_experience` | NT Experience | Ninetailed personalization experience | sandbox |
 | `nt_audience` | NT Audience | Ninetailed audience with rules | sandbox |
@@ -111,6 +117,30 @@ Current surfaces: web homepage, email newsletter preview (Gmail-style), mobile a
 ---
 
 ## Demo Loop Library
+
+### Sandbox Loops — Generic (all verticals)
+
+Industry: Any | Personas: VP Digital, Marketing Ops, SE
+
+| Loop | One-line | Build type | Personas | Promotion | Complexity |
+|---|---|---|---|---|---|
+| [Loop A — Pricing Merge Tags](#sandbox-loop-a) | One feature bullet updates with prospect's industry/company name via NT merge tag — no duplicate entries | net-new | VP digital, marketing ops, SE | candidate | Low |
+
+---
+
+### Sandbox Loop A — Pricing Merge Tags {#sandbox-loop-a}
+
+**Pain signals:** "We have enterprise and SMB customers but they see the same pricing page", "Personalization requires a developer for us", "We'd have to build a separate landing page per segment"
+
+**What it shows:** NT merge tags in a `pricingPlanFeature` RichText field resolve to prospect-specific copy (industry, company name, tier) at runtime. One entry serves all audiences — no new entries per segment, no developer involvement.
+
+**Key demo moment:** Switch persona in NT panel → feature bullet instantly reads "Priority support for Healthcare compliance teams" → open the Contentful entry and show the merge tag: `{{ profile.traits.industry }}` → *"The content editor set this up once."*
+
+**Content types:** `pricingSection`, `pricingPlan`, `pricingPlanFeature`, `nt_experience`, `nt_audience` | **OOTB:** Personalization App (NT), Live Preview
+
+**Loop file:** `demo-loops/sandbox/loops/loop-a-pricing-merge-tags/LOOP.md`
+
+---
 
 ### Bears Demo — Chicago Bears (2026 season)
 

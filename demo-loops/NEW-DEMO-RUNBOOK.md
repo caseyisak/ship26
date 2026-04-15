@@ -17,6 +17,7 @@ CC will remind you at the right point in the build — but print this list and c
 | M2 | **Connect NT Personalization app to new env** | Contentful → Apps → Contentful Personalization → click Connect | After API key is scoped (M1) |
 | M3 | **Enable personalizable content types in NT app** | Contentful Personalization app → Personalizable content types tab → enable each CT | After connecting NT app (M2) |
 | M4 | **Omit field collisions caused by NT app** | Contentful → Content model → [each CT] → omit `ntExperiences` (camelCase) field | Immediately after M3 — see LL-016 |
+| M4b | **Never add `nt_experiences` manually to new CTs** | Do NOT create `nt_experiences` via MCP when building new CTs — let NT app create it in M3. Manual creation with wrong field ID causes `ntExperiencesCollectionCollection` double suffix → 400 error | Before building new CTs — see LL-026 |
 | M5 | **Add NT API key to .env.local** | Worktree `.env.local` | After getting key from NT dashboard |
 | M6 | **Link existing NT experiences (not clone)** | Contentful → each baseline entry → NT sidebar → "Link existing experience" | After creating variant entries (Step 8) — see LL-020 |
 | M7 | **Publish all NT experience + audience entries** | Contentful → each `nt_experience` + `nt_audience` entry | Before first Playwright verification run |
@@ -118,6 +119,8 @@ lsof -p [PID] | grep cwd            # must show worktree path, not main repo
 > 🔴 **MANUAL — M4 (immediately after M3):** After enabling each CT, check for a pre-existing `ntExperiences` (camelCase) field — the NT app added `nt_experiences` (snake_case), and both generate the identical GraphQL name `ntExperiencesCollection` → 422 error. Omit the old field via MCP or Contentful UI. **Affected in the sandbox:** `banner`, `features`, `faq`, `tabbedcontent`. You WILL hit this if you skip it. See LL-016.
 
 ⚠️ **Pain from bears (critical):** When you enable a content type, the NT app adds an `nt_experiences` (snake_case) field to it. If you previously added a manual `ntExperiences` (camelCase) field to that content type, **both fields generate the identical GraphQL name `ntExperiencesCollection`** → GraphQL 422 error → page 404.
+
+⚠️ **New CT rule (LL-026):** When building a brand new content type that will need NT personalization, **do NOT add `nt_experiences` via MCP**. Let the NT app create it in M3 (Personalizable content types tab). If you create it manually with the wrong field ID (e.g. `ntExperiencesCollection` instead of `nt_experiences`), Contentful GraphQL appends `Collection` again → `ntExperiencesCollectionCollection` → 400 on every `*_BY_ID` query. The fix requires disabling the bad field, adding a new one with the correct ID, and re-publishing the CT.
 
 ---
 
