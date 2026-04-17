@@ -175,7 +175,7 @@ const TABBED_CONTENT_FIELDS = `
   }
 `;
 
-/** Feature Item fragment: all fields from Feature Item content type (titleRt, descriptionRt, media, animationKey, mediaPlacement). */
+/** Feature Item fragment: all fields from Feature Item content type (titleRt, descriptionRt, media, animationKey, mediaPlacement, sectionStyle). */
 const FEATURE_ITEM_FIELDS = `
   __typename
   sys { id }
@@ -185,6 +185,7 @@ const FEATURE_ITEM_FIELDS = `
     media { url }
     animationKey
     mediaPlacement
+    sectionStyle
   }
 `;
 
