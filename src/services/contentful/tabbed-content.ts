@@ -22,9 +22,9 @@ type RawTabbedContent = {
   __typename: string;
   sys: { id: string };
   internalName?: string | null;
-  tagline?: string | null;
-  title?: string | null;
-  description?: string | null;
+  taglineRt?: { json: Record<string, unknown> } | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
   itemsCollectionCollection?: { items: RawTabbedContentItem[] } | null;
   ntExperiencesCollectionCollection?: NtExperiencesCollection | null;
 };
@@ -59,9 +59,9 @@ function mapTabbedContent(
     __typename: 'Tabbedcontent',
     sys: { id: item.sys.id },
     internalName: item.internalName ?? null,
-    tagline: item.tagline ?? null,
-    title: item.title ?? null,
-    description: item.description ?? null,
+    taglineRt: item.taglineRt ?? null,
+    titleRt: item.titleRt ?? null,
+    descriptionRt: item.descriptionRt ?? null,
     itemsCollection: item.itemsCollectionCollection
       ? {
           items: item.itemsCollectionCollection.items

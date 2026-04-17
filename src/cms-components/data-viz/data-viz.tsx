@@ -1,7 +1,21 @@
 'use client';
 
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { BLOCKS, MARKS } from '@contentful/rich-text-types';
 import Papa from 'papaparse';
 import React, { useEffect, useMemo, useState } from 'react';
+
+const dataVizRichTextOptions = {
+  renderMark: {
+    [MARKS.BOLD]: (text: React.ReactNode) => <strong>{text}</strong>,
+    [MARKS.ITALIC]: (text: React.ReactNode) => <em>{text}</em>,
+  },
+  renderNode: {
+    [BLOCKS.PARAGRAPH]: (_node: unknown, children: React.ReactNode) => (
+      <>{children}</>
+    ),
+  },
+};
 import {
   Bar,
   BarChart,
@@ -69,8 +83,20 @@ const DataViz = ({
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
 
-  const title = liveData.title ?? null;
-  const description = liveData.description ?? null;
+  const titleRtData = (liveData as DataVizFragment).titleRt;
+  const descriptionRtData = (liveData as DataVizFragment).descriptionRt;
+  const title = titleRtData?.json
+    ? documentToReactComponents(
+        titleRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        dataVizRichTextOptions,
+      )
+    : null;
+  const description = descriptionRtData?.json
+    ? documentToReactComponents(
+        descriptionRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        dataVizRichTextOptions,
+      )
+    : null;
   const chartType = liveData.chartType ?? 'groupedBar';
   const csvUrl = liveData.csvData?.url ?? null;
   const colorScheme = liveData.colorScheme ?? 'default';
@@ -502,13 +528,13 @@ const DataViz = ({
             {title && (
               <CardTitle
                 className="text-lg font-semibold"
-                {...getProps({ fieldId: 'title' })}
+                {...getProps({ fieldId: 'titleRt' })}
               >
                 {title}
               </CardTitle>
             )}
             {description && (
-              <CardDescription {...getProps({ fieldId: 'description' })}>
+              <CardDescription {...getProps({ fieldId: 'descriptionRt' })}>
                 {description}
               </CardDescription>
             )}

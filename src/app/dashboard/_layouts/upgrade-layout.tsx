@@ -1,4 +1,7 @@
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { BLOCKS } from '@contentful/rich-text-types';
 import Link from 'next/link';
+import React from 'react';
 
 import { BlockRenderer } from '@/block-renderer';
 import type { DashboardPageData } from '@/services/contentful/dashboard-page';
@@ -139,7 +142,12 @@ export function UpgradeLayout({ page }: Props) {
         {page?.bottom && page.bottom.__typename === 'Faq' && (
           <section className="mt-10">
             <h2 className="text-xl font-bold text-foreground mb-5">
-              {page.bottom.title ?? 'Common Questions'}
+              {page.bottom.titleRt?.json
+                ? documentToReactComponents(
+                    page.bottom.titleRt.json as unknown as Parameters<typeof documentToReactComponents>[0],
+                    { renderNode: { [BLOCKS.PARAGRAPH]: (_n: unknown, c: React.ReactNode) => <>{c}</> } },
+                  )
+                : 'Common Questions'}
             </h2>
             <UpgradeFaqAccordion faq={page.bottom} />
           </section>

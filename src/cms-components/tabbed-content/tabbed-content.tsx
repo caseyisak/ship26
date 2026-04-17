@@ -1,5 +1,7 @@
 'use client';
 
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { BLOCKS, MARKS } from '@contentful/rich-text-types';
 import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
 import * as React from 'react';
@@ -11,6 +13,18 @@ import {
   useLiveUpdates,
 } from '@/lib/live-preview';
 import { cn } from '@/lib/utils';
+
+const tabbedRichTextOptions = {
+  renderMark: {
+    [MARKS.BOLD]: (text: React.ReactNode) => <strong>{text}</strong>,
+    [MARKS.ITALIC]: (text: React.ReactNode) => <em>{text}</em>,
+  },
+  renderNode: {
+    [BLOCKS.PARAGRAPH]: (_node: unknown, children: React.ReactNode) => (
+      <>{children}</>
+    ),
+  },
+};
 
 function useLockedAspectHeight(aspect = 3 / 2) {
   const ref = React.useRef<HTMLDivElement | null>(null);
@@ -38,11 +52,27 @@ const TabbedContent = ({
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
 
-  const tagline = liveData.tagline ?? 'For Developers';
-  const title = liveData.title ?? 'Building Blocks for Recurring Billing';
-  const description =
-    liveData.description ??
-    'Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.';
+  const taglineRtData = (liveData as TabbedContentFragment).taglineRt;
+  const titleRtData = (liveData as TabbedContentFragment).titleRt;
+  const descriptionRtData = (liveData as TabbedContentFragment).descriptionRt;
+  const tagline = taglineRtData?.json
+    ? documentToReactComponents(
+        taglineRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        tabbedRichTextOptions,
+      )
+    : 'For Developers';
+  const title = titleRtData?.json
+    ? documentToReactComponents(
+        titleRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        tabbedRichTextOptions,
+      )
+    : 'Building Blocks for Recurring Billing';
+  const description = descriptionRtData?.json
+    ? documentToReactComponents(
+        descriptionRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        tabbedRichTextOptions,
+      )
+    : 'Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.';
 
   const items = liveData.itemsCollection?.items ?? [];
   const [active, setActive] = React.useState<string | null>(
@@ -68,19 +98,19 @@ const TabbedContent = ({
         <div className="max-w-3xl">
           <p
             className="text-tagline text-sm sm:text-base"
-            {...getProps({ fieldId: 'tagline' })}
+            {...getProps({ fieldId: 'taglineRt' })}
           >
             {tagline}
           </p>
           <h2
             className="text-foreground mt-4 text-3xl leading-tight font-medium tracking-tight sm:text-5xl lg:text-[52px]"
-            {...getProps({ fieldId: 'title' })}
+            {...getProps({ fieldId: 'titleRt' })}
           >
             {title}
           </h2>
           <p
             className="text-muted-foreground mt-4 text-base sm:text-lg"
-            {...getProps({ fieldId: 'description' })}
+            {...getProps({ fieldId: 'descriptionRt' })}
           >
             {description}
           </p>

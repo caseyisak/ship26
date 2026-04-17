@@ -49,7 +49,6 @@ type RawSlot = {
   colorVariant?: string | null;
   sectionStyle?: unknown;
   // FeatureItem fields
-  title?: string | null; // legacy
   titleRt?: {
     json: Record<string, unknown>;
     links?: {
@@ -63,7 +62,7 @@ type RawSlot = {
       };
     };
   } | null;
-  description?: string | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
   media?: { url?: string } | null;
   animationKey?: string | null;
   mediaPlacement?: string | null;
@@ -73,8 +72,8 @@ type RawSlot = {
       __typename: string;
       sys: { id: string };
       internalName?: string | null;
-      question?: string | null;
-      answer?: string | null;
+      questionRt?: { json: Record<string, unknown> } | null;
+      answerRt?: { json: Record<string, unknown> } | null;
     } | null>;
   } | null;
 } | null;
@@ -123,7 +122,7 @@ export function mapSlot(raw: RawSlot): DashboardSlot {
       __typename: 'FeatureItem',
       sys: raw.sys,
       titleRt: raw.titleRt ?? null,
-      description: raw.description,
+      descriptionRt: raw.descriptionRt ?? null,
       media: raw.media ?? null,
       animationKey: raw.animationKey,
       mediaPlacement: raw.mediaPlacement as FeatureItemFragment['mediaPlacement'],
@@ -136,8 +135,8 @@ export function mapSlot(raw: RawSlot): DashboardSlot {
       __typename: 'Faq',
       sys: raw.sys,
       internalName: raw.internalName,
-      title: raw.title,
-      description: raw.description,
+      titleRt: raw.titleRt ?? null,
+      descriptionRt: raw.descriptionRt ?? null,
       itemsCollection: raw.itemsCollection
         ? {
             items: raw.itemsCollection.items
@@ -146,8 +145,8 @@ export function mapSlot(raw: RawSlot): DashboardSlot {
                 __typename: 'FaqItem' as const,
                 sys: item.sys,
                 internalName: item.internalName,
-                question: item.question,
-                answer: item.answer,
+                questionRt: item.questionRt ?? null,
+                answerRt: item.answerRt ?? null,
               })),
           }
         : null,

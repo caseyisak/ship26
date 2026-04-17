@@ -1,9 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { BLOCKS, MARKS } from '@contentful/rich-text-types';
+import React, { useState } from 'react';
 
-import type { FaqFragment } from '@/block-renderer/types';
+import type { FaqFragment, FaqItemFragment } from '@/block-renderer/types';
 import { useContentfulInspectorModeProps, useLiveUpdates } from '@/lib/live-preview';
+
+const faqRtOptions = {
+  renderMark: {
+    [MARKS.BOLD]: (text: React.ReactNode) => <strong>{text}</strong>,
+    [MARKS.ITALIC]: (text: React.ReactNode) => <em>{text}</em>,
+  },
+  renderNode: {
+    [BLOCKS.PARAGRAPH]: (_node: unknown, children: React.ReactNode) => <>{children}</>,
+  },
+};
+
+function renderRt(rt: FaqItemFragment['questionRt'] | FaqItemFragment['answerRt']): React.ReactNode {
+  if (!rt?.json) return null;
+  return documentToReactComponents(
+    rt.json as unknown as Parameters<typeof documentToReactComponents>[0],
+    faqRtOptions,
+  );
+}
 
 type Props = { faq: FaqFragment };
 
@@ -28,7 +48,7 @@ export function UpgradeFaqAccordion({ faq }: Props) {
               className="w-full flex items-center justify-between px-6 py-5 text-left focus:outline-none"
               aria-expanded={isOpen}
             >
-              <span className="text-sm font-semibold text-foreground" {...getProps({ fieldId: 'question', entryId: item.sys.id })}>{item.question}</span>
+              <span className="text-sm font-semibold text-foreground" {...getProps({ fieldId: 'questionRt', entryId: item.sys.id })}>{renderRt(item.questionRt)}</span>
               <svg
                 viewBox="0 0 24 24"
                 className={`w-4 h-4 text-muted-foreground shrink-0 ml-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
@@ -43,7 +63,7 @@ export function UpgradeFaqAccordion({ faq }: Props) {
             </button>
             {isOpen && (
               <div className="px-6 pb-5">
-                <p className="text-sm text-muted-foreground leading-relaxed" {...getProps({ fieldId: 'answer', entryId: item.sys.id })}>{item.answer}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed" {...getProps({ fieldId: 'answerRt', entryId: item.sys.id })}>{renderRt(item.answerRt)}</p>
               </div>
             )}
           </div>

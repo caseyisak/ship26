@@ -11,16 +11,16 @@ type RawFaqItem = {
   __typename: string;
   sys: { id: string };
   internalName?: string | null;
-  question?: string | null;
-  answer?: string | null;
+  questionRt?: { json: Record<string, unknown> } | null;
+  answerRt?: { json: Record<string, unknown> } | null;
 };
 
 type RawFaq = {
   __typename: string;
   sys: { id: string };
   internalName?: string | null;
-  title?: string | null;
-  description?: string | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
   itemsCollection?: { items: Array<RawFaqItem | null> } | null;
   ntExperiencesCollection?: NtExperiencesCollection | null;
 };
@@ -37,8 +37,8 @@ function mapFaqItem(item: RawFaqItem | null): FaqItemFragment | null {
     __typename: 'FaqItem',
     sys: { id: item.sys.id },
     internalName: item.internalName ?? null,
-    question: item.question ?? null,
-    answer: item.answer ?? null,
+    questionRt: item.questionRt ?? null,
+    answerRt: item.answerRt ?? null,
   };
 }
 
@@ -48,8 +48,8 @@ function mapFaq(item: RawFaq | null): FaqFragment | null {
     __typename: 'Faq',
     sys: { id: item.sys.id },
     internalName: item.internalName ?? null,
-    title: item.title ?? null,
-    description: item.description ?? null,
+    titleRt: item.titleRt ?? null,
+    descriptionRt: item.descriptionRt ?? null,
     itemsCollection: item.itemsCollection
       ? {
           items: item.itemsCollection.items

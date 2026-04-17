@@ -7,8 +7,8 @@ type RawDataViz = {
   __typename: string;
   sys: { id: string };
   internalName?: string | null;
-  title?: string | null;
-  description?: string | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
   chartType?: string | null;
   csvData?: { url?: string } | null;
   colorScheme?: string | null;
@@ -27,8 +27,8 @@ function mapDataViz(item: RawDataViz | null): DataVizFragment | null {
     __typename: 'DataViz',
     sys: { id: item.sys.id },
     internalName: item.internalName ?? null,
-    title: item.title ?? null,
-    description: item.description ?? null,
+    titleRt: item.titleRt ?? null,
+    descriptionRt: item.descriptionRt ?? null,
     chartType: item.chartType ?? null,
     csvData: item.csvData ?? null,
     colorScheme: item.colorScheme ?? null,

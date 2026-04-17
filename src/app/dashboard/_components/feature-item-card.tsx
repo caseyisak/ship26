@@ -4,6 +4,7 @@ import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import type { Block, Inline } from '@contentful/rich-text-types';
 import { MergeTag } from '@ninetailed/experience.js-react';
+import React from 'react';
 
 import type { FeatureItemFragment } from '@/block-renderer/types';
 import { useContentfulInspectorModeProps, useLiveUpdates } from '@/lib/live-preview';
@@ -80,8 +81,19 @@ export function FeatureItemCard({ data }: Props) {
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(liveData.sys.id);
 
-  const { titleRt, description, media, mediaPlacement } = liveData;
+  const { titleRt, descriptionRt, media, mediaPlacement } = liveData;
   const linksMap = buildLinksMap(titleRt);
+
+  const descriptionNode = descriptionRt?.json
+    ? documentToReactComponents(
+        descriptionRt.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        {
+          renderNode: {
+            [BLOCKS.PARAGRAPH]: (_node: unknown, children: React.ReactNode) => <>{children}</>,
+          },
+        },
+      )
+    : null;
 
   const isHorizontal = mediaPlacement === 'left' || mediaPlacement === 'right';
   const mediaFirst = !mediaPlacement || mediaPlacement === 'top' || mediaPlacement === 'left';
@@ -106,12 +118,12 @@ export function FeatureItemCard({ data }: Props) {
           )}
         </div>
       )}
-      {description && (
+      {descriptionNode && (
         <p
           className="text-xs text-muted-foreground leading-relaxed"
-          {...getProps({ fieldId: 'description' })}
+          {...getProps({ fieldId: 'descriptionRt' })}
         >
-          {description}
+          {descriptionNode}
         </p>
       )}
     </div>

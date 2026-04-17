@@ -19,8 +19,8 @@ function transformSection(item: any): PageSection | null {
         __typename: 'Hero',
         sys: { id: item.sys.id },
         internalName: item.internalName ?? null,
-        headline: item.headline ?? null,
-        subheadline: item.subheadline ?? null,
+        headlineRt: item.headlineRt ?? null,
+        subheadlineRt: item.subheadlineRt ?? null,
         ctaText: item.ctaText ?? null,
         ctaUrl: item.ctaUrl ?? null,
         variant: item.variant ?? null,
@@ -35,8 +35,8 @@ function transformSection(item: any): PageSection | null {
         __typename: 'Faq',
         sys: { id: item.sys.id },
         internalName: item.internalName ?? null,
-        title: item.title ?? null,
-        description: item.description ?? null,
+        titleRt: item.titleRt ?? null,
+        descriptionRt: item.descriptionRt ?? null,
         itemsCollection: item.itemsCollection
           ? {
               items: item.itemsCollection.items
@@ -47,8 +47,8 @@ function transformSection(item: any): PageSection | null {
                         __typename: 'FaqItem',
                         sys: { id: faqItem.sys.id },
                         internalName: faqItem.internalName ?? null,
-                        question: faqItem.question ?? null,
-                        answer: faqItem.answer ?? null,
+                        questionRt: faqItem.questionRt ?? null,
+                        answerRt: faqItem.answerRt ?? null,
                       }
                     : null,
                 )
@@ -62,9 +62,9 @@ function transformSection(item: any): PageSection | null {
         __typename: 'Tabbedcontent',
         sys: { id: item.sys.id },
         internalName: item.internalName ?? null,
-        tagline: item.tagline ?? null,
-        title: item.title ?? null,
-        description: item.description ?? null,
+        taglineRt: item.taglineRt ?? null,
+        titleRt: item.titleRt ?? null,
+        descriptionRt: item.descriptionRt ?? null,
         itemsCollection: item.itemsCollectionCollection
           ? {
               items: item.itemsCollectionCollection.items
@@ -95,9 +95,9 @@ function transformSection(item: any): PageSection | null {
         __typename: 'Features',
         sys: { id: item.sys.id },
         internalName: item.internalName ?? null,
-        label: item.label ?? null,
-        title: item.title ?? null,
-        description: item.description ?? null,
+        labelRt: item.labelRt ?? null,
+        titleRt: item.titleRt ?? null,
+        descriptionRt: item.descriptionRt ?? null,
         // Keep feature items RAW - let FeatureCard component handle transformation after useLiveUpdates
         itemsCollection: item.itemsCollection ?? null,
         ntExperiencesCollection: item.ntExperiencesCollection ?? undefined,
@@ -108,8 +108,8 @@ function transformSection(item: any): PageSection | null {
         __typename: 'DataViz',
         sys: { id: item.sys.id },
         internalName: item.internalName ?? null,
-        title: item.title ?? null,
-        description: item.description ?? null,
+        titleRt: item.titleRt ?? null,
+        descriptionRt: item.descriptionRt ?? null,
         chartType: item.chartType ?? null,
         csvData: item.csvData ?? null,
         colorScheme: item.colorScheme ?? null,
@@ -140,8 +140,8 @@ function transformSection(item: any): PageSection | null {
         __typename: 'TwoAcross',
         sys: { id: item.sys.id },
         internalName: item.internalName ?? null,
-        eyebrow: item.eyebrow ?? null,
-        heading: item.heading ?? null,
+        eyebrowRt: item.eyebrowRt ?? null,
+        headingRt: item.headingRt ?? null,
         body: item.body ? { json: item.body.json } : null,
         media: item.media ?? null,
         mediaAltText: item.mediaAltText ?? null,

@@ -11,8 +11,8 @@ type RawHero = {
   __typename: string;
   sys: { id: string };
   internalName?: string | null;
-  headline?: string | null;
-  subheadline?: string | null;
+  headlineRt?: { json: Record<string, unknown> } | null;
+  subheadlineRt?: { json: Record<string, unknown> } | null;
   ctaText?: string | null;
   ctaUrl?: string | null;
   variant?: string | null;
@@ -34,8 +34,8 @@ function mapHero(item: RawHero | null): HeroFragment | null {
     __typename: 'Hero',
     sys: { id: item.sys.id },
     internalName: item.internalName ?? null,
-    headline: item.headline ?? null,
-    subheadline: item.subheadline ?? null,
+    headlineRt: item.headlineRt ?? null,
+    subheadlineRt: item.subheadlineRt ?? null,
     ctaText: item.ctaText ?? null,
     ctaUrl: item.ctaUrl ?? null,
     variant: item.variant ?? null,

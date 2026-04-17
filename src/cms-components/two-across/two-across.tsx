@@ -55,8 +55,20 @@ const TwoAcross = ({
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
 
-  const eyebrow = liveData.eyebrow;
-  const heading = liveData.heading;
+  const eyebrowRtData = (liveData as TwoAcrossFragment).eyebrowRt;
+  const headingRtData = (liveData as TwoAcrossFragment).headingRt;
+  const eyebrow = eyebrowRtData?.json
+    ? documentToReactComponents(
+        eyebrowRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        richTextOptions,
+      )
+    : null;
+  const heading = headingRtData?.json
+    ? documentToReactComponents(
+        headingRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        richTextOptions,
+      )
+    : null;
   const body = liveData.body;
   const ctaLabel = liveData.ctaLabel;
   const ctaUrl = liveData.ctaUrl;
@@ -125,19 +137,19 @@ const TwoAcross = ({
   const textBlock = (
     <div className="flex flex-col justify-center gap-4">
       {eyebrow && (
-        <p
+        <div
           className="text-primary text-sm font-semibold tracking-widest uppercase"
           style={eyebrowStyle}
-          {...getProps({ fieldId: 'eyebrow' })}
+          {...getProps({ fieldId: 'eyebrowRt' })}
         >
           {eyebrow}
-        </p>
+        </div>
       )}
       {heading && (
         <h2
           className="text-foreground text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl"
           style={headlineStyle}
-          {...getProps({ fieldId: 'heading' })}
+          {...getProps({ fieldId: 'headingRt' })}
         >
           {heading}
         </h2>
@@ -149,7 +161,7 @@ const TwoAcross = ({
           {...getProps({ fieldId: 'body' })}
         >
           {documentToReactComponents(
-            body.json as Parameters<typeof documentToReactComponents>[0],
+            body.json as unknown as Parameters<typeof documentToReactComponents>[0],
             richTextOptions,
           )}
         </div>

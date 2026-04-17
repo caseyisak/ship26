@@ -1,5 +1,9 @@
 'use client';
 
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { BLOCKS, MARKS } from '@contentful/rich-text-types';
+import * as React from 'react';
+
 import type { HeroFragment } from '@/block-renderer/types';
 import { BlockProps } from '@/block-renderer/types';
 import { Button } from '@/components/ui/button';
@@ -15,12 +19,36 @@ import {
 } from '@/lib/section-style-types';
 import { cn } from '@/lib/utils';
 
+const heroRichTextOptions = {
+  renderMark: {
+    [MARKS.BOLD]: (text: React.ReactNode) => <strong>{text}</strong>,
+    [MARKS.ITALIC]: (text: React.ReactNode) => <em>{text}</em>,
+  },
+  renderNode: {
+    [BLOCKS.PARAGRAPH]: (_node: unknown, children: React.ReactNode) => (
+      <>{children}</>
+    ),
+  },
+};
+
 const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
 
-  const headline = liveData.headline;
-  const subheadline = liveData.subheadline;
+  const headlineRt = (liveData as HeroFragment).headlineRt;
+  const subheadlineRt = (liveData as HeroFragment).subheadlineRt;
+  const headline = headlineRt?.json
+    ? documentToReactComponents(
+        headlineRt.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        heroRichTextOptions,
+      )
+    : null;
+  const subheadline = subheadlineRt?.json
+    ? documentToReactComponents(
+        subheadlineRt.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        heroRichTextOptions,
+      )
+    : null;
   const ctaText = liveData.ctaText;
   const ctaUrl = liveData.ctaUrl;
 
@@ -63,7 +91,7 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
       {headline && (
         <h1
           className="text-foreground text-4xl leading-tight font-medium tracking-tight text-balance sm:text-5xl md:text-[68px]"
-          {...getProps({ fieldId: 'headline' })}
+          {...getProps({ fieldId: 'headlineRt' })}
         >
           {headline}
         </h1>
@@ -71,7 +99,7 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
       {subheadline && (
         <p
           className="text-muted-foreground md:text-md mx-auto max-w-2xl text-base sm:text-lg"
-          {...getProps({ fieldId: 'subheadline' })}
+          {...getProps({ fieldId: 'subheadlineRt' })}
         >
           {subheadline}
         </p>
@@ -229,7 +257,7 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
                 {headline && (
                   <h1
                     className="text-foreground text-2xl leading-tight font-medium tracking-tight text-balance sm:text-3xl md:text-4xl"
-                    {...getProps({ fieldId: 'headline' })}
+                    {...getProps({ fieldId: 'headlineRt' })}
                   >
                     {headline}
                   </h1>
@@ -237,7 +265,7 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
                 {subheadline && (
                   <p
                     className="text-muted-foreground text-sm sm:text-base"
-                    {...getProps({ fieldId: 'subheadline' })}
+                    {...getProps({ fieldId: 'subheadlineRt' })}
                   >
                     {subheadline}
                   </p>

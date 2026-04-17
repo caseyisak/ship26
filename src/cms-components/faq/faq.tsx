@@ -1,5 +1,7 @@
 'use client';
 
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { BLOCKS, MARKS } from '@contentful/rich-text-types';
 import { Minus, Plus } from 'lucide-react';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
@@ -11,10 +13,22 @@ import {
 } from '@/lib/live-preview';
 import { cn } from '@/lib/utils';
 
+const faqRichTextOptions = {
+  renderMark: {
+    [MARKS.BOLD]: (text: React.ReactNode) => <strong>{text}</strong>,
+    [MARKS.ITALIC]: (text: React.ReactNode) => <em>{text}</em>,
+  },
+  renderNode: {
+    [BLOCKS.PARAGRAPH]: (_node: unknown, children: React.ReactNode) => (
+      <>{children}</>
+    ),
+  },
+};
+
 type FaqItemProps = {
   id: string;
-  question: string;
-  answer: string;
+  question: React.ReactNode;
+  answer: React.ReactNode;
   open: boolean;
   onToggle: (id: string) => void;
 };
@@ -119,10 +133,20 @@ const Faq = ({ data, className, ...props }: BlockProps<FaqFragment>) => {
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
 
-  const title = liveData.title ?? 'Frequently Asked Questions';
-  const description =
-    liveData.description ??
-    'Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.';
+  const titleRtData = (liveData as FaqFragment).titleRt;
+  const descriptionRtData = (liveData as FaqFragment).descriptionRt;
+  const title = titleRtData?.json
+    ? documentToReactComponents(
+        titleRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        faqRichTextOptions,
+      )
+    : 'Frequently Asked Questions';
+  const description = descriptionRtData?.json
+    ? documentToReactComponents(
+        descriptionRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        faqRichTextOptions,
+      )
+    : 'Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.';
   const items = liveData.itemsCollection?.items ?? [];
 
   const [openId, setOpenId] = useState<string | undefined>(undefined);
@@ -138,21 +162,21 @@ const Faq = ({ data, className, ...props }: BlockProps<FaqFragment>) => {
       <div className="container px-0 py-16 sm:py-20 md:px-6 lg:py-28">
         <p
           className="text-tagline mb-4 text-center text-sm leading-tight font-normal sm:text-base"
-          {...getProps({ fieldId: 'title' })}
+          {...getProps({ fieldId: 'titleRt' })}
         >
           FAQ
         </p>
 
         <h2
           className="text-foreground mx-auto mb-4 max-w-3xl text-center text-3xl leading-tight font-medium tracking-tight sm:text-4xl md:text-5xl"
-          {...getProps({ fieldId: 'title' })}
+          {...getProps({ fieldId: 'titleRt' })}
         >
           {title}
         </h2>
 
         <p
           className="text-muted-foreground mx-auto max-w-2xl text-center text-base font-normal sm:text-lg"
-          {...getProps({ fieldId: 'description' })}
+          {...getProps({ fieldId: 'descriptionRt' })}
         >
           {description}
         </p>
@@ -161,8 +185,18 @@ const Faq = ({ data, className, ...props }: BlockProps<FaqFragment>) => {
           {items.map((item) => {
             const id = `faq-item-${item.sys.id}`;
             const open = openId === id;
-            const question = item.question ?? '';
-            const answer = item.answer ?? '';
+            const question = item.questionRt?.json
+              ? documentToReactComponents(
+                  item.questionRt.json as unknown as Parameters<typeof documentToReactComponents>[0],
+                  faqRichTextOptions,
+                )
+              : null;
+            const answer = item.answerRt?.json
+              ? documentToReactComponents(
+                  item.answerRt.json as unknown as Parameters<typeof documentToReactComponents>[0],
+                  faqRichTextOptions,
+                )
+              : null;
 
             if (!question && !answer) return null;
 

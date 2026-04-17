@@ -1,6 +1,9 @@
 'use client';
 
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { BLOCKS, MARKS } from '@contentful/rich-text-types';
 import Image from 'next/image';
+import * as React from 'react';
 
 import type {
   FeatureItemFragment,
@@ -14,21 +17,43 @@ import {
 } from '@/lib/live-preview';
 import { cn } from '@/lib/utils';
 
+const featuresRichTextOptions = {
+  renderMark: {
+    [MARKS.BOLD]: (text: React.ReactNode) => <strong>{text}</strong>,
+    [MARKS.ITALIC]: (text: React.ReactNode) => <em>{text}</em>,
+  },
+  renderNode: {
+    [BLOCKS.PARAGRAPH]: (_node: unknown, children: React.ReactNode) => (
+      <>{children}</>
+    ),
+  },
+};
+
 function FeatureCard({
   item,
-  mediaPosition = 'top',
 }: {
   item: FeatureItemFragment;
-  mediaPosition?: 'top' | 'bottom' | 'left' | 'right' | null;
 }) {
   // Apply live updates to RAW Contentful data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const liveItem = useLiveUpdates(item) as any;
   const getItemProps = useContentfulInspectorModeProps(item.sys.id);
 
-  // Extract fields from raw Contentful data (using 'media' not 'image')
-  const title = liveItem.title ?? '';
-  const description = liveItem.description ?? liveItem.excerpt ?? null;
+  // Extract fields — prefer RT fields
+  const titleRtData = (liveItem as FeatureItemFragment).titleRt;
+  const descriptionRtData = (liveItem as FeatureItemFragment).descriptionRt ?? (liveItem as FeatureItemFragment).descriptionRt;
+  const title = titleRtData?.json
+    ? documentToReactComponents(
+        titleRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        featuresRichTextOptions,
+      )
+    : null;
+  const description = descriptionRtData?.json
+    ? documentToReactComponents(
+        descriptionRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        featuresRichTextOptions,
+      )
+    : null;
   const animationKey = liveItem.animationKey ?? null;
 
   // Use raw Contentful field name 'media', not mapped 'image'
@@ -39,7 +64,8 @@ function FeatureCard({
     ? getFeatureVisualComponent(animationKey)
     : null;
 
-  const pos = mediaPosition ?? 'top';
+  // Read mediaPlacement per-item (featureItem controls its own layout)
+  const pos = (liveItem as FeatureItemFragment).mediaPlacement ?? 'top';
   const isSideBySide = pos === 'left' || pos === 'right';
 
   // For side-by-side layouts the image fills the card height; for stacked it uses fixed heights
@@ -50,7 +76,7 @@ function FeatureCard({
       ) : imageUrl ? (
         <Image
           src={imageUrl}
-          alt={title || 'Feature'}
+          alt=""
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 40vw"
@@ -66,7 +92,7 @@ function FeatureCard({
       ) : imageUrl ? (
         <Image
           src={imageUrl}
-          alt={title || 'Feature'}
+          alt=""
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 50vw"
@@ -100,7 +126,7 @@ function FeatureCard({
       {title && (
         <h3
           className="text-foreground text-lg font-medium sm:text-xl"
-          {...getItemProps({ fieldId: 'title' })}
+          {...getItemProps({ fieldId: 'titleRt' })}
         >
           {title}
         </h3>
@@ -108,7 +134,7 @@ function FeatureCard({
       {description && (
         <p
           className="text-muted-foreground mt-2 text-sm sm:text-base"
-          {...getItemProps({ fieldId: 'description' })}
+          {...getItemProps({ fieldId: 'descriptionRt' })}
         >
           {description}
         </p>
@@ -138,7 +164,7 @@ function FeatureCard({
       {title && (
         <h3
           className="text-foreground text-lg font-medium sm:text-xl"
-          {...getItemProps({ fieldId: 'title' })}
+          {...getItemProps({ fieldId: 'titleRt' })}
         >
           {title}
         </h3>
@@ -146,7 +172,7 @@ function FeatureCard({
       {description && (
         <p
           className="text-muted-foreground mt-2 text-sm sm:text-base"
-          {...getItemProps({ fieldId: 'description' })}
+          {...getItemProps({ fieldId: 'descriptionRt' })}
         >
           {description}
         </p>
@@ -165,10 +191,27 @@ const Features = ({
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
 
-  const label = liveData.label ?? null;
-  const title = liveData.title ?? null;
-  const description = liveData.description ?? null;
-  const mediaPosition = (liveData as FeaturesFragment).mediaPosition ?? 'top';
+  const labelRtData = (liveData as FeaturesFragment).labelRt;
+  const titleRtData = (liveData as FeaturesFragment).titleRt;
+  const descriptionRtData = (liveData as FeaturesFragment).descriptionRt;
+  const label = labelRtData?.json
+    ? documentToReactComponents(
+        labelRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        featuresRichTextOptions,
+      )
+    : null;
+  const title = titleRtData?.json
+    ? documentToReactComponents(
+        titleRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        featuresRichTextOptions,
+      )
+    : null;
+  const description = descriptionRtData?.json
+    ? documentToReactComponents(
+        descriptionRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
+        featuresRichTextOptions,
+      )
+    : null;
   const items = liveData.itemsCollection?.items ?? [];
 
   return (
@@ -181,7 +224,7 @@ const Features = ({
         {label && (
           <p
             className="text-tagline mb-4 text-center text-sm sm:text-base"
-            {...getProps({ fieldId: 'label' })}
+            {...getProps({ fieldId: 'labelRt' })}
           >
             {label}
           </p>
@@ -190,7 +233,7 @@ const Features = ({
         {title && (
           <h2
             className="text-foreground mx-auto max-w-3xl text-center text-3xl leading-tight font-medium tracking-tight text-balance sm:text-4xl md:text-5xl"
-            {...getProps({ fieldId: 'title' })}
+            {...getProps({ fieldId: 'titleRt' })}
           >
             {title}
           </h2>
@@ -199,7 +242,7 @@ const Features = ({
         {description && (
           <p
             className="text-muted-foreground mx-auto mt-4 max-w-2xl text-center text-base sm:text-lg"
-            {...getProps({ fieldId: 'description' })}
+            {...getProps({ fieldId: 'descriptionRt' })}
           >
             {description}
           </p>
@@ -218,7 +261,6 @@ const Features = ({
               <FeatureCard
                 key={item.sys.id}
                 item={item}
-                mediaPosition={mediaPosition}
               />
             ))}
           </div>

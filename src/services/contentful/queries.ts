@@ -20,8 +20,8 @@ const NT_VARIANT_FIELDS = `
   sys { id }
   ... on Hero {
     internalName
-    headline
-    subheadline
+    headlineRt { json }
+    subheadlineRt { json }
     background { url }
     media { url }
     ctaText
@@ -31,25 +31,25 @@ const NT_VARIANT_FIELDS = `
   }
   ... on Faq {
     internalName
-    title
-    description
+    titleRt { json }
+    descriptionRt { json }
   }
   ... on Features {
     internalName
-    label
-    title
-    description
+    labelRt { json }
+    titleRt { json }
+    descriptionRt { json }
   }
   ... on Tabbedcontent {
     internalName
-    tagline
-    title
-    description
+    taglineRt { json }
+    titleRt { json }
+    descriptionRt { json }
   }
   ... on DataViz {
     internalName
-    title
-    description
+    titleRt { json }
+    descriptionRt { json }
     chartType
     csvData { url }
     colorScheme
@@ -67,9 +67,10 @@ const NT_VARIANT_FIELDS = `
   }
   ... on TwoAcross {
     internalName
-    eyebrow
-    heading
+    eyebrowRt { json }
+    headingRt { json }
     media { url }
+    mediaPosition
     ctaLabel
     ctaUrl
     colorVariant
@@ -90,14 +91,14 @@ const NT_EXPERIENCE_FIELDS = `
   }
 `;
 
-/** Hero fragment: all fields from Hero content type (internalName, headline, subheadline, background, media, ctaText, ctaUrl, sectionStyle, variant, nt_experiences). */
+/** Hero fragment: all fields from Hero content type (internalName, headlineRt, subheadlineRt, background, media, ctaText, ctaUrl, sectionStyle, variant, nt_experiences). */
 const HERO_FIELDS = `
   __typename
   sys { id }
   ... on Hero {
     internalName
-    headline
-    subheadline
+    headlineRt { json }
+    subheadlineRt { json }
     background { url }
     media { url }
     ctaText
@@ -110,25 +111,25 @@ const HERO_FIELDS = `
   }
 `;
 
-/** FaqItem fragment: all fields from FaqItem content type (internalName, question, answer). */
+/** FaqItem fragment: all fields from FaqItem content type (internalName, questionRt, answerRt). */
 const FAQ_ITEM_FIELDS = `
   __typename
   sys { id }
   ... on Faqitem {
     internalName
-    question
-    answer
+    questionRt { json }
+    answerRt { json }
   }
 `;
 
-/** FAQ fragment: all fields from FAQ content type (internalName, title, description, items). */
+/** FAQ fragment: all fields from FAQ content type (internalName, titleRt, descriptionRt, items). */
 const FAQ_FIELDS = `
   __typename
   sys { id }
   ... on Faq {
     internalName
-    title
-    description
+    titleRt { json }
+    descriptionRt { json }
     itemsCollection(limit: 50) {
       items {
         ${FAQ_ITEM_FIELDS}
@@ -154,15 +155,15 @@ const TABBED_CONTENT_ITEM_FIELDS = `
   }
 `;
 
-/** TabbedContent fragment: all fields from TabbedContent content type (internalName, tagline, title, description, itemsCollection, ntExperiences). */
+/** TabbedContent fragment: all fields from TabbedContent content type (internalName, taglineRt, titleRt, descriptionRt, itemsCollection, ntExperiences). */
 const TABBED_CONTENT_FIELDS = `
   __typename
   sys { id }
   ... on Tabbedcontent {
     internalName
-    tagline
-    title
-    description
+    taglineRt { json }
+    titleRt { json }
+    descriptionRt { json }
     itemsCollectionCollection(limit: 50) {
       items {
         ${TABBED_CONTENT_ITEM_FIELDS}
@@ -174,27 +175,28 @@ const TABBED_CONTENT_FIELDS = `
   }
 `;
 
-/** Feature Item fragment: all fields from Feature Item content type (titleRt, description, media, animationKey). */
+/** Feature Item fragment: all fields from Feature Item content type (titleRt, descriptionRt, media, animationKey, mediaPlacement). */
 const FEATURE_ITEM_FIELDS = `
   __typename
   sys { id }
   ... on FeatureItem {
     titleRt { json }
-    description
+    descriptionRt { json }
     media { url }
     animationKey
+    mediaPlacement
   }
 `;
 
-/** Features fragment: all fields from Features content type (internalName, label, title, description, items, ntExperiences). */
+/** Features fragment: all fields from Features content type (internalName, labelRt, titleRt, descriptionRt, items, ntExperiences). */
 const FEATURES_FIELDS = `
   __typename
   sys { id }
   ... on Features {
     internalName
-    label
-    title
-    description
+    labelRt { json }
+    titleRt { json }
+    descriptionRt { json }
     itemsCollection(limit: 20) {
       items {
         ${FEATURE_ITEM_FIELDS}
@@ -206,14 +208,14 @@ const FEATURES_FIELDS = `
   }
 `;
 
-/** DataViz fragment: all fields from DataViz content type (internalName, title, description, chartType, csvData, colorScheme, showLegend). */
+/** DataViz fragment: all fields from DataViz content type (internalName, titleRt, descriptionRt, chartType, csvData, colorScheme, showLegend). */
 const DATA_VIZ_FIELDS = `
   __typename
   sys { id }
   ... on DataViz {
     internalName
-    title
-    description
+    titleRt { json }
+    descriptionRt { json }
     chartType
     csvData { url }
     colorScheme
@@ -269,8 +271,8 @@ const TWO_ACROSS_FIELDS = `
   sys { id }
   ... on TwoAcross {
     internalName
-    eyebrow
-    heading
+    eyebrowRt { json }
+    headingRt { json }
     body { json }
     media { url }
     mediaAltText
@@ -555,16 +557,16 @@ const DASHBOARD_SLOT_FIELDS = `
   }
   ... on Faq {
     internalName
-    title
-    description
+    titleRt { json }
+    descriptionRt { json }
     itemsCollection(limit: 50) {
       items {
         __typename
         sys { id }
         ... on Faqitem {
           internalName
-          question
-          answer
+          questionRt { json }
+          answerRt { json }
         }
       }
     }

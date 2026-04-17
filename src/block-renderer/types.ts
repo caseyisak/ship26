@@ -33,12 +33,12 @@ export type NtExperienceFragment = {
   } | null;
 };
 
-/** Hero section (matches Contentful Hero content type: internalName, headline, subheadline, background, media, ctaText, ctaUrl, sectionStyle, variant, nt_experiences). */
+/** Hero section (matches Contentful Hero content type: internalName, headlineRt, subheadlineRt, background, media, ctaText, ctaUrl, sectionStyle, variant, nt_experiences). */
 export type HeroFragment = BlockData & {
   __typename: 'Hero';
   internalName?: string | null;
-  headline?: string | null;
-  subheadline?: string | null;
+  headlineRt?: { json: Record<string, unknown> } | null;
+  subheadlineRt?: { json: Record<string, unknown> } | null;
   ctaText?: string | null;
   ctaUrl?: string | null;
   variant?: string | null;
@@ -50,21 +50,21 @@ export type HeroFragment = BlockData & {
   } | null;
 };
 
-/** FaqItem (matches Contentful FaqItem content type: internalName, question, answer). */
+/** FaqItem (matches Contentful FaqItem content type: internalName, questionRt, answerRt). */
 export type FaqItemFragment = {
   __typename: 'FaqItem';
   sys: { id: string };
   internalName?: string | null;
-  question?: string | null;
-  answer?: string | null;
+  questionRt?: { json: Record<string, unknown> } | null;
+  answerRt?: { json: Record<string, unknown> } | null;
 };
 
-/** FAQ section (matches Contentful FAQ content type: internalName, title, description, items). */
+/** FAQ section (matches Contentful FAQ content type: internalName, titleRt, descriptionRt, items). */
 export type FaqFragment = BlockData & {
   __typename: 'Faq';
   internalName?: string | null;
-  title?: string | null;
-  description?: string | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
   itemsCollection?: { items: FaqItemFragment[] } | null;
   ntExperiencesCollection?: {
     items: Array<NtExperienceFragment>;
@@ -83,24 +83,23 @@ export type TabbedContentItemFragment = {
   buttonLabel?: string | null;
 };
 
-/** TabbedContent section (matches Contentful TabbedContent content type: internalName, tagline, title, description, itemsCollection, ntExperiences). */
+/** TabbedContent section (matches Contentful TabbedContent content type: internalName, taglineRt, titleRt, descriptionRt, itemsCollection, ntExperiences). */
 export type TabbedContentFragment = BlockData & {
   __typename: 'Tabbedcontent';
   internalName?: string | null;
-  tagline?: string | null;
-  title?: string | null;
-  description?: string | null;
+  taglineRt?: { json: Record<string, unknown> } | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
   itemsCollection?: { items: TabbedContentItemFragment[] } | null;
   ntExperiencesCollection?: {
     items: Array<NtExperienceFragment>;
   } | null;
 };
 
-/** Feature Item (matches Contentful Feature Item content type: title, description, media, animationKey). */
+/** Feature Item (matches Contentful Feature Item content type: titleRt, descriptionRt, media, animationKey). */
 export type FeatureItemFragment = {
   __typename: 'FeatureItem';
   sys: { id: string };
-  title?: string | null; // legacy symbol field — kept for backwards compat
   titleRt?: {
     json: Record<string, unknown>;
     links?: {
@@ -114,7 +113,7 @@ export type FeatureItemFragment = {
       };
     };
   } | null;
-  description?: string | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
   image?: { url?: string } | null; // Mapped field name (legacy)
   media?: { url?: string } | null; // Raw Contentful field name
   animationKey?: string | null;
@@ -122,13 +121,13 @@ export type FeatureItemFragment = {
   sectionStyle?: Record<string, string> | null;
 };
 
-/** Features section (matches Contentful Features content type: internalName, label, title, description, mediaPosition, items, ntExperiences). */
+/** Features section (matches Contentful Features content type: internalName, labelRt, titleRt, descriptionRt, mediaPosition, items, ntExperiences). */
 export type FeaturesFragment = BlockData & {
   __typename: 'Features';
   internalName?: string | null;
-  label?: string | null;
-  title?: string | null;
-  description?: string | null;
+  labelRt?: { json: Record<string, unknown> } | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
   mediaPosition?: 'top' | 'bottom' | 'left' | 'right' | null;
   itemsCollection?: { items: FeatureItemFragment[] } | null;
   ntExperiencesCollection?: {
@@ -136,12 +135,12 @@ export type FeaturesFragment = BlockData & {
   } | null;
 };
 
-/** DataViz section (matches Contentful DataViz content type: internalName, title, description, chartType, csvData, colorScheme, showLegend). */
+/** DataViz section (matches Contentful DataViz content type: internalName, titleRt, descriptionRt, chartType, csvData, colorScheme, showLegend). */
 export type DataVizFragment = BlockData & {
   __typename: 'DataViz';
   internalName?: string | null;
-  title?: string | null;
-  description?: string | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
   chartType?: string | null;
   csvData?: { url?: string } | null;
   colorScheme?: string | null;
@@ -232,8 +231,8 @@ export type SocialPostFragment = BlockData & {
 export type TwoAcrossFragment = BlockData & {
   __typename: 'TwoAcross';
   internalName?: string | null;
-  eyebrow?: string | null;
-  heading?: string | null;
+  eyebrowRt?: { json: Record<string, unknown> } | null;
+  headingRt?: { json: Record<string, unknown> } | null;
   body?: { json: unknown } | null;
   media?: { url?: string } | null;
   mediaAltText?: string | null;
