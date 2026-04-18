@@ -1,6 +1,5 @@
 'use client';
 
-import { useNinetailed } from '@ninetailed/experience.js-react';
 import { Settings } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,19 +7,26 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useSettings } from '@/personalization/settings-context';
+import { getPersona, clearPersona } from '@/lib/persona-session';
+import type { Persona } from '@/lib/persona-session';
 
-import { LoginModal } from './login-modal';
-
-// Gear icon — navigates to the dashboard (entry point into the app from the marketing site)
-function PersonalizationToggle({ className }: { className?: string }) {
+// Gear icon — navigates to dashboard (if logged in) or /login (if not)
+function PersonalizationToggle({ className, isLoggedIn }: { className?: string; isLoggedIn: boolean }) {
   const router = useRouter();
   return (
     <Button
       size="sm"
       variant="outline"
-      onClick={() => router.push('/dashboard')}
+      onClick={() => router.push(isLoggedIn ? '/dashboard' : '/login')}
       className={cn('px-2', className)}
       aria-label="Go to dashboard"
       title="Dashboard"
@@ -30,81 +36,73 @@ function PersonalizationToggle({ className }: { className?: string }) {
   );
 }
 
-function LoginButton({
+// Persona status + logout dropdown (shown when logged in on marketing pages)
+// No persona switching here — that's dashboard-only.
+function PersonaDropdown({
+  activePersona,
   className,
   afterAction,
 }: {
+  activePersona: Persona;
   className?: string;
   afterAction?: () => void;
 }) {
-  const ninetailed = useNinetailed();
-  const settings = useSettings();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const metadata = settings?.loggedInMetadata as
-    | Record<string, unknown>
-    | null
-    | undefined;
-  const firstName = (metadata?.firstName as string) ?? 'Account';
-  const initials =
-    [metadata?.firstName, metadata?.lastName]
-      .filter(Boolean)
-      .map((n) => (n as string)[0].toUpperCase())
-      .join('') || 'U';
-
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    setModalOpen(false);
-    // Persist session for dashboard auth guard
-    try { localStorage.setItem('metafi_session', '1'); } catch {}
-    afterAction?.();
-  };
+  const router = useRouter();
 
   const handleLogout = () => {
-    ninetailed.reset();
-    setIsLoggedIn(false);
-    try { localStorage.removeItem('metafi_session'); } catch {}
+    clearPersona();
     afterAction?.();
+    router.push('/page/home');
   };
 
-  if (isLoggedIn) {
-    return (
-      <div className={cn('flex items-center gap-2', className)}>
-        <div className="bg-primary text-primary-foreground flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold">
-          {initials}
-        </div>
-        <span className="text-foreground hidden text-sm font-medium sm:inline">
-          {firstName}
-        </span>
-        <Link href="/dashboard">
-          <Button size="sm" variant="default">
-            Dashboard
-          </Button>
-        </Link>
-        <Button size="sm" variant="outline" onClick={handleLogout}>
-          Log Out
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => setModalOpen(true)}
-        className={className}
-      >
-        Login
-      </Button>
-      <LoginModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        onLogin={handleLogin}
-      />
-    </>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className={cn(
+            'flex items-center gap-2 rounded-none border border-border bg-card px-2.5 py-1.5 text-sm font-medium hover:bg-accent transition-colors',
+            className,
+          )}
+          aria-label="Account menu"
+        >
+          <span
+            className="h-2 w-2 rounded-full shrink-0"
+            style={{ background: activePersona.color }}
+            aria-hidden="true"
+          />
+          <span className="text-foreground">{activePersona.label}</span>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-44 rounded-none">
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard" className="cursor-pointer">
+            Dashboard →
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={handleLogout}
+          className="cursor-pointer text-destructive focus:text-destructive"
+        >
+          Log Out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+// Login button — shown when not logged in
+function LoginButton({ className }: { className?: string }) {
+  const router = useRouter();
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      onClick={() => router.push('/login')}
+      className={className}
+    >
+      Login
+    </Button>
   );
 }
 
@@ -112,7 +110,6 @@ const HEADER_HEIGHT = 80;
 
 const Navbar = () => {
   const pathname = usePathname();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const settings = useSettings();
   const nav = settings?.nav ?? null;
 
@@ -121,6 +118,17 @@ const Navbar = () => {
 
   // Nav links from CMS — no hardcoded fallback
   const navLinks = nav?.linksCollection?.items ?? [];
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Persona state — read from localStorage on mount
+  const [activePersona, setActivePersona] = useState<Persona | null>(null);
+
+  useEffect(() => {
+    setActivePersona(getPersona());
+  }, []);
+
+  const isLoggedIn = Boolean(activePersona);
 
   useEffect(() => {
     document.body.classList.toggle('overflow-hidden', isMenuOpen);
@@ -221,8 +229,19 @@ const Navbar = () => {
         </nav>
 
         <div className="flex items-center gap-2.5">
-          <LoginButton className="hidden sm:flex lg:flex" />
-          <PersonalizationToggle className="hidden sm:flex lg:flex" />
+          {isLoggedIn && activePersona ? (
+            <PersonaDropdown
+              activePersona={activePersona}
+              className="hidden sm:flex lg:flex"
+              afterAction={() => setActivePersona(getPersona())}
+            />
+          ) : (
+            <LoginButton className="hidden sm:flex lg:flex" />
+          )}
+          <PersonalizationToggle
+            className="hidden sm:flex lg:flex"
+            isLoggedIn={isLoggedIn}
+          />
 
           <button
             className="text-muted-foreground relative flex size-8 lg:hidden"
@@ -315,11 +334,19 @@ const Navbar = () => {
                   </div>
 
                   <div className="mt-4 mb-6 flex flex-col gap-3">
-                    <LoginButton
-                      className="w-full"
-                      afterAction={() => setIsMenuOpen(false)}
-                    />
-                    <PersonalizationToggle className="w-full" />
+                    {isLoggedIn && activePersona ? (
+                      <PersonaDropdown
+                        activePersona={activePersona}
+                        className="w-full"
+                        afterAction={() => {
+                          setActivePersona(getPersona());
+                          setIsMenuOpen(false);
+                        }}
+                      />
+                    ) : (
+                      <LoginButton className="w-full" />
+                    )}
+                    <PersonalizationToggle className="w-full" isLoggedIn={isLoggedIn} />
                   </div>
                 </nav>
               </div>

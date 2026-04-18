@@ -25,10 +25,6 @@ export function DashboardPreviewClient({ page }: { page: DashboardPageRaw }) {
     primaryBlock: mapSlot((liveRaw.primaryBlock ?? null) as any),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     secondaryBlock: mapSlot((liveRaw.secondaryBlock ?? null) as any),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    tertiaryBlock: mapSlot((liveRaw.tertiaryBlock ?? null) as any),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    quaternaryBlock: mapSlot((liveRaw.quaternaryBlock ?? null) as any),
   };
 
   return <GenericDashboard page={transformed} />;

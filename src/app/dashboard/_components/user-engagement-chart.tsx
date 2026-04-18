@@ -1,6 +1,6 @@
 'use client';
 
-// Use semantic chart colors (--chart-1, --chart-2) so the chart is visible
+// Use semantic chart colors (--chart-2, --chart-3) so the chart is visible
 // regardless of the --primary color value (which may be near-black in light mode).
 import {
   AreaChart,
@@ -11,27 +11,46 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import type { ChartData } from '@/services/contentful/dashboard-settings';
 
-const data = [
-  { week: 'W1', sessions: 1240, returning: 680 },
-  { week: 'W2', sessions: 1580, returning: 920 },
-  { week: 'W3', sessions: 1380, returning: 810 },
-  { week: 'W4', sessions: 1920, returning: 1100 },
-  { week: 'W5', sessions: 1750, returning: 1040 },
-  { week: 'W6', sessions: 2100, returning: 1280 },
-  { week: 'W7', sessions: 1960, returning: 1150 },
-  { week: 'W8', sessions: 2340, returning: 1420 },
+const FALLBACK_DATA = [
+  { label: 'W1', sessions: 1240, returning: 680 },
+  { label: 'W2', sessions: 1580, returning: 920 },
+  { label: 'W3', sessions: 1380, returning: 810 },
+  { label: 'W4', sessions: 1920, returning: 1100 },
+  { label: 'W5', sessions: 1750, returning: 1040 },
+  { label: 'W6', sessions: 2100, returning: 1280 },
+  { label: 'W7', sessions: 1960, returning: 1150 },
+  { label: 'W8', sessions: 2340, returning: 1420 },
 ];
 
-export function UserEngagementChart() {
+type Props = {
+  chartData?: ChartData | null;
+};
+
+export function UserEngagementChart({ chartData }: Props) {
+  const title = chartData?.title ?? 'User Engagement';
+  const subtitle = chartData?.subtitle ?? 'Weekly sessions — all vs returning';
+  const dataKey = chartData?.dataKey ?? 'sessions';
+  const dataKey2 = chartData?.dataKey2 ?? 'returning';
+  const label = chartData?.label ?? 'All Sessions';
+  const label2 = chartData?.label2 ?? 'Returning';
+  const rawData = chartData?.data ?? FALLBACK_DATA;
+
+  // Remap data: use "label" key as the X-axis category key
+  const chartPoints = rawData.map((pt) => ({
+    week: pt.label,
+    ...pt,
+  }));
+
   return (
     <div className="bg-card border border-border rounded-none p-5 flex flex-col gap-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-foreground">User Engagement</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Weekly sessions — all vs returning
-          </p>
+          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+          {subtitle && (
+            <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>
+          )}
         </div>
         <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
           <span className="flex items-center gap-1.5">
@@ -39,20 +58,22 @@ export function UserEngagementChart() {
               className="inline-block h-2 w-2 rounded-sm"
               style={{ background: 'var(--chart-2)' }}
             />
-            All Sessions
+            {label}
           </span>
-          <span className="flex items-center gap-1.5">
-            <span
-              className="inline-block h-2 w-2 rounded-sm"
-              style={{ background: 'var(--chart-3)' }}
-            />
-            Returning
-          </span>
+          {dataKey2 && (
+            <span className="flex items-center gap-1.5">
+              <span
+                className="inline-block h-2 w-2 rounded-sm"
+                style={{ background: 'var(--chart-3)' }}
+              />
+              {label2}
+            </span>
+          )}
         </div>
       </div>
 
       <ResponsiveContainer width="100%" height={220}>
-        <AreaChart data={data}>
+        <AreaChart data={chartPoints}>
           <defs>
             <linearGradient id="gradSessions" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={0.3} />
@@ -92,18 +113,20 @@ export function UserEngagementChart() {
           />
           <Area
             type="monotone"
-            dataKey="sessions"
+            dataKey={dataKey}
             stroke="var(--chart-2)"
             strokeWidth={2}
             fill="url(#gradSessions)"
           />
-          <Area
-            type="monotone"
-            dataKey="returning"
-            stroke="var(--chart-3)"
-            strokeWidth={2}
-            fill="url(#gradReturning)"
-          />
+          {dataKey2 && (
+            <Area
+              type="monotone"
+              dataKey={dataKey2}
+              stroke="var(--chart-3)"
+              strokeWidth={2}
+              fill="url(#gradReturning)"
+            />
+          )}
         </AreaChart>
       </ResponsiveContainer>
     </div>

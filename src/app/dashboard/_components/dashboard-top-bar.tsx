@@ -2,67 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { JetBrains_Mono } from 'next/font/google';
-import { Settings, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Settings, Check } from 'lucide-react';
 import { useNinetailed } from '@ninetailed/experience.js-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { clearPersona, getPersona, setPersona } from '@/lib/persona-session';
+import type { Persona } from '@/lib/persona-session';
+import type { DashboardSettingsData } from '@/services/contentful/dashboard-settings';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { cn } from '@/lib/utils';
-
-const jetBrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['500', '600'],
-});
-
-// ─── KPI strip data ──────────────────────────────────────────────────────────
-
-const KPI_STATS = [
-  { label: 'Active Users', value: '24,891', delta: 12 },
-  { label: 'Content Published', value: '1,204', delta: 8 },
-  { label: 'Page Views', value: '318K', delta: -3 },
-  { label: 'Conversion Rate', value: '4.7%', delta: 21 },
-  { label: 'API Calls', value: '2.1M', delta: 5 },
-];
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function KpiStatItem({
-  label,
-  value,
-  delta,
-}: {
-  label: string;
-  value: string;
-  delta: number;
-}) {
-  const isUp = delta >= 0;
-  return (
-    <div className="flex flex-col gap-0.5 px-4 shrink-0">
-      <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide leading-none">
-        {label}
-      </span>
-      <div className="flex items-baseline gap-1.5">
-        <span className={cn('text-sm font-semibold leading-none', jetBrainsMono.className)}>
-          {value}
-        </span>
-        <span
-          className={cn(
-            'flex items-center gap-0.5 text-[10px] font-medium leading-none',
-            isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400',
-          )}
-        >
-          {isUp ? (
-            <ArrowUpRight className="h-2.5 w-2.5 shrink-0" />
-          ) : (
-            <ArrowDownRight className="h-2.5 w-2.5 shrink-0" />
-          )}
-          {isUp ? '+' : ''}{delta}%
-        </span>
-      </div>
-    </div>
-  );
-}
 
 // Gear button — opens the NT personalization panel via the preview plugin
 function NtGearButton() {
@@ -86,41 +40,125 @@ function NtGearButton() {
   );
 }
 
-// Logout button — clears session, resets NT profile, redirects to /page/home
-function DashboardLogoutButton() {
+// Persona dropdown — shows active persona, allows switching, log out
+function PersonaDropdown({
+  activePersona,
+  allPersonas,
+  onPersonaChange,
+}: {
+  activePersona: Persona;
+  allPersonas: Persona[];
+  onPersonaChange: (p: Persona | null) => void;
+}) {
   const ninetailed = useNinetailed();
   const router = useRouter();
 
+  const handleSwitch = (persona: Persona) => {
+    setPersona(persona);
+    onPersonaChange(persona);
+    router.refresh();
+  };
+
   const handleLogout = () => {
     ninetailed.reset();
-    // Clear shared session flag used by dashboard auth guard
-    try { localStorage.removeItem('metafi_session'); } catch {}
+    clearPersona();
+    onPersonaChange(null);
     router.push('/page/home');
   };
 
   return (
-    <Button
-      size="sm"
-      variant="outline"
-      onClick={handleLogout}
-      className="h-7 text-xs px-2 shrink-0"
-    >
-      Log Out
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className="flex items-center gap-2 h-7 rounded-none border border-border bg-card px-2.5 text-xs font-medium hover:bg-accent transition-colors shrink-0"
+          aria-label="Persona menu"
+        >
+          <span
+            className="h-2 w-2 rounded-full shrink-0"
+            style={{ background: activePersona.color }}
+            aria-hidden="true"
+          />
+          <span className="text-foreground">{activePersona.label}</span>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52 rounded-none">
+        {allPersonas.map((p) => {
+          const isActive = p.customerType === activePersona.customerType;
+          return (
+            <DropdownMenuItem
+              key={p.customerType}
+              onClick={() => !isActive && handleSwitch(p)}
+              className="gap-2 cursor-pointer"
+            >
+              <span
+                className="h-2 w-2 rounded-full shrink-0"
+                style={{ background: p.color }}
+                aria-hidden="true"
+              />
+              <span className="flex-1">
+                {p.label}
+              </span>
+              {isActive && <Check className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />}
+            </DropdownMenuItem>
+          );
+        })}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={handleLogout}
+          className="cursor-pointer text-destructive focus:text-destructive"
+        >
+          Log Out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export function DashboardTopBar() {
-  // DEMO_MODE gate — read client-side to avoid hydration mismatch
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [activePersona, setActivePersona] = useState<Persona | null>(null);
+  const [allPersonas, setAllPersonas] = useState<Persona[]>([]);
+
   useEffect(() => {
     setIsDemoMode(process.env.NEXT_PUBLIC_DEMO_MODE === 'true');
+
+    // Read active persona from localStorage
+    const persona = getPersona();
+    setActivePersona(persona);
+
+    // Fetch all personas from the API route
+    fetch('/api/dashboard-settings')
+      .then((r) => r.json())
+      .then((data: DashboardSettingsData | null) => {
+        if (!data) return;
+        const list: Persona[] = [data.personaA, data.personaB, data.personaC].filter(
+          (p): p is Persona => Boolean(p),
+        );
+        if (list.length > 0) setAllPersonas(list);
+        // If we don't have an active persona yet, try first in list
+        if (!persona && list.length > 0) {
+          setActivePersona(list[0]);
+        }
+      })
+      .catch(() => {
+        // API unavailable — keep fallback
+      });
   }, []);
 
+  // Fallback personas for when the API hasn't loaded yet
+  const personasForDropdown =
+    allPersonas.length > 0
+      ? allPersonas
+      : [
+          { name: 'Persona A', label: 'New Visitor', customerType: 'new-visitor', color: '#6366f1' },
+          { name: 'Persona B', label: 'Returning', customerType: 'returning', color: '#10b981' },
+          { name: 'Persona C', label: 'Premium', customerType: 'premium', color: '#f59e0b' },
+        ];
+
   return (
-    <header className="flex h-14 items-center gap-0 border-b border-border bg-card sticky top-0 z-40 overflow-hidden">
+    <header className="flex h-12 shrink-0 items-center gap-0 border-b border-border bg-card z-40">
       {/* Left: sidebar toggle + breadcrumb */}
       <div className="flex items-center gap-2 px-3 shrink-0">
         <SidebarTrigger className="-ml-1" />
@@ -128,31 +166,24 @@ export function DashboardTopBar() {
         <span className="text-sm font-medium text-foreground whitespace-nowrap">Dashboard</span>
       </div>
 
-      <Separator orientation="vertical" className="h-8 shrink-0" />
+      {/* Spacer */}
+      <div className="flex-1" />
 
-      {/* Center: KPI stat strip — scrollable on narrow viewports */}
-      <div className="flex items-center flex-1 overflow-x-auto scrollbar-none min-w-0">
-        <div className="flex items-center divide-x divide-border">
-          {KPI_STATS.map((stat) => (
-            <KpiStatItem
-              key={stat.label}
-              label={stat.label}
-              value={stat.value}
-              delta={stat.delta}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Right: gear (demo mode only) + logout */}
-      <div className="flex items-center gap-2 px-3 shrink-0 border-l border-border ml-auto">
+      {/* Right: persona dropdown + gear (demo mode only) */}
+      <div className="flex items-center gap-2 px-3 shrink-0 border-l border-border">
+        {activePersona && (
+          <PersonaDropdown
+            activePersona={activePersona}
+            allPersonas={personasForDropdown}
+            onPersonaChange={(p) => setActivePersona(p)}
+          />
+        )}
         {isDemoMode && (
           <>
-            <NtGearButton />
             <Separator orientation="vertical" className="h-4" />
+            <NtGearButton />
           </>
         )}
-        <DashboardLogoutButton />
       </div>
     </header>
   );

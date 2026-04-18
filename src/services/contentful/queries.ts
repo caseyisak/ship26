@@ -992,8 +992,6 @@ export const DASHBOARD_PAGE_BY_ID = `
         headerBlock { ${DASHBOARD_SLOT_FIELDS} }
         primaryBlock { ${DASHBOARD_SLOT_FIELDS} }
         secondaryBlock { ${DASHBOARD_SLOT_FIELDS} }
-        tertiaryBlock { ${DASHBOARD_SLOT_FIELDS} }
-        quaternaryBlock { ${DASHBOARD_SLOT_FIELDS} }
       }
     }
   }
@@ -1011,8 +1009,28 @@ export const DASHBOARD_PAGE_BY_SLUG = `
         headerBlock { ${DASHBOARD_SLOT_FIELDS} }
         primaryBlock { ${DASHBOARD_SLOT_FIELDS} }
         secondaryBlock { ${DASHBOARD_SLOT_FIELDS} }
-        tertiaryBlock { ${DASHBOARD_SLOT_FIELDS} }
-        quaternaryBlock { ${DASHBOARD_SLOT_FIELDS} }
+      }
+    }
+  }
+`;
+
+/** Fetch the first dashboardSettings entry (singleton pattern). */
+export const DASHBOARD_SETTINGS = `
+  query DashboardSettings($preview: Boolean) {
+    dashboardSettingsCollection(limit: 1, preview: $preview) {
+      items {
+        sys { id }
+        internalName
+        metricCard1
+        metricCard2
+        metricCard3
+        metricCard4
+        chart1
+        chart2
+        chart3
+        personaA
+        personaB
+        personaC
       }
     }
   }

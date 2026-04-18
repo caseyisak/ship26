@@ -18,8 +18,6 @@ export type DashboardPageData = {
   headerBlock?: DashboardSlot;
   primaryBlock?: DashboardSlot;
   secondaryBlock?: DashboardSlot;
-  tertiaryBlock?: DashboardSlot;
-  quaternaryBlock?: DashboardSlot;
 };
 
 /** Raw (untransformed) dashboard page — passed to useLiveUpdates so the SDK
@@ -35,10 +33,6 @@ export type DashboardPageRaw = {
   primaryBlock?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   secondaryBlock?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  tertiaryBlock?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  quaternaryBlock?: any;
 };
 
 // ── Raw response types ────────────────────────────────────────────────────────
@@ -104,8 +98,6 @@ type DashboardPageByIdResponse = {
       headerBlock?: RawSlot;
       primaryBlock?: RawSlot;
       secondaryBlock?: RawSlot;
-      tertiaryBlock?: RawSlot;
-      quaternaryBlock?: RawSlot;
     }>;
   };
 };
@@ -230,8 +222,6 @@ export async function getDashboardPageByEntryId({
       headerBlock: mapSlot(raw.headerBlock ?? null),
       primaryBlock: mapSlot(raw.primaryBlock ?? null),
       secondaryBlock: mapSlot(raw.secondaryBlock ?? null),
-      tertiaryBlock: mapSlot(raw.tertiaryBlock ?? null),
-      quaternaryBlock: mapSlot(raw.quaternaryBlock ?? null),
     };
   } catch {
     return null;
@@ -263,8 +253,6 @@ export async function getDashboardPageBySlug({
       headerBlock: mapSlot(raw.headerBlock ?? null),
       primaryBlock: mapSlot(raw.primaryBlock ?? null),
       secondaryBlock: mapSlot(raw.secondaryBlock ?? null),
-      tertiaryBlock: mapSlot(raw.tertiaryBlock ?? null),
-      quaternaryBlock: mapSlot(raw.quaternaryBlock ?? null),
     };
   } catch {
     return null;

@@ -12,10 +12,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import type { ChartData } from '@/services/contentful/dashboard-settings';
 
 // Use semantic chart colors from the theme (--chart-1 through --chart-5)
-// These are designed to be visible and distinct regardless of primary color value.
-// color-mix palette kept for reference line / secondary elements.
 const mixBase = 'var(--background)';
 const palette = {
   bar: 'var(--chart-1)',
@@ -23,25 +22,49 @@ const palette = {
   legend: 'var(--chart-1)',
 };
 
-const data = [
-  { month: 'Oct', views: 3200, published: 18 },
-  { month: 'Nov', views: 4100, published: 22 },
-  { month: 'Dec', views: 3800, published: 15 },
-  { month: 'Jan', views: 5200, published: 29 },
-  { month: 'Feb', views: 4800, published: 24 },
-  { month: 'Mar', views: 6100, published: 31 },
-  { month: 'Apr', views: 5700, published: 27 },
+// Fallback data used when no Contentful chartData is provided
+const FALLBACK_DATA = [
+  { label: 'Oct', views: 3200 },
+  { label: 'Nov', views: 4100 },
+  { label: 'Dec', views: 3800 },
+  { label: 'Jan', views: 5200 },
+  { label: 'Feb', views: 4800 },
+  { label: 'Mar', views: 6100 },
+  { label: 'Apr', views: 5700 },
 ];
 
-const TARGET_VIEWS = 5000;
+const FALLBACK_CONFIG = {
+  title: 'Content Performance',
+  subtitle: 'Monthly page views with target reference',
+  dataKey: 'views',
+  targetValue: 5000,
+  targetLabel: 'Target',
+};
 
-export function ContentPerformanceChart() {
+type Props = {
+  chartData?: ChartData | null;
+};
+
+export function ContentPerformanceChart({ chartData }: Props) {
+  const title = chartData?.title ?? FALLBACK_CONFIG.title;
+  const subtitle = chartData?.subtitle ?? FALLBACK_CONFIG.subtitle;
+  const dataKey = chartData?.dataKey ?? FALLBACK_CONFIG.dataKey;
+  const targetValue = chartData?.targetValue ?? FALLBACK_CONFIG.targetValue;
+  const targetLabel = chartData?.targetLabel ?? FALLBACK_CONFIG.targetLabel;
+  const data = chartData?.data ?? FALLBACK_DATA;
+
+  // Remap data: use "label" key as the X-axis category key (recharts needs a named key)
+  const chartPoints = data.map((pt) => ({
+    month: pt.label,
+    ...pt,
+  }));
+
   const springValue = useSpring(0, { stiffness: 60, damping: 18 });
   const [refLineY, setRefLineY] = useState(0);
 
   useEffect(() => {
-    springValue.set(TARGET_VIEWS);
-  }, [springValue]);
+    springValue.set(targetValue ?? 0);
+  }, [springValue, targetValue]);
 
   useMotionValueEvent(springValue, 'change', (latest) => {
     setRefLineY(Math.round(latest));
@@ -51,10 +74,10 @@ export function ContentPerformanceChart() {
     <div className="bg-card border border-border rounded-none p-5 flex flex-col gap-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-foreground">Content Performance</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Monthly page views with target reference
-          </p>
+          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+          {subtitle && (
+            <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>
+          )}
         </div>
         <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
           <span className="flex items-center gap-1.5">
@@ -62,13 +85,13 @@ export function ContentPerformanceChart() {
               className="inline-block h-2 w-2 rounded-sm"
               style={{ background: palette.legend }}
             />
-            Page Views
+            {chartData?.label ?? 'Page Views'}
           </span>
         </div>
       </div>
 
       <ResponsiveContainer width="100%" height={220}>
-        <BarChart data={data} barCategoryGap="35%">
+        <BarChart data={chartPoints} barCategoryGap="35%">
           <CartesianGrid
             strokeDasharray="3 3"
             stroke="var(--border)"
@@ -97,18 +120,20 @@ export function ContentPerformanceChart() {
             itemStyle={{ color: 'var(--muted-foreground)' }}
             cursor={{ fill: 'var(--muted)', opacity: 0.5 }}
           />
-          <ReferenceLine
-            y={refLineY}
-            stroke={palette.refLine}
-            strokeDasharray="4 3"
-            label={{
-              value: `Target ${TARGET_VIEWS.toLocaleString()}`,
-              fill: 'var(--muted-foreground)',
-              fontSize: 10,
-              position: 'insideTopRight',
-            }}
-          />
-          <Bar dataKey="views" fill={palette.bar} radius={0} />
+          {targetValue != null && (
+            <ReferenceLine
+              y={refLineY}
+              stroke={palette.refLine}
+              strokeDasharray="4 3"
+              label={{
+                value: `${targetLabel} ${targetValue.toLocaleString()}`,
+                fill: 'var(--muted-foreground)',
+                fontSize: 10,
+                position: 'insideTopRight',
+              }}
+            />
+          )}
+          <Bar dataKey={dataKey} fill={palette.bar} radius={0} />
         </BarChart>
       </ResponsiveContainer>
     </div>
