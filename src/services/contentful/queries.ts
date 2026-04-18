@@ -918,6 +918,9 @@ const DASHBOARD_SLOT_FIELDS = `
     variant
     colorVariant
     sectionStyle
+    ntExperiencesCollection(limit: 10) {
+      items { ${NT_EXPERIENCE_FIELDS} }
+    }
   }
   ... on FeatureItem {
     titleRt {

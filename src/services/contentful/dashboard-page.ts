@@ -86,6 +86,9 @@ type RawSlot = {
   ctaSecondaryLabelRt?: { json: Record<string, unknown> } | null;
   ctaSecondaryUrl?: string | null;
   backgroundImage?: { url?: string; width?: number; height?: number; description?: string } | null;
+  // NT fields
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ntExperiencesCollection?: { items: any[] } | null;
 } | null;
 
 type DashboardPageByIdResponse = {
@@ -122,6 +125,7 @@ export function mapSlot(raw: RawSlot): DashboardSlot {
       sectionStyle: raw.sectionStyle as string | null | undefined,
       game: null,
       media: null,
+      ntExperiencesCollection: raw.ntExperiencesCollection ?? null,
     } satisfies BannerFragment;
   }
 
