@@ -125,6 +125,7 @@ Industry: Any | Personas: VP Digital, Marketing Ops, SE
 | Loop | One-line | Build type | Personas | Promotion | Complexity |
 |---|---|---|---|---|---|
 | [Loop A — Pricing Merge Tags](#sandbox-loop-a) | One feature bullet updates with prospect's industry/company name via NT merge tag — no duplicate entries | net-new | VP digital, marketing ops, SE | candidate | Low |
+| [Loop B — Dashboard Personas](#sandbox-loop-b) | Log in as any of 3 customer tiers — dashboard content slots swap per persona with zero dev work | net-new | VP digital/CX, marketing ops, head of personalization, SE | sandbox | Medium |
 
 ---
 
@@ -139,6 +140,28 @@ Industry: Any | Personas: VP Digital, Marketing Ops, SE
 **Content types:** `pricingSection`, `pricingPlan`, `pricingPlanFeature`, `nt_experience`, `nt_audience` | **OOTB:** Personalization App (NT), Live Preview
 
 **Loop file:** `demo-loops/sandbox/loops/loop-a-pricing-merge-tags/LOOP.md`
+
+---
+
+### Sandbox Loop B — Dashboard Personas {#sandbox-loop-b}
+
+**Pain signals:** "We want to show personalized dashboards per customer tier", "Our portal looks the same for every user regardless of their plan", "We can't show different content to new vs returning customers without dev work", "We need a way to demo what the logged-in experience looks like for different personas"
+
+**What it shows:** A logged-in dashboard with 3 content slots (headerBlock, primaryBlock, secondaryBlock) that swap per customer persona — New Visitor, Returning Customer, Premium User — using NT audience targeting. KPI cards and chart data are driven by a `dashboardSettings` JSON entry that simulates an internal API. Content editors control all post-login content from Contentful.
+
+**Key demo moment:** Switch persona in dashboard top bar → NT `identify()` fires → content slots update instantly → open `dashboardSettings` JSON entry → *"This is what normally comes from an internal API. Your team controls the narrative around it."*
+
+**Persona mapping:**
+
+| Persona | Display Name | customerType trait | NT Audience |
+|---|---|---|---|
+| A | New Visitor | `new-visitor` | Customer Type — New Visitor |
+| B | Returning Customer | `returning` | Customer Type — Returning |
+| C | Premium User | `premium` | Customer Type — Premium |
+
+**Content types:** `dashboardPage`, `dashboardSettings`, `banner` | **OOTB:** Personalization App (NT), Live Preview
+
+**Loop file:** `demo-loops/sandbox/loops/loop-b-dashboard-personas/LOOP.md`
 
 ---
 
