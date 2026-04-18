@@ -1,4 +1,4 @@
-import { Facebook, Linkedin, Twitter } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -33,9 +33,9 @@ const columns = [
 ];
 
 const socials = [
-  { Icon: Linkedin, href: 'https://linkedin.com' },
-  { Icon: Twitter, href: 'https://twitter.com' },
-  { Icon: Facebook, href: 'https://facebook.com' },
+  { Icon: Globe, href: 'https://linkedin.com' },
+  { Icon: Globe, href: 'https://twitter.com' },
+  { Icon: Globe, href: 'https://facebook.com' },
 ];
 
 export const Footer = () => {
