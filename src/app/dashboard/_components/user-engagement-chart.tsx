@@ -1,5 +1,7 @@
 'use client';
 
+// Use semantic chart colors (--chart-1, --chart-2) so the chart is visible
+// regardless of the --primary color value (which may be near-black in light mode).
 import {
   AreaChart,
   Area,
@@ -33,11 +35,17 @@ export function UserEngagementChart() {
         </div>
         <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
           <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-2 rounded-sm bg-primary" />
+            <span
+              className="inline-block h-2 w-2 rounded-sm"
+              style={{ background: 'var(--chart-2)' }}
+            />
             All Sessions
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-2 rounded-sm bg-muted-foreground/50" />
+            <span
+              className="inline-block h-2 w-2 rounded-sm"
+              style={{ background: 'var(--chart-3)' }}
+            />
             Returning
           </span>
         </div>
@@ -46,22 +54,13 @@ export function UserEngagementChart() {
       <ResponsiveContainer width="100%" height={220}>
         <AreaChart data={data}>
           <defs>
-            {/* eslint-disable-next-line react/no-unknown-property */}
             <linearGradient id="gradSessions" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.25} />
-              <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
+              <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="var(--chart-2)" stopOpacity={0} />
             </linearGradient>
             <linearGradient id="gradReturning" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor="var(--muted-foreground)"
-                stopOpacity={0.2}
-              />
-              <stop
-                offset="95%"
-                stopColor="var(--muted-foreground)"
-                stopOpacity={0}
-              />
+              <stop offset="5%" stopColor="var(--chart-3)" stopOpacity={0.25} />
+              <stop offset="95%" stopColor="var(--chart-3)" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid
@@ -94,14 +93,14 @@ export function UserEngagementChart() {
           <Area
             type="monotone"
             dataKey="sessions"
-            stroke="var(--primary)"
+            stroke="var(--chart-2)"
             strokeWidth={2}
             fill="url(#gradSessions)"
           />
           <Area
             type="monotone"
             dataKey="returning"
-            stroke="var(--muted-foreground)"
+            stroke="var(--chart-3)"
             strokeWidth={2}
             fill="url(#gradReturning)"
           />

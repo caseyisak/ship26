@@ -52,12 +52,13 @@ export function GenericDashboard({ page }: Props) {
           <section aria-label="Key metrics">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
               {KPI_STATS.map((stat) => (
-                <KpiStatCard
-                  key={stat.label}
-                  label={stat.label}
-                  value={stat.value}
-                  delta={stat.delta}
-                />
+                <div key={stat.label} className="min-w-0 overflow-hidden">
+                  <KpiStatCard
+                    label={stat.label}
+                    value={stat.value}
+                    delta={stat.delta}
+                  />
+                </div>
               ))}
             </div>
           </section>
@@ -71,13 +72,15 @@ export function GenericDashboard({ page }: Props) {
 
           {/* Primary + Secondary two-column Contentful grid */}
           <section aria-label="Personalized content blocks">
-            <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
               {/* Primary slot — main personalization zone */}
-              <div>
+              <div className="min-w-0 overflow-hidden border border-border bg-card rounded-none">
                 {page?.primaryBlock ? (
-                  <BlockRenderer data={page.primaryBlock} />
+                  <div className="w-full max-w-full overflow-hidden [&>*]:!w-full [&>*]:!max-w-full">
+                    <BlockRenderer data={page.primaryBlock} />
+                  </div>
                 ) : (
-                  <div className="border border-border bg-card p-10 text-center rounded-none">
+                  <div className="p-10 text-center">
                     <p className="text-muted-foreground text-sm">
                       No primary content configured. Link a block to the{' '}
                       <code className="font-mono text-xs bg-muted px-1">primaryBlock</code>{' '}
@@ -88,11 +91,13 @@ export function GenericDashboard({ page }: Props) {
               </div>
 
               {/* Secondary slot — supplemental / sidebar zone */}
-              <div>
+              <div className="min-w-0 overflow-hidden border border-border bg-card rounded-none">
                 {page?.secondaryBlock ? (
-                  <BlockRenderer data={page.secondaryBlock} />
+                  <div className="w-full max-w-full overflow-hidden [&>*]:!w-full [&>*]:!max-w-full">
+                    <BlockRenderer data={page.secondaryBlock} />
+                  </div>
                 ) : (
-                  <div className="border border-border bg-card p-8 text-center rounded-none">
+                  <div className="p-8 text-center">
                     <p className="text-muted-foreground text-sm">
                       No secondary content configured.
                     </p>

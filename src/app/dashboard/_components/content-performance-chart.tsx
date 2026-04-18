@@ -13,11 +13,14 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+// Use semantic chart colors from the theme (--chart-1 through --chart-5)
+// These are designed to be visible and distinct regardless of primary color value.
+// color-mix palette kept for reference line / secondary elements.
 const mixBase = 'var(--background)';
 const palette = {
-  primary: 'var(--primary)',
-  secondary: `color-mix(in oklch, var(--primary) 75%, ${mixBase})`,
-  tertiary: `color-mix(in oklch, var(--primary) 55%, ${mixBase})`,
+  bar: 'var(--chart-1)',
+  refLine: `color-mix(in oklch, var(--chart-1) 55%, ${mixBase})`,
+  legend: 'var(--chart-1)',
 };
 
 const data = [
@@ -57,7 +60,7 @@ export function ContentPerformanceChart() {
           <span className="flex items-center gap-1.5">
             <span
               className="inline-block h-2 w-2 rounded-sm"
-              style={{ background: palette.primary }}
+              style={{ background: palette.legend }}
             />
             Page Views
           </span>
@@ -96,7 +99,7 @@ export function ContentPerformanceChart() {
           />
           <ReferenceLine
             y={refLineY}
-            stroke={palette.tertiary}
+            stroke={palette.refLine}
             strokeDasharray="4 3"
             label={{
               value: `Target ${TARGET_VIEWS.toLocaleString()}`,
@@ -105,7 +108,7 @@ export function ContentPerformanceChart() {
               position: 'insideTopRight',
             }}
           />
-          <Bar dataKey="views" fill={palette.primary} radius={0} />
+          <Bar dataKey="views" fill={palette.bar} radius={0} />
         </BarChart>
       </ResponsiveContainer>
     </div>

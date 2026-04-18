@@ -25,7 +25,7 @@ export function KpiStatCard({
   const isUp = delta >= 0;
 
   return (
-    <div className="bg-card flex flex-col gap-1 border border-border p-4 rounded-none">
+    <div className="bg-card flex flex-col gap-1 border border-border p-4 rounded-none min-w-0 overflow-hidden">
       <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
         {label}
       </p>

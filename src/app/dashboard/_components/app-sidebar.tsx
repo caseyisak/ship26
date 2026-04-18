@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -36,10 +37,15 @@ const NAV_ITEMS = [
   { label: 'Support', href: '/dashboard/support', icon: HeadphonesIcon },
 ];
 
-const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
-
 export function AppSidebar() {
   const pathname = usePathname();
+  // Read DEMO_MODE client-side to avoid server/client hydration mismatch
+  // (process.env is serialised at build time; reading it in a useEffect avoids
+  //  the conditional-render tree-shape mismatch that causes React hydration errors)
+  const [isDemoMode, setIsDemoMode] = useState(false);
+  useEffect(() => {
+    setIsDemoMode(process.env.NEXT_PUBLIC_DEMO_MODE === 'true');
+  }, []);
 
   return (
     <Sidebar collapsible="icon">
@@ -84,16 +90,18 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      {isDemoMode && (
-        <SidebarFooter className="border-t border-sidebar-border p-3 group-data-[collapsible=icon]:hidden">
+      {/* SidebarFooter always rendered to keep React tree shape consistent.
+          Content is gated by isDemoMode which is set client-side after hydration. */}
+      <SidebarFooter className="border-t border-sidebar-border p-3 group-data-[collapsible=icon]:hidden">
+        {isDemoMode && (
           <div className="flex flex-col gap-2">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Demo Personas
             </span>
             <PersonaSwitcher />
           </div>
-        </SidebarFooter>
-      )}
+        )}
+      </SidebarFooter>
 
       <SidebarRail />
     </Sidebar>
