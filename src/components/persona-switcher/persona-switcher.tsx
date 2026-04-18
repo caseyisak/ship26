@@ -1,6 +1,7 @@
 'use client';
 
 import { useNinetailed } from '@ninetailed/experience.js-react';
+import { NT_AUDIENCES } from '@/config/nt-audiences';
 
 /**
  * PersonaSwitcher — demo-mode only component.
@@ -10,14 +11,11 @@ import { useNinetailed } from '@ninetailed/experience.js-react';
  *   2. Calls window.ninetailed.plugins.preview.activateAudience() to force local variant swap
  *      (per LL-024 — this is the only API that reliably triggers variant evaluation client-side)
  *
- * Only visible when NEXT_PUBLIC_DEMO_MODE=true OR running in dev/preview environments
- * (detected by the absence of a production host check). Gate is enforced by the parent
+ * Only visible when NEXT_PUBLIC_DEMO_MODE=true. Gate is enforced by the parent
  * component that conditionally renders this — not inline here.
  *
- * Persona map (must match NT audiences created in Contentful NT app):
- *   Persona A — customerType: new-visitor  → "Customer Type — New Visitor"
- *   Persona B — customerType: returning    → "Customer Type — Returning"
- *   Persona C — customerType: premium      → "Customer Type — Premium"
+ * Audience IDs come from src/config/nt-audiences.ts (injected via NEXT_PUBLIC_NT_AUDIENCE_* env vars).
+ * Source of truth for IDs + persona map: demo-loops/nt-audiences.md
  */
 
 type Persona = {
@@ -27,25 +25,23 @@ type Persona = {
   color: string;
 };
 
-// Audience IDs must be set after creating audiences in the NT app.
-// Replace these placeholder IDs once audiences are created in Contentful.
 export const PERSONAS: Persona[] = [
   {
     label: 'Persona A',
     customerType: 'new-visitor',
-    audienceId: process.env.NEXT_PUBLIC_NT_AUDIENCE_NEW_VISITOR ?? '',
+    audienceId: NT_AUDIENCES.newVisitor,
     color: 'bg-blue-500 hover:bg-blue-600',
   },
   {
     label: 'Persona B',
     customerType: 'returning',
-    audienceId: process.env.NEXT_PUBLIC_NT_AUDIENCE_RETURNING ?? '',
+    audienceId: NT_AUDIENCES.returning,
     color: 'bg-emerald-500 hover:bg-emerald-600',
   },
   {
     label: 'Persona C',
     customerType: 'premium',
-    audienceId: process.env.NEXT_PUBLIC_NT_AUDIENCE_PREMIUM ?? '',
+    audienceId: NT_AUDIENCES.premium,
     color: 'bg-purple-500 hover:bg-purple-600',
   },
 ];
