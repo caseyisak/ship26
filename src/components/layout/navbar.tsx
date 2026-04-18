@@ -4,7 +4,7 @@ import { useNinetailed } from '@ninetailed/experience.js-react';
 import { Settings } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -13,21 +13,17 @@ import { useSettings } from '@/personalization/settings-context';
 
 import { LoginModal } from './login-modal';
 
+// Gear icon — navigates to the dashboard (entry point into the app from the marketing site)
 function PersonalizationToggle({ className }: { className?: string }) {
-  const handleClick = () => {
-    (
-      window as unknown as {
-        ninetailed?: { plugins?: { preview?: { toggle?: () => void } } };
-      }
-    ).ninetailed?.plugins?.preview?.toggle?.();
-  };
+  const router = useRouter();
   return (
     <Button
       size="sm"
       variant="outline"
-      onClick={handleClick}
+      onClick={() => router.push('/dashboard')}
       className={cn('px-2', className)}
-      aria-label="Open personalization panel"
+      aria-label="Go to dashboard"
+      title="Dashboard"
     >
       <Settings className="h-4 w-4" />
     </Button>
@@ -60,12 +56,15 @@ function LoginButton({
   const handleLogin = () => {
     setIsLoggedIn(true);
     setModalOpen(false);
+    // Persist session for dashboard auth guard
+    try { localStorage.setItem('metafi_session', '1'); } catch {}
     afterAction?.();
   };
 
   const handleLogout = () => {
     ninetailed.reset();
     setIsLoggedIn(false);
+    try { localStorage.removeItem('metafi_session'); } catch {}
     afterAction?.();
   };
 
@@ -78,6 +77,11 @@ function LoginButton({
         <span className="text-foreground hidden text-sm font-medium sm:inline">
           {firstName}
         </span>
+        <Link href="/dashboard">
+          <Button size="sm" variant="default">
+            Dashboard
+          </Button>
+        </Link>
         <Button size="sm" variant="outline" onClick={handleLogout}>
           Log Out
         </Button>

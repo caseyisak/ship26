@@ -992,6 +992,8 @@ export const DASHBOARD_PAGE_BY_ID = `
         headerBlock { ${DASHBOARD_SLOT_FIELDS} }
         primaryBlock { ${DASHBOARD_SLOT_FIELDS} }
         secondaryBlock { ${DASHBOARD_SLOT_FIELDS} }
+        tertiaryBlock { ${DASHBOARD_SLOT_FIELDS} }
+        quaternaryBlock { ${DASHBOARD_SLOT_FIELDS} }
       }
     }
   }
@@ -1009,6 +1011,8 @@ export const DASHBOARD_PAGE_BY_SLUG = `
         headerBlock { ${DASHBOARD_SLOT_FIELDS} }
         primaryBlock { ${DASHBOARD_SLOT_FIELDS} }
         secondaryBlock { ${DASHBOARD_SLOT_FIELDS} }
+        tertiaryBlock { ${DASHBOARD_SLOT_FIELDS} }
+        quaternaryBlock { ${DASHBOARD_SLOT_FIELDS} }
       }
     }
   }

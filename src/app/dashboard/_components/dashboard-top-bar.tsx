@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { JetBrains_Mono } from 'next/font/google';
 import { Settings, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { useNinetailed } from '@ninetailed/experience.js-react';
@@ -8,9 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-import { LoginModal } from '@/components/layout/login-modal';
-import { useSettings } from '@/personalization/settings-context';
-import { PERSONAS } from '@/components/persona-switcher';
 
 const jetBrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -66,7 +64,7 @@ function KpiStatItem({
   );
 }
 
-// Gear button — calls window.ninetailed.plugins.preview.toggle() (same as main navbar)
+// Gear button — opens the NT personalization panel via the preview plugin
 function NtGearButton() {
   const handleClick = () => {
     (
@@ -88,106 +86,34 @@ function NtGearButton() {
   );
 }
 
-// Persona pills — compact A/B/C buttons
-type WindowNT = {
-  ninetailed?: {
-    plugins?: {
-      preview?: {
-        activateAudience: (id: string) => void;
-        resetAudience: (id: string) => void;
-      };
-    };
-  };
-};
-
-function PersonaPills() {
+// Logout button — clears session, resets NT profile, redirects to /page/home
+function DashboardLogoutButton() {
   const ninetailed = useNinetailed();
-  const allAudienceIds = PERSONAS.map((p) => p.audienceId);
-
-  const handlePersona = async (persona: typeof PERSONAS[0]) => {
-    await ninetailed.identify('visitor', { customerType: persona.customerType });
-    const win = window as unknown as WindowNT;
-    const preview = win.ninetailed?.plugins?.preview;
-    if (!preview) return;
-    allAudienceIds.forEach((id) => { if (id) preview.resetAudience(id); });
-    if (persona.audienceId) preview.activateAudience(persona.audienceId);
-  };
-
-  return (
-    <div className="flex items-center gap-1 shrink-0">
-      {PERSONAS.map((persona) => (
-        <button
-          key={persona.customerType}
-          onClick={() => handlePersona(persona)}
-          className={cn(
-            'text-white text-[10px] font-bold px-2 py-1 leading-none rounded-sm transition-colors shrink-0',
-            persona.color,
-          )}
-          title={`Simulate ${persona.label} (${persona.customerType})`}
-        >
-          {persona.label.replace('Persona ', '')}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-// Login/logout — mirrors the main site nav button
-function DashboardLoginButton() {
-  const ninetailed = useNinetailed();
-  const settings = useSettings();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const metadata = settings?.loggedInMetadata as Record<string, unknown> | null | undefined;
-  const initials =
-    [metadata?.firstName, metadata?.lastName]
-      .filter(Boolean)
-      .map((n) => (n as string)[0].toUpperCase())
-      .join('') || 'U';
-
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    setModalOpen(false);
-  };
+  const router = useRouter();
 
   const handleLogout = () => {
     ninetailed.reset();
-    setIsLoggedIn(false);
+    // Clear shared session flag used by dashboard auth guard
+    try { localStorage.removeItem('metafi_session'); } catch {}
+    router.push('/page/home');
   };
 
-  if (isLoggedIn) {
-    return (
-      <div className="flex items-center gap-1.5 shrink-0">
-        <div className="bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold">
-          {initials}
-        </div>
-        <Button size="sm" variant="outline" onClick={handleLogout} className="h-7 text-xs px-2">
-          Log Out
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => setModalOpen(true)}
-        className="h-7 text-xs px-2 shrink-0"
-      >
-        Login
-      </Button>
-      <LoginModal open={modalOpen} onOpenChange={setModalOpen} onLogin={handleLogin} />
-    </>
+    <Button
+      size="sm"
+      variant="outline"
+      onClick={handleLogout}
+      className="h-7 text-xs px-2 shrink-0"
+    >
+      Log Out
+    </Button>
   );
 }
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export function DashboardTopBar() {
-  // Read DEMO_MODE client-side to avoid hydration mismatch
+  // DEMO_MODE gate — read client-side to avoid hydration mismatch
   const [isDemoMode, setIsDemoMode] = useState(false);
   useEffect(() => {
     setIsDemoMode(process.env.NEXT_PUBLIC_DEMO_MODE === 'true');
@@ -218,17 +144,15 @@ export function DashboardTopBar() {
         </div>
       </div>
 
-      {/* Right: gear + personas + login */}
+      {/* Right: gear (demo mode only) + logout */}
       <div className="flex items-center gap-2 px-3 shrink-0 border-l border-border ml-auto">
         {isDemoMode && (
           <>
             <NtGearButton />
             <Separator orientation="vertical" className="h-4" />
-            <PersonaPills />
-            <Separator orientation="vertical" className="h-4" />
           </>
         )}
-        <DashboardLoginButton />
+        <DashboardLogoutButton />
       </div>
     </header>
   );
