@@ -1,18 +1,23 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import type { PersonaData } from '@/services/contentful/dashboard-settings';
+import type { Persona } from '@/lib/persona-session';
 import { setPersona } from '@/lib/persona-session';
 
 type Props = {
-  personas: Array<PersonaData & { key: string }>;
+  personas: Array<Persona & { key: string }>;
+  /** Called after sign-in completes — use to close a parent modal. */
+  onSuccess?: () => void;
 };
 
-export function PersonaButtons({ personas }: Props) {
+export function PersonaButtons({ personas, onSuccess }: Props) {
   const router = useRouter();
 
-  const handleSignIn = (persona: PersonaData) => {
+  const handleSignIn = (persona: Persona) => {
     setPersona(persona);
+    if (onSuccess) {
+      onSuccess();
+    }
     router.push('/dashboard');
   };
 

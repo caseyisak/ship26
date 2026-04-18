@@ -16,7 +16,11 @@ const FALLBACK_METRICS = [
   { label: 'Conversion Rate', value: '4.7%', delta: 21 },
 ];
 
-type Props = { page: DashboardPageData | null; settings?: DashboardSettingsData | null };
+type Props = {
+  page: DashboardPageData | null;
+  settings?: DashboardSettingsData | null;
+  loggedInMetadata?: Record<string, unknown> | null;
+};
 
 /**
  * GenericDashboard — Contentful-driven dashboard layout.
@@ -37,7 +41,7 @@ type Props = { page: DashboardPageData | null; settings?: DashboardSettingsData 
  * Chart data: driven by dashboardSettings JSON fields (chart1, chart2, chart3).
  * KPI metric cards: driven by dashboardSettings.metricCard1-4.
  */
-export function GenericDashboard({ page, settings }: Props) {
+export function GenericDashboard({ page, settings, loggedInMetadata }: Props) {
   // Build metric cards from settings or fallback
   const metricCards = settings
     ? [settings.metricCard1, settings.metricCard2, settings.metricCard3, settings.metricCard4].filter(
@@ -47,10 +51,13 @@ export function GenericDashboard({ page, settings }: Props) {
 
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar
+        siteTitle={settings?.siteTitle ?? 'Metafi'}
+        siteHomeUrl={settings?.siteHomeUrl ?? '/page/home'}
+      />
       {/* SidebarInset: fills remaining width beside sidebar */}
       <SidebarInset className="flex flex-col min-h-screen">
-        <DashboardTopBar />
+        <DashboardTopBar loggedInMetadata={loggedInMetadata ?? null} />
 
         {/* Main content — scrolls naturally, no viewport-fit constraint */}
         <div className="flex flex-col gap-4 p-4">

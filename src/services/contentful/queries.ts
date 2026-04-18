@@ -1028,9 +1028,8 @@ export const DASHBOARD_SETTINGS = `
         chart1
         chart2
         chart3
-        personaA
-        personaB
-        personaC
+        siteTitle
+        siteHomeUrl
       }
     }
   }

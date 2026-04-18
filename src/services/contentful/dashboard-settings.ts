@@ -3,13 +3,6 @@ import { DASHBOARD_SETTINGS } from './queries';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-export type PersonaData = {
-  name: string;
-  label: string;
-  customerType: string;
-  color: string;
-};
-
 export type MetricCardData = {
   label: string;
   value: string;
@@ -41,6 +34,8 @@ export type ChartData = {
 export type DashboardSettingsData = {
   sys: { id: string };
   internalName: string;
+  siteTitle?: string | null;
+  siteHomeUrl?: string | null;
   metricCard1?: MetricCardData | null;
   metricCard2?: MetricCardData | null;
   metricCard3?: MetricCardData | null;
@@ -48,9 +43,6 @@ export type DashboardSettingsData = {
   chart1?: ChartData | null;
   chart2?: ChartData | null;
   chart3?: ChartData | null;
-  personaA?: PersonaData | null;
-  personaB?: PersonaData | null;
-  personaC?: PersonaData | null;
 };
 
 // ── Response type ─────────────────────────────────────────────────────────────
@@ -60,6 +52,8 @@ type DashboardSettingsResponse = {
     items: Array<{
       sys: { id: string };
       internalName: string;
+      siteTitle?: string | null;
+      siteHomeUrl?: string | null;
       metricCard1?: MetricCardData | null;
       metricCard2?: MetricCardData | null;
       metricCard3?: MetricCardData | null;
@@ -67,9 +61,6 @@ type DashboardSettingsResponse = {
       chart1?: ChartData | null;
       chart2?: ChartData | null;
       chart3?: ChartData | null;
-      personaA?: PersonaData | null;
-      personaB?: PersonaData | null;
-      personaC?: PersonaData | null;
     }>;
   };
 };

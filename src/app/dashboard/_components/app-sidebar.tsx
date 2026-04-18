@@ -2,14 +2,15 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Home } from 'lucide-react';
 import {
-  Home,
   CreditCard,
   Settings,
   ArrowUpCircle,
   Layers,
   HeadphonesIcon,
   BarChart3,
+  LayoutDashboard,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -25,7 +26,7 @@ import {
 } from '@/components/ui/sidebar';
 
 const NAV_ITEMS = [
-  { label: 'Overview', href: '/dashboard', icon: Home },
+  { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   { label: 'Billing', href: '/dashboard/billing', icon: CreditCard },
   { label: 'Upgrades', href: '/dashboard/upgrade', icon: ArrowUpCircle },
@@ -34,24 +35,33 @@ const NAV_ITEMS = [
   { label: 'Support', href: '/dashboard/support', icon: HeadphonesIcon },
 ];
 
+type AppSidebarProps = {
+  siteTitle?: string;
+  siteHomeUrl?: string;
+};
+
 /**
- * AppSidebar — collapsible icon sidebar with Metafi brand + nav items.
- * Persona switcher has been moved to the top header bar (DashboardTopBar).
+ * AppSidebar — collapsible icon sidebar with site branding + nav items.
+ * siteTitle/siteHomeUrl come from dashboardSettings so editors can change them.
  */
-export function AppSidebar() {
+export function AppSidebar({ siteTitle = 'Metafi', siteHomeUrl = '/page/home' }: AppSidebarProps) {
   const pathname = usePathname();
+  const initial = siteTitle.charAt(0).toUpperCase();
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border py-4 px-4">
-        <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
+        <Link
+          href={siteHomeUrl}
+          className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center hover:opacity-80 transition-opacity"
+        >
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-primary text-primary-foreground font-bold text-xs">
-            M
+            {initial}
           </div>
           <span className="font-semibold text-sm text-sidebar-foreground group-data-[collapsible=icon]:hidden">
-            Metafi
+            {siteTitle}
           </span>
-        </div>
+        </Link>
       </SidebarHeader>
 
       <SidebarContent>

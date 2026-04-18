@@ -1,27 +1,24 @@
 import Image from 'next/image';
-import { getDashboardSettings } from '@/services/contentful/dashboard-settings';
+import { getSettings } from '@/services/contentful/settings';
 import { PersonaButtons } from './persona-buttons';
-import type { PersonaData } from '@/services/contentful/dashboard-settings';
+import type { Persona } from '@/lib/persona-session';
 
 export const revalidate = 60;
 
-// Fallback personas used if Contentful is unreachable
-const FALLBACK_PERSONAS: Array<PersonaData & { key: string }> = [
+const FALLBACK_PERSONAS: Array<Persona & { key: string }> = [
   { key: 'A', name: 'Persona A', label: 'New Visitor', customerType: 'new-visitor', color: '#6366f1' },
-  { key: 'B', name: 'Persona B', label: 'Returning', customerType: 'returning', color: '#10b981' },
-  { key: 'C', name: 'Persona C', label: 'Premium', customerType: 'premium', color: '#f59e0b' },
+  { key: 'B', name: 'Persona B', label: 'Returning Customer', customerType: 'returning', color: '#10b981' },
+  { key: 'C', name: 'Persona C', label: 'Premium User', customerType: 'premium', color: '#f59e0b' },
 ];
 
 export default async function LoginPage() {
-  const settings = await getDashboardSettings();
+  const settings = await getSettings();
+  const rawPersonas = settings?.loggedInMetadata?.personas as Array<Persona> | undefined;
 
-  const personas: Array<PersonaData & { key: string }> = settings
-    ? [
-        settings.personaA && { ...settings.personaA, key: 'A' },
-        settings.personaB && { ...settings.personaB, key: 'B' },
-        settings.personaC && { ...settings.personaC, key: 'C' },
-      ].filter((p): p is PersonaData & { key: string } => Boolean(p))
-    : FALLBACK_PERSONAS;
+  const personas: Array<Persona & { key: string }> =
+    rawPersonas && rawPersonas.length > 0
+      ? rawPersonas.map((p, i) => ({ ...p, key: String.fromCharCode(65 + i) }))
+      : FALLBACK_PERSONAS;
 
   return (
     <section className="bg-background min-h-screen flex items-center justify-center px-6">

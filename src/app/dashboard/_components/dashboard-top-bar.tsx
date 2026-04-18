@@ -14,9 +14,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { clearPersona, getPersona, setPersona } from '@/lib/persona-session';
 import type { Persona } from '@/lib/persona-session';
-import type { DashboardSettingsData } from '@/services/contentful/dashboard-settings';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+
+const FALLBACK_PERSONAS: Persona[] = [
+  { name: 'Persona A', label: 'New Visitor', customerType: 'new-visitor', color: '#6366f1' },
+  { name: 'Persona B', label: 'Returning Customer', customerType: 'returning', color: '#10b981' },
+  { name: 'Persona C', label: 'Premium User', customerType: 'premium', color: '#f59e0b' },
+];
 
 // Gear button — opens the NT personalization panel via the preview plugin
 function NtGearButton() {
@@ -40,12 +45,14 @@ function NtGearButton() {
   );
 }
 
-// Persona dropdown — shows active persona, allows switching, log out
+// Persona dropdown — shows displayName as trigger, personas as items, log out
 function PersonaDropdown({
+  displayName,
   activePersona,
   allPersonas,
   onPersonaChange,
 }: {
+  displayName: string;
   activePersona: Persona;
   allPersonas: Persona[];
   onPersonaChange: (p: Persona | null) => void;
@@ -71,14 +78,14 @@ function PersonaDropdown({
       <DropdownMenuTrigger asChild>
         <button
           className="flex items-center gap-2 h-7 rounded-none border border-border bg-card px-2.5 text-xs font-medium hover:bg-accent transition-colors shrink-0"
-          aria-label="Persona menu"
+          aria-label="Account menu"
         >
           <span
             className="h-2 w-2 rounded-full shrink-0"
             style={{ background: activePersona.color }}
             aria-hidden="true"
           />
-          <span className="text-foreground">{activePersona.label}</span>
+          <span className="text-foreground">{displayName}</span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52 rounded-none">
@@ -95,9 +102,7 @@ function PersonaDropdown({
                 style={{ background: p.color }}
                 aria-hidden="true"
               />
-              <span className="flex-1">
-                {p.label}
-              </span>
+              <span className="flex-1">{p.label}</span>
               {isActive && <Check className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />}
             </DropdownMenuItem>
           );
@@ -116,46 +121,26 @@ function PersonaDropdown({
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 
-export function DashboardTopBar() {
+type Props = {
+  loggedInMetadata: Record<string, unknown> | null;
+};
+
+export function DashboardTopBar({ loggedInMetadata }: Props) {
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [activePersona, setActivePersona] = useState<Persona | null>(null);
-  const [allPersonas, setAllPersonas] = useState<Persona[]>([]);
+
+  const displayName = (loggedInMetadata?.displayName as string) || 'Signed In';
+  const personas: Persona[] =
+    Array.isArray(loggedInMetadata?.personas) && loggedInMetadata.personas.length > 0
+      ? (loggedInMetadata.personas as Persona[])
+      : FALLBACK_PERSONAS;
 
   useEffect(() => {
     setIsDemoMode(process.env.NEXT_PUBLIC_DEMO_MODE === 'true');
-
-    // Read active persona from localStorage
-    const persona = getPersona();
-    setActivePersona(persona);
-
-    // Fetch all personas from the API route
-    fetch('/api/dashboard-settings')
-      .then((r) => r.json())
-      .then((data: DashboardSettingsData | null) => {
-        if (!data) return;
-        const list: Persona[] = [data.personaA, data.personaB, data.personaC].filter(
-          (p): p is Persona => Boolean(p),
-        );
-        if (list.length > 0) setAllPersonas(list);
-        // If we don't have an active persona yet, try first in list
-        if (!persona && list.length > 0) {
-          setActivePersona(list[0]);
-        }
-      })
-      .catch(() => {
-        // API unavailable — keep fallback
-      });
+    setActivePersona(getPersona());
   }, []);
 
-  // Fallback personas for when the API hasn't loaded yet
-  const personasForDropdown =
-    allPersonas.length > 0
-      ? allPersonas
-      : [
-          { name: 'Persona A', label: 'New Visitor', customerType: 'new-visitor', color: '#6366f1' },
-          { name: 'Persona B', label: 'Returning', customerType: 'returning', color: '#10b981' },
-          { name: 'Persona C', label: 'Premium', customerType: 'premium', color: '#f59e0b' },
-        ];
+  const allPersonas = personas.length > 0 ? personas : FALLBACK_PERSONAS;
 
   return (
     <header className="flex h-12 shrink-0 items-center gap-0 border-b border-border bg-card z-40">
@@ -173,8 +158,9 @@ export function DashboardTopBar() {
       <div className="flex items-center gap-2 px-3 shrink-0 border-l border-border">
         {activePersona && (
           <PersonaDropdown
+            displayName={displayName}
             activePersona={activePersona}
-            allPersonas={personasForDropdown}
+            allPersonas={allPersonas}
             onPersonaChange={(p) => setActivePersona(p)}
           />
         )}
