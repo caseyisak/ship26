@@ -934,7 +934,7 @@ const DASHBOARD_SLOT_FIELDS = `
         }
       }
     }
-    description
+    descriptionRt { json }
     media { url }
     animationKey
     mediaPlacement
@@ -956,6 +956,28 @@ const DASHBOARD_SLOT_FIELDS = `
       }
     }
   }
+  ... on Hero {
+    internalName
+    headlineRt { json }
+    subheadlineRt { json }
+    ctaText
+    ctaUrl
+    variant
+    sectionStyle
+    background { url }
+  }
+  ... on CtaSection {
+    internalName
+    headlineRt { json }
+    subheadlineRt { json }
+    ctaPrimaryLabelRt { json }
+    ctaPrimaryUrl
+    ctaSecondaryLabelRt { json }
+    ctaSecondaryUrl
+    colorVariant
+    backgroundImage { url width height description }
+    sectionStyle
+  }
 `;
 
 /** Fetch a DashboardPage entry by entry ID (used for live preview). */
@@ -966,31 +988,10 @@ export const DASHBOARD_PAGE_BY_ID = `
         __typename
         sys { id }
         internalName
-        title
         slug
-        pageType
-        top { ${DASHBOARD_SLOT_FIELDS} }
-        middle { ${DASHBOARD_SLOT_FIELDS} }
-        bottom { ${DASHBOARD_SLOT_FIELDS} }
-      }
-    }
-  }
-`;
-
-/** Fetch a DashboardPage entry by pageType (dashboard-home | upgrades | checkout). */
-export const DASHBOARD_PAGE_BY_TYPE = `
-  query DashboardPageByType($pageType: String!, $locale: String!, $preview: Boolean) {
-    dashboardPageCollection(where: { pageType: $pageType }, locale: $locale, preview: $preview, limit: 1) {
-      items {
-        __typename
-        sys { id }
-        internalName
-        title
-        slug
-        pageType
-        top { ${DASHBOARD_SLOT_FIELDS} }
-        middle { ${DASHBOARD_SLOT_FIELDS} }
-        bottom { ${DASHBOARD_SLOT_FIELDS} }
+        headerBlock { ${DASHBOARD_SLOT_FIELDS} }
+        primaryBlock { ${DASHBOARD_SLOT_FIELDS} }
+        secondaryBlock { ${DASHBOARD_SLOT_FIELDS} }
       }
     }
   }
@@ -1004,12 +1005,10 @@ export const DASHBOARD_PAGE_BY_SLUG = `
         __typename
         sys { id }
         internalName
-        title
         slug
-        pageType
-        top { ${DASHBOARD_SLOT_FIELDS} }
-        middle { ${DASHBOARD_SLOT_FIELDS} }
-        bottom { ${DASHBOARD_SLOT_FIELDS} }
+        headerBlock { ${DASHBOARD_SLOT_FIELDS} }
+        primaryBlock { ${DASHBOARD_SLOT_FIELDS} }
+        secondaryBlock { ${DASHBOARD_SLOT_FIELDS} }
       }
     }
   }
