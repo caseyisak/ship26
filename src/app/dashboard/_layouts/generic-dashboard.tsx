@@ -49,21 +49,21 @@ export function GenericDashboard({ page, settings }: Props) {
     <SidebarProvider>
       <AppSidebar />
       {/* SidebarInset: fills remaining width beside sidebar */}
-      <SidebarInset className="flex flex-col h-screen overflow-hidden">
+      <SidebarInset className="flex flex-col min-h-screen">
         <DashboardTopBar />
 
-        {/* Main scrollable content — fills remaining height */}
-        <div className="flex flex-col flex-1 min-h-0 overflow-auto gap-4 p-4">
+        {/* Main content — scrolls naturally, no viewport-fit constraint */}
+        <div className="flex flex-col gap-4 p-4">
 
           {/* ── 1. Header block — full-width, conditional ── */}
           {page?.headerBlock ? (
-            <section aria-label="Header content" className="shrink-0">
+            <section aria-label="Header content">
               <BlockRenderer data={page.headerBlock} />
             </section>
           ) : null}
 
           {/* ── 2. KPI metric cards row ── */}
-          <section aria-label="Key metrics" className="shrink-0">
+          <section aria-label="Key metrics">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {metricCards.map((card) => {
                 if (!card) return null;
@@ -80,16 +80,14 @@ export function GenericDashboard({ page, settings }: Props) {
             </div>
           </section>
 
-          {/* ── 3. chart1 | primaryBlock — 2-col, flex-1 ── */}
-          <section
-            aria-label="Performance and primary content"
-            className="flex-1 min-h-0"
-          >
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 h-full">
-              <ContentPerformanceChart chartData={settings?.chart1 ?? null} />
+          {/* ── 3. chart1 | primaryBlock — 2-col ── */}
+          <section aria-label="Performance and primary content">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <div className="h-80">
+                <ContentPerformanceChart chartData={settings?.chart1 ?? null} />
+              </div>
               {page?.primaryBlock ? (
-                <div className="min-w-0 overflow-hidden border border-border bg-card rounded-none flex flex-col">
-                  {/* Force block content to render in a stacked vertical layout */}
+                <div className="h-80 min-w-0 overflow-hidden border border-border bg-card rounded-none flex flex-col">
                   <div className="flex-1 w-full overflow-hidden [&>*]:!w-full [&>*]:!max-w-full [&_.banner-inner]:!flex-col [&_.banner-inner]:!items-start [&_.banner-inner]:!gap-4">
                     <BlockRenderer data={page.primaryBlock} />
                   </div>
@@ -98,18 +96,18 @@ export function GenericDashboard({ page, settings }: Props) {
             </div>
           </section>
 
-          {/* ── 4. chart2 | chart3 — 2-col, flex-1 ── */}
-          <section
-            aria-label="Engagement charts"
-            className="flex-1 min-h-0"
-          >
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 h-full">
-              <UserEngagementChart chartData={settings?.chart2 ?? null} />
+          {/* ── 4. chart2 | chart3 — 2-col ── */}
+          <section aria-label="Engagement charts">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <div className="h-80">
+                <UserEngagementChart chartData={settings?.chart2 ?? null} />
+              </div>
               {settings?.chart3 ? (
-                <UserEngagementChart chartData={settings.chart3} />
+                <div className="h-80">
+                  <UserEngagementChart chartData={settings.chart3} />
+                </div>
               ) : (
-                // Placeholder keeps the grid shape when chart3 is not configured
-                <div className="border border-border border-dashed bg-card/40 rounded-none flex items-center justify-center p-4">
+                <div className="h-80 border border-border border-dashed bg-card/40 rounded-none flex items-center justify-center p-4">
                   <p className="text-xs text-muted-foreground text-center">
                     Chart 3 — configure in <strong>dashboardSettings</strong>
                   </p>
@@ -120,7 +118,7 @@ export function GenericDashboard({ page, settings }: Props) {
 
           {/* ── 5. secondaryBlock — full-width, conditional ── */}
           {page?.secondaryBlock ? (
-            <section aria-label="Secondary content" className="shrink-0">
+            <section aria-label="Secondary content">
               <div className="min-w-0 overflow-hidden border border-border bg-card rounded-none">
                 <div className="w-full max-w-full overflow-hidden [&>*]:!w-full [&>*]:!max-w-full">
                   <BlockRenderer data={page.secondaryBlock} />
