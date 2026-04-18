@@ -1,6 +1,5 @@
 import React from 'react';
 
-import MetafiCta from '@/components/sections/matafi-cta';
 import MetafiFeatureBenefits from '@/components/sections/metafi-feature-benefits';
 import MetafiFeaturePricing from '@/components/sections/metafi-feature-pricing';
 import MetafiFeaturesHero from '@/components/sections/metafi-features-section';
@@ -15,7 +14,6 @@ const page = () => {
       <MetafiFeaturesTabs />
       <MetafiFeaturePricing />
       <MetafiIntegrations />
-      <MetafiCta />
     </>
   );
 };

@@ -1,4 +1,3 @@
-import MetafiCta from '@/components/sections/matafi-cta';
 import MetafiFaq from '@/components/sections/metafi-faq';
 import MetafiFeaturedBlogPosts, {
   FeaturedCard,
@@ -34,7 +33,6 @@ export default function Home() {
       <MetafiTestimonials />
       <MetafiFaq />
       <MetafiFeaturedBlogPosts posts={cards} />
-      <MetafiCta />
     </>
   );
 }

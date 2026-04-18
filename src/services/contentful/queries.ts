@@ -76,6 +76,15 @@ const NT_VARIANT_FIELDS = `
     colorVariant
     sectionStyle
   }
+  ... on CtaSection {
+    internalName
+    headlineRt { json }
+    subheadlineRt { json }
+    ctaPrimaryUrl
+    ctaSecondaryUrl
+    colorVariant
+    sectionStyle
+  }
 `;
 
 /** Ninetailed experience fragment fields. */
@@ -111,6 +120,27 @@ const HERO_FIELDS = `
   }
 `;
 
+/**
+ * Lean Hero fragment for PAGE_BY_SLUG — omits ntExperiencesCollection.
+ * NT data is available via HERO_BY_ID (preview route only).
+ * Keeps PAGE_BY_SLUG under Contentful's 8192-byte query limit (LL-011).
+ */
+const HERO_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on Hero {
+    internalName
+    headlineRt { json }
+    subheadlineRt { json }
+    background { url }
+    media { url }
+    ctaText
+    ctaUrl
+    sectionStyle
+    variant
+  }
+`;
+
 /** FaqItem fragment: all fields from FaqItem content type (internalName, questionRt, answerRt). */
 const FAQ_ITEM_FIELDS = `
   __typename
@@ -137,6 +167,26 @@ const FAQ_FIELDS = `
     }
     ntExperiencesCollection(limit: 10) {
       items { ${NT_EXPERIENCE_FIELDS} }
+    }
+  }
+`;
+
+/**
+ * Lean FAQ fragment for PAGE_BY_SLUG — omits ntExperiencesCollection.
+ * NT data is available via FAQ_BY_ID (preview route only).
+ * Keeps PAGE_BY_SLUG under Contentful's 8192-byte query limit (LL-011).
+ */
+const FAQ_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on Faq {
+    internalName
+    titleRt { json }
+    descriptionRt { json }
+    itemsCollection(limit: 50) {
+      items {
+        ${FAQ_ITEM_FIELDS}
+      }
     }
   }
 `;
@@ -175,6 +225,27 @@ const TABBED_CONTENT_FIELDS = `
   }
 `;
 
+/**
+ * Lean TabbedContent fragment for PAGE_BY_SLUG — omits ntExperiencesCollection.
+ * NT data is available via TABBED_CONTENT_BY_ID (preview route only).
+ * Keeps PAGE_BY_SLUG under Contentful's 8192-byte query limit (LL-011).
+ */
+const TABBED_CONTENT_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on Tabbedcontent {
+    internalName
+    taglineRt { json }
+    titleRt { json }
+    descriptionRt { json }
+    itemsCollectionCollection(limit: 50) {
+      items {
+        ${TABBED_CONTENT_ITEM_FIELDS}
+      }
+    }
+  }
+`;
+
 /** Feature Item fragment: all fields from Feature Item content type (titleRt, descriptionRt, media, animationKey, mediaPlacement, sectionStyle). */
 const FEATURE_ITEM_FIELDS = `
   __typename
@@ -209,6 +280,27 @@ const FEATURES_FIELDS = `
   }
 `;
 
+/**
+ * Lean Features fragment for PAGE_BY_SLUG — omits ntExperiencesCollection.
+ * NT data is available via FEATURES_BY_ID (preview route only).
+ * Keeps PAGE_BY_SLUG under Contentful's 8192-byte query limit (LL-011).
+ */
+const FEATURES_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on Features {
+    internalName
+    labelRt { json }
+    titleRt { json }
+    descriptionRt { json }
+    itemsCollection(limit: 20) {
+      items {
+        ${FEATURE_ITEM_FIELDS}
+      }
+    }
+  }
+`;
+
 /** DataViz fragment: all fields from DataViz content type (internalName, titleRt, descriptionRt, chartType, csvData, colorScheme, showLegend). */
 const DATA_VIZ_FIELDS = `
   __typename
@@ -224,6 +316,25 @@ const DATA_VIZ_FIELDS = `
     ntExperiencesCollection(limit: 10) {
       items { ${NT_EXPERIENCE_FIELDS} }
     }
+  }
+`;
+
+/**
+ * Lean DataViz fragment for PAGE_BY_SLUG — omits ntExperiencesCollection.
+ * NT data is available via DATA_VIZ_BY_ID (preview route only).
+ * Keeps PAGE_BY_SLUG under Contentful's 8192-byte query limit (LL-011).
+ */
+const DATA_VIZ_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on DataViz {
+    internalName
+    titleRt { json }
+    descriptionRt { json }
+    chartType
+    csvData { url }
+    colorScheme
+    showLegend
   }
 `;
 
@@ -285,6 +396,251 @@ const TWO_ACROSS_FIELDS = `
   }
 `;
 
+/** CtaSection fragment: full-width CTA block with colorVariant, optional background image, and dual CTAs. */
+const CTA_SECTION_FIELDS = `
+  __typename
+  sys { id }
+  ... on CtaSection {
+    internalName
+    headlineRt { json }
+    subheadlineRt { json }
+    ctaPrimaryLabelRt { json }
+    ctaPrimaryUrl
+    ctaSecondaryLabelRt { json }
+    ctaSecondaryUrl
+    colorVariant
+    backgroundImage { url width height description }
+    sectionStyle
+  }
+`;
+
+/** PricingPlanFeature fragment: single feature line item on a plan card. */
+const PRICING_PLAN_FEATURE_FIELDS = `
+  __typename
+  sys { id }
+  ... on PricingPlanFeature {
+    internalName
+    label { json }
+  }
+`;
+
+/** PricingPlan fragment: single pricing tier card. */
+const PRICING_PLAN_FIELDS = `
+  __typename
+  sys { id }
+  ... on PricingPlan {
+    internalName
+    name
+    blurb { json }
+    monthlyPrice
+    annualPrice
+    perUnitMonthly
+    perUnitAnnual
+    badge
+    colorVariant
+    ctaLabel { json }
+    ctaUrl
+    featuresCollection(limit: 20) {
+      items { ${PRICING_PLAN_FEATURE_FIELDS} }
+    }
+  }
+`;
+
+/** Pricing fragment: pricing section with optional monthly/yearly toggle and plan cards. */
+const PRICING_FIELDS = `
+  __typename
+  sys { id }
+  ... on Pricing {
+    internalName
+    label { json }
+    title { json }
+    description { json }
+    showToggle
+    colorVariant
+    plansCollection(limit: 6) {
+      items { ${PRICING_PLAN_FIELDS} }
+    }
+  }
+`;
+
+/**
+ * Lean Pricing fragment for PAGE_BY_SLUG — header only (no nested plans/features).
+ * Full data is loaded in PRICING_BY_ID (used by the preview route and BY_ID fetcher).
+ * Intentionally excluded from nested items to stay within Contentful's 8192-byte query limit.
+ * NOTE: title/description aliased to titleRt/descriptionRt to avoid type conflict with
+ * BlogPostsSection.title/description (String) in the shared inline fragment selection set.
+ */
+const PRICING_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on Pricing {
+    internalName
+    label { json }
+    titleRt: title { json }
+    descriptionRt: description { json }
+    showToggle
+    colorVariant
+    plansCollection(limit: 6) {
+      items { ${PRICING_PLAN_FIELDS} }
+    }
+  }
+`;
+
+/** IconGridItem fragment: single icon + text card. */
+const ICON_GRID_ITEM_FIELDS = `
+  __typename
+  sys { id }
+  ... on IconGridItem {
+    internalName
+    icon { url }
+    animationKey
+    title { json }
+    description { json }
+  }
+`;
+
+/** IconGrid fragment: bordered card or borderless icon-above-text grid. */
+const ICON_GRID_FIELDS = `
+  __typename
+  sys { id }
+  ... on IconGrid {
+    internalName
+    label { json }
+    title { json }
+    description { json }
+    style
+    columns
+    colorVariant
+    itemsCollection(limit: 20) {
+      items { ${ICON_GRID_ITEM_FIELDS} }
+    }
+  }
+`;
+
+/**
+ * Lean IconGrid fragment for PAGE_BY_SLUG — header only (no nested items).
+ * Full data loaded in ICON_GRID_BY_ID.
+ * NOTE: title/description aliased to titleRt/descriptionRt to avoid type conflict with
+ * BlogPostsSection.title/description (String) in the shared inline fragment selection set.
+ */
+const ICON_GRID_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on IconGrid {
+    internalName
+    label { json }
+    titleRt: title { json }
+    descriptionRt: description { json }
+    style
+    columns
+    colorVariant
+    itemsCollection(limit: 20) {
+      items { ${ICON_GRID_ITEM_FIELDS} }
+    }
+  }
+`;
+
+/** FeatureShowcaseItem fragment: 1/3 text + 2/3 image. */
+const FEATURE_SHOWCASE_ITEM_FIELDS = `
+  __typename
+  sys { id }
+  ... on FeatureShowcaseItem {
+    internalName
+    title { json }
+    description { json }
+    media { url }
+  }
+`;
+
+/** FeatureShowcase fragment: stacked 2-col showcase sections. */
+const FEATURE_SHOWCASE_FIELDS = `
+  __typename
+  sys { id }
+  ... on FeatureShowcase {
+    internalName
+    label { json }
+    title { json }
+    description { json }
+    colorVariant
+    itemsCollection(limit: 10) {
+      items { ${FEATURE_SHOWCASE_ITEM_FIELDS} }
+    }
+  }
+`;
+
+/**
+ * Lean FeatureShowcase fragment for PAGE_BY_SLUG — header only (no nested items).
+ * Full data loaded in FEATURE_SHOWCASE_BY_ID.
+ * NOTE: title/description aliased to titleRt/descriptionRt to avoid type conflict with
+ * BlogPostsSection.title/description (String) in the shared inline fragment selection set.
+ */
+const FEATURE_SHOWCASE_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on FeatureShowcase {
+    internalName
+    label { json }
+    titleRt: title { json }
+    descriptionRt: description { json }
+    colorVariant
+    itemsCollection(limit: 10) {
+      items { ${FEATURE_SHOWCASE_ITEM_FIELDS} }
+    }
+  }
+`;
+
+/** MediaCard fragment: large image card with imageFit. */
+const MEDIA_CARD_FIELDS = `
+  __typename
+  sys { id }
+  ... on MediaCard {
+    internalName
+    title { json }
+    description { json }
+    media { url }
+    imageFit
+  }
+`;
+
+/** MediaCardGrid fragment: grid of media cards. */
+const MEDIA_CARD_GRID_FIELDS = `
+  __typename
+  sys { id }
+  ... on MediaCardGrid {
+    internalName
+    label { json }
+    title { json }
+    description { json }
+    columns
+    colorVariant
+    itemsCollection(limit: 12) {
+      items { ${MEDIA_CARD_FIELDS} }
+    }
+  }
+`;
+
+/**
+ * Lean MediaCardGrid fragment for PAGE_BY_SLUG — header only (no nested items).
+ * Full data loaded in MEDIA_CARD_GRID_BY_ID.
+ * NOTE: title/description aliased to titleRt/descriptionRt to avoid type conflict with
+ * BlogPostsSection.title/description (String) in the shared inline fragment selection set.
+ */
+const MEDIA_CARD_GRID_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on MediaCardGrid {
+    internalName
+    label { json }
+    titleRt: title { json }
+    descriptionRt: description { json }
+    columns
+    colorVariant
+    itemsCollection(limit: 12) {
+      items { ${MEDIA_CARD_FIELDS} }
+    }
+  }
+`;
+
 /** Banner fragment: web + mobile surfaces. */
 const BANNER_FIELDS = `
   __typename
@@ -305,6 +661,12 @@ const BANNER_FIELDS = `
   }
 `;
 
+/**
+ * PAGE_BY_SLUG — lean query kept under Contentful's 8192-byte limit (LL-011).
+ * All block fragments use *_PAGE_FIELDS variants that omit ntExperiencesCollection
+ * and nested items collections where possible.
+ * Full data (NT + nested items) is only fetched via *_BY_ID queries in preview routes.
+ */
 export const PAGE_BY_SLUG = `
   query PageBySlug($slug: String!, $locale: String!, $preview: Boolean) {
     pageCollection(where: { slug: $slug }, locale: $locale, preview: $preview, limit: 1) {
@@ -317,14 +679,19 @@ export const PAGE_BY_SLUG = `
           items {
             __typename
             sys { id }
-            ${HERO_FIELDS}
+            ${HERO_PAGE_FIELDS}
             ${BANNER_FIELDS}
-            ${FAQ_FIELDS}
-            ${TABBED_CONTENT_FIELDS}
-            ${FEATURES_FIELDS}
-            ${DATA_VIZ_FIELDS}
+            ${FAQ_PAGE_FIELDS}
+            ${TABBED_CONTENT_PAGE_FIELDS}
+            ${FEATURES_PAGE_FIELDS}
+            ${DATA_VIZ_PAGE_FIELDS}
             ${TWO_ACROSS_FIELDS}
             ${BLOG_POSTS_SECTION_FIELDS}
+            ${CTA_SECTION_FIELDS}
+            ${PRICING_PAGE_FIELDS}
+            ${ICON_GRID_PAGE_FIELDS}
+            ${FEATURE_SHOWCASE_PAGE_FIELDS}
+            ${MEDIA_CARD_GRID_PAGE_FIELDS}
           }
         }
         ntExperiencesCollection(limit: 10) {
@@ -508,6 +875,23 @@ export const SOCIAL_POST_BY_ID = `
   }
 `;
 
+/** Fetch a single CtaSection entry by entry ID (for ID-based live preview).
+ *  ntExperiencesCollection is intentionally excluded from CTA_SECTION_FIELDS (PAGE_BY_SLUG byte limit) — added here only. */
+export const CTA_SECTION_BY_ID = `
+  query CtaSectionById($id: String!, $locale: String!, $preview: Boolean) {
+    ctaSectionCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${CTA_SECTION_FIELDS}
+        ... on CtaSection {
+          ntExperiencesCollection(limit: 10) {
+            items { ${NT_EXPERIENCE_FIELDS} }
+          }
+        }
+      }
+    }
+  }
+`;
+
 /** Fetch a single BlogPostsSection entry by entry ID (for ID-based live preview). */
 export const BLOG_POSTS_SECTION_BY_ID = `
   query BlogPostsSectionById($id: String!, $locale: String!, $preview: Boolean) {
@@ -682,6 +1066,50 @@ export const NEWS_ARTICLE_BY_ID = `
     newsArticleCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${NEWS_ARTICLE_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single Pricing entry by entry ID (for ID-based live preview). */
+export const PRICING_BY_ID = `
+  query PricingById($id: String!, $locale: String!, $preview: Boolean) {
+    pricingCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${PRICING_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single IconGrid entry by entry ID (for ID-based live preview). */
+export const ICON_GRID_BY_ID = `
+  query IconGridById($id: String!, $locale: String!, $preview: Boolean) {
+    iconGridCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${ICON_GRID_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single FeatureShowcase entry by entry ID (for ID-based live preview). */
+export const FEATURE_SHOWCASE_BY_ID = `
+  query FeatureShowcaseById($id: String!, $locale: String!, $preview: Boolean) {
+    featureShowcaseCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${FEATURE_SHOWCASE_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single MediaCardGrid entry by entry ID (for ID-based live preview). */
+export const MEDIA_CARD_GRID_BY_ID = `
+  query MediaCardGridById($id: String!, $locale: String!, $preview: Boolean) {
+    mediaCardGridCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${MEDIA_CARD_GRID_FIELDS}
       }
     }
   }

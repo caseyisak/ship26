@@ -243,6 +243,24 @@ export type TwoAcrossFragment = BlockData & {
   colorVariant?: 'light' | 'dark' | 'primary' | 'secondary' | 'alt' | null;
 };
 
+/** CtaSection — full-width call-to-action block with colorVariant, optional background image, and dual CTAs. */
+export type CtaSectionFragment = BlockData & {
+  __typename: 'CtaSection';
+  internalName?: string | null;
+  headlineRt?: { json: Record<string, unknown> } | null;
+  subheadlineRt?: { json: Record<string, unknown> } | null;
+  ctaPrimaryLabelRt?: { json: Record<string, unknown> } | null;
+  ctaPrimaryUrl?: string | null;
+  ctaSecondaryLabelRt?: { json: Record<string, unknown> } | null;
+  ctaSecondaryUrl?: string | null;
+  colorVariant?: 'light' | 'dark' | 'alt' | 'primary' | 'secondary' | 'image' | null;
+  backgroundImage?: { url?: string; width?: number; height?: number; description?: string } | null;
+  sectionStyle?: string | null;
+  ntExperiencesCollection?: {
+    items: Array<NtExperienceFragment>;
+  } | null;
+};
+
 /** Blog Posts Section — curated list of blog posts embeddable on any page. */
 export type BlogPostsSectionFragment = BlockData & {
   __typename: 'BlogPostsSection';
@@ -253,6 +271,112 @@ export type BlogPostsSectionFragment = BlockData & {
   postsCollection?: {
     items: Array<BlogPostFragment>;
   } | null;
+};
+
+/** Pricing Plan Feature — a single feature line item on a plan card. */
+export type PricingPlanFeatureFragment = {
+  __typename: 'PricingPlanFeature';
+  sys: { id: string };
+  internalName?: string | null;
+  label?: { json: Record<string, unknown> } | null;
+};
+
+/** Pricing Plan — a single tier card within a Pricing block. */
+export type PricingPlanFragment = {
+  __typename: 'PricingPlan';
+  sys: { id: string };
+  internalName?: string | null;
+  name?: string | null;
+  blurb?: { json: Record<string, unknown> } | null;
+  monthlyPrice?: string | null;
+  annualPrice?: string | null;
+  perUnitMonthly?: string | null;
+  perUnitAnnual?: string | null;
+  badge?: string | null;
+  colorVariant?: string | null;
+  ctaLabel?: { json: Record<string, unknown> } | null;
+  ctaUrl?: string | null;
+  featuresCollection?: { items: PricingPlanFeatureFragment[] } | null;
+};
+
+/** Pricing section — toggle + plan cards. */
+export type PricingFragment = BlockData & {
+  __typename: 'Pricing';
+  internalName?: string | null;
+  label?: { json: Record<string, unknown> } | null;
+  title?: { json: Record<string, unknown> } | null;
+  description?: { json: Record<string, unknown> } | null;
+  showToggle?: boolean | null;
+  colorVariant?: 'light' | 'dark' | 'accent' | null;
+  plansCollection?: { items: PricingPlanFragment[] } | null;
+};
+
+/** Icon Grid Item — a single icon + text card. */
+export type IconGridItemFragment = {
+  __typename: 'IconGridItem';
+  sys: { id: string };
+  internalName?: string | null;
+  icon?: { url?: string } | null;
+  animationKey?: string | null;
+  title?: { json: Record<string, unknown> } | null;
+  description?: { json: Record<string, unknown> } | null;
+};
+
+/** Icon Grid — bordered card or borderless icon-above-text grid. */
+export type IconGridFragment = BlockData & {
+  __typename: 'IconGrid';
+  internalName?: string | null;
+  label?: { json: Record<string, unknown> } | null;
+  title?: { json: Record<string, unknown> } | null;
+  description?: { json: Record<string, unknown> } | null;
+  style?: 'card' | 'borderless' | null;
+  columns?: number | null;
+  colorVariant?: 'light' | 'dark' | 'accent' | null;
+  itemsCollection?: { items: IconGridItemFragment[] } | null;
+};
+
+/** Feature Showcase Item — 1/3 text + 2/3 image. */
+export type FeatureShowcaseItemFragment = {
+  __typename: 'FeatureShowcaseItem';
+  sys: { id: string };
+  internalName?: string | null;
+  title?: { json: Record<string, unknown> } | null;
+  description?: { json: Record<string, unknown> } | null;
+  media?: { url?: string } | null;
+};
+
+/** Feature Showcase — stacked 2-col showcase sections. */
+export type FeatureShowcaseFragment = BlockData & {
+  __typename: 'FeatureShowcase';
+  internalName?: string | null;
+  label?: { json: Record<string, unknown> } | null;
+  title?: { json: Record<string, unknown> } | null;
+  description?: { json: Record<string, unknown> } | null;
+  colorVariant?: 'light' | 'dark' | 'accent' | null;
+  itemsCollection?: { items: FeatureShowcaseItemFragment[] } | null;
+};
+
+/** Media Card — large image area card with imageFit option. */
+export type MediaCardFragment = {
+  __typename: 'MediaCard';
+  sys: { id: string };
+  internalName?: string | null;
+  title?: { json: Record<string, unknown> } | null;
+  description?: { json: Record<string, unknown> } | null;
+  media?: { url?: string } | null;
+  imageFit?: 'contain' | 'cover' | null;
+};
+
+/** Media Card Grid — grid of media cards. */
+export type MediaCardGridFragment = BlockData & {
+  __typename: 'MediaCardGrid';
+  internalName?: string | null;
+  label?: { json: Record<string, unknown> } | null;
+  title?: { json: Record<string, unknown> } | null;
+  description?: { json: Record<string, unknown> } | null;
+  columns?: number | null;
+  colorVariant?: 'light' | 'dark' | 'accent' | null;
+  itemsCollection?: { items: MediaCardFragment[] } | null;
 };
 
 export type PersonalizedBlockData = BlockData & {

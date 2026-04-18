@@ -3,10 +3,15 @@ import { draftMode } from 'next/headers';
 import type {
   BannerFragment,
   BlogPostsSectionFragment,
+  CtaSectionFragment,
   DataVizFragment,
   FaqFragment,
+  FeatureShowcaseFragment,
   FeaturesFragment,
   HeroFragment,
+  IconGridFragment,
+  MediaCardGridFragment,
+  PricingFragment,
   TabbedContentFragment,
   TwoAcrossFragment,
 } from '@/block-renderer/types';
@@ -23,7 +28,12 @@ export type PageSection =
   | FeaturesFragment
   | DataVizFragment
   | TwoAcrossFragment
-  | BlogPostsSectionFragment;
+  | BlogPostsSectionFragment
+  | CtaSectionFragment
+  | PricingFragment
+  | IconGridFragment
+  | FeatureShowcaseFragment
+  | MediaCardGridFragment;
 
 export type PageData = {
   __typename?: string;

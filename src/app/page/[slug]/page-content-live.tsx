@@ -163,6 +163,76 @@ function transformSection(item: any): PageSection | null {
         postsCollection: item.postsCollection ?? null,
       };
     }
+    if (item.__typename === 'CtaSection') {
+      return {
+        __typename: 'CtaSection',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        headlineRt: item.headlineRt ?? null,
+        subheadlineRt: item.subheadlineRt ?? null,
+        ctaPrimaryLabelRt: item.ctaPrimaryLabelRt ?? null,
+        ctaPrimaryUrl: item.ctaPrimaryUrl ?? null,
+        ctaSecondaryLabelRt: item.ctaSecondaryLabelRt ?? null,
+        ctaSecondaryUrl: item.ctaSecondaryUrl ?? null,
+        colorVariant: item.colorVariant ?? null,
+        backgroundImage: item.backgroundImage ?? null,
+        sectionStyle: item.sectionStyle ?? null,
+      };
+    }
+    if (item.__typename === 'Pricing') {
+      return {
+        __typename: 'Pricing',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        label: item.label ?? null,
+        // PAGE_BY_SLUG aliases title/description as titleRt/descriptionRt to avoid
+        // type conflict with BlogPostsSection.title (String) in shared selection set
+        title: item.title ?? item.titleRt ?? null,
+        description: item.description ?? item.descriptionRt ?? null,
+        showToggle: item.showToggle ?? null,
+        colorVariant: item.colorVariant ?? null,
+        plansCollection: item.plansCollection ?? null,
+      };
+    }
+    if (item.__typename === 'IconGrid') {
+      return {
+        __typename: 'IconGrid',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        label: item.label ?? null,
+        title: item.title ?? item.titleRt ?? null,
+        description: item.description ?? item.descriptionRt ?? null,
+        style: item.style ?? null,
+        columns: item.columns ?? null,
+        colorVariant: item.colorVariant ?? null,
+        itemsCollection: item.itemsCollection ?? null,
+      };
+    }
+    if (item.__typename === 'FeatureShowcase') {
+      return {
+        __typename: 'FeatureShowcase',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        label: item.label ?? null,
+        title: item.title ?? item.titleRt ?? null,
+        description: item.description ?? item.descriptionRt ?? null,
+        colorVariant: item.colorVariant ?? null,
+        itemsCollection: item.itemsCollection ?? null,
+      };
+    }
+    if (item.__typename === 'MediaCardGrid') {
+      return {
+        __typename: 'MediaCardGrid',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        label: item.label ?? null,
+        title: item.title ?? item.titleRt ?? null,
+        description: item.description ?? item.descriptionRt ?? null,
+        columns: item.columns ?? null,
+        colorVariant: item.colorVariant ?? null,
+        itemsCollection: item.itemsCollection ?? null,
+      };
+    }
     return null;
   } catch (error) {
     // eslint-disable-next-line no-console

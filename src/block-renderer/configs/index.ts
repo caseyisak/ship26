@@ -3,19 +3,29 @@ import type {
   BlockConfig,
   BlockData,
   BlogPostsSectionFragment,
+  CtaSectionFragment,
   DataVizFragment,
   FaqFragment,
+  FeatureShowcaseFragment,
   FeaturesFragment,
   HeroFragment,
+  IconGridFragment,
+  MediaCardGridFragment,
+  PricingFragment,
   TabbedContentFragment,
   TwoAcrossFragment,
 } from '@/block-renderer/types';
 import { Banner } from '@/cms-components/banner';
 import { BlogPostsSection } from '@/cms-components/blog-posts-section';
+import { CtaSection } from '@/cms-components/cta-section';
 import { DataViz } from '@/cms-components/data-viz';
 import { Faq } from '@/cms-components/faq';
+import { FeatureShowcase } from '@/cms-components/feature-showcase';
 import { Features } from '@/cms-components/features';
 import { Hero } from '@/cms-components/hero';
+import { IconGrid } from '@/cms-components/icon-grid';
+import { MediaCardGrid } from '@/cms-components/media-card-grid';
+import { Pricing } from '@/cms-components/pricing';
 import { TabbedContent } from '@/cms-components/tabbed-content';
 import { TwoAcross } from '@/cms-components/two-across/two-across';
 
@@ -75,6 +85,41 @@ const twoAcrossConfig: BlockConfig<TwoAcrossFragment> = {
   },
 };
 
+const ctaSectionConfig: BlockConfig<CtaSectionFragment> = {
+  typename: 'CtaSection',
+  layouts: {
+    default: () => CtaSection,
+  },
+};
+
+const pricingConfig: BlockConfig<PricingFragment> = {
+  typename: 'Pricing',
+  layouts: {
+    default: () => Pricing,
+  },
+};
+
+const iconGridConfig: BlockConfig<IconGridFragment> = {
+  typename: 'IconGrid',
+  layouts: {
+    default: () => IconGrid,
+  },
+};
+
+const featureShowcaseConfig: BlockConfig<FeatureShowcaseFragment> = {
+  typename: 'FeatureShowcase',
+  layouts: {
+    default: () => FeatureShowcase,
+  },
+};
+
+const mediaCardGridConfig: BlockConfig<MediaCardGridFragment> = {
+  typename: 'MediaCardGrid',
+  layouts: {
+    default: () => MediaCardGrid,
+  },
+};
+
 export const blockConfigs: BlockConfig<BlockData>[] = [
   heroConfig as BlockConfig<BlockData>,
   faqConfig as BlockConfig<BlockData>,
@@ -84,4 +129,9 @@ export const blockConfigs: BlockConfig<BlockData>[] = [
   bannerConfig as BlockConfig<BlockData>,
   blogPostsSectionConfig as BlockConfig<BlockData>,
   twoAcrossConfig as BlockConfig<BlockData>,
+  ctaSectionConfig as BlockConfig<BlockData>,
+  pricingConfig as BlockConfig<BlockData>,
+  iconGridConfig as BlockConfig<BlockData>,
+  featureShowcaseConfig as BlockConfig<BlockData>,
+  mediaCardGridConfig as BlockConfig<BlockData>,
 ];

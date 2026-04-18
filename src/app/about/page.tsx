@@ -1,4 +1,3 @@
-import MetafiCta from '@/components/sections/matafi-cta';
 import MetafiAboutHero from '@/components/sections/metafi-about-hero';
 import MetafiPartnerLogos from '@/components/sections/metafi-partner-logos';
 import MetafiTeam from '@/components/sections/metafi-team';
@@ -11,7 +10,6 @@ export default function AboutPage() {
       <MetafiThroughYears />
       <MetafiTeam />
       <MetafiPartnerLogos />
-      <MetafiCta />
     </>
   );
 }

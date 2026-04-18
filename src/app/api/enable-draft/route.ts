@@ -34,7 +34,12 @@ export async function GET(request: NextRequest) {
       type === 'socialPost' ||
       type === 'blogPostsSection' ||
       type === 'newsletterIssue' ||
-      type === 'newsletter')
+      type === 'newsletter' ||
+      type === 'ctaSection' ||
+      type === 'pricing' ||
+      type === 'iconGrid' ||
+      type === 'featureShowcase' ||
+      type === 'mediaCardGrid')
   ) {
     if (
       entryId.includes('entry.') ||
@@ -69,6 +74,11 @@ export async function GET(request: NextRequest) {
       blogPostsSection: 'blog-posts-section',
       newsletterIssue: 'newsletter',
       newsletter: 'newsletter',
+      ctaSection: 'cta-section',
+      pricing: 'pricing',
+      iconGrid: 'icon-grid',
+      featureShowcase: 'feature-showcase',
+      mediaCardGrid: 'media-card-grid',
     };
     const routeSegment = typeToRoute[type] ?? type;
     // Forward passthrough params (view, locale, preview) to the preview page
