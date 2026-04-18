@@ -14,6 +14,7 @@ export type Persona = {
   label: string;
   customerType: string;
   color: string;
+  displayName?: string;
 };
 
 export const PERSONA_COOKIE = 'metafi-persona';

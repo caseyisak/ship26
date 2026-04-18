@@ -126,17 +126,14 @@ type Props = {
 };
 
 export function DashboardTopBar({ loggedInMetadata }: Props) {
-  const [isDemoMode, setIsDemoMode] = useState(false);
   const [activePersona, setActivePersona] = useState<Persona | null>(null);
 
-  const displayName = (loggedInMetadata?.displayName as string) || 'Signed In';
   const personas: Persona[] =
     Array.isArray(loggedInMetadata?.personas) && loggedInMetadata.personas.length > 0
       ? (loggedInMetadata.personas as Persona[])
       : FALLBACK_PERSONAS;
 
   useEffect(() => {
-    setIsDemoMode(process.env.NEXT_PUBLIC_DEMO_MODE === 'true');
     setActivePersona(getPersona());
   }, []);
 
@@ -154,22 +151,18 @@ export function DashboardTopBar({ loggedInMetadata }: Props) {
       {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Right: persona dropdown + gear (demo mode only) */}
+      {/* Right: persona dropdown + gear */}
       <div className="flex items-center gap-2 px-3 shrink-0 border-l border-border">
         {activePersona && (
           <PersonaDropdown
-            displayName={displayName}
+            displayName={activePersona.displayName || activePersona.label}
             activePersona={activePersona}
             allPersonas={allPersonas}
             onPersonaChange={(p) => setActivePersona(p)}
           />
         )}
-        {isDemoMode && (
-          <>
-            <Separator orientation="vertical" className="h-4" />
-            <NtGearButton />
-          </>
-        )}
+        <Separator orientation="vertical" className="h-4" />
+        <NtGearButton />
       </div>
     </header>
   );

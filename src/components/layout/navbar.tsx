@@ -20,9 +20,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSettings } from '@/personalization/settings-context';
-import { getPersona, clearPersona } from '@/lib/persona-session';
+import { getPersona, setPersona, clearPersona } from '@/lib/persona-session';
 import type { Persona } from '@/lib/persona-session';
 import { PersonaButtons } from '@/app/login/persona-buttons';
 
@@ -51,25 +52,36 @@ function PersonalizationToggle({
   );
 }
 
-// Logged-in persona dropdown — shows displayName + color dot, persona switcher + log out inside
+// Logged-in persona dropdown — shows active persona's displayName + color dot, persona switcher + log out inside
 function PersonaDropdown({
-  displayName,
   activePersona,
+  allPersonas,
   className,
-  afterAction,
+  onPersonaChange,
+  afterLogout,
 }: {
-  displayName: string;
   activePersona: Persona;
+  allPersonas: Persona[];
   className?: string;
-  afterAction?: () => void;
+  onPersonaChange: (p: Persona) => void;
+  afterLogout?: () => void;
 }) {
   const router = useRouter();
 
+  const handleSwitch = (p: Persona) => {
+    if (p.customerType === activePersona.customerType) return;
+    setPersona(p);
+    onPersonaChange(p);
+    router.refresh();
+  };
+
   const handleLogout = () => {
     clearPersona();
-    afterAction?.();
+    afterLogout?.();
     router.push('/page/home');
   };
+
+  const triggerLabel = activePersona.displayName || activePersona.label;
 
   return (
     <DropdownMenu>
@@ -86,10 +98,29 @@ function PersonaDropdown({
             style={{ background: activePersona.color }}
             aria-hidden="true"
           />
-          <span className="text-foreground">{displayName}</span>
+          <span className="text-foreground">{triggerLabel}</span>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44 rounded-none">
+      <DropdownMenuContent align="end" className="w-52 rounded-none">
+        {allPersonas.map((p) => {
+          const isActive = p.customerType === activePersona.customerType;
+          return (
+            <DropdownMenuItem
+              key={p.customerType}
+              onClick={() => handleSwitch(p)}
+              className="gap-2 cursor-pointer"
+            >
+              <span
+                className="h-2 w-2 rounded-full shrink-0"
+                style={{ background: p.color }}
+                aria-hidden="true"
+              />
+              <span className="flex-1">{p.label}</span>
+              {isActive && <Check className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />}
+            </DropdownMenuItem>
+          );
+        })}
+        <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/dashboard" className="cursor-pointer">
             Dashboard →
@@ -276,10 +307,11 @@ const Navbar = () => {
           <div className="flex items-center gap-2.5">
             {isLoggedIn && activePersona ? (
               <PersonaDropdown
-                displayName={displayName}
                 activePersona={activePersona}
+                allPersonas={personas}
                 className="hidden sm:flex lg:flex"
-                afterAction={() => setActivePersona(getPersona())}
+                onPersonaChange={(p) => setActivePersona(p)}
+                afterLogout={() => setActivePersona(null)}
               />
             ) : (
               <LoginButton
@@ -380,11 +412,12 @@ const Navbar = () => {
                     <div className="mt-4 mb-6 flex flex-col gap-3">
                       {isLoggedIn && activePersona ? (
                         <PersonaDropdown
-                          displayName={displayName}
                           activePersona={activePersona}
+                          allPersonas={personas}
                           className="w-full"
-                          afterAction={() => {
-                            setActivePersona(getPersona());
+                          onPersonaChange={(p) => setActivePersona(p)}
+                          afterLogout={() => {
+                            setActivePersona(null);
                             setIsMenuOpen(false);
                           }}
                         />
