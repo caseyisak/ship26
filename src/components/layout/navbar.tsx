@@ -183,9 +183,12 @@ const Navbar = () => {
   useEffect(() => {
     const p = getPersona();
     setActivePersona(p);
-    // Re-identify on page load so NT evaluates audiences against the stored persona
     if (p) {
-      ninetailed.identify('', { customerType: p.customerType });
+      // Defer identify so LocalAudienceEvaluator's onProfileChange subscription is active first
+      const id = setTimeout(() => {
+        ninetailed.identify('', { customerType: p.customerType });
+      }, 0);
+      return () => clearTimeout(id);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

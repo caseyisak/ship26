@@ -139,11 +139,15 @@ export function DashboardTopBar({ loggedInMetadata }: Props) {
   useEffect(() => {
     const p = getPersona();
     setActivePersona(p);
-    // Re-identify on page load so NT evaluates audiences against the stored persona.
-    // NT re-initializes fresh on each navigation — without this call the profile is empty
-    // and no audience rules match until the user manually triggers something.
     if (p) {
-      ninetailed.identify('', { customerType: p.customerType });
+      // Defer identify by one event-loop tick so LocalAudienceEvaluator (higher in the tree)
+      // has time to set up its onProfileChange subscription before we fire.
+      // React runs useEffect bottom-up, so DashboardTopBar fires before LocalAudienceEvaluator —
+      // without this deferral, the first onProfileChange event is missed.
+      const id = setTimeout(() => {
+        ninetailed.identify('', { customerType: p.customerType });
+      }, 0);
+      return () => clearTimeout(id);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
