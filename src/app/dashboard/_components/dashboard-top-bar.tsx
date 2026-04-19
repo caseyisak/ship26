@@ -62,8 +62,10 @@ function PersonaDropdown({
 
   const handleSwitch = (persona: Persona) => {
     setPersona(persona);
+    // Identify via React hook (reliable) — window.ninetailed global in setPersona is a fallback only
+    ninetailed.identify('', { customerType: persona.customerType });
     onPersonaChange(persona);
-    router.refresh();
+    // No router.refresh() — NT <Experience> swap is client-side; a server refresh races against identify
   };
 
   const handleLogout = () => {
@@ -126,6 +128,7 @@ type Props = {
 };
 
 export function DashboardTopBar({ loggedInMetadata }: Props) {
+  const ninetailed = useNinetailed();
   const [activePersona, setActivePersona] = useState<Persona | null>(null);
 
   const personas: Persona[] =
@@ -134,7 +137,15 @@ export function DashboardTopBar({ loggedInMetadata }: Props) {
       : FALLBACK_PERSONAS;
 
   useEffect(() => {
-    setActivePersona(getPersona());
+    const p = getPersona();
+    setActivePersona(p);
+    // Re-identify on page load so NT evaluates audiences against the stored persona.
+    // NT re-initializes fresh on each navigation — without this call the profile is empty
+    // and no audience rules match until the user manually triggers something.
+    if (p) {
+      ninetailed.identify('', { customerType: p.customerType });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const allPersonas = personas.length > 0 ? personas : FALLBACK_PERSONAS;

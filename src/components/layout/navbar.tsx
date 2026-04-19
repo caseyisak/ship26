@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useNinetailed } from '@ninetailed/experience.js-react';
 import { useSettings } from '@/personalization/settings-context';
 import { getPersona, setPersona, clearPersona } from '@/lib/persona-session';
 import type { Persona } from '@/lib/persona-session';
@@ -66,13 +67,15 @@ function PersonaDropdown({
   onPersonaChange: (p: Persona) => void;
   afterLogout?: () => void;
 }) {
+  const ninetailed = useNinetailed();
   const router = useRouter();
 
   const handleSwitch = (p: Persona) => {
     if (p.customerType === activePersona.customerType) return;
     setPersona(p);
+    ninetailed.identify('', { customerType: p.customerType });
     onPersonaChange(p);
-    router.refresh();
+    // No router.refresh() — NT <Experience> swap is client-side
   };
 
   const handleLogout = () => {
@@ -172,12 +175,19 @@ const Navbar = () => {
         { key: 'C', name: 'Persona C', label: 'Premium User', customerType: 'premium', color: '#f59e0b' },
       ];
 
+  const ninetailed = useNinetailed();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [activePersona, setActivePersona] = useState<Persona | null>(null);
 
   useEffect(() => {
-    setActivePersona(getPersona());
+    const p = getPersona();
+    setActivePersona(p);
+    // Re-identify on page load so NT evaluates audiences against the stored persona
+    if (p) {
+      ninetailed.identify('', { customerType: p.customerType });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const isLoggedIn = Boolean(activePersona);
