@@ -771,6 +771,23 @@ export const PAGE_BY_SLUG = `
             ${FEATURE_SHOWCASE_PAGE_FIELDS}
             ${MEDIA_CARD_GRID_PAGE_FIELDS}
             ${FEATURE_SECTION_PAGE_FIELDS}
+            ... on NewsWrapper {
+              __typename
+              sys { id }
+              internalName
+              labelRt: label { json }
+              titleRt: title { json }
+              descriptionRt: description { json }
+              filterCategory
+              sortOrder
+              maxItems
+              priorityItemsCollection(limit: 6) {
+                items {
+                  __typename
+                  sys { id }
+                }
+              }
+            }
           }
         }
         ntExperiencesCollection(limit: 10) {
@@ -1212,6 +1229,68 @@ export const FEATURE_SECTION_BY_ID = `
     featureSectionCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${FEATURE_SECTION_FIELDS}
+      }
+    }
+  }
+`;
+
+/** NewsWrapper fragment — section header + config fields (no merged articles, those are fetched server-side). */
+const NEWS_WRAPPER_FIELDS = `
+  __typename
+  sys { id }
+  ... on NewsWrapper {
+    internalName
+    labelRt: label { json }
+    titleRt: title { json }
+    descriptionRt: description { json }
+    filterCategory
+    sortOrder
+    maxItems
+    priorityItemsCollection(limit: 6) {
+      items {
+        __typename
+        sys { id }
+      }
+    }
+  }
+`;
+
+/** Fetch a single NewsWrapper entry by entry ID (for ID-based live preview). */
+export const NEWS_WRAPPER_BY_ID = `
+  query NewsWrapperById($id: String!, $locale: String!, $preview: Boolean) {
+    newsWrapperCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${NEWS_WRAPPER_FIELDS}
+      }
+    }
+  }
+`;
+
+/**
+ * Fetch a dynamic pool of BlogPost entries for the NewsWrapper (unfiltered).
+ * Caller passes limit = maxItems * 2 and the desired order.
+ * Category filtering is done client-side after fetch when filterCategory is set.
+ */
+export const NEWS_WRAPPER_POOL = `
+  query NewsWrapperPool($locale: String!, $preview: Boolean, $limit: Int!, $order: [BlogPostOrder]) {
+    blogPostCollection(
+      locale: $locale
+      preview: $preview
+      limit: $limit
+      order: $order
+    ) {
+      items {
+        __typename
+        sys { id }
+        ... on BlogPost {
+          title
+          slug
+          excerpt
+          publishDate
+          contentfulMetadata { tags { id name } }
+          heroImage { url width height }
+          author { __typename sys { id } ... on Author { name bio } }
+        }
       }
     }
   }

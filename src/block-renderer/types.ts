@@ -475,6 +475,23 @@ export type FeatureSectionFragment = BlockData & {
   } | null;
 };
 
+/** NewsWrapper section — dynamic news feed with pinned items, filtering, and NT personalization. */
+export type NewsWrapperFragment = BlockData & {
+  __typename: 'NewsWrapper';
+  internalName?: string | null;
+  labelRt?: { json: Record<string, unknown> } | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
+  filterCategory?: string | null;
+  sortOrder?: string | null;
+  maxItems?: number | null;
+  priorityItemsCollection?: {
+    items: Array<{ __typename: string; sys: { id: string } } | null>;
+  } | null;
+  /** Server-side merged article list (pinned + dynamic, deduped, sliced to maxItems). */
+  mergedArticles?: BlogPostFragment[];
+};
+
 export type PersonalizedBlockData = BlockData & {
   ntExperiencesCollection?: { items: Array<NtExperienceFragment> };
 };

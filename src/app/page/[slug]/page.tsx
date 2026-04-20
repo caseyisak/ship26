@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { PageContentLive } from '@/app/page/[slug]/page-content-live';
 import { getPageBySlug, getPageSlugs } from '@/services/contentful/page';
+import { getNewsWrapperForPage } from '@/services/contentful/news-wrapper';
 
 export const revalidate = 0;
 
@@ -31,5 +32,21 @@ export default async function ContentfulPage({
     return notFound();
   }
 
-  return <PageContentLive page={page} />;
+  // Enrich any NewsWrapper sections with merged articles server-side
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rawSections = (page.sectionsCollection?.items ?? []) as any[];
+  const enrichedSections = await Promise.all(
+    rawSections.map(async (section) => {
+      if (section?.__typename === 'NewsWrapper') {
+        const enriched = await getNewsWrapperForPage({ entryId: section.sys.id });
+        return enriched ?? section;
+      }
+      return section;
+    }),
+  );
+  const enrichedPage = page.sectionsCollection
+    ? { ...page, sectionsCollection: { ...page.sectionsCollection, items: enrichedSections } }
+    : page;
+
+  return <PageContentLive page={enrichedPage} />;
 }

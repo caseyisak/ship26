@@ -236,6 +236,21 @@ function transformSection(item: any): PageSection | null {
         ntExperiencesCollection: item.ntExperiencesCollection ?? null,
       };
     }
+    if (item.__typename === 'NewsWrapper') {
+      return {
+        __typename: 'NewsWrapper',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        labelRt: item.labelRt ?? item.label ?? null,
+        titleRt: item.titleRt ?? item.title ?? null,
+        descriptionRt: item.descriptionRt ?? item.description ?? null,
+        filterCategory: item.filterCategory ?? null,
+        sortOrder: item.sortOrder ?? null,
+        maxItems: item.maxItems ?? null,
+        priorityItemsCollection: item.priorityItemsCollection ?? null,
+        mergedArticles: item.mergedArticles ?? [],
+      };
+    }
     return null;
   } catch (error) {
     // eslint-disable-next-line no-console

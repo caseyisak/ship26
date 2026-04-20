@@ -13,6 +13,7 @@ import type {
   HeroFragment,
   IconGridFragment,
   MediaCardGridFragment,
+  NewsWrapperFragment,
   PricingFragment,
   TabbedContentFragment,
   TwoAcrossFragment,
@@ -29,6 +30,7 @@ import { Features } from '@/cms-components/features';
 import { Hero } from '@/cms-components/hero';
 import { IconGrid } from '@/cms-components/icon-grid';
 import { MediaCardGrid } from '@/cms-components/media-card-grid';
+import { NewsWrapper } from '@/cms-components/news-wrapper';
 import { Pricing } from '@/cms-components/pricing';
 import { TabbedContent } from '@/cms-components/tabbed-content';
 import { TwoAcross } from '@/cms-components/two-across/two-across';
@@ -138,6 +140,13 @@ const featureSectionConfig: BlockConfig<FeatureSectionFragment> = {
   },
 };
 
+const newsWrapperConfig: BlockConfig<NewsWrapperFragment> = {
+  typename: 'NewsWrapper',
+  layouts: {
+    default: () => NewsWrapper,
+  },
+};
+
 export const blockConfigs: BlockConfig<BlockData>[] = [
   heroConfig as BlockConfig<BlockData>,
   faqConfig as BlockConfig<BlockData>,
@@ -154,4 +163,5 @@ export const blockConfigs: BlockConfig<BlockData>[] = [
   featureShowcaseConfig as BlockConfig<BlockData>,
   mediaCardGridConfig as BlockConfig<BlockData>,
   featureSectionConfig as BlockConfig<BlockData>,
+  newsWrapperConfig as BlockConfig<BlockData>,
 ];
