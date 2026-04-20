@@ -16,7 +16,12 @@ type CtaSectionByIdResponse = {
       ctaSecondaryLabelRt?: { json: Record<string, unknown> } | null;
       ctaSecondaryUrl?: string | null;
       colorVariant?: string | null;
-      backgroundImage?: { url?: string; width?: number; height?: number; description?: string } | null;
+      backgroundImage?: {
+        url?: string;
+        width?: number;
+        height?: number;
+        description?: string;
+      } | null;
       sectionStyle?: unknown;
     }>;
   };

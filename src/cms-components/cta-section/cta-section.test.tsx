@@ -32,7 +32,9 @@ const baseEntry = {
   sys: { id: 'cta-1', spaceId: 'test' },
   internalName: 'Test CTA',
   headlineRt: makeRtJson('Start Your Free Trial Today'),
-  subheadlineRt: makeRtJson('Join thousands of fintech companies already using Metafi'),
+  subheadlineRt: makeRtJson(
+    'Join thousands of fintech companies already using Metafi',
+  ),
   ctaPrimaryLabelRt: makeRtJson('Get Started Free'),
   ctaPrimaryUrl: '/signup',
   ctaSecondaryLabelRt: makeRtJson('Watch Demo'),
@@ -59,7 +61,9 @@ describe('CtaSection', () => {
       </LivePreviewProvider>,
     );
     expect(
-      screen.getByText('Join thousands of fintech companies already using Metafi'),
+      screen.getByText(
+        'Join thousands of fintech companies already using Metafi',
+      ),
     ).toBeTruthy();
   });
 
@@ -89,7 +93,9 @@ describe('CtaSection', () => {
         <CtaSection data={{ ...baseEntry, ctaPrimaryLabelRt: null }} />
       </LivePreviewProvider>,
     );
-    expect(screen.queryByRole('link', { name: /get started free/i })).toBeNull();
+    expect(
+      screen.queryByRole('link', { name: /get started free/i }),
+    ).toBeNull();
   });
 
   it('renders overlay div for image variant', () => {
@@ -122,5 +128,65 @@ describe('CtaSection', () => {
     );
     const section = container.querySelector('section');
     expect(section?.className).toContain('bg-primary');
+  });
+
+  it('renders dotted pattern overlay when showDottedPattern is true', () => {
+    const { container } = render(
+      <LivePreviewProvider locale="en-US">
+        <CtaSection data={{ ...baseEntry, showDottedPattern: true }} />
+      </LivePreviewProvider>,
+    );
+    const overlays = container.querySelectorAll('[aria-hidden="true"]');
+    expect(overlays.length).toBeGreaterThan(0);
+  });
+
+  it('does not render dotted pattern when showDottedPattern is false', () => {
+    const { container } = render(
+      <LivePreviewProvider locale="en-US">
+        <CtaSection data={{ ...baseEntry, showDottedPattern: false }} />
+      </LivePreviewProvider>,
+    );
+    const overlays = container.querySelectorAll('[aria-hidden="true"]');
+    expect(overlays.length).toBe(0);
+  });
+
+  it('uses primaryCtaPage slug for primary button href when present', () => {
+    render(
+      <LivePreviewProvider locale="en-US">
+        <CtaSection
+          data={{
+            ...baseEntry,
+            primaryCtaPage: { slug: 'pricing' },
+          }}
+        />
+      </LivePreviewProvider>,
+    );
+    const link = screen.getByRole('link', { name: /get started free/i });
+    expect(link.getAttribute('href')).to.equal('/page/pricing');
+  });
+
+  it('uses secondaryCtaPage slug for secondary button href when present', () => {
+    render(
+      <LivePreviewProvider locale="en-US">
+        <CtaSection
+          data={{
+            ...baseEntry,
+            secondaryCtaPage: { slug: 'contact' },
+          }}
+        />
+      </LivePreviewProvider>,
+    );
+    const link = screen.getByRole('link', { name: /watch demo/i });
+    expect(link.getAttribute('href')).to.equal('/page/contact');
+  });
+
+  it('falls back to ctaPrimaryUrl when primaryCtaPage is absent', () => {
+    render(
+      <LivePreviewProvider locale="en-US">
+        <CtaSection data={{ ...baseEntry, primaryCtaPage: null }} />
+      </LivePreviewProvider>,
+    );
+    const link = screen.getByRole('link', { name: /get started free/i });
+    expect(link.getAttribute('href')).to.equal('/signup');
   });
 });

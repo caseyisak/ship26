@@ -288,10 +288,28 @@ export type CtaSectionFragment = BlockData & {
   subheadlineRt?: { json: Record<string, unknown> } | null;
   ctaPrimaryLabelRt?: { json: Record<string, unknown> } | null;
   ctaPrimaryUrl?: string | null;
+  /** Page reference for primary CTA — takes precedence over ctaPrimaryUrl when present. */
+  primaryCtaPage?: { slug?: string | null } | null;
   ctaSecondaryLabelRt?: { json: Record<string, unknown> } | null;
   ctaSecondaryUrl?: string | null;
-  colorVariant?: 'light' | 'dark' | 'alt' | 'primary' | 'secondary' | 'image' | null;
-  backgroundImage?: { url?: string; width?: number; height?: number; description?: string } | null;
+  /** Page reference for secondary CTA — takes precedence over ctaSecondaryUrl when present. */
+  secondaryCtaPage?: { slug?: string | null } | null;
+  colorVariant?:
+    | 'light'
+    | 'dark'
+    | 'alt'
+    | 'primary'
+    | 'secondary'
+    | 'image'
+    | null;
+  backgroundImage?: {
+    url?: string;
+    width?: number;
+    height?: number;
+    description?: string;
+  } | null;
+  /** When true, renders a radial dot pattern overlay over the section background. */
+  showDottedPattern?: boolean | null;
   sectionStyle?: string | null;
   ntExperiencesCollection?: {
     items: Array<NtExperienceFragment>;

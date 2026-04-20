@@ -406,10 +406,13 @@ const CTA_SECTION_FIELDS = `
     subheadlineRt { json }
     ctaPrimaryLabelRt { json }
     ctaPrimaryUrl
+    primaryCtaPage { ... on Page { slug } }
     ctaSecondaryLabelRt { json }
     ctaSecondaryUrl
+    secondaryCtaPage { ... on Page { slug } }
     colorVariant
     backgroundImage { url width height description }
+    showDottedPattern
     sectionStyle
   }
 `;

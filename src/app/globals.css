@@ -225,6 +225,40 @@
   --section-btn-secondary-border: var(--primary-foreground);
 }
 
+/* ─── Section contrast system ────────────────────────────────────────────── */
+/* data-variant is set on each section wrapper.                               */
+/* Components use --section-* vars so buttons are always readable.            */
+[data-variant='light'] {
+  --section-bg: var(--background);
+  --section-fg: var(--foreground);
+  --section-muted: var(--muted-foreground);
+  --section-btn-primary-bg: var(--primary);
+  --section-btn-primary-fg: var(--primary-foreground);
+  --section-btn-secondary-bg: transparent;
+  --section-btn-secondary-fg: var(--foreground);
+  --section-btn-secondary-border: var(--border);
+}
+[data-variant='dark'] {
+  --section-bg: var(--foreground);
+  --section-fg: var(--background);
+  --section-muted: oklch(from var(--background) l c h / 0.7);
+  --section-btn-primary-bg: var(--background);
+  --section-btn-primary-fg: var(--foreground);
+  --section-btn-secondary-bg: transparent;
+  --section-btn-secondary-fg: var(--background);
+  --section-btn-secondary-border: var(--background);
+}
+[data-variant='accent'] {
+  --section-bg: var(--primary);
+  --section-fg: var(--primary-foreground);
+  --section-muted: oklch(from var(--primary-foreground) l c h / 0.8);
+  --section-btn-primary-bg: var(--primary-foreground);
+  --section-btn-primary-fg: var(--primary);
+  --section-btn-secondary-bg: transparent;
+  --section-btn-secondary-fg: var(--primary-foreground);
+  --section-btn-secondary-border: var(--primary-foreground);
+}
+
 /* ─── Bears Demo Theme ───────────────────────────────────────────────────── */
 /* Bears navy: #0B1F41  →  oklch(0.19 0.068 258) */
 /* Bears orange: #C83803  →  oklch(0.55 0.205 38) */

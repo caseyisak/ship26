@@ -1,4 +1,4 @@
-import { Globe } from 'lucide-react';
+import { Globe, Link2, Share2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -33,8 +33,8 @@ const columns = [
 ];
 
 const socials = [
-  { Icon: Globe, href: 'https://linkedin.com' },
-  { Icon: Globe, href: 'https://twitter.com' },
+  { Icon: Link2, href: 'https://linkedin.com' },
+  { Icon: Share2, href: 'https://twitter.com' },
   { Icon: Globe, href: 'https://facebook.com' },
 ];
 

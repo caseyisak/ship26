@@ -73,10 +73,12 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
     subheadlineRt,
     ctaPrimaryLabelRt,
     ctaPrimaryUrl,
+    primaryCtaPage,
     ctaSecondaryLabelRt,
     ctaSecondaryUrl,
+    secondaryCtaPage,
     colorVariant,
-    backgroundImage,
+    showDottedPattern,
   } = data;
 
   // Parse sectionStyle — live preview may return object or string
@@ -96,9 +98,10 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
   const resolvedVariant = colorVariant ?? 'primary';
   const isImageVariant = resolvedVariant === 'image';
 
-  const colorBgClass = !useOverride && !isImageVariant
-    ? (COLOR_VARIANT_BG[resolvedVariant] ?? 'bg-primary')
-    : '';
+  const colorBgClass =
+    !useOverride && !isImageVariant
+      ? (COLOR_VARIANT_BG[resolvedVariant] ?? 'bg-primary')
+      : '';
   const colorTextClass = !useOverride
     ? (COLOR_VARIANT_TEXT[resolvedVariant] ?? 'text-primary-foreground')
     : '';
@@ -125,7 +128,9 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
   // ── Text color overrides (sectionStyle) ───────────────────────────────────
   const bgColor = useOverride ? sectionStyle.backgroundColor : undefined;
   const defaultTextColor = bgColor
-    ? isDarkColor(bgColor) ? '#ffffff' : '#1a1a2e'
+    ? isDarkColor(bgColor)
+      ? '#ffffff'
+      : '#1a1a2e'
     : undefined;
 
   const headlineStyle: React.CSSProperties =
@@ -144,11 +149,19 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
 
   // Overlay opacity for image variant
   const overlayOpacity = isImageVariant
-    ? ((sectionStyle.overlayOpacity ?? 50) / 100)
+    ? (sectionStyle.overlayOpacity ?? 50) / 100
     : 0;
 
-  const hasPrimary = !!(ctaPrimaryLabelRt?.json && ctaPrimaryUrl);
-  const hasSecondary = !!(ctaSecondaryLabelRt?.json && ctaSecondaryUrl);
+  // Page reference takes precedence over raw URL — matches issue spec
+  const resolvedPrimaryUrl = primaryCtaPage?.slug
+    ? `/page/${primaryCtaPage.slug}`
+    : (ctaPrimaryUrl ?? null);
+  const resolvedSecondaryUrl = secondaryCtaPage?.slug
+    ? `/page/${secondaryCtaPage.slug}`
+    : (ctaSecondaryUrl ?? null);
+
+  const hasPrimary = !!(ctaPrimaryLabelRt?.json && resolvedPrimaryUrl);
+  const hasSecondary = !!(ctaSecondaryLabelRt?.json && resolvedSecondaryUrl);
 
   // Map colorVariant → data-variant for the CSS contrast system
   const dataVariant =
@@ -160,13 +173,28 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
 
   // Button inline styles — override shadcn's bg-primary/bg-background base classes.
   // Inline styles guarantee contrast regardless of Tailwind specificity order.
-  const primaryBtnColors: Record<string, { backgroundColor: string; color: string }> = {
-    accent: { backgroundColor: 'var(--primary-foreground)', color: 'var(--primary)' },
+  const primaryBtnColors: Record<
+    string,
+    { backgroundColor: string; color: string }
+  > = {
+    accent: {
+      backgroundColor: 'var(--primary-foreground)',
+      color: 'var(--primary)',
+    },
     dark: { backgroundColor: 'var(--background)', color: 'var(--foreground)' },
-    light: { backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' },
+    light: {
+      backgroundColor: 'var(--primary)',
+      color: 'var(--primary-foreground)',
+    },
   };
-  const secondaryBtnColors: Record<string, { color: string; borderColor: string }> = {
-    accent: { color: 'var(--primary-foreground)', borderColor: 'var(--primary-foreground)' },
+  const secondaryBtnColors: Record<
+    string,
+    { color: string; borderColor: string }
+  > = {
+    accent: {
+      color: 'var(--primary-foreground)',
+      borderColor: 'var(--primary-foreground)',
+    },
     dark: { color: 'var(--background)', borderColor: 'var(--background)' },
     light: { color: 'var(--foreground)', borderColor: 'var(--border)' },
   };
@@ -198,8 +226,8 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
         />
       )}
 
-      {/* Subtle dot pattern for image variant */}
-      {isImageVariant && (
+      {/* Dotted pattern overlay — shown when showDottedPattern is true OR for image variant */}
+      {(showDottedPattern || isImageVariant) && (
         <div
           className="pointer-events-none absolute inset-0 z-[1] opacity-10"
           style={{
@@ -211,11 +239,16 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
         />
       )}
 
-      <div className={cn('relative z-10 mx-auto max-w-3xl px-6 py-20 text-center', colorTextClass)}>
+      <div
+        className={cn(
+          'relative z-10 mx-auto max-w-3xl px-6 py-20 text-center',
+          colorTextClass,
+        )}
+      >
         {/* Headline */}
         {headlineRt?.json && (
           <div
-            className="text-4xl font-bold leading-tight tracking-tight text-balance sm:text-5xl"
+            className="text-4xl leading-tight font-bold tracking-tight text-balance sm:text-5xl"
             style={headlineStyle}
             {...getProps({ fieldId: 'headlineRt' })}
           >
@@ -244,7 +277,7 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
                 style={primaryInlineStyle}
                 {...getProps({ fieldId: 'ctaPrimaryLabelRt' })}
               >
-                <a href={ctaPrimaryUrl!}>
+                <a href={resolvedPrimaryUrl!}>
                   <RtField rt={ctaPrimaryLabelRt} />
                 </a>
               </Button>
@@ -257,7 +290,7 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
                 style={secondaryBtnStyle}
                 {...getProps({ fieldId: 'ctaSecondaryLabelRt' })}
               >
-                <a href={ctaSecondaryUrl!}>
+                <a href={resolvedSecondaryUrl!}>
                   <RtField rt={ctaSecondaryLabelRt} />
                 </a>
               </Button>
