@@ -1,6 +1,31 @@
 # Current State & Roadmap
 
-## 🔥 Active Initiative — AIO / AEO / GEO Demo Loop
+## 🔥 Active Initiative — GH Issue Blitz (agent team)
+
+**Execution order:** D → A → B + C in parallel
+
+| Stream | Issues | Branch | Status |
+|--------|--------|--------|--------|
+| D: Model cleanup (first — unblocks A) | #4 rename CTs, #42 FeatureItem fields | `feat/model-cleanup` | ⬜ |
+| A: Marketing blocks | #56 CtaSection, #54 Pricing, #57 featureSection | `feat/marketing-blocks` | ⬜ blocked on D |
+| B: Dashboard + Personas | #40 dashboard, #41 dashboardPage CT, #43 preview route, #39 persona system, #38 switcher | `feat/dashboard-personas` | 🟡 PR #68 open — needs Casey visual sign-off → merge |
+| C: RT field migration | #52 audit + wire all CTs to RT fields | `feat/rt-migration` | ⬜ |
+
+### Backlog — deferred (blocked or needs planning)
+
+| Issue | Why deferred |
+|-------|-------------|
+| #49 Tilley personalization fix | Blocked — issue says "TBD details," nothing to fix yet |
+| #51 Localization all fields | Risky mid-migration — run after #52 RT migration lands and CTs are stable |
+| #8 Deprecate hardcoded themes | Blocked on #57 featureSection — new system not defined yet |
+| #53 Visual form builder app | Big scope, separate Contentful app — needs planning session first |
+| #48 3rd-party integration simulator | Needs design decisions (which integrations, data shape) before code starts |
+| #5 newsWrapper CT + news feed | Standalone, not blocking current streams |
+| #2 Style override app | Separate Contentful app, big scope, not blocking demos |
+
+---
+
+## 🟡 Pending — AIO / AEO / GEO Demo Loop
 
 **Branch to create:** `feat/aio-aeo-geo-demo` (worktree off main)
 **Spec + tasks:** `.claude/specs/001-aio-aeo-geo-demo/`
@@ -73,8 +98,8 @@ All blocks are committed to `main`. This is the source of truth.
 | Branch | Purpose | CC instance |
 |--------|---------|-------------|
 | `main` | Sandbox, all blocks, source of truth | This CC |
+| `feat/dashboard-personas` | Stream B — 3-persona dashboard + NT personalization | Worktree — PR #68 open |
 | `feat/skill-creator` | Claude skills development | Other CC |
-| `demo/bears` + `bears/*` | Bears customer demo | Archived after demo |
 
 ---
 
