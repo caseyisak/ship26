@@ -239,8 +239,6 @@ export type MediaWrapperFragment = {
 export type BannerFragment = BlockData & {
   __typename: 'Banner';
   internalName?: string | null;
-  headline?: string | null;
-  subheadline?: string | null;
   headlineRt?: { json: Record<string, unknown> } | null;
   subheadlineRt?: { json: Record<string, unknown> } | null;
   ctaText?: string | null;

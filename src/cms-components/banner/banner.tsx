@@ -67,7 +67,7 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
   const getProps = useContentfulInspectorModeProps(rawData.sys.id);
   const [isVisible, setIsVisible] = useState(true);
 
-  const { headline, subheadline, headlineRt, subheadlineRt, ctaText, ctaUrl, variant, colorVariant } = data;
+  const { headlineRt, subheadlineRt, ctaText, ctaUrl, variant, colorVariant } = data;
 
   // Parse sectionStyle — live preview may return object or string
   const rawSectionStyle = (data as BannerFragment).sectionStyle;
@@ -168,7 +168,7 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
 
           <div className={cn('flex flex-col items-center gap-3 pt-2 md:flex-row md:items-center md:pt-0', colorTextClass)}>
             <div className="flex flex-col gap-1 md:flex-row md:items-center">
-              {/* Headline — prefer rich text, fall back to legacy string */}
+              {/* Headline */}
               <div
                 className="text-sm font-medium"
                 style={headlineStyle}
@@ -176,9 +176,9 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
               >
                 {headlineRt?.json
                   ? documentToReactComponents(headlineRt.json as unknown as Parameters<typeof documentToReactComponents>[0])
-                  : (headline ?? '')}
+                  : null}
               </div>
-              {/* Subheadline — prefer rich text, fall back to legacy string */}
+              {/* Subheadline */}
               <div
                 className="text-sm"
                 style={subheadlineStyle}
@@ -186,7 +186,7 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
               >
                 {subheadlineRt?.json
                   ? documentToReactComponents(subheadlineRt.json as unknown as Parameters<typeof documentToReactComponents>[0])
-                  : (subheadline ?? '')}
+                  : null}
               </div>
             </div>
           </div>
