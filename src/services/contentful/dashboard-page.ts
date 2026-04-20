@@ -1,19 +1,23 @@
-import type { BannerFragment, FaqFragment, FeatureItemFragment } from '@/block-renderer/types';
+import type { BannerFragment, CtaSectionFragment, FaqFragment, FeatureItemFragment, HeroFragment } from '@/block-renderer/types';
 
 import { fetchGraphQL } from './client';
-import { DASHBOARD_PAGE_BY_ID, DASHBOARD_PAGE_BY_SLUG, DASHBOARD_PAGE_BY_TYPE } from './queries';
+import { DASHBOARD_PAGE_BY_ID, DASHBOARD_PAGE_BY_SLUG } from './queries';
 
-export type DashboardSlot = BannerFragment | FeatureItemFragment | FaqFragment | null;
+export type DashboardSlot =
+  | BannerFragment
+  | FeatureItemFragment
+  | FaqFragment
+  | HeroFragment
+  | CtaSectionFragment
+  | null;
 
 export type DashboardPageData = {
   sys: { id: string };
   internalName?: string | null;
-  title?: string | null;
   slug?: string | null;
-  pageType?: 'dashboard-home' | 'upgrades' | 'checkout' | null;
-  top?: DashboardSlot;
-  middle?: DashboardSlot;
-  bottom?: DashboardSlot;
+  headerBlock?: DashboardSlot;
+  primaryBlock?: DashboardSlot;
+  secondaryBlock?: DashboardSlot;
 };
 
 /** Raw (untransformed) dashboard page — passed to useLiveUpdates so the SDK
@@ -22,15 +26,13 @@ export type DashboardPageRaw = {
   sys: { id: string };
   __typename?: string;
   internalName?: string | null;
-  title?: string | null;
   slug?: string | null;
-  pageType?: string | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  top?: any;
+  headerBlock?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  middle?: any;
+  primaryBlock?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  bottom?: any;
+  secondaryBlock?: any;
 };
 
 // ── Raw response types ────────────────────────────────────────────────────────
@@ -76,6 +78,17 @@ type RawSlot = {
       answerRt?: { json: Record<string, unknown> } | null;
     } | null>;
   } | null;
+  // Hero fields
+  background?: { url?: string } | null;
+  // CtaSection fields
+  ctaPrimaryLabelRt?: { json: Record<string, unknown> } | null;
+  ctaPrimaryUrl?: string | null;
+  ctaSecondaryLabelRt?: { json: Record<string, unknown> } | null;
+  ctaSecondaryUrl?: string | null;
+  backgroundImage?: { url?: string; width?: number; height?: number; description?: string } | null;
+  // NT fields
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ntExperiencesCollection?: { items: any[] } | null;
 } | null;
 
 type DashboardPageByIdResponse = {
@@ -84,12 +97,10 @@ type DashboardPageByIdResponse = {
       __typename: string;
       sys: { id: string };
       internalName?: string | null;
-      title?: string | null;
       slug?: string | null;
-      pageType?: string | null;
-      top?: RawSlot;
-      middle?: RawSlot;
-      bottom?: RawSlot;
+      headerBlock?: RawSlot;
+      primaryBlock?: RawSlot;
+      secondaryBlock?: RawSlot;
     }>;
   };
 };
@@ -114,6 +125,7 @@ export function mapSlot(raw: RawSlot): DashboardSlot {
       sectionStyle: raw.sectionStyle as string | null | undefined,
       game: null,
       media: null,
+      ntExperiencesCollection: raw.ntExperiencesCollection ?? null,
     } satisfies BannerFragment;
   }
 
@@ -153,6 +165,39 @@ export function mapSlot(raw: RawSlot): DashboardSlot {
     } satisfies FaqFragment;
   }
 
+  if (raw.__typename === 'Hero') {
+    return {
+      __typename: 'Hero',
+      sys: raw.sys,
+      internalName: raw.internalName,
+      headlineRt: raw.headlineRt ?? null,
+      subheadlineRt: raw.subheadlineRt ?? null,
+      ctaText: raw.ctaText,
+      ctaUrl: raw.ctaUrl,
+      variant: raw.variant,
+      sectionStyle: raw.sectionStyle as string | null | undefined,
+      background: raw.background ?? null,
+      image: null,
+    } satisfies HeroFragment;
+  }
+
+  if (raw.__typename === 'CtaSection') {
+    return {
+      __typename: 'CtaSection',
+      sys: raw.sys,
+      internalName: raw.internalName,
+      headlineRt: raw.headlineRt ?? null,
+      subheadlineRt: raw.subheadlineRt ?? null,
+      ctaPrimaryLabelRt: raw.ctaPrimaryLabelRt ?? null,
+      ctaPrimaryUrl: raw.ctaPrimaryUrl,
+      ctaSecondaryLabelRt: raw.ctaSecondaryLabelRt ?? null,
+      ctaSecondaryUrl: raw.ctaSecondaryUrl,
+      colorVariant: raw.colorVariant as CtaSectionFragment['colorVariant'],
+      backgroundImage: raw.backgroundImage ?? null,
+      sectionStyle: raw.sectionStyle as string | null | undefined,
+    } satisfies CtaSectionFragment;
+  }
+
   return null;
 }
 
@@ -177,45 +222,10 @@ export async function getDashboardPageByEntryId({
     return {
       sys: raw.sys,
       internalName: raw.internalName,
-      title: raw.title,
       slug: raw.slug,
-      pageType: raw.pageType as DashboardPageData['pageType'],
-      top: mapSlot(raw.top ?? null),
-      middle: mapSlot(raw.middle ?? null),
-      bottom: mapSlot(raw.bottom ?? null),
-    };
-  } catch {
-    return null;
-  }
-}
-
-export async function getDashboardPageByType({
-  pageType,
-  locale = 'en-US',
-  preview = false,
-}: {
-  pageType: 'dashboard-home' | 'upgrades' | 'checkout';
-  locale?: string;
-  preview?: boolean;
-}): Promise<DashboardPageData | null> {
-  try {
-    const data = await fetchGraphQL<DashboardPageByIdResponse>({
-      query: DASHBOARD_PAGE_BY_TYPE,
-      variables: { pageType, locale, preview },
-      preview,
-    });
-    const raw = data.dashboardPageCollection?.items?.[0];
-    if (!raw) return null;
-
-    return {
-      sys: raw.sys,
-      internalName: raw.internalName,
-      title: raw.title,
-      slug: raw.slug,
-      pageType: raw.pageType as DashboardPageData['pageType'],
-      top: mapSlot(raw.top ?? null),
-      middle: mapSlot(raw.middle ?? null),
-      bottom: mapSlot(raw.bottom ?? null),
+      headerBlock: mapSlot(raw.headerBlock ?? null),
+      primaryBlock: mapSlot(raw.primaryBlock ?? null),
+      secondaryBlock: mapSlot(raw.secondaryBlock ?? null),
     };
   } catch {
     return null;
@@ -243,12 +253,10 @@ export async function getDashboardPageBySlug({
     return {
       sys: raw.sys,
       internalName: raw.internalName,
-      title: raw.title,
       slug: raw.slug,
-      pageType: raw.pageType as DashboardPageData['pageType'],
-      top: mapSlot(raw.top ?? null),
-      middle: mapSlot(raw.middle ?? null),
-      bottom: mapSlot(raw.bottom ?? null),
+      headerBlock: mapSlot(raw.headerBlock ?? null),
+      primaryBlock: mapSlot(raw.primaryBlock ?? null),
+      secondaryBlock: mapSlot(raw.secondaryBlock ?? null),
     };
   } catch {
     return null;

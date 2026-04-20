@@ -213,6 +213,7 @@ export type BannerFragment = BlockData & {
   sectionStyle?: string | null;
   game?: GameFragment | null;
   media?: MediaWrapperFragment | null;
+  ntExperiencesCollection?: { items: Array<NtExperienceFragment> } | null;
 };
 
 /** Social Post — multi-channel post with stacked live preview cards per selected channel. */

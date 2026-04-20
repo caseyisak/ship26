@@ -11,6 +11,7 @@ import {
   HeadphonesIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PersonaSwitcher } from '@/components/persona-switcher';
 
 const TABS = [
   { label: 'Overview', href: '/dashboard', icon: Home },
@@ -21,12 +22,14 @@ const TABS = [
   { label: 'Support', href: '/dashboard/support', icon: HeadphonesIcon },
 ];
 
+const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+
 export function DashboardNav() {
   const pathname = usePathname();
 
   return (
     <div className="bg-card border-b border-border sticky top-0 z-40">
-      <div className="container">
+      <div className="container flex items-center justify-between gap-4">
         <nav className="flex overflow-x-auto scrollbar-none" aria-label="Dashboard navigation">
           {TABS.map(({ label, href, icon: Icon }) => {
             const active = pathname === href;
@@ -47,6 +50,13 @@ export function DashboardNav() {
             );
           })}
         </nav>
+
+        {/* Persona switcher — visible only in demo/preview mode */}
+        {isDemoMode && (
+          <div className="shrink-0 py-2">
+            <PersonaSwitcher />
+          </div>
+        )}
       </div>
     </div>
   );

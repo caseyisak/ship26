@@ -1,7 +1,7 @@
 'use client';
 
 import { useNinetailed } from '@ninetailed/experience.js-react';
-import { Eye, EyeOff, Facebook } from 'lucide-react';
+import { Eye, EyeOff, Globe } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
@@ -159,7 +159,7 @@ export function LoginModal({ open, onOpenChange, onLogin }: LoginModalProps) {
                   variant="outline"
                   className="h-11 w-full justify-center rounded-[8px] font-medium"
                 >
-                  <Facebook className="mr-2 size-5" />
+                  <Globe className="mr-2 size-5" />
                   Sign in with Facebook
                 </Button>
               </div>

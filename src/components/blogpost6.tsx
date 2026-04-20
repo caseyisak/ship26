@@ -1,6 +1,6 @@
 'use client';
 import type { LucideIcon } from 'lucide-react';
-import { Linkedin, Twitter } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { Fragment, useEffect, useState } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -43,11 +43,11 @@ const AUTHOR: AuthorType = {
     'An avid storyteller with a passion for crafting compelling narratives, love to explore the human experience through vivid characters and thought-provoking themes. ',
   socials: [
     {
-      icon: Twitter,
+      icon: Globe,
       url: '#',
     },
     {
-      icon: Linkedin,
+      icon: Globe,
       url: '#',
     },
   ],
@@ -66,11 +66,11 @@ const BREADCRUMB: Array<BreadcrumbItem> = [
 
 const SHARE_LINKS = [
   {
-    icon: Twitter,
+    icon: Globe,
     url: '#',
   },
   {
-    icon: Linkedin,
+    icon: Globe,
     url: '#',
   },
 ];
