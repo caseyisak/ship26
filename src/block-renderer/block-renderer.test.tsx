@@ -161,4 +161,22 @@ describe('BlockRenderer', () => {
     expect(screen.getByText('Checkout')).toBeTruthy();
     expect(screen.getByText('Recurring Billing')).toBeTruthy();
   });
+
+  it('renders CardsWrapper with mock data', () => {
+    // CardsWrapper config is registered; typename 'CardsWrapper' is recognized
+    // by the block renderer once the Contentful CT migration is complete.
+    render(
+      <LivePreviewProvider locale="en-US">
+        <BlockRenderer
+          data={{
+            __typename: 'CardsWrapper',
+            sys: { id: 'cw-1' },
+            itemsCollection: { items: [] },
+          }}
+        />
+      </LivePreviewProvider>,
+    );
+    // With no itemsCollection items the component renders an empty section — no error
+    expect(document.querySelector('section')).toBeTruthy();
+  });
 });

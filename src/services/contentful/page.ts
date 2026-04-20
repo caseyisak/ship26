@@ -3,6 +3,7 @@ import { draftMode } from 'next/headers';
 import type {
   BannerFragment,
   BlogPostsSectionFragment,
+  CardsWrapperFragment,
   CtaSectionFragment,
   DataVizFragment,
   FaqFragment,
@@ -26,6 +27,7 @@ export type PageSection =
   | FaqFragment
   | TabbedContentFragment
   | FeaturesFragment
+  | CardsWrapperFragment
   | DataVizFragment
   | TwoAcrossFragment
   | BlogPostsSectionFragment

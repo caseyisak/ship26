@@ -3,6 +3,7 @@ import type {
   BlockConfig,
   BlockData,
   BlogPostsSectionFragment,
+  CardsWrapperFragment,
   CtaSectionFragment,
   DataVizFragment,
   FaqFragment,
@@ -17,6 +18,7 @@ import type {
 } from '@/block-renderer/types';
 import { Banner } from '@/cms-components/banner';
 import { BlogPostsSection } from '@/cms-components/blog-posts-section';
+import { CardsWrapper } from '@/cms-components/cards-wrapper';
 import { CtaSection } from '@/cms-components/cta-section';
 import { DataViz } from '@/cms-components/data-viz';
 import { Faq } from '@/cms-components/faq';
@@ -54,6 +56,13 @@ const featuresConfig: BlockConfig<FeaturesFragment> = {
   typename: 'Features',
   layouts: {
     default: () => Features,
+  },
+};
+
+const cardsWrapperConfig: BlockConfig<CardsWrapperFragment> = {
+  typename: 'CardsWrapper',
+  layouts: {
+    default: () => CardsWrapper,
   },
 };
 
@@ -125,6 +134,7 @@ export const blockConfigs: BlockConfig<BlockData>[] = [
   faqConfig as BlockConfig<BlockData>,
   tabbedContentConfig as BlockConfig<BlockData>,
   featuresConfig as BlockConfig<BlockData>,
+  cardsWrapperConfig as BlockConfig<BlockData>,
   dataVizConfig as BlockConfig<BlockData>,
   bannerConfig as BlockConfig<BlockData>,
   blogPostsSectionConfig as BlockConfig<BlockData>,

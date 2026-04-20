@@ -135,6 +135,45 @@ export type FeaturesFragment = BlockData & {
   } | null;
 };
 
+/** Card (matches Contentful Card content type: renamed from featureItem). */
+export type CardFragment = {
+  __typename: 'Card';
+  sys: { id: string };
+  titleRt?: {
+    json: Record<string, unknown>;
+    links?: {
+      entries?: {
+        inline?: Array<{
+          sys: { id: string };
+          __typename?: string;
+          ntMergetagId?: string | null;
+          ntFallback?: string | null;
+        } | null>;
+      };
+    };
+  } | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
+  image?: { url?: string } | null; // Mapped field name (legacy)
+  media?: { url?: string } | null; // Raw Contentful field name
+  animationKey?: string | null;
+  mediaPlacement?: 'top' | 'bottom' | 'left' | 'right' | null;
+  sectionStyle?: Record<string, string> | null;
+};
+
+/** CardsWrapper section (matches Contentful cardsWrapper content type: renamed from features). */
+export type CardsWrapperFragment = BlockData & {
+  __typename: 'CardsWrapper';
+  internalName?: string | null;
+  labelRt?: { json: Record<string, unknown> } | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
+  mediaPosition?: 'top' | 'bottom' | 'left' | 'right' | null;
+  itemsCollection?: { items: CardFragment[] } | null;
+  ntExperiencesCollection?: {
+    items: Array<NtExperienceFragment>;
+  } | null;
+};
+
 /** DataViz section (matches Contentful DataViz content type: internalName, titleRt, descriptionRt, chartType, csvData, colorScheme, showLegend). */
 export type DataVizFragment = BlockData & {
   __typename: 'DataViz';

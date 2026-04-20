@@ -40,6 +40,12 @@ const NT_VARIANT_FIELDS = `
     titleRt { json }
     descriptionRt { json }
   }
+  ... on CardsWrapper {
+    internalName
+    labelRt { json }
+    titleRt { json }
+    descriptionRt { json }
+  }
   ... on Tabbedcontent {
     internalName
     taglineRt { json }
@@ -296,6 +302,61 @@ const FEATURES_PAGE_FIELDS = `
     itemsCollection(limit: 20) {
       items {
         ${FEATURE_ITEM_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Card fragment: all fields from Card content type (renamed from featureItem). */
+const CARD_FIELDS = `
+  __typename
+  sys { id }
+  ... on Card {
+    titleRt { json }
+    descriptionRt { json }
+    media { url }
+    animationKey
+    mediaPlacement
+    sectionStyle
+  }
+`;
+
+/** CardsWrapper fragment: all fields from cardsWrapper content type (renamed from features). */
+const CARDS_WRAPPER_FIELDS = `
+  __typename
+  sys { id }
+  ... on CardsWrapper {
+    internalName
+    labelRt { json }
+    titleRt { json }
+    descriptionRt { json }
+    itemsCollection(limit: 20) {
+      items {
+        ${CARD_FIELDS}
+      }
+    }
+    ntExperiencesCollection(limit: 10) {
+      items { ${NT_EXPERIENCE_FIELDS} }
+    }
+  }
+`;
+
+/**
+ * Lean CardsWrapper fragment for PAGE_BY_SLUG — omits ntExperiencesCollection.
+ * NT data is available via CARDS_WRAPPER_BY_ID (preview route only).
+ * Keeps PAGE_BY_SLUG under Contentful's 8192-byte query limit (LL-011).
+ */
+const CARDS_WRAPPER_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on CardsWrapper {
+    internalName
+    labelRt { json }
+    titleRt { json }
+    descriptionRt { json }
+    itemsCollection(limit: 20) {
+      items {
+        ${CARD_FIELDS}
       }
     }
   }
@@ -684,6 +745,7 @@ export const PAGE_BY_SLUG = `
             ${FAQ_PAGE_FIELDS}
             ${TABBED_CONTENT_PAGE_FIELDS}
             ${FEATURES_PAGE_FIELDS}
+            ${CARDS_WRAPPER_PAGE_FIELDS}
             ${DATA_VIZ_PAGE_FIELDS}
             ${TWO_ACROSS_FIELDS}
             ${BLOG_POSTS_SECTION_FIELDS}
@@ -1133,6 +1195,17 @@ export const MEDIA_CARD_GRID_BY_ID = `
     mediaCardGridCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${MEDIA_CARD_GRID_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single CardsWrapper entry by entry ID (for ID-based live preview). */
+export const CARDS_WRAPPER_BY_ID = `
+  query CardsWrapperById($id: String!, $locale: String!, $preview: Boolean) {
+    cardsWrapperCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${CARDS_WRAPPER_FIELDS}
       }
     }
   }
