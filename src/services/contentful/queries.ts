@@ -649,7 +649,6 @@ const BANNER_FIELDS = `
     internalName
     headlineRt { json }
     subheadlineRt { json }
-    copy
     ctaText
     ctaUrl
     variant
@@ -912,7 +911,6 @@ const DASHBOARD_SLOT_FIELDS = `
     internalName
     headlineRt { json }
     subheadlineRt { json }
-    copy
     ctaText
     ctaUrl
     variant

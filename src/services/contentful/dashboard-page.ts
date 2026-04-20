@@ -43,7 +43,6 @@ type RawSlot = {
   internalName?: string | null;
   headlineRt?: { json: Record<string, unknown> } | null;
   subheadlineRt?: { json: Record<string, unknown> } | null;
-  copy?: string | null;
   ctaText?: string | null;
   ctaUrl?: string | null;
   variant?: string | null;
@@ -102,7 +101,6 @@ export function mapSlot(raw: RawSlot): DashboardSlot {
       internalName: raw.internalName,
       headlineRt: raw.headlineRt ?? null,
       subheadlineRt: raw.subheadlineRt ?? null,
-      copy: raw.copy,
       ctaText: raw.ctaText,
       ctaUrl: raw.ctaUrl,
       variant: raw.variant as BannerFragment['variant'],

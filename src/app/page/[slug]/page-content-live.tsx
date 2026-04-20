@@ -110,7 +110,6 @@ function transformSection(item: any): PageSection | null {
         internalName: item.internalName ?? null,
         headlineRt: item.headlineRt ?? null,
         subheadlineRt: item.subheadlineRt ?? null,
-        copy: item.copy ?? null,
         ctaText: item.ctaText ?? null,
         ctaUrl: item.ctaUrl ?? null,
         variant: item.variant ?? null,

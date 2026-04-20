@@ -11,7 +11,6 @@ type BannerByIdResponse = {
       internalName?: string | null;
       headlineRt?: { json: Record<string, unknown> } | null;
       subheadlineRt?: { json: Record<string, unknown> } | null;
-      copy?: string | null;
       ctaText?: string | null;
       ctaUrl?: string | null;
       variant?: string | null;
@@ -51,7 +50,6 @@ export async function getBannerByEntryId({
       internalName: raw.internalName,
       headlineRt: raw.headlineRt ?? null,
       subheadlineRt: raw.subheadlineRt ?? null,
-      copy: raw.copy,
       ctaText: raw.ctaText,
       ctaUrl: raw.ctaUrl,
       variant: raw.variant as BannerFragment['variant'],

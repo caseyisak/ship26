@@ -243,7 +243,6 @@ export type BannerFragment = BlockData & {
   subheadline?: string | null;
   headlineRt?: { json: Record<string, unknown> } | null;
   subheadlineRt?: { json: Record<string, unknown> } | null;
-  copy?: string | null;
   ctaText?: string | null;
   ctaUrl?: string | null;
   variant?: string | null;
