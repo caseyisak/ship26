@@ -8,7 +8,6 @@ import type {
   DataVizFragment,
   FaqFragment,
   FeatureShowcaseFragment,
-  FeaturesFragment,
   HeroFragment,
   IconGridFragment,
   MediaCardGridFragment,
@@ -26,7 +25,6 @@ export type PageSection =
   | BannerFragment
   | FaqFragment
   | TabbedContentFragment
-  | FeaturesFragment
   | CardsWrapperFragment
   | DataVizFragment
   | TwoAcrossFragment
@@ -110,26 +108,6 @@ type RawTabbedContent = {
   ntExperiencesCollectionCollection?: NtExperiencesCollection | null;
 };
 
-type RawFeatureItem = {
-  __typename: string;
-  sys: { id: string };
-  title?: string | null;
-  description?: string | null;
-  media?: { url?: string } | null;
-  animationKey?: string | null;
-};
-
-type RawFeatures = {
-  __typename: string;
-  sys: { id: string };
-  internalName?: string | null;
-  label?: string | null;
-  title?: string | null;
-  description?: string | null;
-  itemsCollection?: { items: RawFeatureItem[] } | null;
-  ntExperiencesCollection?: NtExperiencesCollection | null;
-};
-
 type RawDataViz = {
   __typename: string;
   sys: { id: string };
@@ -151,7 +129,7 @@ type PageBySlugResponse = {
       internalName?: string | null;
       sectionsCollection?: {
         items: Array<
-          RawHero | RawFaq | RawTabbedContent | RawFeatures | RawDataViz | null
+          RawHero | RawFaq | RawTabbedContent | RawDataViz | null
         >;
       } | null;
       ntExperiencesCollection?: NtExperiencesCollection | null;

@@ -1,11 +1,10 @@
-import type { BannerFragment, CtaSectionFragment, FaqFragment, FeatureItemFragment, HeroFragment } from '@/block-renderer/types';
+import type { BannerFragment, CtaSectionFragment, FaqFragment, HeroFragment } from '@/block-renderer/types';
 
 import { fetchGraphQL } from './client';
 import { DASHBOARD_PAGE_BY_ID, DASHBOARD_PAGE_BY_SLUG } from './queries';
 
 export type DashboardSlot =
   | BannerFragment
-  | FeatureItemFragment
   | FaqFragment
   | HeroFragment
   | CtaSectionFragment
@@ -50,24 +49,10 @@ type RawSlot = {
   variant?: string | null;
   colorVariant?: string | null;
   sectionStyle?: unknown;
-  // FeatureItem fields
-  titleRt?: {
-    json: Record<string, unknown>;
-    links?: {
-      entries?: {
-        inline?: Array<{
-          sys: { id: string };
-          __typename?: string;
-          ntMergetagId?: string | null;
-          ntFallback?: string | null;
-        } | null>;
-      };
-    };
-  } | null;
+  // Hero/CtaSection shared text fields
+  titleRt?: { json: Record<string, unknown> } | null;
   descriptionRt?: { json: Record<string, unknown> } | null;
   media?: { url?: string } | null;
-  animationKey?: string | null;
-  mediaPlacement?: string | null;
   // Faq fields
   itemsCollection?: {
     items: Array<{
@@ -127,19 +112,6 @@ export function mapSlot(raw: RawSlot): DashboardSlot {
       media: null,
       ntExperiencesCollection: raw.ntExperiencesCollection ?? null,
     } satisfies BannerFragment;
-  }
-
-  if (raw.__typename === 'FeatureItem') {
-    return {
-      __typename: 'FeatureItem',
-      sys: raw.sys,
-      titleRt: raw.titleRt ?? null,
-      descriptionRt: raw.descriptionRt ?? null,
-      media: raw.media ?? null,
-      animationKey: raw.animationKey,
-      mediaPlacement: raw.mediaPlacement as FeatureItemFragment['mediaPlacement'],
-      sectionStyle: raw.sectionStyle as Record<string, string> | null | undefined,
-    } satisfies FeatureItemFragment;
   }
 
   if (raw.__typename === 'Faq') {

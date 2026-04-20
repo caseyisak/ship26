@@ -90,19 +90,6 @@ function transformSection(item: any): PageSection | null {
           item.ntExperiencesCollectionCollection ?? undefined,
       };
     }
-    if (item.__typename === 'Features') {
-      return {
-        __typename: 'Features',
-        sys: { id: item.sys.id },
-        internalName: item.internalName ?? null,
-        labelRt: item.labelRt ?? null,
-        titleRt: item.titleRt ?? null,
-        descriptionRt: item.descriptionRt ?? null,
-        // Keep feature items RAW - let FeatureCard component handle transformation after useLiveUpdates
-        itemsCollection: item.itemsCollection ?? null,
-        ntExperiencesCollection: item.ntExperiencesCollection ?? undefined,
-      };
-    }
     if (item.__typename === 'DataViz') {
       return {
         __typename: 'DataViz',

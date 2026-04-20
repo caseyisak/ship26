@@ -34,12 +34,6 @@ const NT_VARIANT_FIELDS = `
     titleRt { json }
     descriptionRt { json }
   }
-  ... on Features {
-    internalName
-    labelRt { json }
-    titleRt { json }
-    descriptionRt { json }
-  }
   ... on CardsWrapper {
     internalName
     labelRt { json }
@@ -247,61 +241,6 @@ const TABBED_CONTENT_PAGE_FIELDS = `
     itemsCollectionCollection(limit: 50) {
       items {
         ${TABBED_CONTENT_ITEM_FIELDS}
-      }
-    }
-  }
-`;
-
-/** Feature Item fragment: all fields from Feature Item content type (titleRt, descriptionRt, media, animationKey, mediaPlacement, sectionStyle). */
-const FEATURE_ITEM_FIELDS = `
-  __typename
-  sys { id }
-  ... on FeatureItem {
-    titleRt { json }
-    descriptionRt { json }
-    media { url }
-    animationKey
-    mediaPlacement
-    sectionStyle
-  }
-`;
-
-/** Features fragment: all fields from Features content type (internalName, labelRt, titleRt, descriptionRt, items, ntExperiences). */
-const FEATURES_FIELDS = `
-  __typename
-  sys { id }
-  ... on Features {
-    internalName
-    labelRt { json }
-    titleRt { json }
-    descriptionRt { json }
-    itemsCollection(limit: 20) {
-      items {
-        ${FEATURE_ITEM_FIELDS}
-      }
-    }
-    ntExperiencesCollection(limit: 10) {
-      items { ${NT_EXPERIENCE_FIELDS} }
-    }
-  }
-`;
-
-/**
- * Lean Features fragment for PAGE_BY_SLUG — omits ntExperiencesCollection.
- * NT data is available via FEATURES_BY_ID (preview route only).
- * Keeps PAGE_BY_SLUG under Contentful's 8192-byte query limit (LL-011).
- */
-const FEATURES_PAGE_FIELDS = `
-  __typename
-  sys { id }
-  ... on Features {
-    internalName
-    labelRt { json }
-    titleRt { json }
-    descriptionRt { json }
-    itemsCollection(limit: 20) {
-      items {
-        ${FEATURE_ITEM_FIELDS}
       }
     }
   }
@@ -744,7 +683,6 @@ export const PAGE_BY_SLUG = `
             ${BANNER_FIELDS}
             ${FAQ_PAGE_FIELDS}
             ${TABBED_CONTENT_PAGE_FIELDS}
-            ${FEATURES_PAGE_FIELDS}
             ${CARDS_WRAPPER_PAGE_FIELDS}
             ${DATA_VIZ_PAGE_FIELDS}
             ${TWO_ACROSS_FIELDS}
@@ -983,27 +921,6 @@ const DASHBOARD_SLOT_FIELDS = `
     ntExperiencesCollection(limit: 10) {
       items { ${NT_EXPERIENCE_FIELDS} }
     }
-  }
-  ... on FeatureItem {
-    titleRt {
-      json
-      links {
-        entries {
-          inline {
-            sys { id }
-            ... on NtMergetag {
-              ntMergetagId
-              ntFallback
-            }
-          }
-        }
-      }
-    }
-    descriptionRt { json }
-    media { url }
-    animationKey
-    mediaPlacement
-    sectionStyle
   }
   ... on Faq {
     internalName
