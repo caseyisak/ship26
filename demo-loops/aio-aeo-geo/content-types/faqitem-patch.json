@@ -1,0 +1,21 @@
+{
+  "contentTypeId": "faqitem",
+  "description": "Add this field to the faqitem content type to link governance metadata.",
+  "fieldToAdd": {
+    "id": "aioAeoGeo",
+    "name": "AI Optimization Metadata",
+    "type": "Array",
+    "required": false,
+    "localized": false,
+    "items": {
+      "type": "Link",
+      "linkType": "Entry",
+      "validations": [
+        { "linkContentType": ["aioAeoGeo"] }
+      ]
+    },
+    "validations": [
+      { "size": { "max": 1 } }
+    ]
+  }
+}

@@ -129,6 +129,25 @@ function FaqItem({ id, question, answer, open, onToggle }: FaqItemProps) {
   );
 }
 
+function extractRtText(
+  rt: { json: Record<string, unknown> } | null | undefined,
+): string {
+  if (!rt?.json) return '';
+  try {
+    const doc = rt.json as {
+      content?: Array<{ content?: Array<{ value?: string }> }>;
+    };
+    return (
+      doc.content
+        ?.flatMap((block) => block.content ?? [])
+        .map((n) => n.value ?? '')
+        .join('') ?? ''
+    );
+  } catch {
+    return '';
+  }
+}
+
 const Faq = ({ data, className, ...props }: BlockProps<FaqFragment>) => {
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
@@ -149,11 +168,30 @@ const Faq = ({ data, className, ...props }: BlockProps<FaqFragment>) => {
     : 'Hendrerit fames metus leo ut orci pretium. Sit vitae montes egestas montes mauris. Auctor vitae neque urna nam nunc pellentesque.';
   const items = liveData.itemsCollection?.items ?? [];
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: extractRtText(item.questionRt),
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: extractRtText(item.answerRt),
+      },
+    })),
+  };
+
   const [openId, setOpenId] = useState<string | undefined>(undefined);
   const handleToggle = (id: string) =>
     setOpenId((curr) => (curr === id ? undefined : id));
 
   return (
+    <>
+      <script
+        id="faq-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     <section
       id="faq"
       className={cn('bg-background px-6 lg:px-0', className ?? '')}
@@ -214,6 +252,7 @@ const Faq = ({ data, className, ...props }: BlockProps<FaqFragment>) => {
         </div>
       </div>
     </section>
+    </>
   );
 };
 

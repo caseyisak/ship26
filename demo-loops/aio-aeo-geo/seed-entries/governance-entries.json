@@ -1,0 +1,46 @@
+[
+  {
+    "contentTypeId": "aioAeoGeo",
+    "entryId": "6nm4fpps00zGUNEvrAAmnj",
+    "fields": {
+      "internalName": "Data Privacy Governance",
+      "topic": "data_privacy",
+      "ownerTeam": "Legal",
+      "region": "global",
+      "lastUpdated": "2026-03-01"
+    }
+  },
+  {
+    "contentTypeId": "aioAeoGeo",
+    "entryId": "4jqYg8GDUgWnshttOYkn70",
+    "fields": {
+      "internalName": "Pricing Governance",
+      "topic": "pricing",
+      "ownerTeam": "Product Marketing",
+      "region": "US",
+      "lastUpdated": "2026-03-15"
+    }
+  },
+  {
+    "contentTypeId": "aioAeoGeo",
+    "entryId": "1lf4UtdPayLvRKWKFU35oC",
+    "fields": {
+      "internalName": "Product Support Governance",
+      "topic": "product_support",
+      "ownerTeam": "Customer Success",
+      "region": "global",
+      "lastUpdated": "2026-02-28"
+    }
+  },
+  {
+    "contentTypeId": "aioAeoGeo",
+    "entryId": "7Ifq0UkQFT33GAqZUIbON7",
+    "fields": {
+      "internalName": "Compliance Governance",
+      "topic": "compliance",
+      "ownerTeam": "Compliance",
+      "region": "EU",
+      "lastUpdated": "2026-03-10"
+    }
+  }
+]

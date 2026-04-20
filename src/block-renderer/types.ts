@@ -50,13 +50,25 @@ export type HeroFragment = BlockData & {
   } | null;
 };
 
-/** FaqItem (matches Contentful FaqItem content type: internalName, questionRt, answerRt). */
+/** AioAeoGeo governance metadata entry. */
+export type AioAeoGeoFragment = {
+  __typename: 'AioAeoGeo';
+  sys: { id: string };
+  internalName?: string | null;
+  topic?: string | null;
+  ownerTeam?: string | null;
+  lastUpdated?: string | null;
+  region?: string | null;
+};
+
+/** FaqItem (matches Contentful FaqItem content type: internalName, questionRt, answerRt, aioAeoGeo). */
 export type FaqItemFragment = {
   __typename: 'FaqItem';
   sys: { id: string };
   internalName?: string | null;
   questionRt?: { json: Record<string, unknown> } | null;
   answerRt?: { json: Record<string, unknown> } | null;
+  aioAeoGeoCollection?: { items: AioAeoGeoFragment[] } | null;
 };
 
 /** FAQ section (matches Contentful FAQ content type: internalName, titleRt, descriptionRt, items). */

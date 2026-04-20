@@ -141,7 +141,20 @@ const HERO_PAGE_FIELDS = `
   }
 `;
 
-/** FaqItem fragment: all fields from FaqItem content type (internalName, questionRt, answerRt). */
+/** AioAeoGeo fragment: governance metadata for FAQ entries (topic, ownerTeam, lastUpdated, region). */
+const AIO_AEO_GEO_FIELDS = `
+  __typename
+  sys { id }
+  ... on AioAeoGeo {
+    internalName
+    topic
+    ownerTeam
+    lastUpdated
+    region
+  }
+`;
+
+/** FaqItem fragment: all fields from FaqItem content type (internalName, questionRt, answerRt, aioAeoGeo). */
 const FAQ_ITEM_FIELDS = `
   __typename
   sys { id }
@@ -149,6 +162,11 @@ const FAQ_ITEM_FIELDS = `
     internalName
     questionRt { json }
     answerRt { json }
+    aioAeoGeoCollection(limit: 1) {
+      items {
+        ${AIO_AEO_GEO_FIELDS}
+      }
+    }
   }
 `;
 

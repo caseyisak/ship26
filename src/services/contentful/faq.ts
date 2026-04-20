@@ -7,12 +7,23 @@ type NtExperiencesCollection = {
   items: Array<{ __typename?: string; sys?: { id: string } }>;
 };
 
+type RawAioAeoGeo = {
+  __typename: string;
+  sys: { id: string };
+  internalName?: string | null;
+  topic?: string | null;
+  ownerTeam?: string | null;
+  lastUpdated?: string | null;
+  region?: string | null;
+};
+
 type RawFaqItem = {
   __typename: string;
   sys: { id: string };
   internalName?: string | null;
   questionRt?: { json: Record<string, unknown> } | null;
   answerRt?: { json: Record<string, unknown> } | null;
+  aioAeoGeoCollection?: { items: Array<RawAioAeoGeo | null> } | null;
 };
 
 type RawFaq = {
@@ -39,6 +50,24 @@ function mapFaqItem(item: RawFaqItem | null): FaqItemFragment | null {
     internalName: item.internalName ?? null,
     questionRt: item.questionRt ?? null,
     answerRt: item.answerRt ?? null,
+    aioAeoGeoCollection: item.aioAeoGeoCollection
+      ? {
+          items: item.aioAeoGeoCollection.items
+            .filter(
+              (g): g is RawAioAeoGeo =>
+                g !== null && g.__typename === 'AioAeoGeo',
+            )
+            .map((g) => ({
+              __typename: 'AioAeoGeo' as const,
+              sys: { id: g.sys.id },
+              internalName: g.internalName ?? null,
+              topic: g.topic ?? null,
+              ownerTeam: g.ownerTeam ?? null,
+              lastUpdated: g.lastUpdated ?? null,
+              region: g.region ?? null,
+            })),
+        }
+      : null,
   };
 }
 

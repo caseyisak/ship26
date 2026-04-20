@@ -1,0 +1,50 @@
+[
+  {
+    "contentTypeId": "faqitem",
+    "entryId": "5lSrZBhKEzUTyrTq1Gn1PW",
+    "internalName": "FAQ: How is my data protected?",
+    "question": "How is my data protected?",
+    "answer": "Metafi encrypts all customer data in transit using TLS 1.3 and at rest using AES-256 encryption. We maintain strict access controls and conduct regular security audits to ensure your data is never accessible to unauthorized parties. Our Legal team reviews and updates our data protection practices in accordance with GDPR, CCPA, and other applicable regulations.",
+    "governanceEntryId": "6nm4fpps00zGUNEvrAAmnj"
+  },
+  {
+    "contentTypeId": "faqitem",
+    "entryId": "dNaVCN3YfugCq96jRnrUr",
+    "internalName": "FAQ: What's included in each plan?",
+    "question": "What's included in each plan?",
+    "answer": "Metafi offers three plans: Starter (invoicing, payment links, basic analytics), Growth (everything in Starter plus recurring billing, dunning management, and revenue reporting), and Enterprise (everything in Growth plus custom integrations, dedicated support, and SLA guarantees). Annual billing saves 20% across all plans.",
+    "governanceEntryId": "4jqYg8GDUgWnshttOYkn70"
+  },
+  {
+    "contentTypeId": "faqitem",
+    "entryId": "2o0nGihQs97QjWhgkSJgK3",
+    "internalName": "FAQ: How long does onboarding take?",
+    "question": "How long does onboarding take?",
+    "answer": "Most customers are fully onboarded within 3–5 business days. Your dedicated Customer Success manager will guide you through account setup, payment gateway configuration, and team training. Enterprise customers receive a tailored onboarding plan with custom timelines.",
+    "governanceEntryId": "1lf4UtdPayLvRKWKFU35oC"
+  },
+  {
+    "contentTypeId": "faqitem",
+    "entryId": "1iMg2Rx30UG94wSU31HjSr",
+    "internalName": "FAQ: Can I export my data?",
+    "question": "Can I export my data?",
+    "answer": "Yes, you can export all your data at any time from the Settings > Data Export section of your dashboard. Exports are available in CSV and JSON formats and include invoices, customer records, payment history, and analytics. Exports are processed within minutes and delivered to your registered email address.",
+    "governanceEntryId": "6nm4fpps00zGUNEvrAAmnj"
+  },
+  {
+    "contentTypeId": "faqitem",
+    "entryId": "65jQzT3lhm6RTaM7aLVr8i",
+    "internalName": "FAQ: What compliance certifications do you hold?",
+    "question": "What compliance certifications do you hold?",
+    "answer": "Metafi holds SOC 2 Type II and ISO 27001 certifications, which are reviewed annually by independent auditors. We are also PCI DSS Level 1 compliant for payment data handling. EU customers benefit from our GDPR-compliant data processing agreements, and we maintain a dedicated compliance team to address any regulatory requirements.",
+    "governanceEntryId": "7Ifq0UkQFT33GAqZUIbON7"
+  },
+  {
+    "contentTypeId": "faqitem",
+    "entryId": "3nLaRNcri3JeNY5dD8ur3R",
+    "internalName": "FAQ: How do I get support?",
+    "question": "How do I get support?",
+    "answer": "Metafi offers support via live chat (available 24/7), email (response within 4 hours on business days), and phone (Enterprise plans). All plans include access to our comprehensive knowledge base and video tutorials. Enterprise customers also receive a named Customer Success manager and priority escalation paths.",
+    "governanceEntryId": "1lf4UtdPayLvRKWKFU35oC"
+  }
+]
