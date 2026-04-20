@@ -681,6 +681,64 @@ const BANNER_FIELDS = `
   }
 `;
 
+/** FeatureSectionItem fragment: all fields from featureSectionItem content type. */
+const FEATURE_SECTION_ITEM_FIELDS = `
+  __typename
+  sys { id }
+  ... on FeatureSectionItem {
+    internalName
+    icon { url }
+    animationKey
+    title { json }
+    description { json }
+    colorVariant
+    href
+  }
+`;
+
+/** FeatureSection fragment: all fields including NT experiences. */
+const FEATURE_SECTION_FIELDS = `
+  __typename
+  sys { id }
+  ... on FeatureSection {
+    internalName
+    label { json }
+    title { json }
+    description { json }
+    displayVariant
+    columns
+    itemsCollection(limit: 20) {
+      items { ${FEATURE_SECTION_ITEM_FIELDS} }
+    }
+    ntExperiencesCollection(limit: 10) {
+      items { ${NT_EXPERIENCE_FIELDS} }
+    }
+  }
+`;
+
+/**
+ * Lean FeatureSection fragment for PAGE_BY_SLUG — omits ntExperiencesCollection.
+ * NT data is available via FEATURE_SECTION_BY_ID (preview route only).
+ * Keeps PAGE_BY_SLUG under Contentful's 8192-byte query limit (LL-011).
+ * NOTE: title/description aliased to titleRt/descriptionRt to avoid type conflict with
+ * BlogPostsSection.title/description (String) in the shared inline fragment selection set.
+ */
+const FEATURE_SECTION_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on FeatureSection {
+    internalName
+    label { json }
+    titleRt: title { json }
+    descriptionRt: description { json }
+    displayVariant
+    columns
+    itemsCollection(limit: 20) {
+      items { ${FEATURE_SECTION_ITEM_FIELDS} }
+    }
+  }
+`;
+
 /**
  * PAGE_BY_SLUG — lean query kept under Contentful's 8192-byte limit (LL-011).
  * All block fragments use *_PAGE_FIELDS variants that omit ntExperiencesCollection
@@ -712,6 +770,7 @@ export const PAGE_BY_SLUG = `
             ${ICON_GRID_PAGE_FIELDS}
             ${FEATURE_SHOWCASE_PAGE_FIELDS}
             ${MEDIA_CARD_GRID_PAGE_FIELDS}
+            ${FEATURE_SECTION_PAGE_FIELDS}
           }
         }
         ntExperiencesCollection(limit: 10) {
@@ -1142,6 +1201,17 @@ export const CARDS_WRAPPER_BY_ID = `
     cardsWrapperCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${CARDS_WRAPPER_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single FeatureSection entry by entry ID (for ID-based live preview). */
+export const FEATURE_SECTION_BY_ID = `
+  query FeatureSectionById($id: String!, $locale: String!, $preview: Boolean) {
+    featureSectionCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${FEATURE_SECTION_FIELDS}
       }
     }
   }

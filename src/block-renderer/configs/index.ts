@@ -7,6 +7,7 @@ import type {
   CtaSectionFragment,
   DataVizFragment,
   FaqFragment,
+  FeatureSectionFragment,
   FeatureShowcaseFragment,
   FeaturesFragment,
   HeroFragment,
@@ -17,6 +18,7 @@ import type {
   TwoAcrossFragment,
 } from '@/block-renderer/types';
 import { Banner } from '@/cms-components/banner';
+import { FeatureSection } from '@/cms-components/feature-section';
 import { BlogPostsSection } from '@/cms-components/blog-posts-section';
 import { CardsWrapper } from '@/cms-components/cards-wrapper';
 import { CtaSection } from '@/cms-components/cta-section';
@@ -129,6 +131,13 @@ const mediaCardGridConfig: BlockConfig<MediaCardGridFragment> = {
   },
 };
 
+const featureSectionConfig: BlockConfig<FeatureSectionFragment> = {
+  typename: 'FeatureSection',
+  layouts: {
+    default: () => FeatureSection,
+  },
+};
+
 export const blockConfigs: BlockConfig<BlockData>[] = [
   heroConfig as BlockConfig<BlockData>,
   faqConfig as BlockConfig<BlockData>,
@@ -144,4 +153,5 @@ export const blockConfigs: BlockConfig<BlockData>[] = [
   iconGridConfig as BlockConfig<BlockData>,
   featureShowcaseConfig as BlockConfig<BlockData>,
   mediaCardGridConfig as BlockConfig<BlockData>,
+  featureSectionConfig as BlockConfig<BlockData>,
 ];

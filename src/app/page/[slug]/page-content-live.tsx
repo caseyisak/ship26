@@ -219,6 +219,23 @@ function transformSection(item: any): PageSection | null {
         itemsCollection: item.itemsCollection ?? null,
       };
     }
+    if (item.__typename === 'FeatureSection') {
+      return {
+        __typename: 'FeatureSection',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        label: item.label ?? null,
+        // PAGE_BY_SLUG aliases title/description as titleRt/descriptionRt to avoid
+        // type conflict with BlogPostsSection.title (String) in shared selection set
+        title: item.titleRt ?? item.title ?? null,
+        description: item.descriptionRt ?? item.description ?? null,
+        displayVariant: item.displayVariant ?? null,
+        columns: item.columns ?? null,
+        itemsCollection: item.itemsCollection ?? null,
+        sectionStyle: item.sectionStyle ?? null,
+        ntExperiencesCollection: item.ntExperiencesCollection ?? null,
+      };
+    }
     return null;
   } catch (error) {
     // eslint-disable-next-line no-console

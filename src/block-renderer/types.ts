@@ -446,6 +446,35 @@ export type MediaCardGridFragment = BlockData & {
   itemsCollection?: { items: MediaCardFragment[] } | null;
 };
 
+/** FeatureSectionItem — child item for FeatureSection (icon-based layout). */
+export type FeatureSectionItemFragment = {
+  __typename: 'FeatureSectionItem';
+  sys: { id: string };
+  internalName?: string | null;
+  icon?: { url?: string } | null;
+  animationKey?: string | null;
+  title?: { json: Record<string, unknown> } | null;
+  description?: { json: Record<string, unknown> } | null;
+  colorVariant?: 'blue' | 'green' | 'purple' | 'orange' | 'red' | 'gray' | null;
+  href?: string | null;
+};
+
+/** FeatureSection — icon-based feature section with icon-text / cards / integrations variants. */
+export type FeatureSectionFragment = BlockData & {
+  __typename: 'FeatureSection';
+  internalName?: string | null;
+  label?: { json: Record<string, unknown> } | null;
+  title?: { json: Record<string, unknown> } | null;
+  description?: { json: Record<string, unknown> } | null;
+  displayVariant?: 'icon-text' | 'cards' | 'integrations' | null;
+  columns?: number | null;
+  itemsCollection?: { items: Array<FeatureSectionItemFragment | null> } | null;
+  sectionStyle?: Record<string, string> | null;
+  ntExperiencesCollection?: {
+    items: Array<NtExperienceFragment>;
+  } | null;
+};
+
 export type PersonalizedBlockData = BlockData & {
   ntExperiencesCollection?: { items: Array<NtExperienceFragment> };
 };

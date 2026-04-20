@@ -7,6 +7,7 @@ import type {
   CtaSectionFragment,
   DataVizFragment,
   FaqFragment,
+  FeatureSectionFragment,
   FeatureShowcaseFragment,
   HeroFragment,
   IconGridFragment,
@@ -33,7 +34,8 @@ export type PageSection =
   | PricingFragment
   | IconGridFragment
   | FeatureShowcaseFragment
-  | MediaCardGridFragment;
+  | MediaCardGridFragment
+  | FeatureSectionFragment;
 
 export type PageData = {
   __typename?: string;
