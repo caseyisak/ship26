@@ -2,6 +2,9 @@ import { Globe, Link2, Share2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import type { FormFragment } from '@/block-renderer/types';
+import { Form } from '@/cms-components/form';
+
 const columns = [
   {
     title: 'Product',
@@ -38,9 +41,18 @@ const socials = [
   { Icon: Globe, href: 'https://facebook.com' },
 ];
 
-export const Footer = () => {
+type FooterProps = {
+  footerForm?: FormFragment | null;
+};
+
+export const Footer = ({ footerForm }: FooterProps = {}) => {
   return (
     <footer className="force-light-vars bg-primary text-primary-foreground px-2.5 lg:px-0">
+      {footerForm && (
+        <div className="border-b border-primary-foreground/20">
+          <Form data={footerForm} className="bg-transparent" />
+        </div>
+      )}
       <div className="container py-12 md:py-16">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div className="md:min-w-[140px]">

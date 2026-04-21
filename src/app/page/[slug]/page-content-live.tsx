@@ -136,6 +136,7 @@ function transformSection(item: any): PageSection | null {
         ctaUrl: item.ctaUrl ?? null,
         sectionStyle: item.sectionStyle ?? null,
         colorVariant: item.colorVariant ?? null,
+        form: item.form ?? null,
       };
     }
     if (item.__typename === 'BlogPostsSection') {
@@ -261,6 +262,23 @@ function transformSection(item: any): PageSection | null {
         maxItems: item.maxItems ?? null,
         priorityItemsCollection: item.priorityItemsCollection ?? null,
         mergedArticles: item.mergedArticles ?? [],
+      };
+    }
+    if (item.__typename === 'Form') {
+      return {
+        __typename: 'Form',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        formId: item.formId ?? null,
+        formType: item.formType ?? null,
+        labelRt: item.labelRt ?? null,
+        titleRt: item.titleRt ?? null,
+        descriptionRt: item.descriptionRt ?? null,
+        submitLabel: item.submitLabel ?? null,
+        successMessageRt: item.successMessageRt ?? null,
+        redirectUrl: item.redirectUrl ?? null,
+        colorVariant: item.colorVariant ?? null,
+        ntExperiencesCollection: item.ntExperiencesCollection ?? undefined,
       };
     }
     return null;

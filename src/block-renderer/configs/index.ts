@@ -10,6 +10,7 @@ import type {
   FeatureSectionFragment,
   FeatureShowcaseFragment,
   FeaturesFragment,
+  FormFragment,
   HeroFragment,
   IconFeatureGridFragment,
   IconGridFragment,
@@ -20,6 +21,7 @@ import type {
   TwoAcrossFragment,
 } from '@/block-renderer/types';
 import { Banner } from '@/cms-components/banner';
+import { Form } from '@/cms-components/form';
 import { FeatureSection } from '@/cms-components/feature-section';
 import { BlogPostsSection } from '@/cms-components/blog-posts-section';
 import { CardsWrapper } from '@/cms-components/cards-wrapper';
@@ -156,6 +158,13 @@ const iconFeatureGridConfig: BlockConfig<IconFeatureGridFragment> = {
   },
 };
 
+const formConfig: BlockConfig<FormFragment> = {
+  typename: 'Form',
+  layouts: {
+    default: () => Form,
+  },
+};
+
 export const blockConfigs: BlockConfig<BlockData>[] = [
   heroConfig as BlockConfig<BlockData>,
   faqConfig as BlockConfig<BlockData>,
@@ -174,4 +183,5 @@ export const blockConfigs: BlockConfig<BlockData>[] = [
   featureSectionConfig as BlockConfig<BlockData>,
   newsWrapperConfig as BlockConfig<BlockData>,
   iconFeatureGridConfig as BlockConfig<BlockData>,
+  formConfig as BlockConfig<BlockData>,
 ];

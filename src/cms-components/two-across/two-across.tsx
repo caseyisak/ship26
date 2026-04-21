@@ -4,9 +4,10 @@ import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import { BLOCKS, MARKS } from '@contentful/rich-text-types';
 import * as React from 'react';
 
-import type { TwoAcrossFragment } from '@/block-renderer/types';
+import type { FormFragment, TwoAcrossFragment } from '@/block-renderer/types';
 import { BlockProps } from '@/block-renderer/types';
 import { Button } from '@/components/ui/button';
+import { Form } from '@/cms-components/form';
 import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
@@ -131,7 +132,10 @@ const TwoAcross = ({
 
   const mediaAltText = liveData.mediaAltText ?? '';
 
+  const formData = (liveData as TwoAcrossFragment).form ?? null;
+
   const hasMedia = !!mediaUrl;
+  const hasForm = !!formData;
   const imageLeft = mediaPosition === 'left';
 
   const textBlock = (
@@ -184,7 +188,11 @@ const TwoAcross = ({
     </div>
   );
 
-  const mediaBlock = hasMedia ? (
+  const mediaBlock = hasForm ? (
+    <div className="flex items-center justify-center">
+      <Form data={formData as FormFragment} className="w-full" />
+    </div>
+  ) : hasMedia ? (
     <div
       className="relative min-h-[260px] w-full overflow-hidden rounded-lg sm:min-h-[340px]"
       {...getProps({ fieldId: 'media' })}
@@ -209,7 +217,7 @@ const TwoAcross = ({
       {...props}
     >
       <div className="container mx-auto">
-        {hasMedia ? (
+        {(hasMedia || hasForm) ? (
           <div
             className={cn(
               'grid grid-cols-1 items-center gap-10 md:grid-cols-2 md:gap-16',
@@ -228,7 +236,7 @@ const TwoAcross = ({
             )}
           </div>
         ) : (
-          /* No media — text renders full width */
+          /* No media or form — text renders full width */
           <div className="mx-auto max-w-3xl">{textBlock}</div>
         )}
       </div>

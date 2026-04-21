@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import Banner from '@/components/layout/banner';
 import { Footer } from '@/components/layout/footer';
 import Navbar from '@/components/layout/navbar';
+import { useSettings } from '@/personalization/settings-context';
 
 /**
  * Renders site chrome (Banner, Navbar, main, Footer) only when not on the Contentful app route.
@@ -16,6 +17,7 @@ export function ConditionalSiteChrome({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const settings = useSettings();
   const isContentfulApp = pathname?.startsWith('/contentful-app') ?? false;
   const isPreview = pathname?.startsWith('/preview') ?? false;
   const isDashboard = pathname?.startsWith('/dashboard') ?? false;
@@ -29,7 +31,7 @@ export function ConditionalSiteChrome({
       <Banner url="https://www.shadcnblocks.com/template/metafi" />
       <Navbar />
       <main>{children}</main>
-      <Footer />
+      <Footer footerForm={settings?.footerForm} />
     </>
   );
 }

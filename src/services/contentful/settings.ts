@@ -1,3 +1,5 @@
+import type { FormFragment, NtExperienceFragment } from '@/block-renderer/types';
+
 import { fetchGraphQL } from './client';
 
 interface SettingsAsset {
@@ -36,6 +38,7 @@ export interface SiteSettings {
   theme: Record<string, string> | null;
   nav: Nav | null;
   footer: Footer | null;
+  footerForm?: FormFragment | null;
 }
 
 const NAV_LINKS_FRAGMENT = `
@@ -67,6 +70,22 @@ const SETTINGS_QUERY = `
           logo { url title width height }
           ${NAV_LINKS_FRAGMENT}
         }
+        footerForm {
+          __typename
+          sys { id }
+          ... on Form {
+            internalName
+            formId
+            formType
+            labelRt { json }
+            titleRt { json }
+            descriptionRt { json }
+            submitLabel
+            successMessageRt { json }
+            redirectUrl
+            colorVariant
+          }
+        }
       }
     }
   }
@@ -92,6 +111,21 @@ type RawFooter = {
   linksCollection: { items: RawNavLink[] };
 };
 
+type RawFormSettings = {
+  __typename: string;
+  sys: { id: string };
+  internalName?: string | null;
+  formId?: string | null;
+  formType?: string | null;
+  labelRt?: { json: Record<string, unknown> } | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
+  submitLabel?: string | null;
+  successMessageRt?: { json: Record<string, unknown> } | null;
+  redirectUrl?: string | null;
+  colorVariant?: string | null;
+};
+
 type SettingsResponse = {
   settingsCollection: {
     items: Array<{
@@ -100,6 +134,7 @@ type SettingsResponse = {
       theme: Record<string, string> | null;
       nav: RawNav | null;
       footer: RawFooter | null;
+      footerForm?: RawFormSettings | null;
     }>;
   };
 };
@@ -144,6 +179,22 @@ export async function getSettings({
             linksCollection: {
               items: resolveNavLinks(raw.footer.linksCollection?.items ?? []),
             },
+          }
+        : null,
+      footerForm: raw.footerForm && raw.footerForm.__typename === 'Form'
+        ? {
+            __typename: 'Form' as const,
+            sys: { id: raw.footerForm.sys.id },
+            internalName: raw.footerForm.internalName ?? null,
+            formId: raw.footerForm.formId ?? null,
+            formType: (raw.footerForm.formType as FormFragment['formType']) ?? null,
+            labelRt: raw.footerForm.labelRt ?? null,
+            titleRt: raw.footerForm.titleRt ?? null,
+            descriptionRt: raw.footerForm.descriptionRt ?? null,
+            submitLabel: raw.footerForm.submitLabel ?? null,
+            successMessageRt: raw.footerForm.successMessageRt ?? null,
+            redirectUrl: raw.footerForm.redirectUrl ?? null,
+            colorVariant: (raw.footerForm.colorVariant as FormFragment['colorVariant']) ?? null,
           }
         : null,
     };

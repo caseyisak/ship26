@@ -290,6 +290,7 @@ export type TwoAcrossFragment = BlockData & {
   ctaUrl?: string | null;
   sectionStyle?: string | null;
   colorVariant?: 'light' | 'dark' | 'primary' | 'secondary' | 'alt' | null;
+  form?: FormFragment | null;
 };
 
 /** CtaSection — full-width call-to-action block with colorVariant, optional background image, and dual CTAs. */
@@ -515,6 +516,21 @@ export type IconFeatureGridFragment = BlockData & {
 
 export type PersonalizedBlockData = BlockData & {
   ntExperiencesCollection?: { items: Array<NtExperienceFragment> };
+};
+
+/** Form block — newsletter/contact/message variants with NT personalization. */
+export type FormFragment = PersonalizedBlockData & {
+  __typename: 'Form';
+  internalName?: string | null;
+  formId?: string | null;
+  formType?: 'newsletter' | 'contact' | 'message' | null;
+  labelRt?: { json: Record<string, unknown> } | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: { json: Record<string, unknown> } | null;
+  submitLabel?: string | null;
+  successMessageRt?: { json: Record<string, unknown> } | null;
+  redirectUrl?: string | null;
+  colorVariant?: 'light' | 'dark' | 'accent' | 'primary' | null;
 };
 
 export type InheritedProps = Record<string, unknown>;

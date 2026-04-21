@@ -395,6 +395,58 @@ const MEDIA_WRAPPER_FIELDS = `
   }
 `;
 
+/** Form fragment — full, used for preview route / BY_ID fetch and TwoAcross inline form slot. */
+const FORM_FIELDS = `
+  __typename
+  sys { id }
+  ... on Form {
+    internalName
+    formId
+    formType
+    labelRt { json }
+    titleRt { json }
+    descriptionRt { json }
+    submitLabel
+    successMessageRt { json }
+    redirectUrl
+    colorVariant
+    ntExperiencesCollection(limit: 10) {
+      items { ${NT_EXPERIENCE_FIELDS} }
+    }
+  }
+`;
+
+/**
+ * Lean Form fragment for PAGE_BY_SLUG — omits ntExperiencesCollection.
+ * NT data available via FORM_BY_ID. Keeps PAGE_BY_SLUG under Contentful's 8192-byte limit (LL-011).
+ */
+const FORM_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on Form {
+    internalName
+    formId
+    formType
+    labelRt { json }
+    titleRt { json }
+    descriptionRt { json }
+    submitLabel
+    successMessageRt { json }
+    redirectUrl
+    colorVariant
+  }
+`;
+
+export const FORM_BY_ID = `
+  query FormById($id: String!, $locale: String!, $preview: Boolean) {
+    formCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${FORM_FIELDS}
+      }
+    }
+  }
+`;
+
 /** TwoAcross fragment: 2-column text + media section. */
 const TWO_ACROSS_FIELDS = `
   __typename
@@ -411,6 +463,9 @@ const TWO_ACROSS_FIELDS = `
     ctaUrl
     sectionStyle
     colorVariant
+    form {
+      ${FORM_FIELDS}
+    }
   }
 `;
 
@@ -820,6 +875,7 @@ export const PAGE_BY_SLUG = `
             ${MEDIA_CARD_GRID_PAGE_FIELDS}
             ${ICON_FEATURE_GRID_PAGE_FIELDS}
             ${FEATURE_SECTION_PAGE_FIELDS}
+            ${FORM_PAGE_FIELDS}
             ... on NewsWrapper {
               __typename
               sys { id }
