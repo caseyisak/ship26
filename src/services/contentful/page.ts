@@ -10,6 +10,7 @@ import type {
   FeatureSectionFragment,
   FeatureShowcaseFragment,
   HeroFragment,
+  IconFeatureGridFragment,
   IconGridFragment,
   MediaCardGridFragment,
   NewsWrapperFragment,
@@ -37,7 +38,8 @@ export type PageSection =
   | FeatureShowcaseFragment
   | MediaCardGridFragment
   | FeatureSectionFragment
-  | NewsWrapperFragment;
+  | NewsWrapperFragment
+  | IconFeatureGridFragment;
 
 export type PageData = {
   __typename?: string;

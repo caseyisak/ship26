@@ -11,6 +11,7 @@ import type {
   FeatureShowcaseFragment,
   FeaturesFragment,
   HeroFragment,
+  IconFeatureGridFragment,
   IconGridFragment,
   MediaCardGridFragment,
   NewsWrapperFragment,
@@ -28,6 +29,7 @@ import { Faq } from '@/cms-components/faq';
 import { FeatureShowcase } from '@/cms-components/feature-showcase';
 import { Features } from '@/cms-components/features';
 import { Hero } from '@/cms-components/hero';
+import { IconFeatureGrid } from '@/cms-components/icon-feature-grid';
 import { IconGrid } from '@/cms-components/icon-grid';
 import { MediaCardGrid } from '@/cms-components/media-card-grid';
 import { NewsWrapper } from '@/cms-components/news-wrapper';
@@ -147,6 +149,13 @@ const newsWrapperConfig: BlockConfig<NewsWrapperFragment> = {
   },
 };
 
+const iconFeatureGridConfig: BlockConfig<IconFeatureGridFragment> = {
+  typename: 'IconFeatureGrid',
+  layouts: {
+    default: () => IconFeatureGrid,
+  },
+};
+
 export const blockConfigs: BlockConfig<BlockData>[] = [
   heroConfig as BlockConfig<BlockData>,
   faqConfig as BlockConfig<BlockData>,
@@ -164,4 +173,5 @@ export const blockConfigs: BlockConfig<BlockData>[] = [
   mediaCardGridConfig as BlockConfig<BlockData>,
   featureSectionConfig as BlockConfig<BlockData>,
   newsWrapperConfig as BlockConfig<BlockData>,
+  iconFeatureGridConfig as BlockConfig<BlockData>,
 ];

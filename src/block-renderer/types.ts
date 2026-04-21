@@ -492,6 +492,27 @@ export type NewsWrapperFragment = BlockData & {
   mergedArticles?: BlogPostFragment[];
 };
 
+/** IconFeatureItem — child item for IconFeatureGrid (icon + title + description). */
+export type IconFeatureItemFragment = {
+  __typename: 'IconFeatureItem';
+  sys: { id: string };
+  internalName?: string | null;
+  title?: { json: Record<string, unknown> } | null;
+  description?: { json: Record<string, unknown> } | null;
+  icon?: { url?: string } | null;
+};
+
+/** IconFeatureGrid — 3-col icon grid seeded from hardcoded pricing features. */
+export type IconFeatureGridFragment = BlockData & {
+  __typename: 'IconFeatureGrid';
+  internalName?: string | null;
+  label?: { json: Record<string, unknown> } | null;
+  title?: { json: Record<string, unknown> } | null;
+  description?: { json: Record<string, unknown> } | null;
+  columns?: number | null;
+  itemsCollection?: { items: Array<IconFeatureItemFragment | null> } | null;
+};
+
 export type PersonalizedBlockData = BlockData & {
   ntExperiencesCollection?: { items: Array<NtExperienceFragment> };
 };

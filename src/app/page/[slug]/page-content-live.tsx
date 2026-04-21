@@ -236,6 +236,18 @@ function transformSection(item: any): PageSection | null {
         ntExperiencesCollection: item.ntExperiencesCollection ?? null,
       };
     }
+    if (item.__typename === 'IconFeatureGrid') {
+      return {
+        __typename: 'IconFeatureGrid',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        label: item.label ?? null,
+        title: item.titleRt ?? item.title ?? null,
+        description: item.descriptionRt ?? item.description ?? null,
+        columns: item.columns ?? null,
+        itemsCollection: item.itemsCollection ?? null,
+      };
+    }
     if (item.__typename === 'NewsWrapper') {
       return {
         __typename: 'NewsWrapper',

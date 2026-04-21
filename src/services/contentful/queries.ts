@@ -739,6 +739,54 @@ const FEATURE_SECTION_PAGE_FIELDS = `
   }
 `;
 
+/** IconFeatureItem fragment: icon + title + description. */
+const ICON_FEATURE_ITEM_FIELDS = `
+  __typename
+  sys { id }
+  ... on IconFeatureItem {
+    internalName
+    title { json }
+    description { json }
+    icon { url }
+  }
+`;
+
+/** IconFeatureGrid fragment: full, used for preview route / BY_ID fetch. */
+const ICON_FEATURE_GRID_FIELDS = `
+  __typename
+  sys { id }
+  ... on IconFeatureGrid {
+    internalName
+    label { json }
+    title { json }
+    description { json }
+    columns
+    itemsCollection(limit: 20) {
+      items { ${ICON_FEATURE_ITEM_FIELDS} }
+    }
+  }
+`;
+
+/**
+ * Lean IconFeatureGrid fragment for PAGE_BY_SLUG — title/description aliased to
+ * titleRt/descriptionRt to avoid type conflict with BlogPostsSection.title (String).
+ * Keeps PAGE_BY_SLUG under Contentful's 8192-byte query limit (LL-011).
+ */
+const ICON_FEATURE_GRID_PAGE_FIELDS = `
+  __typename
+  sys { id }
+  ... on IconFeatureGrid {
+    internalName
+    label { json }
+    titleRt: title { json }
+    descriptionRt: description { json }
+    columns
+    itemsCollection(limit: 20) {
+      items { ${ICON_FEATURE_ITEM_FIELDS} }
+    }
+  }
+`;
+
 /**
  * PAGE_BY_SLUG — lean query kept under Contentful's 8192-byte limit (LL-011).
  * All block fragments use *_PAGE_FIELDS variants that omit ntExperiencesCollection
@@ -770,6 +818,7 @@ export const PAGE_BY_SLUG = `
             ${ICON_GRID_PAGE_FIELDS}
             ${FEATURE_SHOWCASE_PAGE_FIELDS}
             ${MEDIA_CARD_GRID_PAGE_FIELDS}
+            ${ICON_FEATURE_GRID_PAGE_FIELDS}
             ${FEATURE_SECTION_PAGE_FIELDS}
             ... on NewsWrapper {
               __typename
@@ -1229,6 +1278,17 @@ export const FEATURE_SECTION_BY_ID = `
     featureSectionCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${FEATURE_SECTION_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single IconFeatureGrid entry by entry ID (for ID-based live preview). */
+export const ICON_FEATURE_GRID_BY_ID = `
+  query IconFeatureGridById($id: String!, $locale: String!, $preview: Boolean) {
+    iconFeatureGridCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${ICON_FEATURE_GRID_FIELDS}
       }
     }
   }
