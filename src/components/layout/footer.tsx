@@ -48,14 +48,9 @@ type FooterProps = {
 export const Footer = ({ footerForm }: FooterProps = {}) => {
   return (
     <footer className="force-light-vars bg-primary text-primary-foreground px-2.5 lg:px-0">
-      {footerForm && (
-        <div className="border-b border-primary-foreground/20">
-          <Form data={footerForm} className="bg-transparent" />
-        </div>
-      )}
       <div className="container py-12 md:py-16">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
-          <div className="md:min-w-[140px]">
+          <div className="flex flex-col gap-6 md:max-w-[280px]">
             <Link href="/" aria-label="Metafi">
               <Image
                 src="/images/layout/logo.svg"
@@ -65,6 +60,9 @@ export const Footer = ({ footerForm }: FooterProps = {}) => {
                 className="invert"
               />
             </Link>
+            {footerForm && (
+              <Form data={footerForm} className="bg-transparent p-0" />
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-4 md:flex md:w-[525px] md:items-start md:justify-between md:gap-0">

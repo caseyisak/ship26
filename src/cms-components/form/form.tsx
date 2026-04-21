@@ -73,13 +73,15 @@ const Form = ({ data, className, ...props }: BlockProps<FormFragment>) => {
     }
   };
 
+  const compact = Boolean(className);
+
   return (
     <section
-      className={cn('px-6 py-16 lg:px-0', bgClass, className ?? '')}
+      className={cn(!compact && 'px-6 py-16 lg:px-0', bgClass, className ?? '')}
       {...props}
     >
-      <div className="container px-0 py-0 md:px-6">
-        <div className="mx-auto max-w-xl">
+      <div className={cn(!compact && 'container px-0 py-0 md:px-6')}>
+        <div className={cn(!compact && 'mx-auto max-w-xl')}>
           {label && (
             <p
               className="text-tagline mb-3 text-sm font-semibold uppercase tracking-widest"
