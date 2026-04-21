@@ -89,7 +89,6 @@ export default async function RootLayout({
       </head>
       <body
         className={`h-screen ${inter.variable} antialiased`}
-        data-theme={process.env.NEXT_PUBLIC_BRAND}
       >
         {/* Inline script runs before React: when Contentful iframes root (/) we redirect immediately so the Section Style Editor loads, not the homepage */}
         <script

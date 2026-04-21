@@ -38,7 +38,6 @@ export default async function PreviewBannerPage({
     return (
       <div
         className="flex min-h-screen flex-col items-center justify-center bg-gray-200 p-6"
-        data-theme={process.env.NEXT_PUBLIC_BRAND}
       >
         <DeviceFrame banner={banner} />
       </div>
@@ -47,7 +46,7 @@ export default async function PreviewBannerPage({
 
   // Web: just the banner, no wrapper chrome — preview layout already strips nav/footer
   return (
-    <div data-theme={process.env.NEXT_PUBLIC_BRAND}>
+    <div>
       <BlockRenderer data={banner} />
     </div>
   );

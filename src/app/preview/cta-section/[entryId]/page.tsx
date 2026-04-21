@@ -33,7 +33,7 @@ export default async function PreviewCtaSectionPage({
   }
 
   return (
-    <div data-theme={process.env.NEXT_PUBLIC_BRAND}>
+    <div>
       <BlockRenderer data={ctaSection} />
     </div>
   );

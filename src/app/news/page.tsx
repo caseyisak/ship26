@@ -21,7 +21,7 @@ export default async function NewsPage() {
   }));
 
   return (
-    <div data-theme={process.env.NEXT_PUBLIC_BRAND}>
+    <div>
       <div className="bg-background px-6 py-12 lg:px-0">
         <div className="container px-0 md:px-6">
           <p className="text-tagline mb-3 text-sm font-semibold tracking-widest uppercase">

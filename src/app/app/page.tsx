@@ -2,21 +2,19 @@
  * Generic mock mobile app — a standalone page that simulates a branded mobile app.
  * Used in multi-channel demos to show the same Contentful content rendering across surfaces.
  *
- * Styling is driven by CSS vars from the active [data-theme] (set via NEXT_PUBLIC_BRAND).
- * No brand-specific content is hardcoded here — all copy/colors come from the theme.
+ * Styling is driven by CSS vars injected at render time via getSettings() / themeToStyle()
+ * in layout.tsx. No brand-specific content is hardcoded here — all copy/colors come from
+ * Contentful siteSettings.
  *
  * For a connected live-preview demo, use /preview/banner/[entryId] which shows
  * both this phone frame and the web banner side by side.
  */
-
-const brand = process.env.NEXT_PUBLIC_BRAND ?? 'metafi';
 
 export default function MockAppPage() {
   return (
     <div
       className="flex min-h-screen items-center justify-center"
       style={{ backgroundColor: '#f0f0f0' }}
-      data-theme={brand}
     >
       <div
         className="relative overflow-hidden rounded-[2.5rem] shadow-2xl"
@@ -51,10 +49,10 @@ export default function MockAppPage() {
             className="flex size-9 items-center justify-center rounded-full text-sm font-bold text-white"
             style={{ backgroundColor: 'var(--accent, var(--primary))' }}
           >
-            {brand.slice(0, 1).toUpperCase()}
+            M
           </div>
           <div>
-            <p className="text-sm font-bold text-white capitalize">{brand}</p>
+            <p className="text-sm font-bold text-white capitalize">Metafi</p>
             <p className="text-xs text-white/70">Official App</p>
           </div>
         </div>
@@ -103,7 +101,7 @@ export default function MockAppPage() {
 
       {/* Label */}
       <p className="absolute bottom-6 text-sm text-gray-400">
-        Multi-channel demo · <span className="capitalize">{brand}</span> theme
+        Multi-channel demo · Metafi theme
       </p>
     </div>
   );
