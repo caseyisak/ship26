@@ -5,7 +5,15 @@ import type { Block, Document, Node } from '@contentful/rich-text-types';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { Fragment, useEffect, useState } from 'react';
 
-import type { BlogPostFragment } from '@/block-renderer/types';
+import type {
+  BannerFragment,
+  BlogPostFragment,
+  CtaSectionFragment,
+  TwoAcrossFragment,
+} from '@/block-renderer/types';
+import { Banner } from '@/cms-components/banner/banner';
+import { CtaSection } from '@/cms-components/cta-section/cta-section';
+import { TwoAcross } from '@/cms-components/two-across/two-across';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Breadcrumb,
@@ -51,8 +59,58 @@ function extractHeadings(doc: unknown): Heading[] {
   return headings;
 }
 
-/** Inject IDs onto h2/h3 elements so the TOC scroll-spy can target them. */
-function buildRichTextOptions(headings: Heading[]) {
+/** Extract plain text from a rich text document (for fallback rendering). */
+function rtToPlainText(doc: unknown): string {
+  if (!doc || typeof doc !== 'object') return '';
+  try {
+    const document = doc as Document;
+    const texts: string[] = [];
+    function walk(node: Node) {
+      if (node.nodeType === 'text') {
+        texts.push((node as unknown as { value: string }).value);
+      }
+      if ('content' in node && Array.isArray(node.content)) {
+        node.content.forEach(walk);
+      }
+    }
+    document.content?.forEach(walk);
+    return texts.join('');
+  } catch {
+    return '';
+  }
+}
+
+/** Inline rich text renderer — strips block wrappers, renders marks only. */
+const inlineRtOptions = {
+  renderMark: {
+    [MARKS.BOLD]: (text: React.ReactNode) => <strong>{text}</strong>,
+    [MARKS.ITALIC]: (text: React.ReactNode) => <em>{text}</em>,
+    [MARKS.UNDERLINE]: (text: React.ReactNode) => <u>{text}</u>,
+  },
+  renderNode: {
+    [BLOCKS.PARAGRAPH]: (_: Node, children: React.ReactNode) => (
+      <>{children}</>
+    ),
+    [BLOCKS.HEADING_1]: (_: Node, children: React.ReactNode) => (
+      <>{children}</>
+    ),
+    [BLOCKS.HEADING_2]: (_: Node, children: React.ReactNode) => (
+      <>{children}</>
+    ),
+  },
+};
+
+type EmbeddedEntry = {
+  __typename: string;
+  sys: { id: string };
+  [key: string]: unknown;
+};
+
+/** Build body rich text options with embedded-entry and heading ID support. */
+function buildRichTextOptions(
+  headings: Heading[],
+  entryMap: Map<string, EmbeddedEntry>,
+) {
   let h2Counter = 0;
   let h3Counter = 0;
   const headingIds = headings.map((h) => h.id);
@@ -66,10 +124,10 @@ function buildRichTextOptions(headings: Heading[]) {
       [MARKS.CODE]: (text: React.ReactNode) => <code>{text}</code>,
     },
     renderNode: {
-      [BLOCKS.HEADING_1]: (node: Node, children: React.ReactNode) => (
+      [BLOCKS.HEADING_1]: (_: Node, children: React.ReactNode) => (
         <h1>{children}</h1>
       ),
-      [BLOCKS.HEADING_2]: (node: Node, children: React.ReactNode) => {
+      [BLOCKS.HEADING_2]: (_: Node, children: React.ReactNode) => {
         const id = headingIds[headingIndex++] ?? `h2-${++h2Counter}`;
         return (
           <h2 id={id} className="scroll-mt-24">
@@ -77,7 +135,7 @@ function buildRichTextOptions(headings: Heading[]) {
           </h2>
         );
       },
-      [BLOCKS.HEADING_3]: (node: Node, children: React.ReactNode) => {
+      [BLOCKS.HEADING_3]: (_: Node, children: React.ReactNode) => {
         const id = headingIds[headingIndex++] ?? `h3-${++h3Counter}`;
         return (
           <h3 id={id} className="scroll-mt-24">
@@ -85,33 +143,30 @@ function buildRichTextOptions(headings: Heading[]) {
           </h3>
         );
       },
-      [BLOCKS.PARAGRAPH]: (node: Node, children: React.ReactNode) => (
+      [BLOCKS.PARAGRAPH]: (_: Node, children: React.ReactNode) => (
         <p>{children}</p>
       ),
-      [BLOCKS.UL_LIST]: (node: Node, children: React.ReactNode) => (
+      [BLOCKS.UL_LIST]: (_: Node, children: React.ReactNode) => (
         <ul>{children}</ul>
       ),
-      [BLOCKS.OL_LIST]: (node: Node, children: React.ReactNode) => (
+      [BLOCKS.OL_LIST]: (_: Node, children: React.ReactNode) => (
         <ol>{children}</ol>
       ),
-      [BLOCKS.LIST_ITEM]: (node: Node, children: React.ReactNode) => (
+      [BLOCKS.LIST_ITEM]: (_: Node, children: React.ReactNode) => (
         <li>{children}</li>
       ),
-      [BLOCKS.QUOTE]: (node: Node, children: React.ReactNode) => (
+      [BLOCKS.QUOTE]: (_: Node, children: React.ReactNode) => (
         <blockquote>{children}</blockquote>
       ),
       [BLOCKS.EMBEDDED_ASSET]: (node: Node) => {
-        const url = (
-          node.data?.target as {
-            fields?: { file?: { url?: string }; title?: string };
-          }
-        )?.fields?.file?.url;
-        const title =
-          (
-            node.data?.target as {
-              fields?: { file?: { url?: string }; title?: string };
-            }
-          )?.fields?.title ?? '';
+        const target = node.data?.target as {
+          sys?: { id?: string };
+          fields?: { file?: { url?: string }; title?: string };
+          url?: string;
+          title?: string;
+        };
+        const url = target?.fields?.file?.url ?? target?.url ?? null;
+        const title = target?.fields?.title ?? target?.title ?? '';
         if (!url) return null;
         const src = url.startsWith('//') ? `https:${url}` : url;
         return (
@@ -124,6 +179,35 @@ function buildRichTextOptions(headings: Heading[]) {
             />
           </div>
         );
+      },
+      [BLOCKS.EMBEDDED_ENTRY]: (node: Node) => {
+        const id = (node.data?.target as { sys?: { id?: string } })?.sys?.id;
+        if (!id) return null;
+        const entry = entryMap.get(id);
+        if (!entry) return null;
+
+        if (entry.__typename === 'Banner') {
+          return (
+            <div className="not-prose my-8">
+              <Banner data={entry as unknown as BannerFragment} />
+            </div>
+          );
+        }
+        if (entry.__typename === 'CtaSection') {
+          return (
+            <div className="not-prose my-8">
+              <CtaSection data={entry as unknown as CtaSectionFragment} />
+            </div>
+          );
+        }
+        if (entry.__typename === 'TwoAcross') {
+          return (
+            <div className="not-prose my-8">
+              <TwoAcross data={entry as unknown as TwoAcrossFragment} />
+            </div>
+          );
+        }
+        return null;
       },
       [INLINES.HYPERLINK]: (node: Node, children: React.ReactNode) => (
         <a
@@ -205,15 +289,26 @@ const BlogPostCms = ({ data, className }: BlogPostCmsProps) => {
   const liveData = useLiveUpdates(data) as BlogPostFragment;
   const getProps = useContentfulInspectorModeProps(data.sys.id);
 
-  const title = liveData.title ?? '';
-  const excerpt = liveData.excerpt ?? '';
+  const titleRt = liveData.titleRt ?? null;
+  const titleFallback = liveData.title ?? '';
+  const excerptRt = liveData.excerptRt ?? null;
+  const excerptFallback = liveData.excerpt ?? '';
   const publishDate = liveData.publishDate ?? null;
   const tags = liveData.contentfulMetadata?.tags ?? [];
   const heroImageUrl = liveData.heroImage?.url ?? null;
   const bodyJson = liveData.body?.json ?? null;
+  const bodyLinks = liveData.body?.links ?? null;
   const author = liveData.author;
   const authorName = author?.name ?? 'Metafi Team';
   const authorBio = author?.bio ?? '';
+
+  // Build lookup map: sys.id → embedded entry data
+  const entryMap = new Map<string, EmbeddedEntry>();
+  for (const entry of bodyLinks?.entries?.block ?? []) {
+    if (entry?.sys?.id) {
+      entryMap.set(entry.sys.id, entry as EmbeddedEntry);
+    }
+  }
 
   const headings = extractHeadings(bodyJson);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -237,13 +332,24 @@ const BlogPostCms = ({ data, className }: BlogPostCmsProps) => {
     return () => observer.disconnect();
   }, [headings.length]);
 
-  const richTextOptions = buildRichTextOptions(headings);
+  const richTextOptions = buildRichTextOptions(headings, entryMap);
+
   const initials = authorName
     .split(' ')
     .map((w) => w[0])
     .join('')
     .slice(0, 2)
     .toUpperCase();
+
+  const titleText = titleRt
+    ? rtToPlainText(titleRt.json)
+    : titleFallback;
+
+  const heroSrc = heroImageUrl
+    ? heroImageUrl.startsWith('//')
+      ? `https:${heroImageUrl}`
+      : heroImageUrl
+    : null;
 
   return (
     <section className={cn('pb-32', className)}>
@@ -277,21 +383,31 @@ const BlogPostCms = ({ data, className }: BlogPostCmsProps) => {
                   {publishDate && <div>{formatDate(publishDate)}</div>}
                 </div>
 
-                {title && (
+                {(titleRt || titleFallback) && (
                   <h1
                     className="text-center text-[2.5rem] leading-[1.2] font-semibold md:text-5xl lg:text-6xl"
-                    {...getProps({ fieldId: 'title' })}
+                    {...getProps({ fieldId: 'titleRt' })}
                   >
-                    {title}
+                    {titleRt
+                      ? documentToReactComponents(
+                          titleRt.json as Document,
+                          inlineRtOptions,
+                        )
+                      : titleFallback}
                   </h1>
                 )}
 
-                {excerpt && (
+                {(excerptRt || excerptFallback) && (
                   <p
                     className="text-foreground/80 text-center text-xl leading-[1.4] font-semibold"
-                    {...getProps({ fieldId: 'excerpt' })}
+                    {...getProps({ fieldId: 'excerptRt' })}
                   >
-                    {excerpt}
+                    {excerptRt
+                      ? documentToReactComponents(
+                          excerptRt.json as Document,
+                          inlineRtOptions,
+                        )
+                      : excerptFallback}
                   </p>
                 )}
 
@@ -314,17 +430,13 @@ const BlogPostCms = ({ data, className }: BlogPostCmsProps) => {
       </div>
 
       {/* Hero image */}
-      {heroImageUrl && (
+      {heroSrc && (
         <div className="container pt-10">
           <div className="mx-auto max-w-5xl overflow-hidden rounded-xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={
-                heroImageUrl.startsWith('//')
-                  ? `https:${heroImageUrl}`
-                  : heroImageUrl
-              }
-              alt={title}
+              src={heroSrc}
+              alt={titleText}
               className="max-h-[480px] w-full object-cover"
               {...getProps({ fieldId: 'heroImage' })}
             />

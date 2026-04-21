@@ -209,16 +209,30 @@ export type AuthorFragment = {
   bio?: string | null;
 };
 
-/** BlogPost (matches Contentful BlogPost content type: title, slug, excerpt, publishDate, contentfulMetadata, heroImage, body, author). */
+type BlogBodyEmbeddedEntry =
+  | { __typename: 'Banner'; sys: { id: string }; headlineRt?: { json: unknown } | null; subheadlineRt?: { json: unknown } | null; ctaText?: string | null; ctaUrl?: string | null; colorVariant?: string | null; sectionStyle?: string | null }
+  | { __typename: 'CtaSection'; sys: { id: string }; headlineRt?: { json: unknown } | null; subheadlineRt?: { json: unknown } | null; ctaPrimaryLabelRt?: { json: unknown } | null; ctaPrimaryUrl?: string | null; ctaSecondaryLabelRt?: { json: unknown } | null; ctaSecondaryUrl?: string | null; colorVariant?: string | null; sectionStyle?: string | null }
+  | { __typename: 'TwoAcross'; sys: { id: string }; eyebrowRt?: { json: unknown } | null; headingRt?: { json: unknown } | null; body?: { json: unknown } | null; media?: { url?: string } | null; mediaAltText?: string | null; mediaPosition?: string | null; ctaLabel?: string | null; ctaUrl?: string | null; colorVariant?: string | null; sectionStyle?: string | null }
+  | { __typename: string; sys: { id: string } };
+
+/** BlogPost (matches Contentful BlogPost content type). */
 export type BlogPostFragment = BlockData & {
   __typename: 'BlogPost';
   title?: string | null;
+  titleRt?: { json: unknown } | null;
   slug?: string | null;
   excerpt?: string | null;
+  excerptRt?: { json: unknown } | null;
   publishDate?: string | null;
   contentfulMetadata?: { tags: Array<{ id: string; name: string }> } | null;
   heroImage?: { url?: string; width?: number; height?: number } | null;
-  body?: { json: unknown } | null;
+  body?: {
+    json: unknown;
+    links?: {
+      entries?: { block?: Array<BlogBodyEmbeddedEntry> | null } | null;
+      assets?: { block?: Array<{ sys: { id: string }; url?: string; title?: string; width?: number; height?: number }> | null } | null;
+    } | null;
+  } | null;
   author?: AuthorFragment | null;
   ntExperiencesCollection?: {
     items: Array<NtExperienceFragment>;

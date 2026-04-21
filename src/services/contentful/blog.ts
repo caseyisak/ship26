@@ -16,12 +16,14 @@ type RawBlogPost = {
   __typename: string;
   sys: { id: string };
   title?: string | null;
+  titleRt?: { json: unknown } | null;
   slug?: string | null;
   excerpt?: string | null;
+  excerptRt?: { json: unknown } | null;
   publishDate?: string | null;
   contentfulMetadata?: { tags: Array<{ id: string; name: string }> } | null;
   heroImage?: { url?: string; width?: number; height?: number } | null;
-  body?: { json: unknown } | null;
+  body?: { json: unknown; links?: unknown } | null;
   author?: RawAuthor | null;
 };
 
@@ -53,12 +55,16 @@ function mapBlogPost(raw: RawBlogPost | null): BlogPostFragment | null {
     __typename: 'BlogPost',
     sys: { id: raw.sys.id },
     title: raw.title ?? null,
+    titleRt: raw.titleRt ?? null,
     slug: raw.slug ?? null,
     excerpt: raw.excerpt ?? null,
+    excerptRt: raw.excerptRt ?? null,
     publishDate: raw.publishDate ?? null,
     contentfulMetadata: raw.contentfulMetadata ?? null,
     heroImage: raw.heroImage ?? null,
-    body: raw.body ?? null,
+    body: raw.body
+      ? { json: raw.body.json, links: (raw.body as { json: unknown; links?: unknown }).links ?? null }
+      : null,
     author: mapAuthor(raw.author),
   };
 }

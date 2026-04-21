@@ -984,18 +984,69 @@ const BLOG_POST_CARD_FIELDS = `
   }
 `;
 
-/** BlogPost full fragment: includes body richtext JSON (for detail pages). */
+/** BlogPost full fragment: includes body richtext JSON + links (for detail pages). */
 const BLOG_POST_FIELDS = `
   __typename
   sys { id }
   ... on BlogPost {
     title
+    titleRt { json }
     slug
     excerpt
+    excerptRt { json }
     publishDate
     contentfulMetadata { tags { id name } }
     heroImage { url width height }
-    body { json }
+    body {
+      json
+      links {
+        entries {
+          block {
+            __typename
+            sys { id }
+            ... on Banner {
+              headlineRt { json }
+              subheadlineRt { json }
+              ctaText
+              ctaUrl
+              colorVariant
+              sectionStyle
+            }
+            ... on CtaSection {
+              headlineRt { json }
+              subheadlineRt { json }
+              ctaPrimaryLabelRt { json }
+              ctaPrimaryUrl
+              ctaSecondaryLabelRt { json }
+              ctaSecondaryUrl
+              colorVariant
+              sectionStyle
+            }
+            ... on TwoAcross {
+              eyebrowRt { json }
+              headingRt { json }
+              body { json }
+              media { url }
+              mediaAltText
+              mediaPosition
+              ctaLabel
+              ctaUrl
+              colorVariant
+              sectionStyle
+            }
+          }
+        }
+        assets {
+          block {
+            sys { id }
+            url
+            title
+            width
+            height
+          }
+        }
+      }
+    }
     author {
       ${AUTHOR_FIELDS}
     }
