@@ -13,6 +13,7 @@ import {
   Text,
   TextInput,
 } from '@contentful/f36-components';
+import { useCMA } from '@contentful/react-apps-toolkit';
 import React, { useEffect, useState } from 'react';
 
 // ── Public types (re-used by field-editor) ────────────────────────────────────
@@ -62,11 +63,8 @@ type Activation = { fieldId: string; simulatorType: SimulatorType };
 type ConfigSdk = {
   app: {
     getParameters: () => Promise<AppParams | null>;
-    onConfigure: (handler: () => { parameters: AppParams }) => () => void;
+    onConfigure: (handler: () => object) => () => void;
     setReady: () => void;
-  };
-  space: {
-    getContentTypes: () => Promise<{ items: ContentType[] }>;
   };
 };
 
@@ -74,6 +72,7 @@ type ConfigSdk = {
 
 export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
   const appSdk = sdk as ConfigSdk;
+  const cma = useCMA();
 
   const [contentTypes, setContentTypes] = useState<ContentType[]>([]);
   const [activations, setActivations] = useState<Record<string, Activation | null>>({});
@@ -86,10 +85,10 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
     async function init() {
       const [params, ctsResult] = await Promise.all([
         appSdk.app.getParameters(),
-        appSdk.space.getContentTypes(),
+        cma.contentType.getMany({ query: { limit: 200 } }),
       ]);
 
-      const cts = (ctsResult?.items ?? []).sort((a, b) =>
+      const cts = ((ctsResult?.items ?? []) as ContentType[]).sort((a, b) =>
         a.name.localeCompare(b.name),
       );
       setContentTypes(cts);
@@ -125,18 +124,20 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
           simulatorType: v.simulatorType,
         }));
 
-      // Auto-assign field appearance to this app for each activated CT+field
-      const EditorInterface: Record<string, { controls: { fieldId: string; settings?: Record<string, unknown> }[] }> = {};
-      for (const m of mappings) {
-        EditorInterface[m.contentTypeId] = {
-          controls: [{ fieldId: m.fieldId }],
-        };
+      // Auto-assign field appearance to this app for each activated CT+field.
+      // Only include targetState when there are mappings — an empty EditorInterface
+      // causes Contentful to reject the save with "Failed to update app configuration".
+      const result: Record<string, unknown> = { parameters: { mappings } };
+
+      if (mappings.length > 0) {
+        const EditorInterface: Record<string, { controls: { fieldId: string }[] }> = {};
+        for (const m of mappings) {
+          EditorInterface[m.contentTypeId] = { controls: [{ fieldId: m.fieldId }] };
+        }
+        result.targetState = { EditorInterface };
       }
 
-      return {
-        parameters: { mappings },
-        targetState: { EditorInterface },
-      };
+      return result;
     });
     return cleanup;
   }, [activations, ready]); // eslint-disable-line react-hooks/exhaustive-deps
