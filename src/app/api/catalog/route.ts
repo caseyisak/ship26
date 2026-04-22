@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { SEED_ASSETS, SEED_PRODUCTS } from '@/lib/integration-adapters/seed-data';
+import { getSettings } from '@/services/contentful/settings';
 
 /**
  * GET /api/catalog?type=products|assets&q=searchterm
  *
  * Returns the integration simulator catalog filtered by optional search query.
- * Data is seeded in src/lib/integration-adapters/seed-data.ts.
- * A real implementation would swap the seed for a Shopify/DAM API call.
+ * Data source: Settings CT → productCatalog / assetCatalog JSON fields.
+ * Falls back to seed-data.ts if the Settings entry has no catalog data.
  *
  * Responds with CORS headers so the Contentful app iframe can fetch it.
  */
@@ -22,22 +23,26 @@ export async function GET(request: NextRequest) {
     'Cache-Control': 'no-store',
   };
 
+  const settings = await getSettings();
+
   if (type === 'products') {
+    const catalog = settings?.productCatalog ?? SEED_PRODUCTS;
     const results = q
-      ? SEED_PRODUCTS.filter(
+      ? catalog.filter(
           (p) =>
             p.name.toLowerCase().includes(q) ||
             p.sku.toLowerCase().includes(q) ||
             p.category.toLowerCase().includes(q) ||
             p.tags.some((t) => t.toLowerCase().includes(q)),
         )
-      : SEED_PRODUCTS;
+      : catalog;
     return NextResponse.json(results, { headers: corsHeaders });
   }
 
   if (type === 'assets') {
+    const catalog = settings?.assetCatalog ?? SEED_ASSETS;
     const results = q
-      ? SEED_ASSETS.filter(
+      ? catalog.filter(
           (a) =>
             a.filename.toLowerCase().includes(q) ||
             a.title.toLowerCase().includes(q) ||
@@ -45,7 +50,7 @@ export async function GET(request: NextRequest) {
             a.folder.toLowerCase().includes(q) ||
             a.tags.some((t) => t.toLowerCase().includes(q)),
         )
-      : SEED_ASSETS;
+      : catalog;
     return NextResponse.json(results, { headers: corsHeaders });
   }
 
