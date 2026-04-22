@@ -45,22 +45,24 @@ export async function fetchGraphQL<T>({
     }[];
   };
   if (json.errors?.length) {
-    const errorMessages = json.errors.map((e) => {
-      const location = e.locations?.[0]
-        ? ` (line ${e.locations[0].line}, column ${e.locations[0].column})`
-        : '';
-      const path = e.path ? ` at path: ${e.path.join('.')}` : '';
-      return `${e.message}${location}${path}`;
-    });
-    const fullError = `Contentful GraphQL errors:\n${errorMessages.join('\n')}`;
+    // Classify errors: unresolvable links are soft (partial data still usable);
+    // all other errors are hard (treat as failure).
+    const hardErrors = json.errors.filter(
+      (e) =>
+        (e as { extensions?: { contentful?: { code?: string } } }).extensions
+          ?.contentful?.code !== 'UNRESOLVABLE_LINK',
+    );
     if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
-      console.error(
+      console.warn(
         '[fetchGraphQL] GraphQL errors:',
         JSON.stringify(json.errors, null, 2),
       );
     }
-    throw new Error(fullError);
+    if (hardErrors.length > 0 || !json.data) {
+      const msgs = hardErrors.map((e) => e.message);
+      throw new Error(`Contentful GraphQL errors:\n${msgs.join('\n')}`);
+    }
   }
   if (!json.data) {
     throw new Error('Contentful GraphQL: no data');
