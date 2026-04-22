@@ -13,8 +13,7 @@ import {
   Text,
   TextInput,
 } from '@contentful/f36-components';
-import { useCMA } from '@contentful/react-apps-toolkit';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // ── Public types (re-used by field-editor) ────────────────────────────────────
 
@@ -63,8 +62,12 @@ type Activation = { fieldId: string; simulatorType: SimulatorType };
 type ConfigSdk = {
   app: {
     getParameters: () => Promise<AppParams | null>;
-    onConfigure: (handler: () => object) => () => void;
+    onConfigure: (handler: () => object) => void;
+    onConfigurationCompleted: (handler: (err: null | { message: string }) => void) => void;
     setReady: () => void;
+  };
+  space: {
+    getContentTypes: () => Promise<{ items: ContentType[] }>;
   };
 };
 
@@ -72,7 +75,6 @@ type ConfigSdk = {
 
 export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
   const appSdk = sdk as ConfigSdk;
-  const cma = useCMA();
 
   const [contentTypes, setContentTypes] = useState<ContentType[]>([]);
   const [activations, setActivations] = useState<Record<string, Activation | null>>({});
@@ -80,27 +82,28 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
   const [ready, setReady] = useState(false);
   const [search, setSearch] = useState('');
 
+  // Keep a ref so the onConfigure handler always reads latest activations
+  // without needing to re-register on every change.
+  const activationsRef = useRef(activations);
+  useEffect(() => { activationsRef.current = activations; }, [activations]);
+
   // Load saved params + all content types in parallel, then mark ready
   useEffect(() => {
     async function init() {
       const [params, ctsResult] = await Promise.all([
         appSdk.app.getParameters(),
-        cma.contentType.getMany({ query: { limit: 200 } }),
+        appSdk.space.getContentTypes(),
       ]);
 
-      const cts = ((ctsResult?.items ?? []) as ContentType[]).sort((a, b) =>
+      const cts = (ctsResult?.items ?? []).sort((a, b) =>
         a.name.localeCompare(b.name),
       );
       setContentTypes(cts);
 
-      // Convert saved mappings → activations map (one entry per CT)
       if (params?.mappings?.length) {
         const map: Record<string, Activation> = {};
         for (const m of params.mappings) {
-          map[m.contentTypeId] = {
-            fieldId: m.fieldId,
-            simulatorType: m.simulatorType,
-          };
+          map[m.contentTypeId] = { fieldId: m.fieldId, simulatorType: m.simulatorType };
         }
         setActivations(map);
       }
@@ -112,11 +115,13 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
     init();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Re-register onConfigure whenever activations change
+  // Register onConfigure once after ready — reads latest activations via ref.
   useEffect(() => {
     if (!ready) return;
-    const cleanup = appSdk.app.onConfigure(() => {
-      const mappings = Object.entries(activations)
+
+    appSdk.app.onConfigure(() => {
+      const current = activationsRef.current;
+      const mappings = Object.entries(current)
         .filter((entry): entry is [string, Activation] => entry[1] !== null)
         .map(([ctId, v]) => ({
           contentTypeId: ctId,
@@ -124,11 +129,9 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
           simulatorType: v.simulatorType,
         }));
 
-      // Auto-assign field appearance to this app for each activated CT+field.
-      // Only include targetState when there are mappings — an empty EditorInterface
-      // causes Contentful to reject the save with "Failed to update app configuration".
+      // Only include targetState when there are mappings — Contentful rejects
+      // an empty EditorInterface: {} and shows "Failed to update app configuration".
       const result: Record<string, unknown> = { parameters: { mappings } };
-
       if (mappings.length > 0) {
         const EditorInterface: Record<string, { controls: { fieldId: string }[] }> = {};
         for (const m of mappings) {
@@ -139,8 +142,15 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
 
       return result;
     });
-    return cleanup;
-  }, [activations, ready]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Log save errors so we can see exactly what Contentful rejects
+    appSdk.app.onConfigurationCompleted((err) => {
+      if (err) {
+        // eslint-disable-next-line no-console
+        console.error('[IntegrationSimulator] onConfigurationCompleted error:', err);
+      }
+    });
+  }, [ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleCt = (ct: ContentType) => {
     setActivations((prev) => {
