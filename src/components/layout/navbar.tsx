@@ -28,25 +28,23 @@ import { getPersona, setPersona, clearPersona } from '@/lib/persona-session';
 import type { Persona } from '@/lib/persona-session';
 import { PersonaButtons } from '@/app/login/persona-buttons';
 
-// Gear icon — navigates to dashboard (if logged in) or opens login dialog (if not)
-function PersonalizationToggle({
-  className,
-  isLoggedIn,
-  onOpenLogin,
-}: {
-  className?: string;
-  isLoggedIn: boolean;
-  onOpenLogin: () => void;
-}) {
-  const router = useRouter();
+// Gear icon — opens the NT personalization panel via the preview plugin
+function PersonalizationToggle({ className }: { className?: string }) {
+  const handleClick = () => {
+    (
+      window as unknown as {
+        ninetailed?: { plugins?: { preview?: { toggle?: () => void } } };
+      }
+    ).ninetailed?.plugins?.preview?.toggle?.();
+  };
   return (
     <Button
       size="sm"
       variant="outline"
-      onClick={() => isLoggedIn ? router.push('/dashboard') : onOpenLogin()}
+      onClick={handleClick}
       className={cn('px-2', className)}
-      aria-label="Go to dashboard"
-      title="Dashboard"
+      aria-label="Open personalization panel"
+      title="Open personalization panel"
     >
       <Settings className="h-4 w-4" />
     </Button>
@@ -332,11 +330,7 @@ const Navbar = () => {
                 onClick={() => setIsLoginOpen(true)}
               />
             )}
-            <PersonalizationToggle
-              className="hidden sm:flex lg:flex"
-              isLoggedIn={isLoggedIn}
-              onOpenLogin={() => setIsLoginOpen(true)}
-            />
+            <PersonalizationToggle className="hidden sm:flex lg:flex" />
 
             <button
               className="text-muted-foreground relative flex size-8 lg:hidden"
@@ -443,14 +437,7 @@ const Navbar = () => {
                           }}
                         />
                       )}
-                      <PersonalizationToggle
-                        className="w-full"
-                        isLoggedIn={isLoggedIn}
-                        onOpenLogin={() => {
-                          setIsMenuOpen(false);
-                          setIsLoginOpen(true);
-                        }}
-                      />
+                      <PersonalizationToggle className="w-full" />
                     </div>
                   </nav>
                 </div>
