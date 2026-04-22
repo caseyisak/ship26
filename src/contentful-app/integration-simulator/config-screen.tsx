@@ -116,17 +116,28 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
   // Re-register onConfigure whenever activations change
   useEffect(() => {
     if (!ready) return;
-    const cleanup = appSdk.app.onConfigure(() => ({
-      parameters: {
-        mappings: Object.entries(activations)
-          .filter((entry): entry is [string, Activation] => entry[1] !== null)
-          .map(([ctId, v]) => ({
-            contentTypeId: ctId,
-            fieldId: v.fieldId,
-            simulatorType: v.simulatorType,
-          })),
-      },
-    }));
+    const cleanup = appSdk.app.onConfigure(() => {
+      const mappings = Object.entries(activations)
+        .filter((entry): entry is [string, Activation] => entry[1] !== null)
+        .map(([ctId, v]) => ({
+          contentTypeId: ctId,
+          fieldId: v.fieldId,
+          simulatorType: v.simulatorType,
+        }));
+
+      // Auto-assign field appearance to this app for each activated CT+field
+      const EditorInterface: Record<string, { controls: { fieldId: string; settings?: Record<string, unknown> }[] }> = {};
+      for (const m of mappings) {
+        EditorInterface[m.contentTypeId] = {
+          controls: [{ fieldId: m.fieldId }],
+        };
+      }
+
+      return {
+        parameters: { mappings },
+        targetState: { EditorInterface },
+      };
+    });
     return cleanup;
   }, [activations, ready]); // eslint-disable-line react-hooks/exhaustive-deps
 

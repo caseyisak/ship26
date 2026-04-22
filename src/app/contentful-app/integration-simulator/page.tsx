@@ -10,7 +10,7 @@ import { useEffect } from 'react';
  * Components are loaded client-only (ssr: false) because
  * @contentful/f36-components accesses browser APIs at module evaluation time.
  *
- * Local URL: http://localhost:3002/contentful-app/integration-simulator
+ * Local URL: http://localhost:3000/contentful-app/integration-simulator
  * Locations: app-config, entry-field, dialog
  */
 
@@ -76,7 +76,7 @@ export default function IntegrationSimulatorPage() {
         <code>dialog</code>).
       </p>
       <code className="rounded bg-muted px-3 py-1.5 text-sm">
-        http://localhost:3002/contentful-app/integration-simulator
+        http://localhost:3000/contentful-app/integration-simulator
       </code>
     </div>
   );

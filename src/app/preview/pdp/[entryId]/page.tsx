@@ -1,6 +1,9 @@
 import { notFound } from 'next/navigation';
 
 import { BlockRenderer } from '@/block-renderer';
+import { Footer } from '@/components/layout/footer';
+import Navbar from '@/components/layout/navbar';
+import { getSettings } from '@/services/contentful/settings';
 import { getPdpByEntryId } from '@/services/contentful/pdp';
 
 type Props = {
@@ -17,14 +20,22 @@ export default async function PreviewPdpPage({ params, searchParams }: Props) {
   const { entryId } = await params;
   const { locale } = await searchParams;
 
-  const pdp = await getPdpByEntryId({
-    entryId,
-    locale: locale ?? 'en-US',
-  });
+  const [pdp, settings] = await Promise.all([
+    getPdpByEntryId({ entryId, locale: locale ?? 'en-US' }),
+    getSettings(),
+  ]);
 
   if (!pdp) {
     notFound();
   }
 
-  return <BlockRenderer data={pdp} />;
+  return (
+    <>
+      <Navbar />
+      <main>
+        <BlockRenderer data={pdp} />
+      </main>
+      <Footer footerForm={settings?.footerForm} />
+    </>
+  );
 }
