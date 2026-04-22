@@ -291,6 +291,48 @@ function transformSection(item: any): PageSection | null {
         sectionsCollection: item.sectionsCollection ?? null,
       };
     }
+    if (item.__typename === 'CardsWrapper') {
+      return {
+        __typename: 'CardsWrapper',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        labelRt: item.labelRt ?? null,
+        titleRt: item.titleRt ?? null,
+        descriptionRt: item.descriptionRt ?? null,
+        itemsCollection: item.itemsCollection
+          ? {
+              items: item.itemsCollection.items
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                .map((card: any) =>
+                  card && card.__typename === 'Card'
+                    ? {
+                        __typename: 'Card',
+                        sys: { id: card.sys.id },
+                        titleRt: card.titleRt ?? null,
+                        descriptionRt: card.descriptionRt ?? null,
+                        media: card.media ?? null,
+                        animationKey: card.animationKey ?? null,
+                        mediaPlacement: card.mediaPlacement ?? null,
+                        sectionStyle: card.sectionStyle ?? null,
+                      }
+                    : null,
+                )
+                .filter(Boolean),
+            }
+          : null,
+        ntExperiencesCollection: item.ntExperiencesCollection ?? undefined,
+      };
+    }
+    if (item.__typename === 'DynamicListing') {
+      return {
+        __typename: 'DynamicListing',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        titleRt: item.titleRt ?? null,
+        skus: item.skus ?? null,
+        displayVariant: item.displayVariant ?? null,
+      };
+    }
     return null;
   } catch (error) {
     // eslint-disable-next-line no-console

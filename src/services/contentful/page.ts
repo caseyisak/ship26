@@ -6,6 +6,7 @@ import type {
   CardsWrapperFragment,
   CtaSectionFragment,
   DataVizFragment,
+  DynamicListingFragment,
   FaqFragment,
   FeatureSectionFragment,
   FeatureShowcaseFragment,
@@ -43,7 +44,8 @@ export type PageSection =
   | NewsWrapperFragment
   | IconFeatureGridFragment
   | FormFragment
-  | ProductDetailPageFragment;
+  | ProductDetailPageFragment
+  | DynamicListingFragment;
 
 export type PageData = {
   __typename?: string;
