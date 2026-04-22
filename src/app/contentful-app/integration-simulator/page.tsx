@@ -16,7 +16,7 @@ import { useEffect } from 'react';
 
 const IntegrationSimulatorConfig = dynamic(
   () =>
-    import('@/contentful-app/integration-simulator/config-screen').then(
+    import('./config-screen').then(
       (m) => m.IntegrationSimulatorConfig,
     ),
   { ssr: false },
@@ -24,7 +24,7 @@ const IntegrationSimulatorConfig = dynamic(
 
 const IntegrationSimulatorField = dynamic(
   () =>
-    import('@/contentful-app/integration-simulator/field-editor').then(
+    import('./field-editor').then(
       (m) => m.IntegrationSimulatorField,
     ),
   { ssr: false },
@@ -32,7 +32,7 @@ const IntegrationSimulatorField = dynamic(
 
 const IntegrationSimulatorDialog = dynamic(
   () =>
-    import('@/contentful-app/integration-simulator/dialog').then(
+    import('./dialog').then(
       (m) => m.IntegrationSimulatorDialog,
     ),
   { ssr: false },

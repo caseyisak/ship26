@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 
 const IntegrationSimulatorField = dynamic(
   () =>
-    import('@/contentful-app/integration-simulator/field-editor').then(
+    import('@/app/contentful-app/integration-simulator/field-editor').then(
       (m) => m.IntegrationSimulatorField,
     ),
   { ssr: false },
