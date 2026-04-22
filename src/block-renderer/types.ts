@@ -547,6 +547,34 @@ export type FormFragment = PersonalizedBlockData & {
   colorVariant?: 'light' | 'dark' | 'accent' | 'primary' | null;
 };
 
+/** ProductDetailPage block — SKU drives client-side catalog fetch; editorNotes is the only Contentful-editable region. */
+export type ProductDetailPageFragment = BlockData & {
+  __typename: 'ProductDetailPage';
+  internalName?: string | null;
+  /** JSON Object field — stores full ProductRecord written by the Integration Simulator app */
+  sku?: Record<string, unknown> | null;
+  editorNotes?: { json: Record<string, unknown> } | null;
+  sectionsCollection?: {
+    items: Array<
+      | BannerFragment
+      | TwoAcrossFragment
+      | CtaSectionFragment
+      | FormFragment
+      | DynamicListingFragment
+      | null
+    >;
+  } | null;
+};
+
+/** DynamicListing block — SKU array drives client-side multi-product fetch. */
+export type DynamicListingFragment = BlockData & {
+  __typename: 'DynamicListing';
+  internalName?: string | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  skus?: string[] | null;
+  displayVariant?: 'grid' | 'scroll' | null;
+};
+
 export type InheritedProps = Record<string, unknown>;
 
 export type BlockProps<

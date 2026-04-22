@@ -6,6 +6,7 @@ import type {
   CardsWrapperFragment,
   CtaSectionFragment,
   DataVizFragment,
+  DynamicListingFragment,
   FaqFragment,
   FeatureSectionFragment,
   FeatureShowcaseFragment,
@@ -17,9 +18,12 @@ import type {
   MediaCardGridFragment,
   NewsWrapperFragment,
   PricingFragment,
+  ProductDetailPageFragment,
   TabbedContentFragment,
   TwoAcrossFragment,
 } from '@/block-renderer/types';
+import { DynamicListing } from '@/cms-components/dynamic-listing/dynamic-listing';
+import { Pdp } from '@/cms-components/pdp/pdp';
 import { Banner } from '@/cms-components/banner';
 import { Form } from '@/cms-components/form';
 import { FeatureSection } from '@/cms-components/feature-section';
@@ -165,6 +169,20 @@ const formConfig: BlockConfig<FormFragment> = {
   },
 };
 
+const pdpConfig: BlockConfig<ProductDetailPageFragment> = {
+  typename: 'ProductDetailPage',
+  layouts: {
+    default: () => Pdp,
+  },
+};
+
+const dynamicListingConfig: BlockConfig<DynamicListingFragment> = {
+  typename: 'DynamicListing',
+  layouts: {
+    default: () => DynamicListing,
+  },
+};
+
 export const blockConfigs: BlockConfig<BlockData>[] = [
   heroConfig as BlockConfig<BlockData>,
   faqConfig as BlockConfig<BlockData>,
@@ -184,4 +202,6 @@ export const blockConfigs: BlockConfig<BlockData>[] = [
   newsWrapperConfig as BlockConfig<BlockData>,
   iconFeatureGridConfig as BlockConfig<BlockData>,
   formConfig as BlockConfig<BlockData>,
+  pdpConfig as BlockConfig<BlockData>,
+  dynamicListingConfig as BlockConfig<BlockData>,
 ];

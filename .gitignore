@@ -27,6 +27,12 @@
 .DS_Store
 *.pem
 
+# playwright mcp artifacts
+.playwright-mcp/
+*.png
+*.jpeg
+*.jpg
+
 # debug
 npm-debug.log*
 yarn-debug.log*

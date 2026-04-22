@@ -1,4 +1,5 @@
 import type { FormFragment, NtExperienceFragment } from '@/block-renderer/types';
+import type { AssetRecord, ProductRecord } from '@/lib/integration-adapters/types';
 
 import { fetchGraphQL } from './client';
 
@@ -39,6 +40,8 @@ export interface SiteSettings {
   nav: Nav | null;
   footer: Footer | null;
   footerForm?: FormFragment | null;
+  productCatalog?: ProductRecord[] | null;
+  assetCatalog?: AssetRecord[] | null;
 }
 
 const NAV_LINKS_FRAGMENT = `
@@ -70,6 +73,8 @@ const SETTINGS_QUERY = `
           logo { url title width height }
           ${NAV_LINKS_FRAGMENT}
         }
+        productCatalog
+        assetCatalog
         footerForm {
           __typename
           sys { id }
@@ -135,6 +140,8 @@ type SettingsResponse = {
       nav: RawNav | null;
       footer: RawFooter | null;
       footerForm?: RawFormSettings | null;
+      productCatalog?: ProductRecord[] | null;
+      assetCatalog?: AssetRecord[] | null;
     }>;
   };
 };
@@ -181,6 +188,8 @@ export async function getSettings({
             },
           }
         : null,
+      productCatalog: raw.productCatalog ?? null,
+      assetCatalog: raw.assetCatalog ?? null,
       footerForm: raw.footerForm && raw.footerForm.__typename === 'Form'
         ? {
             __typename: 'Form' as const,

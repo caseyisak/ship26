@@ -281,6 +281,16 @@ function transformSection(item: any): PageSection | null {
         ntExperiencesCollection: item.ntExperiencesCollection ?? undefined,
       };
     }
+    if (item.__typename === 'ProductDetailPage') {
+      return {
+        __typename: 'ProductDetailPage',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        sku: item.sku ?? null,
+        editorNotes: item.editorNotes ?? null,
+        sectionsCollection: item.sectionsCollection ?? null,
+      };
+    }
     return null;
   } catch (error) {
     // eslint-disable-next-line no-console

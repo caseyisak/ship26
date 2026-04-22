@@ -16,6 +16,7 @@ import type {
   MediaCardGridFragment,
   NewsWrapperFragment,
   PricingFragment,
+  ProductDetailPageFragment,
   TabbedContentFragment,
   TwoAcrossFragment,
 } from '@/block-renderer/types';
@@ -41,7 +42,8 @@ export type PageSection =
   | FeatureSectionFragment
   | NewsWrapperFragment
   | IconFeatureGridFragment
-  | FormFragment;
+  | FormFragment
+  | ProductDetailPageFragment;
 
 export type PageData = {
   __typename?: string;

@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation';
 
+import { BlockRenderer } from '@/block-renderer';
 import { PageContentLive } from '@/app/page/[slug]/page-content-live';
 import { getPageBySlug, getPageSlugs } from '@/services/contentful/page';
+import { getPdpBySlug } from '@/services/contentful/pdp';
 import { getNewsWrapperForPage } from '@/services/contentful/news-wrapper';
 
 export const revalidate = 0;
@@ -28,8 +30,11 @@ export default async function ContentfulPage({
     preview: previewEnabled || undefined,
   });
 
+  // Fall back to ProductDetailPage if no Page entry matches this slug
   if (!page) {
-    return notFound();
+    const pdp = await getPdpBySlug({ slug, locale: 'en-US', preview: previewEnabled || undefined });
+    if (!pdp) return notFound();
+    return <BlockRenderer data={pdp} />;
   }
 
   // Enrich any NewsWrapper sections with merged articles server-side

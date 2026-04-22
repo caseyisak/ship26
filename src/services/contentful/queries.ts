@@ -842,6 +842,78 @@ const ICON_FEATURE_GRID_PAGE_FIELDS = `
   }
 `;
 
+/** PDP lean fragment for PAGE_BY_SLUG — sku (JSON) + editorNotes + sections; no NT. */
+const PDP_PAGE_FIELDS = `
+  ... on ProductDetailPage {
+    __typename
+    sys { id }
+    internalName
+    sku
+    editorNotes { json }
+    sectionsCollection(limit: 10) {
+      items {
+        __typename
+        ... on Entry { sys { id } }
+        ... on Banner {
+          headlineRt { json }
+          subheadlineRt { json }
+          ctaText
+          ctaUrl
+          variant
+          colorVariant
+          sectionStyle
+        }
+        ... on TwoAcross {
+          eyebrowRt { json }
+          headingRt { json }
+          body { json }
+          mediaPosition
+          colorVariant
+          ctaLabel
+          ctaUrl
+          sectionStyle
+        }
+        ... on CtaSection {
+          headlineRt { json }
+          subheadlineRt { json }
+          ctaPrimaryLabelRt { json }
+          ctaPrimaryUrl
+          ctaSecondaryLabelRt { json }
+          ctaSecondaryUrl
+          colorVariant
+          sectionStyle
+        }
+        ... on Form {
+          formId
+          formType
+          labelRt { json }
+          titleRt { json }
+          descriptionRt { json }
+          submitLabel
+          colorVariant
+        }
+        ... on DynamicListing {
+          titleRt { json }
+          skus
+          displayVariant
+        }
+      }
+    }
+  }
+`;
+
+/** DynamicListing lean fragment for PAGE_BY_SLUG — skus array + display config; no NT. */
+const DYNAMIC_LISTING_PAGE_FIELDS = `
+  ... on DynamicListing {
+    __typename
+    sys { id }
+    internalName
+    titleRt { json }
+    skus
+    displayVariant
+  }
+`;
+
 /**
  * PAGE_BY_SLUG — lean query kept under Contentful's 8192-byte limit (LL-011).
  * All block fragments use *_PAGE_FIELDS variants that omit ntExperiencesCollection
@@ -876,6 +948,8 @@ export const PAGE_BY_SLUG = `
             ${ICON_FEATURE_GRID_PAGE_FIELDS}
             ${FEATURE_SECTION_PAGE_FIELDS}
             ${FORM_PAGE_FIELDS}
+            ${PDP_PAGE_FIELDS}
+            ${DYNAMIC_LISTING_PAGE_FIELDS}
             ... on NewsWrapper {
               __typename
               sys { id }
@@ -1458,6 +1532,45 @@ export const NEWS_WRAPPER_POOL = `
           heroImage { url width height }
           author { __typename sys { id } ... on Author { name bio } }
         }
+      }
+    }
+  }
+`;
+
+/** Full PDP fields (same as page — no NT on this CT). */
+const PDP_FIELDS = PDP_PAGE_FIELDS;
+
+/** Fetch a single ProductDetailPage by entry ID (live preview). */
+export const PDP_BY_ID = `
+  query PdpById($id: String!, $locale: String!, $preview: Boolean) {
+    productDetailPageCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${PDP_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single ProductDetailPage by slug (same pattern as PAGE_BY_SLUG). */
+export const PDP_BY_SLUG = `
+  query PdpBySlug($slug: String!, $locale: String!, $preview: Boolean) {
+    productDetailPageCollection(where: { slug: $slug }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${PDP_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Full DynamicListing fields (same as page). */
+const DYNAMIC_LISTING_FIELDS = DYNAMIC_LISTING_PAGE_FIELDS;
+
+/** Fetch a single DynamicListing by entry ID (live preview). */
+export const DYNAMIC_LISTING_BY_ID = `
+  query DynamicListingById($id: String!, $locale: String!, $preview: Boolean) {
+    dynamicListingCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${DYNAMIC_LISTING_FIELDS}
       }
     }
   }

@@ -1,3 +1,15 @@
+/*
+ * Override root layout's `h-screen` on body.
+ * Inside a Contentful iframe, 100vh = iframe height (e.g. 150px).
+ * The auto-resizer measures document.documentElement.scrollHeight,
+ * so body must be auto-height for it to reflect actual content size.
+ */
+html,
+body {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
 /* Forma-36 design tokens (subset) for Contentful-native app appearance */
 :root {
   --gray-100: #f7f9fa;
