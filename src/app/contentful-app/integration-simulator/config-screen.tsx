@@ -13,7 +13,7 @@ import {
   Text,
   TextInput,
 } from '@contentful/f36-components';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // ── Public types (re-used by field-editor) ────────────────────────────────────
 
@@ -62,8 +62,7 @@ type Activation = { fieldId: string; simulatorType: SimulatorType };
 type ConfigSdk = {
   app: {
     getParameters: () => Promise<AppParams | null>;
-    onConfigure: (handler: () => object) => void;
-    onConfigurationCompleted: (handler: (err: null | { message: string }) => void) => void;
+    onConfigure: (handler: () => { parameters: AppParams }) => () => void;
     setReady: () => void;
   };
   space: {
@@ -81,11 +80,6 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
   const [loadingCts, setLoadingCts] = useState(true);
   const [ready, setReady] = useState(false);
   const [search, setSearch] = useState('');
-
-  // Keep a ref so the onConfigure handler always reads latest activations
-  // without needing to re-register on every change.
-  const activationsRef = useRef(activations);
-  useEffect(() => { activationsRef.current = activations; }, [activations]);
 
   // Load saved params + all content types in parallel, then mark ready
   useEffect(() => {
@@ -115,42 +109,25 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
     init();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Register onConfigure once after ready — reads latest activations via ref.
+  // Re-register onConfigure whenever activations change so the handler closes
+  // over the latest state. Field appearance (widgetId/widgetNamespace) must be
+  // set manually in Content Model → field appearance — targetState is not used
+  // because the Contentful parent frame rejects it consistently.
   useEffect(() => {
     if (!ready) return;
-
-    appSdk.app.onConfigure(() => {
-      const current = activationsRef.current;
-      const mappings = Object.entries(current)
-        .filter((entry): entry is [string, Activation] => entry[1] !== null)
-        .map(([ctId, v]) => ({
-          contentTypeId: ctId,
-          fieldId: v.fieldId,
-          simulatorType: v.simulatorType,
-        }));
-
-      // Only include targetState when there are mappings — Contentful rejects
-      // an empty EditorInterface: {} and shows "Failed to update app configuration".
-      const result: Record<string, unknown> = { parameters: { mappings } };
-      if (mappings.length > 0) {
-        const EditorInterface: Record<string, { controls: { fieldId: string }[] }> = {};
-        for (const m of mappings) {
-          EditorInterface[m.contentTypeId] = { controls: [{ fieldId: m.fieldId }] };
-        }
-        result.targetState = { EditorInterface };
-      }
-
-      return result;
-    });
-
-    // Log save errors so we can see exactly what Contentful rejects
-    appSdk.app.onConfigurationCompleted((err) => {
-      if (err) {
-        // eslint-disable-next-line no-console
-        console.error('[IntegrationSimulator] onConfigurationCompleted error:', err);
-      }
-    });
-  }, [ready]); // eslint-disable-line react-hooks/exhaustive-deps
+    const cleanup = appSdk.app.onConfigure(() => ({
+      parameters: {
+        mappings: Object.entries(activations)
+          .filter((entry): entry is [string, Activation] => entry[1] !== null)
+          .map(([ctId, v]) => ({
+            contentTypeId: ctId,
+            fieldId: v.fieldId,
+            simulatorType: v.simulatorType,
+          })),
+      },
+    }));
+    return cleanup;
+  }, [activations, ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleCt = (ct: ContentType) => {
     setActivations((prev) => {
