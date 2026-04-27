@@ -11,8 +11,8 @@ export type EmbeddedEntry = {
   excerpt?: string | null;
   heroImage?: { url?: string | null } | null;
   // TwoAcross fields
-  eyebrow?: string | null;
-  heading?: string | null;
+  eyebrowRt?: { json: unknown } | null;
+  headingRt?: { json: unknown } | null;
   body?: { json: unknown } | null;
   media?: { url?: string | null } | null;
   mediaAltText?: string | null;
@@ -20,13 +20,19 @@ export type EmbeddedEntry = {
   ctaLabel?: string | null;
   ctaUrl?: string | null;
   colorVariant?: string | null;
-  // Hero + Banner fields
+  // Hero + Banner RT fields
+  headlineRt?: { json: unknown } | null;
+  subheadlineRt?: { json: unknown } | null;
+  ctaText?: string | null;
+  // Hero legacy (kept for type compat, not queried)
   headline?: string | null;
   subheadline?: string | null;
-  ctaText?: string | null;
   background?: { url?: string | null } | null;
   image?: { url?: string | null } | null;
   variant?: string | null;
+  // Banner RT fields
+  headlineRt?: { json: unknown } | null;
+  subheadlineRt?: { json: unknown } | null;
 };
 
 export type NewsletterLinkedEntry = {
@@ -36,8 +42,8 @@ export type NewsletterLinkedEntry = {
   slug?: string | null;
   excerpt?: string | null;
   heroImage?: { url?: string | null } | null;
-  eyebrow?: string | null;
-  heading?: string | null;
+  eyebrowRt?: { json: unknown } | null;
+  headingRt?: { json: unknown } | null;
   media?: { url?: string | null } | null;
   ctaLabel?: string | null;
   ctaUrl?: string | null;
@@ -123,7 +129,7 @@ const NEWSLETTER_FIELDS = `
   promoSlot {
     ... on Entry { sys { id } __typename }
     ... on BlogPost { title slug excerpt heroImage { url } }
-    ... on TwoAcross { eyebrow heading media { url } ctaLabel ctaUrl colorVariant }
+    ... on TwoAcross { eyebrowRt { json } headingRt { json } media { url } ctaLabel ctaUrl colorVariant }
     ... on Banner { headlineRt { json } subheadlineRt { json } ctaText ctaUrl colorVariant }
   }
   content {
@@ -139,8 +145,8 @@ const NEWSLETTER_FIELDS = `
             heroImage { url }
           }
           ... on TwoAcross {
-            eyebrow
-            heading
+            eyebrowRt { json }
+            headingRt { json }
             body { json }
             media { url }
             mediaAltText
@@ -150,16 +156,16 @@ const NEWSLETTER_FIELDS = `
             colorVariant
           }
           ... on Hero {
-            headline
-            subheadline
+            headlineRt { json }
+            subheadlineRt { json }
             ctaText
             ctaUrl
             background { url }
             media { url }
           }
           ... on Banner {
-            headline
-            subheadline
+            headlineRt { json }
+            subheadlineRt { json }
             ctaText
             ctaUrl
             variant

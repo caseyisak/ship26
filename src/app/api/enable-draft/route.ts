@@ -41,7 +41,8 @@ export async function GET(request: NextRequest) {
       type === 'featureShowcase' ||
       type === 'mediaCardGrid' ||
       type === 'dashboardPage' ||
-      type === 'productDetailPage')
+      type === 'productDetailPage' ||
+      type === 'form')
   ) {
     if (
       entryId.includes('entry.') ||
@@ -83,6 +84,7 @@ export async function GET(request: NextRequest) {
       mediaCardGrid: 'media-card-grid',
       dashboardPage: 'dashboard',
       productDetailPage: 'pdp',
+      form: 'form',
     };
     const routeSegment = typeToRoute[type] ?? type;
     // Forward passthrough params (view, locale, preview) to the preview page

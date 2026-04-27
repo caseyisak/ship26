@@ -1,32 +1,131 @@
-# Project Instructions
+# CLAUDE.md — Metafi × Contentful Demo Sandbox
 
-## CLI tool paths
-
-- **Homebrew / gh / other tools:** PATH may not include `/opt/homebrew/bin` in Claude Code sessions. Use full paths:
-  - `gh` → `/opt/homebrew/bin/gh`
-  - `brew` → `/opt/homebrew/bin/brew`
-- **GitHub:** repo is `https://github.com/caseyisak/metafi`, authenticated as `caseyisak`
+This file is the single source of truth for how Claude Code (CC) should operate in this repo.
+Read it at the start of every session before touching any code.
 
 ---
 
-## Package Manager: Bun
+## What this repo is
 
-This project uses **bun** for all package and script operations. Do not use npm, yarn, or pnpm.
+**Metafi** is a Next.js 15 marketing site that serves as the **live sandbox and demo platform for Contentful**. Every block, content type, and integration here exists to show prospective customers what Contentful can do.
 
-| Use case | Use this | Do not use |
-|----------|----------|------------|
-| Install dependencies | `bun install` | `npm install` |
-| Add a package | `bun add <pkg>` | `npm install <pkg>` |
-| Add dev dependency | `bun add -d <pkg>` | `npm install -D <pkg>` |
-| Run dev server | `bun run dev` | `npm run dev` |
-| Build | `bun run build` | `npm run build` |
-| Run tests | `bun test` or `bun run test` | `npm test` |
-| Run scripts from package.json | `bun run <script>` | `npm run <script>` |
-| Execute a script/file | `bun run <file>` or `bun <file>` | `npx` / `node` |
+Two modes of use:
 
-- In docs, snippets, and terminal commands: use `bun` and `bun run` only.
-- For Next.js (e.g. `next dev`, `next build`): invoke via `bun run dev`, `bun run build`, etc.
-- Commit and use `bun.lockb`; do not add or rely on `package-lock.json` or `yarn.lock`.
+| Mode | Branch pattern | Purpose |
+|------|---------------|---------|
+| **Sandbox** | `main` | The always-on demo site. All blocks live here. Generic branding. |
+| **Custom demo** | `demo/<customer>` | Customer-specific branch with a new Contentful env, branded content, and curated demo loops |
+
+The sandbox is the source of truth. Custom demos branch off it, run their demo, then **promote any reusable components or content types back into main** before the branch is retired.
+
+---
+
+## Tech stack
+
+- **Framework:** Next.js 15 (App Router) + TypeScript + Tailwind CSS 4 + shadcn/ui
+- **Package manager:** Bun — never npm/yarn/pnpm (see table below)
+- **CMS:** Contentful via GraphQL API
+- **Live preview:** Contentful Live Preview SDK — real-time field updates in iframe
+- **Personalization:** Ninetailed
+- **Custom apps:** Section Style Editor, Integration Simulator (both in `src/app/contentful-app/`)
+- **Contentful space:** `uumzxfocy3ef`, environment: `master`
+
+### Bun command reference
+
+| Use case | Command |
+|----------|---------|
+| Install deps | `bun install` |
+| Add package | `bun add <pkg>` |
+| Add dev dep | `bun add -d <pkg>` |
+| Dev server | `bun run dev` |
+| Build | `bun run build` |
+| Tests | `bun test` |
+| Type check | `bunx tsc --noEmit` |
+| Lint | `bun run lint` |
+
+---
+
+## Component sources (check in this order)
+
+Before building any new UI component, check these sources. Do NOT build from scratch if a good starting point exists.
+
+1. **`metafi-nextjs-template-1.0.0/`** — the static starter template. **Read-only.** Never modify it. Use it as a reference for layout, component structure, and static markup that can be wired to Contentful.
+2. **shadcnblocks** (`https://www.shadcnblocks.com`) — browse by section type (hero, faq, pricing, etc.). API key in `.env.local` as `SHADCNBLOCKS_API_KEY`. Install: `bunx shadcn add @shadcnblocks/[block-name]`.
+3. **Existing `cms-components/`** — check if a block already exists before creating a new one.
+4. **Custom demo branches** — components built for a specific customer that have been promoted to sandbox.
+
+**Workflow before building:** Use the `add-contentful-block` skill — it runs discovery, Q&A, content model approval, and milestones before any code is written.
+
+---
+
+## MCP servers
+
+MCPs extend what Claude can do. This project uses two types:
+
+### Docker MCP Toolkit (via Docker Desktop)
+
+These run in Docker containers. They are preferred over native MCPs to keep token usage low and avoid auth complexity. Activate via Docker Desktop → MCP Toolkit.
+
+| Server | Tools | When to use |
+|--------|-------|-------------|
+| Brave Search | 6 | Web research, competitor lookups |
+| Context7 | 2 | Library/framework docs lookup |
+| Firecrawl | 14 | Brand scraping for demo setup |
+| n8n | 42 | Workflow automation |
+| Notion | 22 | Reading/writing Notion docs |
+| Playwright | 21 | Browser automation, visual testing |
+| Sequential Thinking | 1 | Complex multi-step reasoning |
+| YouTube Transcripts | 4 | Pulling video content for context |
+
+### Cloud / native MCPs (always available)
+
+| Server | When to use |
+|--------|------------|
+| Contentful MCP | Create/update content types, entries, publish — preferred over manual UI |
+| Vercel MCP | Deployments, build logs, runtime logs |
+| Mermaid Chart | Diagrams |
+| IDE MCP | Diagnostics, code execution |
+
+**MCP config lives in:** `~/.claude.json` (not `~/.claude/mcp.json`). Use `claude mcp list` to verify status.
+
+---
+
+## Skills — when to use which
+
+Skills are structured workflows that replace ad-hoc instructions. Always use the right skill rather than winging it.
+
+| Task | Skill |
+|------|-------|
+| Building a new Contentful block (end-to-end) | `/add-contentful-block` |
+| Live preview broken / debugging | `/skills:contentful-live-preview-verify` |
+| New demo from scratch | `/skills:demo-setup` |
+| Test NT personalization | `/skills:test-nt-personalization` |
+| Spin up a multi-agent team | `/spin-team` |
+| Session start (prime context) | `/prime` |
+| Session end (wrap + write memory) | `/wrap` |
+| Create/improve a skill | `/skills:skill-creator` |
+| Write a feature spec | `/speckit.specify` |
+| Generate implementation tasks | `/speckit.tasks` |
+| Execute tasks from spec | `/speckit.implement` |
+
+---
+
+## Memory — what to save and when
+
+Memory files live in `.claude/projects/.../memory/`. The index is `MEMORY.md`.
+
+**Save to memory when you learn:**
+- Something non-obvious about how this project works that will matter in a future session
+- A user preference or correction that should change CC's behavior going forward
+- A project decision with a "why" that isn't obvious from the code
+
+**Do NOT save to memory:**
+- Code patterns (read the code)
+- Git history (use `git log`)
+- Anything already in CLAUDE.md or TASKS.md
+- Ephemeral task state (use tasks/plans instead)
+
+**Only the CC on `main` writes to `MEMORY.md`.** Worktree CCs note things locally and the main CC merges them in when the PR lands.
 
 ---
 
@@ -35,121 +134,198 @@ This project uses **bun** for all package and script operations. Do not use npm,
 | What | Where |
 |------|-------|
 | Active tasks & roadmap | `TASKS.md` |
-| Completed/archived work | `archive/tasks-archive.md` ← check here before re-doing something |
-| Known error patterns (LL-001–LL-008) | `documentation/lessons-learned.md` |
+| Completed/archived work | `archive/tasks-archive.md` |
+| Lessons learned (LL-001+) | `documentation/lessons-learned/index.md` |
 | Component docs & architecture | `documentation/` |
-| Session memory (persists across convos) | `.claude/projects/.../memory/MEMORY.md` |
-| Demo workflow rules | `memory/project_demo_workflow.md` |
+| Demo loop library | `demo-loops/` |
+| Demo-OS spec | `demo-loops/DEMO-OS.md` |
+| New demo runbook | `demo-loops/NEW-DEMO-RUNBOOK.md` |
+| Session memory | `.claude/projects/.../memory/MEMORY.md` |
 | Worktree helper | `scripts/worktree-add.sh` |
+| Static template (read-only) | `metafi-nextjs-template-1.0.0/` |
 
-**Before starting any new task:** check `TASKS.md` for current phase, `archive/tasks-archive.md` for prior art, and `documentation/lessons-learned.md` for known pitfalls.
+**Before starting any task:** check `TASKS.md` → `archive/tasks-archive.md` → `documentation/lessons-learned/index.md`.
 
 ---
 
-## Worktree-first workflow (IMPORTANT)
+## Documentation — what to write and when
 
-**Every new phase, feature, or demo gets its own git worktree. Never switch branches mid-session.**
+### Lessons Learned (`documentation/lessons-learned/`)
+
+Write a new LL entry whenever you hit a **non-obvious error** that wasted time and will likely recur.
+
+**When:** After fixing a bug that wasn't obvious from the error message.
+**How:** Create a new `.md` file in `documentation/lessons-learned/` and add one row to `index.md`.
+**Format:** symptom → root cause → fix → related files.
+**Naming:** `ll-NNN-short-slug.md` (increment from current max).
+
+Current max: LL-027.
+
+### Handoff docs (`documentation/handoff-*.md`)
+
+Write a handoff doc whenever a session ends mid-feature, or a new worktree is about to be started.
+
+**Lifecycle:** Stay active until the branch merges. Archive to `documentation/archive/` with date stamp on merge.
+**Must include:** what was built, what's open, files to read first, next steps with source + why.
+
+### Session handoff at worktree creation
+
+When creating a new worktree, always create a handoff/PRD doc **before switching to that worktree session**. This doc is the first thing the worktree CC reads. It must contain:
+- Why this branch exists (the demo or feature it serves)
+- What was agreed / decided before branching
+- Files to read first
+- Ordered implementation steps
+- Related Contentful env / content types
+
+---
+
+## Worktree workflow (IMPORTANT)
+
+**Every new feature, demo, or phase gets its own git worktree. Never switch branches mid-session.**
 
 ### Starting new work
 
-1. Agree on a branch name (e.g. `feat/my-feature`, `demo/acme-2026-04`)
-2. From the main repo root, run:
+1. Agree on branch name: `feat/<name>`, `fix/<name>`, `demo/<customer>-<date>`
+2. Create the worktree:
    ```bash
    bash scripts/worktree-add.sh <branch-name>
    ```
-3. Open a new Claude Code instance pointed at the worktree:
+3. Write the PRD/handoff doc in the current session (before switching).
+4. **STOP.** Tell the user to open a new CC instance:
    ```bash
    claude /Users/casey.lisak/Dev/metafi-worktrees/<branch-slug>
    ```
-4. Do all work in that CC instance. This session stays on its current branch.
+5. All work happens in that CC instance. This session stays on main.
 
-### Why
+### Collapsing a worktree back to main
 
-- No branch switching = no risk of clobbering another agent's context or uncommitted changes
-- Each worktree is an isolated working copy — parallel CC instances can run safely
-- `node_modules` is symlinked (no reinstall needed), `.env.local` is pre-copied from main
+When a worktree is done:
+1. All tests pass, types clean, lint clean
+2. Open a PR and merge to `main`
+3. Archive the handoff doc to `documentation/archive/`
+4. Pull any new lessons learned into `documentation/lessons-learned/`
+5. If the branch added reusable components/CTs from a custom demo, update `TASKS.md` blocks inventory
+6. Remove the worktree:
+   ```bash
+   git worktree remove /Users/casey.lisak/Dev/metafi-worktrees/<branch-slug>
+   git branch -d <branch-name>
+   ```
 
-### Merging back
+---
 
-When the worktree work is done: open a PR (or merge directly) to `main`, then the worktree can be removed:
-```bash
-git worktree remove /Users/casey.lisak/Dev/metafi-worktrees/<branch-slug>
-git branch -d <branch-name>
-```
+## Demo lifecycle
+
+### Starting a custom demo
+
+1. Read `demo-loops/NEW-DEMO-RUNBOOK.md` — follow it exactly
+2. Create branch `demo/<customer>-<date>`, new Contentful env named after customer
+3. Run brand scraping (Firecrawl MCP) → paste tokens into siteSettings CT entry
+4. Pull relevant demo loops from `demo-loops/` into the env
+5. Write `DEMO_SCRIPT.md` in the demo branch
+
+### After a custom demo
+
+1. Write lessons learned (especially anything Contentful-specific or component-specific)
+2. **Promote reusable work back to sandbox:**
+   - New content types → add to `master` Contentful env + component in `cms-components/`
+   - New demo loops → add to `demo-loops/<customer>/` and register in `DEMO-OS.md`
+   - New UI patterns → extract to generic component, wire to Contentful, PR to `main`
+3. Archive the demo handoff doc
+4. Close GitHub issues filed against the demo branch
+
+### Demo loop library (`demo-loops/`)
+
+Each loop lives in `demo-loops/<customer>/loops/<loop-name>/LOOP.md`. Schema: `demo-loops/_schema.md`.
+
+A LOOP.md must contain: talk track, click path, setup steps, modularity story, AI conversion guide.
+
+**Promotion lifecycle:** demo-only → candidate → sandbox (tracked in `DEMO-OS.md`).
+
+---
+
+## Agent teams (tmux + /spin-team)
+
+For complex tasks that benefit from parallel agents (e.g. building a full demo, running multi-step research + implementation):
+
+1. Use `/spin-team` to configure and launch an agent team
+2. Agents run in tmux panes — each pane is a separate CC session on its own worktree branch
+3. **Check branch + working directory before spinning up** — agents must be in the right worktree
+4. Coordinate via `TASKS.md` — each agent owns its own section
+5. Only the main CC writes to `MEMORY.md`; agent CCs write local notes
 
 ---
 
 ## Git commit format
 
-Every commit must follow this format — **both parts are required**:
+Every commit — **both parts required:**
 
 ```
 <type>(<scope>): <what> — <why/operational detail>
 ```
 
-The `— <why>` suffix is not optional. It's what allows future Claude sessions to reconstruct intent from `git log` without reading every file.
-
 **Good:**
 ```
 feat(faq): add aioAeoGeo link field — governance metadata enables AEO story in demo
 fix(data-viz): clamp bubble radius — was overflowing container at small viewport widths
-refactor(block-renderer): extract layout types — prep for multi-layout support in M3
+fix(newsletter): fix RT field names in query — Banner/Hero/TwoAcross migrated to headlineRt
 ```
 
-**Not good (missing why):**
+**Bad (missing why):**
 ```
 feat(faq): add aioAeoGeo link field
 fix(data-viz): clamp bubble radius
 ```
 
-### Context drift rule
-
-Conversations can branch across multiple topics. If it's unclear what the current focus is — or if git log lacks the "why" context needed to understand recent changes — **ask at the start of the session** before diving into work. Don't guess. One clarifying question up front prevents wasted effort on the wrong thing.
+The `— why` is what allows future CC sessions to reconstruct intent from `git log` alone.
 
 ---
 
 ## Multi-CC coordination
 
-This project sometimes runs **multiple Claude Code instances in parallel** (e.g. one on `main`, one on `feat/skill-creator`).
-
-Rules to prevent overwriting each other's work:
-
-- **One CC per branch.** Never have two CC instances on the same branch at the same time.
-- **TASKS.md:** Each CC only edits its own section. The "Active branches" table in TASKS.md shows who owns what.
-- **MEMORY.md:** Only the CC on `main` writes to MEMORY.md. Other branches note things locally; the main CC merges them in on PR.
-- **Before starting work:** run `git log --oneline -5` to see what the other CC may have committed.
-- **After a branch merges to main:** run `git pull` in all other open CC sessions before continuing.
+- **One CC per branch.** Never two CC instances on the same branch.
+- **TASKS.md:** Each CC edits only its own section.
+- **MEMORY.md:** Only main CC writes here.
+- **Before starting work:** `git log --oneline -5` to see recent activity.
+- **After a branch merges to main:** `git pull` in all open CC sessions.
 
 ---
 
-## Contentful Live Preview Debugging
+## CLI tool paths
 
-When debugging Contentful live preview issues, use this context.
+PATH may not include `/opt/homebrew/bin` in CC sessions. Use full paths:
 
-### Two-Context Architecture
+- `gh` → `/opt/homebrew/bin/gh`
+- `brew` → `/opt/homebrew/bin/brew`
+- GitHub repo: `https://github.com/caseyisak/metafi`, auth: `caseyisak`
 
-**PARENT (app.contentful.com)**
-- The Contentful web app (entry editor).
-- The Contentful SDK runs here and sends live updates into the iframe.
+---
 
-**IFRAME (localhost:XXXX)**
-- Your Next.js app running locally (or deployed preview URL).
-- Receives live updates from the SDK. **This is where you debug rendering issues.**
+## Contentful live preview debugging
 
-When the user says "preview is broken," clarify: are they talking about the **parent** (entry form) or the **iframe** (rendered content)? Most issues are in the iframe.
+**Two-context architecture:**
+- **PARENT** (`app.contentful.com`) — Contentful web app, SDK sends updates into iframe
+- **IFRAME** (`localhost:3000`) — your Next.js app, receives live updates
 
-### Data Flow Inspection Points
+When preview is broken: clarify parent vs iframe first. Most issues are in the iframe.
 
-- **`[useFetchEmbeddedEntries]`** – Console logs for fetched/merged embedded entries.
-- **`/api/fetch-deferred-entries`** – Network: status 200 and response payload.
-- **Entry ID consistency** – Rich text JSON `EMBEDDED_ENTRY` nodes must exist in `content.links.entries`.
-- **SDK connection** – Console: `useLiveUpdates` / `useContentfulLiveUpdates` / `LivePreviewProvider`.
-- **Hydration** – React hydration warnings in console.
+**Key inspection points:**
+- Console: `useLiveUpdates` / `LivePreviewProvider` connected?
+- Network: `/api/fetch-deferred-entries` → 200?
+- Console warn: `[fetchGraphQL] GraphQL errors` — field name mismatch, CT migration, query byte limit
+- Hydration warnings in React DevTools
 
-If API calls succeed but UI shows incomplete data, the bug is likely in **merge/replace logic** in `src/hooks/use-fetch-embedded-entries.ts`.
+**Before concluding:** check `documentation/lessons-learned/index.md` for known patterns.
+**For systematic debugging:** run `/skills:contentful-live-preview-verify`.
 
-### Lessons Learned
+**Common silent-failure pattern:** `fetchGraphQL` catches all errors and returns null. A GraphQL field name mismatch (e.g. querying `headline` after CT migrated to `headlineRt`) will 404 the preview with no visible error. Always check the dev server terminal for `[fetchGraphQL] GraphQL errors` warnings.
 
-Before concluding, check **`documentation/lessons-learned.md`** (LL-001 through LL-008) for known error patterns.
+---
 
-For systematic browser inspection, invoke the **contentful-live-preview-verify** skill at `.claude/commands/skills/contentful-live-preview-verify.md`.
+## What we're building next: Demo-OS
+
+Demo-OS is an agent-based system that will automate demo construction. It reads `demo-loops/DEMO-OS.md` (the sandbox inventory + loop library + pain signal mappings) and instructs CC on how to build a custom demo end-to-end.
+
+Before starting Demo-OS work:
+1. Pass `demo-loops/DEMO-OS.md` to the context
+2. Review active sandbox blocks in `TASKS.md`
+3. Ensure all demo loops have valid `LOOP.md` files per `demo-loops/_schema.md`

@@ -137,6 +137,18 @@ NEXT_PUBLIC_BRAND=                     # set to customer name for themed demos
 
 ---
 
+## Sandbox Versions
+
+| Version | Date | What shipped |
+|---------|------|-------------|
+| v1.0 | 2026-03 | Settings CT + theming, newsletter suite, TwoAcross, Banner, nav from Contentful (Punchbowl era) |
+| v2.0 | 2026-03 | NT infrastructure, dashboard shell, animation components, full P0 block promotions |
+| v2.5 | 2026-04 | Full RT field migration across all CTs, Pricing, IconGrid, FeatureShowcase, MediaCardGrid |
+| v3.0 | 2026-04 | 3-persona dashboard + NT personalization, FeatureSection, newsWrapper, localization, form block |
+| v4.0 | 2026-04 | Integration simulator app, catalog CT, DAM picker, ecomm picker, NT persona fixes |
+
+---
+
 ## Deploy
 
 Deploy via [Vercel](https://vercel.com). Add all env vars from above in the Vercel project settings.

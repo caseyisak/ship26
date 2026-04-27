@@ -14,12 +14,30 @@
 
 ---
 
+## 🔴 Active — Newsletter Fixes (sandbox/v4.1)
+
+**Spec:** `.claude/specs/003-newsletter-fixes/spec.md`
+**Branch:** `fix/newsletter-promo-slot` (worktree to be created)
+**Punchbowl deadline:** Week of 2026-04-28
+
+| Task | Issue | Status |
+|------|-------|--------|
+| Fix RT field mismatch — Hero/Banner/TwoAcross embeds render blank | to create | ⬜ |
+| Fix duplicate `headlineRt` TypeScript property in `EmbeddedEntry` | to create | ⬜ |
+| Consolidate `leadStory` → `promoSlot` | to create | ⬜ |
+| Add Newsletter to blocks inventory | to create | ⬜ |
+
+---
+
 ## 🟡 Open — Follow-up To-dos
 
 | To-do | Status | Notes |
 |-------|--------|-------|
 | Persona C feature flag | ⬜ needs clarification | Does "feature flag for DataViz" mean (a) show/hide DataViz slot, or (b) replace banner with DataViz? Clarify before starting. |
 | NT data bucket 409 | ⬜ Follow up with NT support | Casey emailed 2026-04-20. Follow up if no response within a few days. |
+| `feat/card-media-size` | ⬜ ready to open PR | 2 unmerged commits (card mediaSize + style/columns/colorVariant) — own branch/worktree, open PR separately |
+| `fix/button-hover-states` | ⬜ user decision needed | 1 unmerged commit (hover states on button variants) — merge or drop? |
+| Tag `sandbox/v4.0` + add README changelog | ⬜ | Apply to current HEAD before newsletter fix branch |
 
 ---
 
@@ -28,9 +46,8 @@
 | Issue | Why deferred |
 |-------|-------------|
 | #49 Tilley personalization fix | Blocked — "TBD details," nothing to fix yet |
-| #53 Visual form builder app | Simplified to Form CT + 3 variants — shipped as PR #78 |
-| #48 3rd-party integration simulator | Needs design decisions |
 | #2 Style override app | Separate Contentful app, big scope |
+| #48 3rd-party integration simulator | ✅ Shipped — multiple PRs to main (b95f1cf, 7271fb2, 8d93db5). Close this issue. |
 
 ---
 
@@ -55,6 +72,7 @@
 | NewsWrapper | cms-components/news-wrapper | ✅ dynamic news feed |
 | IconFeatureGrid | cms-components/icon-feature-grid | ✅ 3-col icon grid |
 | Form | cms-components/form | ✅ newsletter/contact/message, NT personalization |
+| Newsletter | cms-components/newsletter | ✅ Gmail preview, lead story, promo slot, RTE embeds, live preview |
 
 ---
 
