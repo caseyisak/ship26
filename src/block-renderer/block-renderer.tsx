@@ -10,6 +10,7 @@ import {
 } from '@/block-renderer/utils';
 import { logger } from '@/lib/logger';
 import XRay from '@/lib/x-ray';
+import { useNtExperiences } from '@/personalization/ninetailed-nextjs';
 import { isPersonalized, mapExperiences } from '@/personalization/utils';
 
 import {
@@ -26,6 +27,11 @@ export const BlockRenderer = <Props extends BlockRendererDefaultProps>({
   data,
   ...props
 }: Props) => {
+  // All NT experiences from the provider — avoids requiring ntExperiencesCollection
+  // in PAGE_BY_SLUG query (LL-011 byte limit). Experience component finds the
+  // matching experience via nt_config.components[].baseline.id === data.sys.id.
+  const allNtExperiences = useNtExperiences();
+
   try {
     if (!data || isMissingData(data)) {
       return <InvalidDataError data={data} />;
@@ -47,9 +53,15 @@ export const BlockRenderer = <Props extends BlockRendererDefaultProps>({
       return <UnsupportedLayoutError data={data} layoutType={layoutType} />;
     }
 
-    const mappedExperiences = isPersonalized(data)
-      ? mapExperiences(data.ntExperiencesCollection?.items)
-      : [];
+    // Use global experiences from context (all experiences, not just linked ones).
+    // Falls back to per-block ntExperiencesCollection for preview routes that
+    // fetch the full fragment including ntExperiencesCollection.
+    const mappedExperiences =
+      allNtExperiences.length > 0
+        ? allNtExperiences
+        : isPersonalized(data)
+          ? mapExperiences(data.ntExperiencesCollection?.items)
+          : [];
 
     return (
       <XRay data={data} layoutType={layoutType}>

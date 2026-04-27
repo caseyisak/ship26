@@ -25,7 +25,7 @@ import {
   useNinetailed,
 } from '@ninetailed/experience.js-react';
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo, useRef } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef } from 'react';
 
 import type {
   NtAudienceFragment,
@@ -36,6 +36,13 @@ import { LocalAudienceEvaluator } from './local-audience-evaluator';
 import { mapAudiences, mapExperiences } from './utils';
 
 const SPACE_ID = 'uumzxfocy3ef';
+
+// Global context so block-renderer can use all NT experiences without
+// requiring ntExperiencesCollection in every page query (LL-011 byte limit).
+export const NtExperiencesContext = createContext<ExperienceConfiguration[]>(
+  [],
+);
+export const useNtExperiences = () => useContext(NtExperiencesContext);
 
 function Tracker() {
   const pathname = usePathname();
@@ -76,34 +83,44 @@ export function NinetailedProvider({
     [audiences.map((a) => a.sys.id).join(',')],
   );
 
+  // Stable plugin instance — must NOT be recreated on every render.
+  // v7.9+ enforces singleton; a new instance per render resets variant state
+  // and breaks preview panel click → variant swap.
+  const previewPlugin = useMemo(
+    () =>
+      new NinetailedPreviewPlugin({
+        experiences: mappedExperiences,
+        audiences: mappedAudiences,
+        onOpenExperienceEditor: (exp) =>
+          window.open(
+            `https://app.contentful.com/spaces/${SPACE_ID}/entries/${exp.id}`,
+            '_blank',
+          ),
+        onOpenAudienceEditor: (aud) =>
+          window.open(
+            `https://app.contentful.com/spaces/${SPACE_ID}/entries/${aud.id}`,
+            '_blank',
+          ),
+        // Hide the native purple floating button — gear icon in nav triggers
+        // toggle() directly via window.ninetailed.plugins.preview.toggle()
+        ui: { opener: { hide: true } },
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [mappedExperiences, mappedAudiences],
+  );
+
   return (
-    <ReactNinetailedProvider
-      clientId={clientId}
-      environment={environment}
-      useSDKEvaluation={true}
-      plugins={[
-        new NinetailedPreviewPlugin({
-          experiences: mappedExperiences,
-          audiences: mappedAudiences,
-          onOpenExperienceEditor: (exp) =>
-            window.open(
-              `https://app.contentful.com/spaces/${SPACE_ID}/entries/${exp.id}`,
-              '_blank',
-            ),
-          onOpenAudienceEditor: (aud) =>
-            window.open(
-              `https://app.contentful.com/spaces/${SPACE_ID}/entries/${aud.id}`,
-              '_blank',
-            ),
-          // Hide the native purple floating button — gear icon in nav triggers
-          // toggle() directly via window.ninetailed.plugins.preview.toggle()
-          ui: { opener: { hide: true } },
-        }),
-      ]}
-    >
-      <Tracker />
-      <LocalAudienceEvaluator audiences={mappedAudiences} />
-      {children}
-    </ReactNinetailedProvider>
+    <NtExperiencesContext.Provider value={mappedExperiences}>
+      <ReactNinetailedProvider
+        clientId={clientId}
+        environment={environment}
+        useSDKEvaluation={true}
+        plugins={[previewPlugin]}
+      >
+        <Tracker />
+        <LocalAudienceEvaluator audiences={mappedAudiences} />
+        {children}
+      </ReactNinetailedProvider>
+    </NtExperiencesContext.Provider>
   );
 }
