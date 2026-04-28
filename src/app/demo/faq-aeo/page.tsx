@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import React from 'react';
 
 import { AiSimulationCard } from '@/components/demo/AiSimulationCard';
-import { extractPlainText } from '@/components/demo/AioAeoPreviewPanel';
+import { extractPlainText } from '@/lib/faq-utils';
 import { FaqAeoAfterPanel } from '@/components/demo/FaqAeoAfterPanel';
 import { getFaqByEntryId } from '@/services/contentful/faq';
 

@@ -18,20 +18,7 @@ const rtOptions = {
   },
 };
 
-export function extractPlainText(rt: { json: Record<string, unknown> } | null | undefined): string {
-  if (!rt?.json) return '';
-  try {
-    const doc = rt.json as { content?: Array<{ content?: Array<{ value?: string }> }> };
-    return (
-      doc.content
-        ?.flatMap((block) => block.content ?? [])
-        .map((n) => n.value ?? '')
-        .join('') ?? ''
-    );
-  } catch {
-    return '';
-  }
-}
+export { extractPlainText } from '@/lib/faq-utils';
 
 function formatDate(iso: string | null | undefined): string {
   if (!iso) return '';
@@ -67,6 +54,10 @@ export function AioAeoPreviewPanel({ data }: Props) {
 
   const firstAnswerText = firstItem ? extractPlainText(firstItem.answerRt) : '';
   const firstQuestionText = firstItem ? extractPlainText(firstItem.questionRt) : '';
+  // Delta: Before truncates at 160 chars; After shows the full text.
+  // Only the portion beyond the truncation point is "new".
+  const sharedAnswerText = firstAnswerText.slice(0, 160).trimEnd();
+  const deltaAnswerText = firstAnswerText.slice(sharedAnswerText.length);
   const firstQuestionNode = firstItem?.questionRt?.json
     ? documentToReactComponents(
         firstItem.questionRt.json as unknown as Parameters<typeof documentToReactComponents>[0],
@@ -117,12 +108,22 @@ export function AioAeoPreviewPanel({ data }: Props) {
         )}
 
         {hasGovernance ? (
-          /* High-confidence: full answer + attribution */
+          /* High-confidence: full answer + attribution — inline highlighter-style diff */
           <>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              {firstAnswerText || 'No answer available.'}
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {sharedAnswerText}
+              {deltaAnswerText && (
+                <mark className="rounded-sm bg-green-200/70 px-0.5 dark:bg-green-700/40">
+                  {deltaAnswerText}
+                </mark>
+              )}
+              {!firstAnswerText && (
+                <mark className="rounded-sm bg-green-200/70 px-0.5 dark:bg-green-700/40">
+                  No answer available.
+                </mark>
+              )}
             </p>
-            <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border pt-3">
+            <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
               <span className="text-xs text-muted-foreground">
                 Source: <span className="font-medium text-foreground">metafi.io</span> · FAQPage JSON-LD schema
               </span>
@@ -153,7 +154,7 @@ export function AioAeoPreviewPanel({ data }: Props) {
         )}
       </div>
 
-      {/* Content Governance — only meaningful when governance is present */}
+      {/* Content Governance — diff-highlighted when governance is present */}
       <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
         <p className="text-muted-foreground mb-2 text-xs font-medium uppercase tracking-wide">
           Content Governance
