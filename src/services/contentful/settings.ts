@@ -224,11 +224,15 @@ const CORNER_RADIUS: Record<string, string> = {
  * <style> string. Falls back to nothing if theme is null/empty.
  * Keys like "primaryForeground" → "--primary-foreground".
  * Special key "cornerStyle" maps to "--radius" via CORNER_RADIUS lookup.
+ * Special keys "fontDisplay" / "fontBody" generate Google Fonts @import URLs
+ * and set --font-display / --font-body CSS vars.
+ * Special key "fontDisplayWeight" sets --font-display-weight.
  */
 export function themeToStyle(
   theme: Record<string, string> | null | undefined,
 ): string {
   if (!theme || Object.keys(theme).length === 0) return '';
+  const imports: string[] = [];
   const styles: Record<string, string> = {};
 
   for (const [k, v] of Object.entries(theme)) {
@@ -236,6 +240,16 @@ export function themeToStyle(
       if (CORNER_RADIUS[v]) {
         styles['--radius'] = CORNER_RADIUS[v];
       }
+    } else if (k === 'fontDisplay') {
+      const familyParam = v.replace(/ /g, '+');
+      imports.push(`@import url('https://fonts.googleapis.com/css2?family=${familyParam}:wght@300;400;500;600;700;800&display=swap');`);
+      styles['--font-display'] = `'${v}', sans-serif`;
+    } else if (k === 'fontBody') {
+      const familyParam = v.replace(/ /g, '+');
+      imports.push(`@import url('https://fonts.googleapis.com/css2?family=${familyParam}:wght@100;200;300;400;500;600;700;800;900&display=swap');`);
+      styles['--font-body'] = `'${v}', sans-serif`;
+    } else if (k === 'fontDisplayWeight') {
+      styles['--font-display-weight'] = v;
     } else if (k.startsWith('--')) {
       // Key is already a CSS var name — use as-is
       styles[k] = v;
@@ -248,5 +262,6 @@ export function themeToStyle(
   const vars = Object.entries(styles)
     .map(([k, v]) => `  ${k}: ${v};`)
     .join('\n');
-  return `:root {\n${vars}\n}`;
+  const rootBlock = `:root {\n${vars}\n}`;
+  return imports.length > 0 ? `${imports.join('\n')}\n${rootBlock}` : rootBlock;
 }
