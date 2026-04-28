@@ -126,6 +126,10 @@ Industry: Any | Personas: VP Digital, Marketing Ops, SE
 |---|---|---|---|---|---|
 | [Loop A — Pricing Merge Tags](#sandbox-loop-a) | One feature bullet updates with prospect's industry/company name via NT merge tag — no duplicate entries | net-new | VP digital, marketing ops, SE | candidate | Low |
 | [Loop B — Dashboard Personas](#sandbox-loop-b) | Log in as any of 3 customer tiers — dashboard content slots swap per persona with zero dev work | net-new | VP digital/CX, marketing ops, head of personalization, SE | sandbox | Medium |
+| [Loop A — New Visitor Hero](#sandbox-loop-new-visitor-hero) | New visitors always see a consistent, editor-controlled hero — change it instantly without a code deploy | sandbox | Marketing Leader, Product Manager, Digital Experience Lead | sandbox | Low |
+| [Loop B — Returning Visitor A/B Test](#sandbox-loop-returning-ab-test) | Returning visitors are auto-split across 3 hero messaging variants — value-led, problem-led, social proof | sandbox | Growth Marketer, CRO Specialist, Digital Experience Lead | sandbox | Medium |
+| [Loop C — High Intent Conversion](#sandbox-loop-high-intent) | Pricing page visitors get an urgent hero + {{first_name}} discount banner — merge tag + intent signal, no form fill | sandbox | Growth Marketer, Revenue Leader, Sales Leader | sandbox | Medium |
+| [Loop F — AEO FAQ Schema](#sandbox-loop-f-aeo-faq-schema) | Side-by-side: unstructured FAQ gets "based on various sources" from AI; Contentful-driven FAQ with FAQPage JSON-LD gets a high-confidence attributed answer — live edit updates the AI Overview in real time | net-new | SEO Lead, Marketing Director, Head of Content, Legal/Compliance | sandbox | Low |
 
 ---
 
@@ -162,6 +166,20 @@ Industry: Any | Personas: VP Digital, Marketing Ops, SE
 **Content types:** `dashboardPage`, `dashboardSettings`, `banner` | **OOTB:** Personalization App (NT), Live Preview
 
 **Loop file:** `demo-loops/sandbox/loops/loop-b-dashboard-personas/LOOP.md`
+
+---
+
+### Sandbox Loop F — AEO FAQ Schema {#sandbox-loop-f-aeo-faq-schema}
+
+**Pain signals:** "AI Overviews aren't citing us", "We get 'based on various sources' instead of an attributed answer", "Our competitors are getting the AI citation, we're not", "How do we get Perplexity / ChatGPT to recommend us?", "Our legal team wants to know when compliance FAQs were last reviewed"
+
+**What it shows:** A Before/After split at `/demo/faq-aeo` — left panel is a hardcoded FAQ with no schema (AI simulation returns low confidence, no attribution), right panel is a Contentful-driven FAQ that auto-generates FAQPage JSON-LD (AI simulation returns high confidence, "metafi.io · FAQPage schema" attribution). Live edit an answer in Contentful → the AI Overview and JSON-LD update in real time without a redeploy. Governance badges (topic, owner, review date, region) on each FAQ item close the legal/compliance angle.
+
+**Key demo moment:** Open the JSON-LD drawer to show the `FAQPage` schema → edit the answer in Contentful → save → watch the AI Overview body update live. *"Your editorial team controls what AI says about you — in real time."*
+
+**Content types:** `faq`, `faqItem`, `aioAeoGeo` | **OOTB:** Live Preview (Content Source SDK), GraphQL Content API
+
+**Loop file:** `demo-loops/sandbox/loops/loop-f-aeo-faq-schema/LOOP.md`
 
 ---
 
@@ -417,7 +435,8 @@ Agent prompt template: `MEMORY/PIPELINE/[opp]/scraping-agent-brief.md`
 | Sports / media / entertainment | Bears LA + LB + LC + LD |
 | Brand with social + web presence | Bears LA + LC + Punchbowl L4 |
 | Publisher wanting full lifecycle | Bears LB (mobile) + Punchbowl L1 (newsletter) + Bears LA (social) |
-| Anyone asking about personalization | WOW L1 + L2 or Bears LD |
+| Anyone asking about personalization | Sandbox LA + LB + LC (new visitor → A/B test → high-intent + merge tag arc) or WOW L1 + L2 or Bears LD |
+| Anyone asking about merge tags, email-to-web personalization, CRM-driven content | Sandbox LC (high-intent conversion — merge tag banner included) |
 | ISP / telecom / subscription product | WOW L1 + L2 + L3 (acquisition → active → retention arc) |
 | Anyone asking about logged-in / portal personalization | WOW L2 + L3 |
 | Anyone asking about retention / churn | WOW L3 |

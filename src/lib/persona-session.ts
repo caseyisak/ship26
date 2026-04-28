@@ -12,9 +12,13 @@
 export type Persona = {
   name: string;
   label: string;
-  customerType: string;
+  customer_type: string;
   color: string;
-  displayName?: string;
+  display_name?: string;
+  first_name?: string;
+  last_name?: string;
+  industry?: string;
+  location?: string;
 };
 
 export const PERSONA_COOKIE = 'metafi-persona';
@@ -42,7 +46,15 @@ export function setPersona(persona: Persona): void {
           identify?: (id: string, traits: Record<string, unknown>) => void;
         };
       }
-    ).ninetailed?.identify?.('', { customerType: persona.customerType });
+    ).ninetailed?.identify?.('', {
+      customer_type: persona.customer_type,
+      first_name: persona.first_name ?? null,
+      last_name: persona.last_name ?? null,
+      display_name: persona.display_name ?? null,
+      industry: persona.industry ?? null,
+      location: persona.location ?? null,
+      is_logged_in: true,
+    });
   }
 }
 

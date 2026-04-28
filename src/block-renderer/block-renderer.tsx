@@ -53,15 +53,27 @@ export const BlockRenderer = <Props extends BlockRendererDefaultProps>({
       return <UnsupportedLayoutError data={data} layoutType={layoutType} />;
     }
 
-    // Use global experiences from context (all experiences, not just linked ones).
-    // Falls back to per-block ntExperiencesCollection for preview routes that
-    // fetch the full fragment including ntExperiencesCollection.
-    const mappedExperiences =
+    // Filter global experiences to only those that target this block's baseline entry.
+    // The NT preview plugin's getExperienceSelectionMiddleware does experiences.find()
+    // and stops at the first match — if we pass ALL experiences, it picks whichever
+    // comes first in the array regardless of whether it targets this block's baseline.
+    // Filtering ensures the middleware always finds the correct experience. (LL-028)
+    // Falls back to per-block ntExperiencesCollection for preview routes.
+    const blockExperiences =
       allNtExperiences.length > 0
-        ? allNtExperiences
+        ? allNtExperiences.filter((exp) =>
+            (exp.components ?? []).some(
+              (comp) =>
+                (comp as { type?: string; baseline?: { id?: string } }).type ===
+                  'EntryReplacement' &&
+                (comp as { type?: string; baseline?: { id?: string } }).baseline?.id ===
+                  data.sys.id,
+            ),
+          )
         : isPersonalized(data)
           ? mapExperiences(data.ntExperiencesCollection?.items)
           : [];
+    const mappedExperiences = blockExperiences;
 
     return (
       <XRay data={data} layoutType={layoutType}>

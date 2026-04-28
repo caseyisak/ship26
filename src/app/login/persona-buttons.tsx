@@ -47,7 +47,7 @@ export function PersonaButtons({ personas, onSuccess }: Props) {
             className="shrink-0 text-xs font-medium px-2 py-0.5 rounded-sm text-white"
             style={{ background: persona.color }}
           >
-            {persona.customerType}
+            {persona.customer_type}
           </span>
         </button>
       ))}

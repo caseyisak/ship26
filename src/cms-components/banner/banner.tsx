@@ -1,6 +1,7 @@
 'use client';
 
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { useProfile } from '@ninetailed/experience.js-react';
 import { X } from 'lucide-react';
 import * as React from 'react';
 import { useState } from 'react';
@@ -11,6 +12,7 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { resolveMergeTagsInDoc } from '@/lib/merge-tags';
 import { parseSectionStyle } from '@/lib/section-style-types';
 import { cn } from '@/lib/utils';
 
@@ -67,7 +69,19 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
   const getProps = useContentfulInspectorModeProps(rawData.sys.id);
   const [isVisible, setIsVisible] = useState(true);
 
+  const profileState = useProfile();
+  const traits = (profileState.profile?.traits ?? {}) as Record<string, unknown>;
+
   const { headlineRt, subheadlineRt, ctaText, ctaUrl, variant, colorVariant } = data;
+
+  const resolvedHeadlineRt = resolveMergeTagsInDoc(
+    headlineRt?.json as unknown as Parameters<typeof resolveMergeTagsInDoc>[0],
+    traits,
+  );
+  const resolvedSubheadlineRt = resolveMergeTagsInDoc(
+    subheadlineRt?.json as unknown as Parameters<typeof resolveMergeTagsInDoc>[0],
+    traits,
+  );
 
   // Parse sectionStyle — live preview may return object or string
   const rawSectionStyle = (data as BannerFragment).sectionStyle;
@@ -174,8 +188,8 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
                 style={headlineStyle}
                 {...getProps({ fieldId: 'headlineRt' })}
               >
-                {headlineRt?.json
-                  ? documentToReactComponents(headlineRt.json as unknown as Parameters<typeof documentToReactComponents>[0])
+                {resolvedHeadlineRt
+                  ? documentToReactComponents(resolvedHeadlineRt as unknown as Parameters<typeof documentToReactComponents>[0])
                   : null}
               </div>
               {/* Subheadline */}
@@ -184,8 +198,8 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
                 style={subheadlineStyle}
                 {...getProps({ fieldId: 'subheadlineRt' })}
               >
-                {subheadlineRt?.json
-                  ? documentToReactComponents(subheadlineRt.json as unknown as Parameters<typeof documentToReactComponents>[0])
+                {resolvedSubheadlineRt
+                  ? documentToReactComponents(resolvedSubheadlineRt as unknown as Parameters<typeof documentToReactComponents>[0])
                   : null}
               </div>
             </div>

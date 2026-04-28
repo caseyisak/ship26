@@ -69,9 +69,17 @@ function PersonaDropdown({
   const router = useRouter();
 
   const handleSwitch = (p: Persona) => {
-    if (p.customerType === activePersona.customerType) return;
+    if (p.customer_type === activePersona.customer_type) return;
     setPersona(p);
-    ninetailed.identify('', { customerType: p.customerType });
+    ninetailed.identify('', {
+      customer_type: p.customer_type,
+      first_name: p.first_name ?? null,
+      last_name: p.last_name ?? null,
+      display_name: p.display_name ?? null,
+      industry: p.industry ?? null,
+      location: p.location ?? null,
+      is_logged_in: true,
+    });
     onPersonaChange(p);
     // No router.refresh() — NT <Experience> swap is client-side
   };
@@ -82,7 +90,7 @@ function PersonaDropdown({
     router.push('/page/home');
   };
 
-  const triggerLabel = activePersona.displayName || activePersona.label;
+  const triggerLabel = activePersona.display_name || activePersona.label;
 
   return (
     <DropdownMenu>
@@ -104,10 +112,10 @@ function PersonaDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52 rounded-none">
         {allPersonas.map((p) => {
-          const isActive = p.customerType === activePersona.customerType;
+          const isActive = p.customer_type === activePersona.customer_type;
           return (
             <DropdownMenuItem
-              key={p.customerType}
+              key={p.customer_type}
               onClick={() => handleSwitch(p)}
               className="gap-2 cursor-pointer"
             >
@@ -169,9 +177,9 @@ const Navbar = () => {
         key: String.fromCharCode(65 + i),
       }))
     : [
-        { key: 'A', name: 'Persona A', label: 'New Visitor', customerType: 'new-visitor', color: '#6366f1' },
-        { key: 'B', name: 'Persona B', label: 'Returning Customer', customerType: 'returning', color: '#10b981' },
-        { key: 'C', name: 'Persona C', label: 'Premium User', customerType: 'premium', color: '#f59e0b' },
+        { key: 'A', name: 'Persona A', label: 'New Visitor', customer_type: 'new-visitor', color: '#6366f1' },
+        { key: 'B', name: 'Persona B', label: 'Returning Customer', customer_type: 'returning', color: '#10b981' },
+        { key: 'C', name: 'Persona C', label: 'Premium User', customer_type: 'premium', color: '#f59e0b' },
       ];
 
   const ninetailed = useNinetailed();
@@ -182,11 +190,22 @@ const Navbar = () => {
   useEffect(() => {
     const p = getPersona();
     setActivePersona(p);
-    // Always identify on mount — logged-in users get their persona's customerType,
+    // Always identify on mount — logged-in users get their persona's traits,
     // anonymous users get 'new-visitor' so the LocalAudienceEvaluator fires correctly.
-    const customerType = p?.customerType ?? 'new-visitor';
     const id = setTimeout(() => {
-      ninetailed.identify('', { customerType });
+      if (p) {
+        ninetailed.identify('', {
+          customer_type: p.customer_type,
+          first_name: p.first_name ?? null,
+          last_name: p.last_name ?? null,
+          display_name: p.display_name ?? null,
+          industry: p.industry ?? null,
+          location: p.location ?? null,
+          is_logged_in: true,
+        });
+      } else {
+        ninetailed.identify('', { customer_type: 'new-visitor' });
+      }
     }, 0);
     return () => clearTimeout(id);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -264,7 +283,15 @@ const Navbar = () => {
                 setActivePersona(p);
                 if (p) {
                   setTimeout(() => {
-                    ninetailed.identify('', { customerType: p.customerType });
+                    ninetailed.identify('', {
+                      customer_type: p.customer_type,
+                      first_name: p.first_name ?? null,
+                      last_name: p.last_name ?? null,
+                      display_name: p.display_name ?? null,
+                      industry: p.industry ?? null,
+                      location: p.location ?? null,
+                      is_logged_in: true,
+                    });
                   }, 0);
                 }
               }}

@@ -58,6 +58,7 @@ export type AioAeoGeoFragment = {
   topic?: string | null;
   ownerTeam?: string | null;
   lastUpdated?: string | null;
+  audience?: string | null;
   region?: string | null;
 };
 
@@ -71,12 +72,13 @@ export type FaqItemFragment = {
   aioAeoGeoCollection?: { items: AioAeoGeoFragment[] } | null;
 };
 
-/** FAQ section (matches Contentful FAQ content type: internalName, titleRt, descriptionRt, items). */
+/** FAQ section (matches Contentful FAQ content type: internalName, titleRt, descriptionRt, faqMetadata, items). */
 export type FaqFragment = BlockData & {
   __typename: 'Faq';
   internalName?: string | null;
   titleRt?: { json: Record<string, unknown> } | null;
   descriptionRt?: { json: Record<string, unknown> } | null;
+  faqMetadata?: AioAeoGeoFragment | null;
   itemsCollection?: { items: FaqItemFragment[] } | null;
   ntExperiencesCollection?: {
     items: Array<NtExperienceFragment>;

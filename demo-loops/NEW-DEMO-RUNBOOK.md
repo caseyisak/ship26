@@ -51,7 +51,7 @@ Edit `[worktree]/.env.local`:
 CONTENTFUL_ENVIRONMENT=[customer]        # must match the new Contentful env name
 NEXT_PUBLIC_BRAND=[customer]             # drives data-theme attribute
 NEXT_PUBLIC_NINETAILED_API_KEY=[key]     # REQUIRED — use NEXT_PUBLIC_ prefix, not NINETAILED_CLIENT_ID
-NEXT_PUBLIC_NINETAILED_ENVIRONMENT=main  # usually main unless you created a separate NT env
+NEXT_PUBLIC_NINETAILED_ENVIRONMENT=development  # make each demo worktree development so there are no conflicts with the main env which should be reserved for the master/main sandbox
 ```
 
 > 🔴 **MANUAL — M5:** Get `NEXT_PUBLIC_NINETAILED_API_KEY` from NT dashboard → workspace settings. Paste it into `.env.local`. CC cannot read or inject this value.

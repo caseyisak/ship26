@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import React from 'react';
 
-import MetafiFaq from '@/components/sections/metafi-faq';
 import { AiSimulationCard } from '@/components/demo/AiSimulationCard';
+import { extractPlainText } from '@/components/demo/AioAeoPreviewPanel';
 import { FaqAeoAfterPanel } from '@/components/demo/FaqAeoAfterPanel';
 import { getFaqByEntryId } from '@/services/contentful/faq';
 
@@ -22,15 +22,24 @@ export const metadata = {
     'See the difference structured content makes for AI answer engines. Before: unstructured FAQ. After: FAQPage schema + live Contentful edits.',
 };
 
-export default async function FaqAeoPage() {
+type Props = {
+  searchParams: Promise<{ entryId?: string; locale?: string }>;
+};
+
+export default async function FaqAeoPage({ searchParams }: Props) {
+  const { entryId: queryEntryId, locale } = await searchParams;
   const faqData = await getFaqByEntryId({
-    entryId: AEO_FAQ_ENTRY_ID,
-    locale: 'en-US',
+    entryId: queryEntryId ?? AEO_FAQ_ENTRY_ID,
+    locale: locale ?? 'en-US',
   });
 
   if (!faqData) {
     notFound();
   }
+
+  const firstItem = faqData.itemsCollection?.items?.[0] ?? null;
+  const firstQuestion = firstItem ? extractPlainText(firstItem.questionRt) : undefined;
+  const firstAnswer = firstItem ? extractPlainText(firstItem.answerRt) : undefined;
 
   return (
     <div className="bg-background min-h-screen">
@@ -42,11 +51,28 @@ export default async function FaqAeoPage() {
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
             Structured content makes the difference between{' '}
-            <em>based on various sources</em> and a confident, attributed AI
-            answer.
+            <em>based on various sources</em> and a confident, attributed AI answer.
           </p>
         </div>
       </div>
+
+      {/* Simulated search query bar */}
+      {firstQuestion && (
+        <div className="border-b border-border bg-muted/30 px-4 py-4 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Simulated search query
+            </p>
+            <div className="flex items-center gap-3 rounded-full border border-border bg-card px-4 py-2.5 shadow-sm">
+              <svg className="size-4 shrink-0 text-muted-foreground" viewBox="0 0 20 20" fill="none" aria-hidden>
+                <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              <span className="text-sm text-foreground">{firstQuestion}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Split layout */}
       <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
@@ -59,11 +85,8 @@ export default async function FaqAeoPage() {
               </span>
               <span className="text-muted-foreground text-xs">Before</span>
             </div>
-            <div className="rounded-2xl border border-border bg-card overflow-hidden">
-              <MetafiFaq />
-              <div className="px-6 pb-8">
-                <AiSimulationCard variant="unstructured" />
-              </div>
+            <div className="rounded-2xl border border-border bg-card p-6">
+              <AiSimulationCard question={firstQuestion} answer={firstAnswer} />
             </div>
           </div>
 

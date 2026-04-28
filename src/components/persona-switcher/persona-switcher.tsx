@@ -20,7 +20,7 @@ import { NT_AUDIENCES } from '@/config/nt-audiences';
 
 type Persona = {
   label: string;
-  customerType: string;
+  customer_type: string;
   audienceId: string;
   color: string;
 };
@@ -28,19 +28,19 @@ type Persona = {
 export const PERSONAS: Persona[] = [
   {
     label: 'Persona A',
-    customerType: 'new-visitor',
+    customer_type: 'new-visitor',
     audienceId: NT_AUDIENCES.newVisitor,
     color: 'bg-blue-500 hover:bg-blue-600',
   },
   {
     label: 'Persona B',
-    customerType: 'returning',
+    customer_type: 'returning',
     audienceId: NT_AUDIENCES.returning,
     color: 'bg-emerald-500 hover:bg-emerald-600',
   },
   {
     label: 'Persona C',
-    customerType: 'premium',
+    customer_type: 'premium',
     audienceId: NT_AUDIENCES.premium,
     color: 'bg-purple-500 hover:bg-purple-600',
   },
@@ -75,8 +75,8 @@ export function PersonaSwitcher() {
   const allAudienceIds = PERSONAS.map((p) => p.audienceId);
 
   const handlePersona = async (persona: Persona) => {
-    // Step 1: Identify with customerType trait (for NT cloud + analytics)
-    await ninetailed.identify('visitor', { customerType: persona.customerType });
+    // Step 1: Identify with customer_type trait (for NT cloud + analytics)
+    await ninetailed.identify('visitor', { customer_type: persona.customer_type });
     // Step 2: Force local audience activation via preview plugin (LL-024)
     activatePersonaAudience(persona.audienceId, allAudienceIds);
   };
@@ -88,7 +88,7 @@ export function PersonaSwitcher() {
       </span>
       {PERSONAS.map((persona) => (
         <button
-          key={persona.customerType}
+          key={persona.customer_type}
           onClick={() => handlePersona(persona)}
           className={[
             'text-white text-xs font-semibold px-3 py-1.5 rounded transition-colors',

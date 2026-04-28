@@ -5,6 +5,7 @@ import { BLOCKS, MARKS } from '@contentful/rich-text-types';
 import React from 'react';
 
 import type { FaqFragment } from '@/block-renderer/types';
+import { extractPlainText } from '@/lib/faq-utils';
 
 const rtOptions = {
   renderMark: {
@@ -17,7 +18,7 @@ const rtOptions = {
   },
 };
 
-function extractText(rt: { json: Record<string, unknown> } | null | undefined): string {
+export function extractPlainText(rt: { json: Record<string, unknown> } | null | undefined): string {
   if (!rt?.json) return '';
   try {
     const doc = rt.json as { content?: Array<{ content?: Array<{ value?: string }> }> };
@@ -61,25 +62,11 @@ type Props = {
 export function AioAeoPreviewPanel({ data }: Props) {
   const items = data.itemsCollection?.items ?? [];
   const firstItem = items[0] ?? null;
-  const governance = firstItem?.aioAeoGeoCollection?.items?.[0] ?? null;
+  const governance = data.faqMetadata ?? null;
   const hasGovernance = Boolean(governance);
 
-  // Build the JSON-LD structure from live data
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: items.map((item) => ({
-      '@type': 'Question',
-      name: extractText(item.questionRt),
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: extractText(item.answerRt),
-      },
-    })),
-  };
-
-  // First answer text for AI Overview body
-  const firstAnswerText = firstItem ? extractText(firstItem.answerRt) : '';
+  const firstAnswerText = firstItem ? extractPlainText(firstItem.answerRt) : '';
+  const firstQuestionText = firstItem ? extractPlainText(firstItem.questionRt) : '';
   const firstQuestionNode = firstItem?.questionRt?.json
     ? documentToReactComponents(
         firstItem.questionRt.json as unknown as Parameters<typeof documentToReactComponents>[0],
@@ -87,9 +74,86 @@ export function AioAeoPreviewPanel({ data }: Props) {
       )
     : null;
 
+  // Build the JSON-LD structure from live data
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: extractPlainText(item.questionRt),
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: extractPlainText(item.answerRt),
+      },
+    })),
+  };
+
   return (
     <div className="flex flex-col gap-4">
-      {/* Governance Badges */}
+      {/* AI Suggested Answer — two states */}
+      <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+        <div className="mb-3 flex items-center gap-2">
+          <GoogleDotsIcon />
+          <span className="text-sm font-semibold text-foreground">
+            AI Suggested Answer
+          </span>
+          {hasGovernance ? (
+            <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
+              <span className="size-1.5 rounded-full bg-green-500" />
+              High confidence
+            </span>
+          ) : (
+            <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+              <span className="size-1.5 rounded-full bg-yellow-500" />
+              Low confidence / may vary
+            </span>
+          )}
+        </div>
+
+        {firstQuestionNode && (
+          <p className="text-foreground mb-2 text-sm font-medium">
+            {firstQuestionNode}
+          </p>
+        )}
+
+        {hasGovernance ? (
+          /* High-confidence: full answer + attribution */
+          <>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              {firstAnswerText || 'No answer available.'}
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border pt-3">
+              <span className="text-xs text-muted-foreground">
+                Source: <span className="font-medium text-foreground">metafi.io</span> · FAQPage JSON-LD schema
+              </span>
+              {governance?.ownerTeam && (
+                <span className="text-xs text-muted-foreground">
+                  · Verified by <span className="font-medium text-foreground">{governance.ownerTeam}</span>
+                </span>
+              )}
+              {governance?.lastUpdated && (
+                <span className="text-xs text-muted-foreground">
+                  · Reviewed {formatDate(governance.lastUpdated)}
+                </span>
+              )}
+            </div>
+          </>
+        ) : (
+          /* Low-confidence: truncated + hedge (same as Before panel) */
+          <>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              {firstAnswerText
+                ? `${firstAnswerText.slice(0, 160).trimEnd()}… This information is synthesized from available page content and may not reflect the most current or verified guidance.`
+                : 'Based on various sources, answers may vary. Check the company website for current information.'}
+            </p>
+            <p className="text-muted-foreground/50 mt-2 text-xs italic">
+              No structured schema detected.
+            </p>
+          </>
+        )}
+      </div>
+
+      {/* Content Governance — only meaningful when governance is present */}
       <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
         <p className="text-muted-foreground mb-2 text-xs font-medium uppercase tracking-wide">
           Content Governance
@@ -106,6 +170,11 @@ export function AioAeoPreviewPanel({ data }: Props) {
                 {governance.ownerTeam}
               </span>
             )}
+            {governance.audience && (
+              <span className="inline-flex items-center rounded-full bg-purple-100 px-2.5 py-1 text-xs font-medium text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
+                {governance.audience}
+              </span>
+            )}
             {governance.region && (
               <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
                 {governance.region}
@@ -119,44 +188,9 @@ export function AioAeoPreviewPanel({ data }: Props) {
           </div>
         ) : (
           <p className="text-muted-foreground/50 text-xs italic">
-            No governance metadata
+            No governance metadata — add an AIO / AEO / GEO Governance entry to unlock high-confidence answers.
           </p>
         )}
-      </div>
-
-      {/* AI Overview Mock */}
-      <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-        <div className="mb-3 flex items-center gap-2">
-          <GoogleDotsIcon />
-          <span className="text-sm font-semibold text-foreground">
-            AI Overview
-          </span>
-          {hasGovernance ? (
-            <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
-              <span className="size-1.5 rounded-full bg-green-500" />
-              High confidence
-            </span>
-          ) : (
-            <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
-              <span className="size-1.5 rounded-full bg-yellow-500" />
-              Low confidence / may vary
-            </span>
-          )}
-        </div>
-
-        {firstQuestionNode && (
-          <p className="text-foreground mb-1 text-sm font-medium">
-            {firstQuestionNode}
-          </p>
-        )}
-
-        <p className="text-muted-foreground text-sm leading-relaxed">
-          {firstAnswerText || 'No answer available.'}
-        </p>
-
-        <p className="text-muted-foreground/60 mt-3 text-xs">
-          Source: metafi.io · FAQPage schema
-        </p>
       </div>
 
       {/* JSON-LD Drawer */}
@@ -166,8 +200,9 @@ export function AioAeoPreviewPanel({ data }: Props) {
         </summary>
         <div className="border-t border-border px-4 pb-4 pt-3">
           <p className="text-muted-foreground mb-2 text-xs">
-            This is what answer engines read. Generated automatically from
-            Contentful entries.
+            {hasGovernance
+              ? 'FAQPage JSON-LD generated automatically from Contentful entries + governance metadata.'
+              : 'Schema is present but lacks governance signals — answer engines may still hedge.'}
           </p>
           <pre className="overflow-x-auto rounded-lg bg-muted p-3 text-xs text-foreground">
             <code>{JSON.stringify(jsonLd, null, 2)}</code>

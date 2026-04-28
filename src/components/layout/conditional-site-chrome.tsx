@@ -20,8 +20,9 @@ export function ConditionalSiteChrome({
   const isContentfulApp = pathname?.startsWith('/contentful-app') ?? false;
   const isPreview = pathname?.startsWith('/preview') ?? false;
   const isDashboard = pathname?.startsWith('/dashboard') ?? false;
+  const isDemo = pathname?.startsWith('/demo') ?? false;
 
-  if (isContentfulApp || isPreview || isDashboard) {
+  if (isContentfulApp || isPreview || isDashboard || isDemo) {
     return <>{children}</>;
   }
 

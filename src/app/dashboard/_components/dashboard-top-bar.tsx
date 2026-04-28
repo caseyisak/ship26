@@ -18,9 +18,9 @@ import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 const FALLBACK_PERSONAS: Persona[] = [
-  { name: 'Persona A', label: 'New Visitor', customerType: 'new-visitor', color: '#6366f1' },
-  { name: 'Persona B', label: 'Returning Customer', customerType: 'returning', color: '#10b981' },
-  { name: 'Persona C', label: 'Premium User', customerType: 'premium', color: '#f59e0b' },
+  { name: 'Persona A', label: 'New Visitor', customer_type: 'new-visitor', color: '#6366f1' },
+  { name: 'Persona B', label: 'Returning Customer', customer_type: 'returning', color: '#10b981' },
+  { name: 'Persona C', label: 'Premium User', customer_type: 'premium', color: '#f59e0b' },
 ];
 
 // Gear button — opens the NT personalization panel via the preview plugin
@@ -63,7 +63,15 @@ function PersonaDropdown({
   const handleSwitch = (persona: Persona) => {
     setPersona(persona);
     // Identify via React hook (reliable) — window.ninetailed global in setPersona is a fallback only
-    ninetailed.identify('', { customerType: persona.customerType });
+    ninetailed.identify('', {
+      customer_type: persona.customer_type,
+      first_name: persona.first_name ?? null,
+      last_name: persona.last_name ?? null,
+      display_name: persona.display_name ?? null,
+      industry: persona.industry ?? null,
+      location: persona.location ?? null,
+      is_logged_in: true,
+    });
     onPersonaChange(persona);
     // No router.refresh() — NT <Experience> swap is client-side; a server refresh races against identify
   };
@@ -92,10 +100,10 @@ function PersonaDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52 rounded-none">
         {allPersonas.map((p) => {
-          const isActive = p.customerType === activePersona.customerType;
+          const isActive = p.customer_type === activePersona.customer_type;
           return (
             <DropdownMenuItem
-              key={p.customerType}
+              key={p.customer_type}
               onClick={() => !isActive && handleSwitch(p)}
               className="gap-2 cursor-pointer"
             >
@@ -145,7 +153,15 @@ export function DashboardTopBar({ loggedInMetadata }: Props) {
       // React runs useEffect bottom-up, so DashboardTopBar fires before LocalAudienceEvaluator —
       // without this deferral, the first onProfileChange event is missed.
       const id = setTimeout(() => {
-        ninetailed.identify('', { customerType: p.customerType });
+        ninetailed.identify('', {
+          customer_type: p.customer_type,
+          first_name: p.first_name ?? null,
+          last_name: p.last_name ?? null,
+          display_name: p.display_name ?? null,
+          industry: p.industry ?? null,
+          location: p.location ?? null,
+          is_logged_in: true,
+        });
       }, 0);
       return () => clearTimeout(id);
     }
@@ -170,7 +186,7 @@ export function DashboardTopBar({ loggedInMetadata }: Props) {
       <div className="flex items-center gap-2 px-3 shrink-0 border-l border-border">
         {activePersona && (
           <PersonaDropdown
-            displayName={activePersona.displayName || activePersona.label}
+            displayName={activePersona.display_name || activePersona.label}
             activePersona={activePersona}
             allPersonas={allPersonas}
             onPersonaChange={(p) => setActivePersona(p)}

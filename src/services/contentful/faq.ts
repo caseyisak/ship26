@@ -14,6 +14,7 @@ type RawAioAeoGeo = {
   topic?: string | null;
   ownerTeam?: string | null;
   lastUpdated?: string | null;
+  audience?: string | null;
   region?: string | null;
 };
 
@@ -32,6 +33,7 @@ type RawFaq = {
   internalName?: string | null;
   titleRt?: { json: Record<string, unknown> } | null;
   descriptionRt?: { json: Record<string, unknown> } | null;
+  faqMetadata?: RawAioAeoGeo | null;
   itemsCollection?: { items: Array<RawFaqItem | null> } | null;
   ntExperiencesCollection?: NtExperiencesCollection | null;
 };
@@ -43,7 +45,7 @@ type FaqByIdResponse = {
 };
 
 function mapFaqItem(item: RawFaqItem | null): FaqItemFragment | null {
-  if (!item || item.__typename !== 'FaqItem') return null;
+  if (!item || (item.__typename !== 'FaqItem' && item.__typename !== 'Faqitem')) return null;
   return {
     __typename: 'FaqItem',
     sys: { id: item.sys.id },
@@ -64,6 +66,7 @@ function mapFaqItem(item: RawFaqItem | null): FaqItemFragment | null {
               topic: g.topic ?? null,
               ownerTeam: g.ownerTeam ?? null,
               lastUpdated: g.lastUpdated ?? null,
+              audience: g.audience ?? null,
               region: g.region ?? null,
             })),
         }
@@ -73,12 +76,26 @@ function mapFaqItem(item: RawFaqItem | null): FaqItemFragment | null {
 
 function mapFaq(item: RawFaq | null): FaqFragment | null {
   if (!item || item.__typename !== 'Faq') return null;
+  const faqMetadata = item.faqMetadata?.__typename === 'AioAeoGeo'
+    ? {
+        __typename: 'AioAeoGeo' as const,
+        sys: { id: item.faqMetadata.sys.id },
+        internalName: item.faqMetadata.internalName ?? null,
+        topic: item.faqMetadata.topic ?? null,
+        ownerTeam: item.faqMetadata.ownerTeam ?? null,
+        lastUpdated: item.faqMetadata.lastUpdated ?? null,
+        audience: item.faqMetadata.audience ?? null,
+        region: item.faqMetadata.region ?? null,
+      }
+    : null;
+
   return {
     __typename: 'Faq',
     sys: { id: item.sys.id },
     internalName: item.internalName ?? null,
     titleRt: item.titleRt ?? null,
     descriptionRt: item.descriptionRt ?? null,
+    faqMetadata,
     itemsCollection: item.itemsCollection
       ? {
           items: item.itemsCollection.items

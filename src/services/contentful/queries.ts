@@ -141,7 +141,7 @@ const HERO_PAGE_FIELDS = `
   }
 `;
 
-/** AioAeoGeo fragment: governance metadata for FAQ entries (topic, ownerTeam, lastUpdated, region). */
+/** AioAeoGeo fragment: governance metadata for FAQ entries (topic, ownerTeam, lastUpdated, audience, region). */
 const AIO_AEO_GEO_FIELDS = `
   __typename
   sys { id }
@@ -150,6 +150,7 @@ const AIO_AEO_GEO_FIELDS = `
     topic
     ownerTeam
     lastUpdated
+    audience
     region
   }
 `;
@@ -170,7 +171,7 @@ const FAQ_ITEM_FIELDS = `
   }
 `;
 
-/** FAQ fragment: all fields from FAQ content type (internalName, titleRt, descriptionRt, items). */
+/** FAQ fragment: all fields from FAQ content type (internalName, titleRt, descriptionRt, faqMetadata, items). */
 const FAQ_FIELDS = `
   __typename
   sys { id }
@@ -178,6 +179,9 @@ const FAQ_FIELDS = `
     internalName
     titleRt { json }
     descriptionRt { json }
+    faqMetadata {
+      ${AIO_AEO_GEO_FIELDS}
+    }
     itemsCollection(limit: 50) {
       items {
         ${FAQ_ITEM_FIELDS}
@@ -201,6 +205,9 @@ const FAQ_PAGE_FIELDS = `
     internalName
     titleRt { json }
     descriptionRt { json }
+    faqMetadata {
+      ${AIO_AEO_GEO_FIELDS}
+    }
     itemsCollection(limit: 50) {
       items {
         ${FAQ_ITEM_FIELDS}
