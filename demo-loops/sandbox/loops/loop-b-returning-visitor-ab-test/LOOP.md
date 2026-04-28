@@ -124,6 +124,27 @@ What you're about to see is a 3-way messaging test running exclusively on return
 
 ---
 
+## Visual Test
+
+**Setup:** Open incognito (or clear localStorage + cookies) → `http://localhost:3000/page/home?preview=true`
+
+1. Confirm logged-out state — navbar shows **Login** button, no persona dot
+2. Observe hero → should be baseline ("Content powers every experience" or current baseline copy)
+3. Confirm no nurture banner on the page
+4. Click **Login** → sign in as **Returning Customer** (emerald dot, `customer_type: returning`)
+5. Page stays on `/page/home?preview=true` — observe hero section
+6. Click **⚙️** gear icon → NT panel opens
+7. Scroll down — observe area above/below hero for the nurture banner
+
+**Pass:**
+- [ ] Before login: hero shows baseline copy, no nurture banner visible
+- [ ] After login: hero headline is one of the 3 variants (NOT baseline) — Velocity / Proof / Control copy
+- [ ] After login: nurture banner appears — "Still exploring your options?"
+- [ ] NT panel → **Customer Type — Returning** audience active (green dot); `experienceVariantIndexes` shows entry for `6gZyrNnCaLymz0Azi7OvIL`
+- [ ] Navbar shows persona name + emerald dot as a dropdown trigger (not Login button)
+
+---
+
 ## Entry Reference
 
 | Entry | Content Type | ID | Status | Preview URL |

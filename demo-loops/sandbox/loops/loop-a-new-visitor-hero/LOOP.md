@@ -75,6 +75,23 @@ Contentful separates the content decision from the engineering decision. Your ma
 
 ---
 
+## Visual Test
+
+**Setup:** Open incognito (or clear localStorage + cookies) → `http://localhost:3000/page/home?preview=true`
+
+1. Page loads — do NOT log in
+2. Observe the hero section (first section above fold)
+3. Click the **⚙️** gear icon in the navbar → NT panel opens
+4. Close NT panel → scroll the full page
+
+**Pass:**
+- [ ] Hero renders with baseline headline (check `6yUhVoaCfb1sBoHCKgBlrY` entry for current copy)
+- [ ] No banner rendered anywhere on the page
+- [ ] NT panel → no audience highlighted, `activeAudiences` is empty
+- [ ] Live preview iframe: edit the hero `headline` field in Contentful → text updates in browser without reload
+
+---
+
 ## Entry Reference
 
 | Entry | Content Type | ID | Status | Preview URL |

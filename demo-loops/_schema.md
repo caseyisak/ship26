@@ -95,7 +95,29 @@ The close. Persona-specific value statements. 2-3 bullets. Optionally include an
 
 ---
 
-### 6. Entry Reference
+### 6. Visual Test
+
+Silent QA pass — run this before every demo to verify the loop is working. Not for presenting; not for reading aloud. Written for the SE to execute alone in < 2 minutes.
+
+Format:
+- **Setup** line — browser state (incognito, logged out, clear cookies) + URL
+- Numbered steps — clicks only, no narrative
+- **Pass criteria** — binary checks; if any fail, the loop is broken
+
+```
+**Setup:** Open incognito → `http://localhost:3000/...`
+
+1. [step]
+2. [step]
+
+**Pass:**
+- [ ] [exact text or element visible/absent]
+- [ ] [NT panel state, audience, merge tag resolution]
+```
+
+---
+
+### 7. Entry Reference
 
 A table of every Contentful entry used in this loop.
 
@@ -105,7 +127,7 @@ A table of every Contentful entry used in this loop.
 
 ---
 
-### 7. Reset Checklist
+### 8. Reset Checklist
 
 What must be true before running this loop in a demo. Each item is a checkbox.
 

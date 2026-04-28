@@ -105,6 +105,28 @@ What we're showing here is how Contentful and Ninetailed let you react to that s
 
 ---
 
+## Visual Test
+
+**Setup:** Open incognito (or clear localStorage + cookies) → `http://localhost:3000/page/home?preview=true`
+
+1. Confirm logged-out state — navbar shows **Login** button
+2. Observe hero → should be baseline copy, no discount banner
+3. Click **Login** → sign in as **Premium User** (purple dot, `customer_type: premium`)
+4. Page stays on `/page/home?preview=true` — observe hero section
+5. Scroll down — observe discount banner
+6. Click **⚙️** gear icon → NT panel opens
+7. In Contentful, open discount banner entry `5NCMzyA5b9oYgZaqM9ZoOW` → live-edit headline (e.g. change "20%" to "25%") → observe banner in browser
+
+**Pass:**
+- [ ] Before login: baseline hero, no discount banner
+- [ ] After login: hero shows high-intent variant — "You've been exploring. Let's make the decision easy…"
+- [ ] After login: discount banner visible — merge tag resolves to persona's first name (not raw `{{first_name}}`)
+- [ ] NT panel → **Customer Type — Premium** audience active (green dot); `experienceVariantIndexes` shows entries for `3UMQQgfU0ukuB04rBUP5Pp` and `3Sb7DlOGStyAOCV8FbHVLc`
+- [ ] Live edit: discount % change reflects in banner without page reload
+- [ ] Navbar shows persona name + purple dot (not Login button)
+
+---
+
 ## Entry Reference
 
 | Entry | Content Type | ID | Status | Preview URL |
