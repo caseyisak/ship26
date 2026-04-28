@@ -146,6 +146,7 @@ NEXT_PUBLIC_BRAND=                     # set to customer name for themed demos
 | v2.5 | 2026-04 | Full RT field migration across all CTs, Pricing, IconGrid, FeatureShowcase, MediaCardGrid |
 | v3.0 | 2026-04 | 3-persona dashboard + NT personalization, FeatureSection, newsWrapper, localization, form block |
 | v4.0 | 2026-04 | Integration simulator app, catalog CT, DAM picker, ecomm picker, NT persona fixes |
+| v4.1 | 2026-04 | Newsletter RT field rendering fix, leadStory→promoSlot consolidation, slug→ID routing, CtaSection RTE embed, preview/publish token audit |
 
 ---
 
