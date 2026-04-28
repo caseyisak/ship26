@@ -14,28 +14,18 @@
 
 ---
 
-## 🟠 PR Ready — Newsletter Fixes (sandbox/v4.1)
+## ✅ Completed — Current Sprint
 
-**Spec:** `.claude/specs/003-newsletter-fixes/spec.md`
-**Branch:** `fix/newsletter-promo-slot` | **PR:** caseyisak/metafi#91 — ready to merge
-**Punchbowl deadline:** Week of 2026-04-28
-
-| Task | Status |
-|------|--------|
-| Fix RT field mismatch — Hero/Banner/TwoAcross embeds render blank | ✅ |
-| Fix duplicate `headlineRt` TypeScript property in `EmbeddedEntry` | ✅ |
-| Consolidate `leadStory` → `promoSlot` | ✅ |
-| Remove `slug` field, route `/newsletter/[id]` | ✅ |
-| Fix Hero embed `entry.image` → `entry.media` | ✅ |
-| Move promoSlot above RTE body | ✅ |
-| Preview/publish token audit — all 28 services + 21 routes | ✅ |
-| Fix `getNewsletterById` default `preview=true` → `false` | ✅ |
-| Fix PDP preview route `getSettings()` missing `preview:true` | ✅ |
-| Add CtaSection embed support in newsletter RTE | ✅ |
-| Update Newsletter CT — allow ctaSection in embedded-entry-block | ✅ |
-| Add Newsletter to blocks inventory | ✅ |
-
-**On merge:** tag `sandbox/v4.1` + archive `documentation/handoff-2026-04-27-newsletter-fixes.md`
+| Stream | Issues | Branch | Status |
+|--------|--------|--------|--------|
+| featureSection CT | #57 icon-text/cards/integrations variants | `feat/feature-section` | ✅ PR #72 merged |
+| newsWrapper CT | #5 dynamic news feed block | `feat/news-wrapper` | ✅ PR #73 merged |
+| AIO/AEO/GEO demo loop | M1–M8 | `feat/aio-aeo-geo-demo` | ✅ PR #74 merged |
+| Deprecate data-theme | #8 remove hardcoded CSS theme blocks | `fix/deprecate-data-theme` | ✅ PR #75 merged |
+| Localization | #51 enable all CT fields | `feat/localization` | ✅ PR #76 merged |
+| IconFeatureGrid CT | #55 icon+title+description 3-col grid | `feat/icon-feature-grid` | ✅ PR #77 merged |
+| Form block + NT demo loop | #53 form + personalization | `feat/form-builder-app` | ✅ PR #78 merged |
+| Newsletter fixes | #88 #89 #90 RT rendering, promoSlot, CtaSection, preview audit | `fix/newsletter-promo-slot` | ✅ PR #91 merged → sandbox/v4.1 |
 
 ---
 
