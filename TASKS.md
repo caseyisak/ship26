@@ -14,18 +14,28 @@
 
 ---
 
-## 🔴 Active — Newsletter Fixes (sandbox/v4.1)
+## 🟠 PR Ready — Newsletter Fixes (sandbox/v4.1)
 
 **Spec:** `.claude/specs/003-newsletter-fixes/spec.md`
-**Branch:** `fix/newsletter-promo-slot` (worktree to be created)
+**Branch:** `fix/newsletter-promo-slot` | **PR:** caseyisak/metafi#91 — ready to merge
 **Punchbowl deadline:** Week of 2026-04-28
 
-| Task | Issue | Status |
-|------|-------|--------|
-| Fix RT field mismatch — Hero/Banner/TwoAcross embeds render blank | to create | ⬜ |
-| Fix duplicate `headlineRt` TypeScript property in `EmbeddedEntry` | to create | ⬜ |
-| Consolidate `leadStory` → `promoSlot` | to create | ⬜ |
-| Add Newsletter to blocks inventory | to create | ⬜ |
+| Task | Status |
+|------|--------|
+| Fix RT field mismatch — Hero/Banner/TwoAcross embeds render blank | ✅ |
+| Fix duplicate `headlineRt` TypeScript property in `EmbeddedEntry` | ✅ |
+| Consolidate `leadStory` → `promoSlot` | ✅ |
+| Remove `slug` field, route `/newsletter/[id]` | ✅ |
+| Fix Hero embed `entry.image` → `entry.media` | ✅ |
+| Move promoSlot above RTE body | ✅ |
+| Preview/publish token audit — all 28 services + 21 routes | ✅ |
+| Fix `getNewsletterById` default `preview=true` → `false` | ✅ |
+| Fix PDP preview route `getSettings()` missing `preview:true` | ✅ |
+| Add CtaSection embed support in newsletter RTE | ✅ |
+| Update Newsletter CT — allow ctaSection in embedded-entry-block | ✅ |
+| Add Newsletter to blocks inventory | ✅ |
+
+**On merge:** tag `sandbox/v4.1` + archive `documentation/handoff-2026-04-27-newsletter-fixes.md`
 
 ---
 
@@ -37,7 +47,7 @@
 | NT data bucket 409 | ⬜ Follow up with NT support | Casey emailed 2026-04-20. Follow up if no response within a few days. |
 | `feat/card-media-size` | ⬜ ready to open PR | 2 unmerged commits (card mediaSize + style/columns/colorVariant) — own branch/worktree, open PR separately |
 | `fix/button-hover-states` | ⬜ user decision needed | 1 unmerged commit (hover states on button variants) — merge or drop? |
-| Tag `sandbox/v4.0` + add README changelog | ⬜ | Apply to current HEAD before newsletter fix branch |
+| Tag `sandbox/v4.0` + add README changelog | ⬜ | Tag current main HEAD before merging newsletter PR; v4.1 = post-newsletter |
 
 ---
 
