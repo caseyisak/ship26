@@ -22,7 +22,7 @@ export default async function PreviewPdpPage({ params, searchParams }: Props) {
 
   const [pdp, settings] = await Promise.all([
     getPdpByEntryId({ entryId, locale: locale ?? 'en-US' }),
-    getSettings(),
+    getSettings({ preview: true }),
   ]);
 
   if (!pdp) {

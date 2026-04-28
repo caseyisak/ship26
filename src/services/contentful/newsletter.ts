@@ -30,9 +30,11 @@ export type EmbeddedEntry = {
   background?: { url?: string | null } | null;
   image?: { url?: string | null } | null;
   variant?: string | null;
-  // Banner RT fields
-  headlineRt?: { json: unknown } | null;
-  subheadlineRt?: { json: unknown } | null;
+  // CtaSection fields
+  ctaPrimaryLabelRt?: { json: unknown } | null;
+  ctaPrimaryUrl?: string | null;
+  ctaSecondaryLabelRt?: { json: unknown } | null;
+  ctaSecondaryUrl?: string | null;
 };
 
 export type NewsletterLinkedEntry = {
@@ -44,6 +46,8 @@ export type NewsletterLinkedEntry = {
   heroImage?: { url?: string | null } | null;
   eyebrowRt?: { json: unknown } | null;
   headingRt?: { json: unknown } | null;
+  headlineRt?: { json: unknown } | null;
+  subheadlineRt?: { json: unknown } | null;
   media?: { url?: string | null } | null;
   ctaLabel?: string | null;
   ctaUrl?: string | null;
@@ -64,8 +68,6 @@ export type Newsletter = {
   subjectLine?: string | null;
   date?: string | null;
   teaser?: string | null;
-  slug?: string | null;
-  leadStory?: NewsletterLinkedEntry | null;
   promoSlot?: NewsletterLinkedEntry | null;
   content?: {
     json: unknown;
@@ -89,8 +91,6 @@ type RawNewsletter = {
   subjectLine?: string | null;
   date?: string | null;
   teaser?: string | null;
-  slug?: string | null;
-  leadStory?: NewsletterLinkedEntry | null;
   promoSlot?: NewsletterLinkedEntry | null;
   content?: {
     json: unknown;
@@ -100,10 +100,6 @@ type RawNewsletter = {
       };
     };
   } | null;
-};
-
-type NewsletterBySlugResponse = {
-  newsletterCollection: { items: Array<RawNewsletter | null> };
 };
 
 type NewsletterByIdResponse = {
@@ -122,10 +118,6 @@ const NEWSLETTER_FIELDS = `
   subjectLine
   date
   teaser
-  leadStory {
-    ... on Entry { sys { id } __typename }
-    ... on BlogPost { title slug excerpt heroImage { url } }
-  }
   promoSlot {
     ... on Entry { sys { id } __typename }
     ... on BlogPost { title slug excerpt heroImage { url } }
@@ -171,16 +163,17 @@ const NEWSLETTER_FIELDS = `
             variant
             colorVariant
           }
+          ... on CtaSection {
+            headlineRt { json }
+            subheadlineRt { json }
+            ctaPrimaryLabelRt { json }
+            ctaPrimaryUrl
+            ctaSecondaryLabelRt { json }
+            ctaSecondaryUrl
+            colorVariant
+          }
         }
       }
-    }
-  }
-`;
-
-const NEWSLETTER_BY_SLUG = `
-  query NewsletterBySlug($slug: String!, $preview: Boolean) {
-    newsletterCollection(where: { slug: $slug }, limit: 1, preview: $preview) {
-      items { ${NEWSLETTER_FIELDS} }
     }
   }
 `;
@@ -209,8 +202,6 @@ function mapNewsletter(
     subjectLine: raw.subjectLine ?? null,
     date: raw.date ?? null,
     teaser: raw.teaser ?? null,
-    slug: raw.slug ?? null,
-    leadStory: raw.leadStory ?? null,
     promoSlot: raw.promoSlot ?? null,
     content: raw.content ?? null,
   };
@@ -218,28 +209,10 @@ function mapNewsletter(
 
 // ─── Service functions ────────────────────────────────────────────────────────
 
-/** Fetch a single newsletter by slug (published). */
-export async function getNewsletterBySlug(
-  slug: string,
-  preview = false,
-): Promise<Newsletter | null> {
-  try {
-    const data = await fetchGraphQL<NewsletterBySlugResponse>({
-      query: NEWSLETTER_BY_SLUG,
-      variables: { slug, preview },
-      preview,
-    });
-    const item = data.newsletterCollection?.items?.[0] ?? null;
-    return mapNewsletter(item);
-  } catch {
-    return null;
-  }
-}
-
-/** Fetch a single newsletter by entry ID (for preview route). */
+/** Fetch a single newsletter by entry ID. */
 export async function getNewsletterById(
   id: string,
-  preview = true,
+  preview = false,
 ): Promise<Newsletter | null> {
   try {
     const data = await fetchGraphQL<NewsletterByIdResponse>({

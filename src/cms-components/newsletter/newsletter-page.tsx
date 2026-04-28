@@ -79,9 +79,9 @@ function buildRichTextOptions(linkedEntries: Array<EmbeddedEntry | null> = []) {
           const bgUrl = entry.background?.url?.startsWith('//')
             ? `https:${entry.background.url}`
             : entry.background?.url;
-          const imgUrl2 = entry.image?.url?.startsWith('//')
-            ? `https:${entry.image.url}`
-            : entry.image?.url;
+          const imgUrl2 = entry.media?.url?.startsWith('//')
+            ? `https:${entry.media.url}`
+            : entry.media?.url;
           return (
             <div className="relative my-6 overflow-hidden rounded-none bg-primary text-primary-foreground">
               {bgUrl && (
@@ -92,20 +92,20 @@ function buildRichTextOptions(linkedEntries: Array<EmbeddedEntry | null> = []) {
               )}
               <div className="relative flex items-center gap-6 px-6 py-8">
                 <div className="flex-1">
-                  {entry.headline && (
-                    <h2 className="mb-2 text-2xl leading-tight font-bold text-primary-foreground">
-                      {entry.headline}
-                    </h2>
+                  {!!entry.headlineRt?.json && (
+                    <div className="mb-2 text-2xl leading-tight font-bold text-primary-foreground">
+                      {(documentToReactComponents(entry.headlineRt.json as Document) as unknown as React.ReactNode)}
+                    </div>
                   )}
-                  {entry.subheadline && (
-                    <p className="mb-4 text-sm text-primary-foreground/80">
-                      {entry.subheadline}
-                    </p>
+                  {!!entry.subheadlineRt?.json && (
+                    <div className="mb-4 text-sm text-primary-foreground/80">
+                      {(documentToReactComponents(entry.subheadlineRt.json as Document) as unknown as React.ReactNode)}
+                    </div>
                   )}
                   {entry.ctaText && entry.ctaUrl && (
                     <a
                       href={entry.ctaUrl}
-                      className="inline-block bg-tagline px-4 py-2 text-sm font-semibold text-white no-underline hover:opacity-90"
+                      className="inline-block bg-card px-4 py-2 text-sm font-semibold text-card-foreground no-underline hover:opacity-90"
                     >
                       {entry.ctaText}
                     </a>
@@ -130,21 +130,21 @@ function buildRichTextOptions(linkedEntries: Array<EmbeddedEntry | null> = []) {
             <div className="my-6 rounded-lg border border-border bg-primary px-6 py-8">
               <div className="flex flex-wrap items-center justify-between gap-6">
                 <div>
-                  {entry.headline && (
-                    <p className="text-lg leading-tight font-bold text-primary-foreground">
-                      {entry.headline}
-                    </p>
+                  {!!entry.headlineRt?.json && (
+                    <div className="text-lg leading-tight font-bold text-primary-foreground">
+                      {(documentToReactComponents(entry.headlineRt.json as Document) as unknown as React.ReactNode)}
+                    </div>
                   )}
-                  {entry.subheadline && (
-                    <p className="mt-1 text-sm text-primary-foreground/80">
-                      {entry.subheadline}
-                    </p>
+                  {!!entry.subheadlineRt?.json && (
+                    <div className="mt-1 text-sm text-primary-foreground/80">
+                      {(documentToReactComponents(entry.subheadlineRt.json as Document) as unknown as React.ReactNode)}
+                    </div>
                   )}
                 </div>
                 {entry.ctaText && entry.ctaUrl && (
                   <a
                     href={entry.ctaUrl}
-                    className="flex-shrink-0 rounded bg-tagline px-5 py-2 text-sm font-semibold text-white no-underline hover:opacity-90"
+                    className="flex-shrink-0 rounded bg-card px-5 py-2 text-sm font-semibold text-card-foreground no-underline hover:opacity-90"
                   >
                     {entry.ctaText}
                   </a>
@@ -176,25 +176,65 @@ function buildRichTextOptions(linkedEntries: Array<EmbeddedEntry | null> = []) {
                   </div>
                 )}
                 <div className="flex flex-col justify-center gap-2 px-4 py-4">
-                  {entry.eyebrow && (
-                    <span className="text-[10px] font-bold tracking-widest text-tagline uppercase">
-                      {entry.eyebrow}
+                  {!!entry.eyebrowRt?.json && (
+                    <span className="text-[10px] font-bold tracking-widest text-primary uppercase">
+                      {(documentToReactComponents(entry.eyebrowRt.json as Document) as unknown as React.ReactNode)}
                     </span>
                   )}
-                  {entry.heading && (
-                    <p className="text-base leading-snug font-bold text-foreground">
-                      {entry.heading}
-                    </p>
+                  {!!entry.headingRt?.json && (
+                    <div className="text-base leading-snug font-bold text-foreground">
+                      {(documentToReactComponents(entry.headingRt.json as Document) as unknown as React.ReactNode)}
+                    </div>
                   )}
                   {entry.ctaLabel && entry.ctaUrl && (
                     <a
                       href={entry.ctaUrl}
-                      className="mt-1 inline-block text-xs font-semibold text-tagline underline"
+                      className="mt-1 inline-block text-xs font-semibold text-primary underline"
                     >
                       {entry.ctaLabel} →
                     </a>
                   )}
                 </div>
+              </div>
+            </div>
+          );
+        }
+
+        // ── CtaSection embed ─────────────────────────────────────────────────
+        if (entry.__typename === 'CtaSection') {
+          return (
+            <div className="my-6 rounded-lg border border-border bg-primary px-6 py-8 text-center">
+              {!!entry.headlineRt?.json && (
+                <div className="mb-2 text-xl font-bold text-primary-foreground">
+                  {(documentToReactComponents(entry.headlineRt.json as Document) as unknown as React.ReactNode)}
+                </div>
+              )}
+              {!!entry.subheadlineRt?.json && (
+                <div className="mb-4 text-sm text-primary-foreground/80">
+                  {(documentToReactComponents(entry.subheadlineRt.json as Document) as unknown as React.ReactNode)}
+                </div>
+              )}
+              <div className="flex flex-wrap justify-center gap-3">
+                {entry.ctaPrimaryUrl && (
+                  <a
+                    href={entry.ctaPrimaryUrl}
+                    className="inline-block rounded bg-card px-5 py-2 text-sm font-semibold text-card-foreground no-underline hover:opacity-90"
+                  >
+                    {!!entry.ctaPrimaryLabelRt?.json
+                      ? (documentToReactComponents(entry.ctaPrimaryLabelRt.json as Document) as unknown as React.ReactNode)
+                      : 'Get started'}
+                  </a>
+                )}
+                {entry.ctaSecondaryUrl && (
+                  <a
+                    href={entry.ctaSecondaryUrl}
+                    className="inline-block rounded border border-primary-foreground/30 px-5 py-2 text-sm font-semibold text-primary-foreground no-underline hover:opacity-90"
+                  >
+                    {!!entry.ctaSecondaryLabelRt?.json
+                      ? (documentToReactComponents(entry.ctaSecondaryLabelRt.json as Document) as unknown as React.ReactNode)
+                      : 'Learn more'}
+                  </a>
+                )}
               </div>
             </div>
           );
@@ -285,12 +325,8 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
     date,
     teaser,
     content,
-    leadStory,
     promoSlot,
   } = liveData as typeof liveData & {
-    leadStory?:
-      | import('@/services/contentful/newsletter').NewsletterLinkedEntry
-      | null;
     promoSlot?:
       | import('@/services/contentful/newsletter').NewsletterLinkedEntry
       | null;
@@ -359,64 +395,7 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
               </h1>
             )}
 
-            {/* Lead story — above content */}
-            {leadStory &&
-              leadStory.__typename === 'BlogPost' &&
-              (() => {
-                const img = leadStory.heroImage?.url?.startsWith('//')
-                  ? `https:${leadStory.heroImage.url}`
-                  : leadStory.heroImage?.url;
-                return (
-                  <a
-                    href={leadStory.slug ? `/blog/${leadStory.slug}` : '#'}
-                    className="mb-6 flex overflow-hidden border-l-4 border-tagline bg-muted no-underline transition-colors hover:bg-secondary"
-                    style={{ textDecoration: 'none' }}
-                  >
-                    {img && (
-                      <div className="w-48 flex-shrink-0 self-stretch">
-                        <img
-                          src={img}
-                          alt={leadStory.title ?? ''}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    )}
-                    <div className="flex flex-col justify-center gap-1 px-4 py-4">
-                      <span className="text-[10px] font-bold tracking-widest text-tagline uppercase">
-                        Lead Story
-                      </span>
-                      {leadStory.title && (
-                        <p className="text-base leading-snug font-bold text-foreground">
-                          {leadStory.title}
-                        </p>
-                      )}
-                      {leadStory.excerpt && (
-                        <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
-                          {leadStory.excerpt}
-                        </p>
-                      )}
-                    </div>
-                  </a>
-                );
-              })()}
-
-            {/* Divider */}
-            <hr className="mb-8 border-border" />
-
-            {/* Rich text body */}
-            {bodyJson && (
-              <div
-                className="prose dark:prose-invert max-w-none"
-                {...getProps({ fieldId: 'content' })}
-              >
-                {documentToReactComponents(
-                  bodyJson as Document,
-                  richTextOptions,
-                )}
-              </div>
-            )}
-
-            {/* Promo slot — below content */}
+            {/* Promo slot — above RTE body */}
             {promoSlot &&
               (() => {
                 if (promoSlot.__typename === 'BlogPost') {
@@ -426,7 +405,7 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                   return (
                     <a
                       href={promoSlot.slug ? `/blog/${promoSlot.slug}` : '#'}
-                      className="mt-8 flex overflow-hidden border-l-4 border-primary bg-muted no-underline transition-colors hover:bg-secondary"
+                      className="mb-6 flex overflow-hidden border-l-4 border-primary bg-muted no-underline transition-colors hover:bg-secondary"
                       style={{ textDecoration: 'none' }}
                     >
                       {img && (
@@ -439,8 +418,8 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                         </div>
                       )}
                       <div className="flex flex-col justify-center gap-1 px-4 py-4">
-                        <span className="text-[10px] font-bold tracking-widest text-foreground uppercase">
-                          Promo
+                        <span className="text-[10px] font-bold tracking-widest text-primary uppercase">
+                          Lead Story
                         </span>
                         {promoSlot.title && (
                           <p className="text-base leading-snug font-bold text-foreground">
@@ -461,7 +440,7 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                     ? `https:${promoSlot.media.url}`
                     : promoSlot.media?.url;
                   return (
-                    <div className="mt-8 flex overflow-hidden border-l-4 border-primary bg-card shadow-sm">
+                    <div className="mb-6 flex overflow-hidden border-l-4 border-primary bg-card shadow-sm">
                       {mediaUrl && (
                         <div className="w-48 flex-shrink-0 self-stretch">
                           <img
@@ -472,20 +451,20 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                         </div>
                       )}
                       <div className="flex flex-col justify-center gap-2 px-4 py-4">
-                        {promoSlot.eyebrow && (
-                          <span className="text-[10px] font-bold tracking-widest text-foreground uppercase">
-                            {promoSlot.eyebrow}
+                        {!!promoSlot.eyebrowRt?.json && (
+                          <span className="text-[10px] font-bold tracking-widest text-primary uppercase">
+                            {(documentToReactComponents(promoSlot.eyebrowRt.json as Document) as unknown as React.ReactNode)}
                           </span>
                         )}
-                        {promoSlot.heading && (
-                          <p className="text-base font-bold text-foreground">
-                            {promoSlot.heading}
-                          </p>
+                        {!!promoSlot.headingRt?.json && (
+                          <div className="text-base font-bold text-foreground">
+                            {(documentToReactComponents(promoSlot.headingRt.json as Document) as unknown as React.ReactNode)}
+                          </div>
                         )}
                         {promoSlot.ctaLabel && promoSlot.ctaUrl && (
                           <a
                             href={promoSlot.ctaUrl}
-                            className="text-xs font-semibold text-tagline underline"
+                            className="text-xs font-semibold text-primary underline"
                           >
                             {promoSlot.ctaLabel} →
                           </a>
@@ -496,24 +475,24 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                 }
                 if (promoSlot.__typename === 'Banner') {
                   return (
-                    <div className="mt-8 rounded-lg border border-border bg-primary px-6 py-8">
+                    <div className="mb-6 rounded-lg border border-border bg-primary px-6 py-8">
                       <div className="flex flex-wrap items-center justify-between gap-6">
                         <div>
-                          {promoSlot.headline && (
-                            <p className="text-lg leading-tight font-bold text-primary-foreground">
-                              {promoSlot.headline}
-                            </p>
+                          {!!promoSlot.headlineRt?.json && (
+                            <div className="text-lg leading-tight font-bold text-primary-foreground">
+                              {(documentToReactComponents(promoSlot.headlineRt.json as Document) as unknown as React.ReactNode)}
+                            </div>
                           )}
-                          {promoSlot.subheadline && (
-                            <p className="mt-1 text-sm text-primary-foreground/80">
-                              {promoSlot.subheadline}
-                            </p>
+                          {!!promoSlot.subheadlineRt?.json && (
+                            <div className="mt-1 text-sm text-primary-foreground/80">
+                              {(documentToReactComponents(promoSlot.subheadlineRt.json as Document) as unknown as React.ReactNode)}
+                            </div>
                           )}
                         </div>
                         {promoSlot.ctaText && promoSlot.ctaUrl && (
                           <a
                             href={promoSlot.ctaUrl}
-                            className="flex-shrink-0 rounded bg-tagline px-5 py-2 text-sm font-semibold text-white no-underline hover:opacity-90"
+                            className="flex-shrink-0 rounded bg-card px-5 py-2 text-sm font-semibold text-card-foreground no-underline hover:opacity-90"
                           >
                             {promoSlot.ctaText}
                           </a>
@@ -524,6 +503,22 @@ function NewsletterPageInner({ data }: NewsletterPageInnerProps) {
                 }
                 return null;
               })()}
+
+            {/* Divider */}
+            <hr className="mb-8 border-border" />
+
+            {/* Rich text body */}
+            {bodyJson && (
+              <div
+                className="prose dark:prose-invert max-w-none"
+                {...getProps({ fieldId: 'content' })}
+              >
+                {documentToReactComponents(
+                  bodyJson as Document,
+                  richTextOptions,
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

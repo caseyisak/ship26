@@ -1,17 +1,17 @@
 import { notFound } from 'next/navigation';
 
 import { NewsletterPage } from '@/cms-components/newsletter/newsletter-page';
-import { getNewsletterBySlug } from '@/services/contentful/newsletter';
+import { getNewsletterById } from '@/services/contentful/newsletter';
 
 export const dynamic = 'force-dynamic';
 
-export default async function NewsletterSlugPage({
+export default async function NewsletterIdPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { slug } = await params;
-  const newsletter = await getNewsletterBySlug(slug);
+  const { id } = await params;
+  const newsletter = await getNewsletterById(id, false);
 
   if (!newsletter) {
     notFound();
