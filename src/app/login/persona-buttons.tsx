@@ -17,8 +17,9 @@ export function PersonaButtons({ personas, onSuccess }: Props) {
     setPersona(persona);
     if (onSuccess) {
       onSuccess();
+    } else {
+      router.push('/dashboard');
     }
-    router.push('/dashboard');
   };
 
   return (

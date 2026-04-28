@@ -1,6 +1,6 @@
 'use client';
 
-import { Settings } from 'lucide-react';
+import { LayoutDashboard, Settings } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -123,8 +123,9 @@ function PersonaDropdown({
         })}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/dashboard" className="cursor-pointer">
-            Dashboard →
+          <Link href="/dashboard" className="cursor-pointer gap-2">
+            <LayoutDashboard className="h-4 w-4 shrink-0" />
+            Dashboard
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -181,13 +182,13 @@ const Navbar = () => {
   useEffect(() => {
     const p = getPersona();
     setActivePersona(p);
-    if (p) {
-      // Defer identify so LocalAudienceEvaluator's onProfileChange subscription is active first
-      const id = setTimeout(() => {
-        ninetailed.identify('', { customerType: p.customerType });
-      }, 0);
-      return () => clearTimeout(id);
-    }
+    // Always identify on mount — logged-in users get their persona's customerType,
+    // anonymous users get 'new-visitor' so the LocalAudienceEvaluator fires correctly.
+    const customerType = p?.customerType ?? 'new-visitor';
+    const id = setTimeout(() => {
+      ninetailed.identify('', { customerType });
+    }, 0);
+    return () => clearTimeout(id);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -258,8 +259,14 @@ const Navbar = () => {
             <PersonaButtons
               personas={personas}
               onSuccess={() => {
+                const p = getPersona();
                 setIsLoginOpen(false);
-                setActivePersona(getPersona());
+                setActivePersona(p);
+                if (p) {
+                  setTimeout(() => {
+                    ninetailed.identify('', { customerType: p.customerType });
+                  }, 0);
+                }
               }}
             />
             <p className="text-muted-foreground text-center text-xs mt-6">
