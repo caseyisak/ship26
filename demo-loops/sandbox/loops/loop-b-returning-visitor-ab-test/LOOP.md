@@ -124,6 +124,27 @@ What you're about to see is a 3-way messaging test running exclusively on return
 
 ---
 
+## Metrics
+
+Loop B is an A/B test. Metrics here declare the winner and measure whether the nurture banner is converting or creating noise.
+
+| Metric | NT event | Attach to | What it measures |
+|---|---|---|---|
+| Hero CTA Clicked | `Hero CTA Clicked` | `6gZyrNnCaLymz0Azi7OvIL` (Hero A/B/C Test) | Primary winner declaration signal — CTR per variant |
+| Pricing Page Visited | `Pricing Page Visited` | `6gZyrNnCaLymz0Azi7OvIL` (Hero A/B/C Test) | Two-metric gate — intent downstream of hero CTA |
+| Scroll Depth Reached | `Scroll Depth Reached` | `6gZyrNnCaLymz0Azi7OvIL` (Hero A/B/C Test) | A/B support signal — did the variant hold attention below fold? |
+| Personalized Experience Viewed | `Personalized Experience Viewed` | `6gZyrNnCaLymz0Azi7OvIL` (Hero A/B/C Test) | Impression denominator — needed to calculate CTR |
+| Banner CTA Clicked | `Banner CTA Clicked` | `3GZXiJhiUA1Hid7ECMTI2n` (Nurture Banner XP) | Measures whether nurture offer is compelling |
+| Banner Dismissed | `Banner Dismissed` | `3GZXiJhiUA1Hid7ECMTI2n` (Nurture Banner XP) | Signal-to-noise — dismiss:CTA ratio above 3:1 = message is wrong |
+| Newsletter Form Submitted | `Newsletter Form Submitted` | `3GZXiJhiUA1Hid7ECMTI2n` (Nurture Banner XP) | Nurture conversion — lower-friction funnel entry for undecided visitors |
+| Auth Completed | `Auth Completed` | `6gZyrNnCaLymz0Azi7OvIL` (Hero A/B/C Test) | Macro-conversion — free trial / sign-up completion per variant |
+
+**Winner declaration gate:** Hero CTA Clicked rate **and** Pricing Page Visited rate both favor the same variant → declare winner, promote to baseline, retire the other two.
+
+**Full metrics setup and implementation:** See `demo-loops/sandbox/loops/loop-d-conversion-metrics/LOOP.md`
+
+---
+
 ## Visual Test
 
 **Setup:** Open incognito (or clear localStorage + cookies) → `http://localhost:3000/page/home?preview=true`

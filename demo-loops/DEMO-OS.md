@@ -129,6 +129,7 @@ Industry: Any | Personas: VP Digital, Marketing Ops, SE
 | [Loop A — New Visitor Hero](#sandbox-loop-new-visitor-hero) | New visitors always see a consistent, editor-controlled hero — change it instantly without a code deploy | sandbox | Marketing Leader, Product Manager, Digital Experience Lead | sandbox | Low |
 | [Loop B — Returning Visitor A/B Test](#sandbox-loop-returning-ab-test) | Returning visitors are auto-split across 3 hero messaging variants — value-led, problem-led, social proof | sandbox | Growth Marketer, CRO Specialist, Digital Experience Lead | sandbox | Medium |
 | [Loop C — High Intent Conversion](#sandbox-loop-high-intent) | Pricing page visitors get an urgent hero + {{first_name}} discount banner — merge tag + intent signal, no form fill | sandbox | Growth Marketer, Revenue Leader, Sales Leader | sandbox | Medium |
+| [Loop D — Conversion Metrics](#sandbox-loop-d-conversion-metrics) | 10 NT conversion metrics wired to all 3 audience experiences — hero CTA CTR, banner signal/noise, Auth Completed, Dashboard Activated; proves personalization ROI to a CMO | sandbox | Growth Marketer, CRO Specialist, Revenue Leader, CMO | sandbox | Medium |
 | [Loop F — AEO FAQ Schema](#sandbox-loop-f-aeo-faq-schema) | Side-by-side: unstructured FAQ gets "based on various sources" from AI; Contentful-driven FAQ with FAQPage JSON-LD gets a high-confidence attributed answer — live edit updates the AI Overview in real time | net-new | SEO Lead, Marketing Director, Head of Content, Legal/Compliance | sandbox | Low |
 
 ---
@@ -166,6 +167,20 @@ Industry: Any | Personas: VP Digital, Marketing Ops, SE
 **Content types:** `dashboardPage`, `dashboardSettings`, `banner` | **OOTB:** Personalization App (NT), Live Preview
 
 **Loop file:** `demo-loops/sandbox/loops/loop-b-dashboard-personas/LOOP.md`
+
+---
+
+### Sandbox Loop D — Conversion Metrics {#sandbox-loop-d-conversion-metrics}
+
+**Pain signals:** "We can't prove personalization is working", "We don't know which variant is winning", "Our CMO wants ROI proof before we scale this", "We have impressions but no downstream conversion data", "We can't tell if the banner is noise or signal"
+
+**What it shows:** 10 NT conversion metrics wired to all 3 audience experiences. Hero CTA Clicked + Pricing Page Visited declare the A/B winner. Banner CTA Clicked vs Banner Dismissed shows signal-to-noise ratio. Auth Completed attributed to a variant is the CMO metric. Dashboard Activated catches variants that win on sign-up but lose on activation. All metrics attach to NT experiences in the dashboard — no separate analytics tool required.
+
+**Personas:** Growth Marketer, CRO Specialist, Revenue Leader, CMO
+
+**Key events:** `Hero CTA Clicked`, `Banner CTA Clicked`, `Banner Dismissed`, `Pricing Page Visited`, `Auth Modal Opened`, `Auth Completed`, `Dashboard Activated`, `Scroll Depth Reached`, `Personalized Experience Viewed`, `Newsletter Form Submitted`
+
+**Loop file:** `demo-loops/sandbox/loops/loop-d-conversion-metrics/LOOP.md`
 
 ---
 

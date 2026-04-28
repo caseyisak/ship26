@@ -2,6 +2,7 @@
 
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, MARKS } from '@contentful/rich-text-types';
+import { useNinetailed } from '@ninetailed/experience.js-react';
 import { Check } from 'lucide-react';
 import * as React from 'react';
 
@@ -12,6 +13,8 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { NT_EVENTS } from '@/lib/nt-events';
+import { getPersona } from '@/lib/persona-session';
 import { cn } from '@/lib/utils';
 
 const rtOptions = {
@@ -179,8 +182,16 @@ const SECTION_MUTED: Record<string, string> = {
 const Pricing = ({ data, className, ...props }: BlockProps<PricingFragment>) => {
   const liveData = useLiveUpdates(data) as PricingFragment;
   const getProps = useContentfulInspectorModeProps(data.sys.id);
+  const { track } = useNinetailed();
 
   const [yearly, setYearly] = React.useState(true);
+
+  React.useEffect(() => {
+    track(NT_EVENTS.PRICING_PAGE_VISITED, {
+      segment: getPersona()?.customer_type ?? 'new-visitor',
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const label = rt(liveData.label?.json);
   const title = rt(liveData.title?.json);

@@ -1,7 +1,7 @@
 'use client';
 
-import { Experience } from '@ninetailed/experience.js-react';
-import React from 'react';
+import { Experience, useNinetailed } from '@ninetailed/experience.js-react';
+import React, { useEffect } from 'react';
 
 import {
   getComponent,
@@ -9,6 +9,7 @@ import {
   isMissingData,
 } from '@/block-renderer/utils';
 import { logger } from '@/lib/logger';
+import { NT_EVENTS } from '@/lib/nt-events';
 import XRay from '@/lib/x-ray';
 import { useNtExperiences } from '@/personalization/ninetailed-nextjs';
 import { isPersonalized, mapExperiences } from '@/personalization/utils';
@@ -31,6 +32,37 @@ export const BlockRenderer = <Props extends BlockRendererDefaultProps>({
   // in PAGE_BY_SLUG query (LL-011 byte limit). Experience component finds the
   // matching experience via nt_config.components[].baseline.id === data.sys.id.
   const allNtExperiences = useNtExperiences();
+  const { track } = useNinetailed();
+
+  // Compute blockExperiences at top level so the useEffect below is not inside try/catch
+  // (hooks must be called unconditionally — Rules of Hooks).
+  // Safe before null-check: filter on missing sys.id just returns [].
+  const entryId = data?.sys?.id ?? '';
+  const blockExperiences =
+    allNtExperiences.length > 0
+      ? allNtExperiences.filter((exp) =>
+          (exp.components ?? []).some(
+            (comp) =>
+              (comp as { type?: string; baseline?: { id?: string } }).type ===
+                'EntryReplacement' &&
+              (comp as { type?: string; baseline?: { id?: string } }).baseline?.id ===
+                entryId,
+          ),
+        )
+      : data && isPersonalized(data)
+        ? mapExperiences(data.ntExperiencesCollection?.items)
+        : [];
+
+  // Personalized Experience Viewed — fires once when this block has matched experiences
+  useEffect(() => {
+    if (blockExperiences.length === 0 || !entryId) return;
+    track(NT_EVENTS.PERSONALIZED_EXPERIENCE_VIEWED, {
+      entryId,
+      experienceCount: blockExperiences.length,
+      experienceIds: blockExperiences.map((e) => e.id).join(','),
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blockExperiences.length, entryId]);
 
   try {
     if (!data || isMissingData(data)) {
@@ -53,28 +85,6 @@ export const BlockRenderer = <Props extends BlockRendererDefaultProps>({
       return <UnsupportedLayoutError data={data} layoutType={layoutType} />;
     }
 
-    // Filter global experiences to only those that target this block's baseline entry.
-    // The NT preview plugin's getExperienceSelectionMiddleware does experiences.find()
-    // and stops at the first match — if we pass ALL experiences, it picks whichever
-    // comes first in the array regardless of whether it targets this block's baseline.
-    // Filtering ensures the middleware always finds the correct experience. (LL-028)
-    // Falls back to per-block ntExperiencesCollection for preview routes.
-    const blockExperiences =
-      allNtExperiences.length > 0
-        ? allNtExperiences.filter((exp) =>
-            (exp.components ?? []).some(
-              (comp) =>
-                (comp as { type?: string; baseline?: { id?: string } }).type ===
-                  'EntryReplacement' &&
-                (comp as { type?: string; baseline?: { id?: string } }).baseline?.id ===
-                  data.sys.id,
-            ),
-          )
-        : isPersonalized(data)
-          ? mapExperiences(data.ntExperiencesCollection?.items)
-          : [];
-    const mappedExperiences = blockExperiences;
-
     return (
       <XRay data={data} layoutType={layoutType}>
         <Experience
@@ -83,7 +93,7 @@ export const BlockRenderer = <Props extends BlockRendererDefaultProps>({
           id={data.sys.id}
           component={Component}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          experiences={mappedExperiences as any}
+          experiences={blockExperiences as any}
         />
       </XRay>
     );

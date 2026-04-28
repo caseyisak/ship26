@@ -2,6 +2,7 @@
 
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, MARKS } from '@contentful/rich-text-types';
+import { useNinetailed } from '@ninetailed/experience.js-react';
 import * as React from 'react';
 
 import type { HeroFragment } from '@/block-renderer/types';
@@ -11,6 +12,8 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { NT_EVENTS } from '@/lib/nt-events';
+import { getPersona } from '@/lib/persona-session';
 import {
   DEFAULT_GRID_COLUMNS,
   DEFAULT_GRID_ROWS,
@@ -34,6 +37,7 @@ const heroRichTextOptions = {
 const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
+  const { track } = useNinetailed();
 
   const headlineRt = (liveData as HeroFragment).headlineRt;
   const subheadlineRt = (liveData as HeroFragment).subheadlineRt;
@@ -112,7 +116,18 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
               className="w-full sm:w-auto"
               aria-label={ctaText ?? undefined}
             >
-              <a href={ctaUrl}>{ctaText}</a>
+              <a
+                href={ctaUrl}
+                onClick={() =>
+                  track(NT_EVENTS.HERO_CTA_CLICKED, {
+                    ctaText: ctaText ?? '',
+                    entryId: data.sys.id,
+                    segment: getPersona()?.customer_type ?? 'new-visitor',
+                  })
+                }
+              >
+                {ctaText}
+              </a>
             </Button>
           ) : (
             <Button

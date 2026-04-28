@@ -105,6 +105,28 @@ What we're showing here is how Contentful and Ninetailed let you react to that s
 
 ---
 
+## Metrics
+
+Loop C measures offer effectiveness and macro-conversion for high-intent visitors. These are the metrics that prove personalization ROI to a CMO.
+
+| Metric | NT event | Attach to | What it measures |
+|---|---|---|---|
+| Hero CTA Clicked | `Hero CTA Clicked` | `3UMQQgfU0ukuB04rBUP5Pp` (High Intent Hero XP) | Does the urgent headline drive more CTA engagement than the baseline? |
+| Pricing Page Visited | `Pricing Page Visited` | `3UMQQgfU0ukuB04rBUP5Pp` (High Intent Hero XP) | Intent signal — high-intent visitors should visit pricing at above-baseline rate |
+| Auth Completed | `Auth Completed` | `3UMQQgfU0ukuB04rBUP5Pp` (High Intent Hero XP) | **The CMO metric** — sign-up rate for high-intent segment vs baseline |
+| Dashboard Activated | `Dashboard Activated` | `3UMQQgfU0ukuB04rBUP5Pp` (High Intent Hero XP) | Activation — did the sign-up lead to product engagement? Validates quality not just quantity |
+| Banner CTA Clicked | `Banner CTA Clicked` | `3Sb7DlOGStyAOCV8FbHVLc` (Discount Banner XP) | Was the offer compelling? Low CTR = adjust the offer percentage or framing |
+| Banner Dismissed | `Banner Dismissed` | `3Sb7DlOGStyAOCV8FbHVLc` (Discount Banner XP) | High dismiss rate = banner is noise, offer is not landing |
+| Auth Completed | `Auth Completed` | `3Sb7DlOGStyAOCV8FbHVLc` (Discount Banner XP) | Did the discount banner contribute to sign-ups independent of the hero? |
+| Personalized Experience Viewed | `Personalized Experience Viewed` | Both XPs | Impression denominator for CTR math |
+| Auth Modal Opened | `Auth Modal Opened` | `3UMQQgfU0ukuB04rBUP5Pp` (High Intent Hero XP) | Funnel gap — high CTA clicks but low modal opens = friction on the destination page |
+
+**The CMO story:** "High-intent visitors who saw the urgent hero + discount banner converted to free trial at X× the baseline rate. The personalization paid for itself in the first month."
+
+**Full metrics setup and implementation:** See `demo-loops/sandbox/loops/loop-d-conversion-metrics/LOOP.md`
+
+---
+
 ## Visual Test
 
 **Setup:** Open incognito (or clear localStorage + cookies) → `http://localhost:3000/page/home?preview=true`

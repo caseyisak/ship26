@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { NT_EVENTS } from '@/lib/nt-events';
 import { clearPersona, getPersona, setPersona } from '@/lib/persona-session';
 import type { Persona } from '@/lib/persona-session';
 import { Separator } from '@/components/ui/separator';
@@ -147,6 +148,15 @@ export function DashboardTopBar({ loggedInMetadata }: Props) {
   useEffect(() => {
     const p = getPersona();
     setActivePersona(p);
+
+    // Dashboard Activated — fires once per session (sessionStorage guard)
+    if (p && !sessionStorage.getItem('nt_dashboard_activated')) {
+      sessionStorage.setItem('nt_dashboard_activated', '1');
+      ninetailed.track(NT_EVENTS.DASHBOARD_ACTIVATED, {
+        segment: p.customer_type,
+      });
+    }
+
     if (p) {
       // Defer identify by one event-loop tick so LocalAudienceEvaluator (higher in the tree)
       // has time to set up its onProfileChange subscription before we fire.

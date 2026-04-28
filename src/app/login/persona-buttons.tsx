@@ -1,6 +1,9 @@
 'use client';
 
+import { useNinetailed } from '@ninetailed/experience.js-react';
 import { useRouter } from 'next/navigation';
+
+import { NT_EVENTS } from '@/lib/nt-events';
 import type { Persona } from '@/lib/persona-session';
 import { setPersona } from '@/lib/persona-session';
 
@@ -12,9 +15,14 @@ type Props = {
 
 export function PersonaButtons({ personas, onSuccess }: Props) {
   const router = useRouter();
+  const { track } = useNinetailed();
 
   const handleSignIn = (persona: Persona) => {
     setPersona(persona);
+    track(NT_EVENTS.AUTH_COMPLETED, {
+      authType: 'signup',
+      segment: persona.customer_type,
+    });
     if (onSuccess) {
       onSuccess();
     } else {

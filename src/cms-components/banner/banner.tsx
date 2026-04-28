@@ -1,7 +1,7 @@
 'use client';
 
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
-import { useProfile } from '@ninetailed/experience.js-react';
+import { useNinetailed, useProfile } from '@ninetailed/experience.js-react';
 import { X } from 'lucide-react';
 import * as React from 'react';
 import { useState } from 'react';
@@ -13,6 +13,7 @@ import {
   useLiveUpdates,
 } from '@/lib/live-preview';
 import { resolveMergeTagsInDoc } from '@/lib/merge-tags';
+import { NT_EVENTS } from '@/lib/nt-events';
 import { parseSectionStyle } from '@/lib/section-style-types';
 import { cn } from '@/lib/utils';
 
@@ -69,8 +70,11 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
   const getProps = useContentfulInspectorModeProps(rawData.sys.id);
   const [isVisible, setIsVisible] = useState(true);
 
+  const { track } = useNinetailed();
   const profileState = useProfile();
   const traits = (profileState.profile?.traits ?? {}) as Record<string, unknown>;
+  const segment = (traits.customer_type as string) ?? 'new-visitor';
+  const entryId = rawData.sys.id;
 
   const { headlineRt, subheadlineRt, ctaText, ctaUrl, variant, colorVariant } = data;
 
@@ -175,7 +179,7 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
             variant="ghost"
             size="icon"
             className={cn('absolute top-0 right-0 h-8 w-8 md:hidden', dismissClass)}
-            onClick={() => setIsVisible(false)}
+            onClick={() => { track(NT_EVENTS.BANNER_DISMISSED, { entryId, segment }); setIsVisible(false); }}
           >
             <X className="h-4 w-4" />
           </Button>
@@ -209,6 +213,7 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
             <div className="flex items-center gap-2">
               <a
                 href={ctaUrl ?? '#'}
+                onClick={() => track(NT_EVENTS.BANNER_CTA_CLICKED, { entryId, segment, ctaText: ctaText ?? '' })}
                 className={cn(
                   'rounded-md px-3 py-1.5 text-xs font-semibold hover:opacity-90',
                   !useOverride || !sectionStyle.buttonBgColor
@@ -224,7 +229,7 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
                 variant="ghost"
                 size="icon"
                 className={cn('hidden h-8 w-8 md:inline-flex', dismissClass)}
-                onClick={() => setIsVisible(false)}
+                onClick={() => { track(NT_EVENTS.BANNER_DISMISSED, { entryId, segment }); setIsVisible(false); }}
               >
                 <X className="h-4 w-4" />
               </Button>

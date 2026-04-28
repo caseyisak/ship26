@@ -75,6 +75,23 @@ Contentful separates the content decision from the engineering decision. Your ma
 
 ---
 
+## Metrics
+
+Loop A establishes baselines. These metrics run in the background for every new visitor and provide the denominator for measuring how much personalization improves on the baseline for Loops B and C.
+
+| Metric | NT event | What it measures | Attribution |
+|---|---|---|---|
+| Hero CTA Clicked | `Hero CTA Clicked` | Baseline above-fold CTA CTR — the number to beat | 30 min |
+| Pricing Page Visited | `Pricing Page Visited` | Baseline pricing intent rate | 1 day |
+| Scroll Depth Reached | `Scroll Depth Reached` | Baseline page engagement depth | 30 min |
+| Personalized Experience Viewed | `Personalized Experience Viewed` | Impression denominator (fires 0 times for new visitors — confirms no personalization is being applied) | 30 min |
+
+**Attach to:** No NT experiences for Loop A (baseline has no experience). Track these as global metrics. The Personalized Experience Viewed count for `segment: new-visitor` should be 0 — if it's non-zero, a new visitor is being incorrectly bucketed into a personalized experience.
+
+**Full metrics setup and implementation:** See `demo-loops/sandbox/loops/loop-d-conversion-metrics/LOOP.md`
+
+---
+
 ## Visual Test
 
 **Setup:** Open incognito (or clear localStorage + cookies) → `http://localhost:3000/page/home?preview=true`

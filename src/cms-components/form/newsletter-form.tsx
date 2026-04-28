@@ -2,6 +2,8 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNinetailed } from '@ninetailed/experience.js-react';
+
+import { NT_EVENTS } from '@/lib/nt-events';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -21,7 +23,7 @@ type Props = {
 };
 
 export function NewsletterForm({ submitLabel, onSuccess }: Props) {
-  const { identify } = useNinetailed();
+  const { identify, track } = useNinetailed();
 
   const {
     register,
@@ -30,6 +32,7 @@ export function NewsletterForm({ submitLabel, onSuccess }: Props) {
   } = useForm<Fields>({ resolver: zodResolver(schema) });
 
   const onSubmit = async (values: Fields) => {
+    track(NT_EVENTS.NEWSLETTER_FORM_SUBMITTED, { email: values.email });
     // NT trait — marks visitor as newsletter subscriber
     setTimeout(() => {
       identify('', { isNewsletterSubscribed: true, email: values.email });

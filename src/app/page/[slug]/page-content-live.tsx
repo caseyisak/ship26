@@ -1,7 +1,12 @@
 'use client';
 
+import { useNinetailed } from '@ninetailed/experience.js-react';
+import { useEffect } from 'react';
+
 import { BlockRenderer } from '@/block-renderer';
 import { useLiveUpdates } from '@/lib/live-preview';
+import { NT_EVENTS } from '@/lib/nt-events';
+import { getPersona } from '@/lib/persona-session';
 import type { PageData, PageSection } from '@/services/contentful/page';
 
 type Props = {
@@ -352,6 +357,28 @@ function transformSection(item: any): PageSection | null {
  * ensure React properly re-renders when sections are reordered.
  */
 export function PageContentLive({ page }: Props) {
+  const { track } = useNinetailed();
+
+  // Scroll Depth Reached — fires once when user scrolls past 60%
+  useEffect(() => {
+    let fired = false;
+    const onScroll = () => {
+      if (fired) return;
+      const scrolled = window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight);
+      if (scrolled >= 0.6) {
+        fired = true;
+        track(NT_EVENTS.SCROLL_DEPTH_REACHED, {
+          depth: 60,
+          segment: getPersona()?.customer_type ?? 'new-visitor',
+        });
+        window.removeEventListener('scroll', onScroll);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Apply live updates to the RAW GraphQL data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const livePage = useLiveUpdates(page) as any;

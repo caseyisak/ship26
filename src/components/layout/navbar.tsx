@@ -24,6 +24,7 @@ import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNinetailed } from '@ninetailed/experience.js-react';
 import { useSettings } from '@/personalization/settings-context';
+import { NT_EVENTS } from '@/lib/nt-events';
 import { getPersona, setPersona, clearPersona } from '@/lib/persona-session';
 import type { Persona } from '@/lib/persona-session';
 import { PersonaButtons } from '@/app/login/persona-buttons';
@@ -183,6 +184,7 @@ const Navbar = () => {
       ];
 
   const ninetailed = useNinetailed();
+  const { track } = ninetailed;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [activePersona, setActivePersona] = useState<Persona | null>(null);
@@ -361,7 +363,7 @@ const Navbar = () => {
             ) : (
               <LoginButton
                 className="hidden sm:flex lg:flex"
-                onClick={() => setIsLoginOpen(true)}
+                onClick={() => { track(NT_EVENTS.AUTH_MODAL_OPENED, { triggerSource: 'nav' }); setIsLoginOpen(true); }}
               />
             )}
             <PersonalizationToggle className="hidden sm:flex lg:flex" />
@@ -467,6 +469,7 @@ const Navbar = () => {
                           className="w-full"
                           onClick={() => {
                             setIsMenuOpen(false);
+                            track(NT_EVENTS.AUTH_MODAL_OPENED, { triggerSource: 'mobile-menu' });
                             setIsLoginOpen(true);
                           }}
                         />
