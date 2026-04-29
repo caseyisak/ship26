@@ -58,7 +58,7 @@ function CardItem({ item, mutedClass }: { item: IconGridItemFragment; mutedClass
       </div>
       <div className="p-5">
         {item.title?.json && (
-          <h3 className="text-foreground text-lg font-medium leading-tight">
+          <h3 className="text-lg font-medium leading-tight">
             {rt(item.title.json)}
           </h3>
         )}
@@ -96,7 +96,7 @@ function BorderlessItem({ item, mutedClass }: { item: IconGridItemFragment; mute
         )}
       </div>
       {item.title?.json && (
-        <h3 className="text-foreground mt-6 text-lg font-medium">
+        <h3 className="mt-6 text-lg font-medium">
           {rt(item.title.json)}
         </h3>
       )}
@@ -159,7 +159,7 @@ const IconGrid = ({ data, className, ...props }: BlockProps<IconGridFragment>) =
           )}
           {title && (
             <h2
-              className="text-foreground mt-4 text-3xl leading-tight font-medium tracking-tight sm:text-5xl"
+              className="mt-4 text-3xl leading-tight font-medium tracking-tight sm:text-5xl"
               {...getProps({ fieldId: 'title' })}
             >
               {title}

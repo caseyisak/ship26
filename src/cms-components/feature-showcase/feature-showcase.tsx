@@ -59,7 +59,7 @@ function ShowcaseItem({ item, index, mutedClass }: { item: FeatureShowcaseItemFr
       {/* Text panel — 1/3 */}
       <div className={cn('flex flex-col gap-4', textRight && 'md:[direction:ltr]')}>
         {item.title?.json && (
-          <h3 className="text-foreground text-2xl font-semibold leading-tight sm:text-3xl">
+          <h3 className="text-2xl font-semibold leading-tight sm:text-3xl">
             {rt(item.title.json)}
           </h3>
         )}
@@ -125,7 +125,7 @@ const FeatureShowcase = ({ data, className, ...props }: BlockProps<FeatureShowca
             )}
             {title && (
               <h2
-                className="text-foreground text-3xl leading-tight font-medium tracking-tight sm:text-4xl md:text-5xl"
+                className="text-3xl leading-tight font-medium tracking-tight sm:text-4xl md:text-5xl"
                 {...getProps({ fieldId: 'title' })}
               >
                 {title}

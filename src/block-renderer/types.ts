@@ -171,6 +171,9 @@ export type CardFragment = {
   media?: { url?: string } | null; // Raw Contentful field name
   animationKey?: string | null;
   mediaPlacement?: 'top' | 'bottom' | 'left' | 'right' | null;
+  mediaSize?: 'icon' | 'small' | 'medium' | 'fill' | 'cover' | null;
+  colorVariant?: 'transparent' | 'light' | 'dark' | 'accent' | null;
+  style?: 'card' | 'borderless' | null;
   sectionStyle?: Record<string, string> | null;
 };
 
@@ -182,6 +185,9 @@ export type CardsWrapperFragment = BlockData & {
   titleRt?: { json: Record<string, unknown> } | null;
   descriptionRt?: { json: Record<string, unknown> } | null;
   mediaPosition?: 'top' | 'bottom' | 'left' | 'right' | null;
+  style?: 'card' | 'borderless' | null;
+  columns?: number | null;
+  colorVariant?: 'light' | 'dark' | 'accent' | null;
   itemsCollection?: { items: CardFragment[] } | null;
   ntExperiencesCollection?: {
     items: Array<NtExperienceFragment>;

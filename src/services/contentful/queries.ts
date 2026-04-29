@@ -281,6 +281,9 @@ const CARD_FIELDS = `
     media { url }
     animationKey
     mediaPlacement
+    mediaSize
+    colorVariant
+    style
     sectionStyle
   }
 `;
@@ -294,6 +297,9 @@ const CARDS_WRAPPER_FIELDS = `
     labelRt { json }
     titleRt { json }
     descriptionRt { json }
+    style
+    columns
+    colorVariant
     itemsCollection(limit: 20) {
       items {
         ${CARD_FIELDS}
@@ -318,6 +324,9 @@ const CARDS_WRAPPER_PAGE_FIELDS = `
     labelRt { json }
     titleRt { json }
     descriptionRt { json }
+    style
+    columns
+    colorVariant
     itemsCollection(limit: 20) {
       items {
         ${CARD_FIELDS}

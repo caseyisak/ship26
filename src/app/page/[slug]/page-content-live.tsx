@@ -304,6 +304,9 @@ function transformSection(item: any): PageSection | null {
         labelRt: item.labelRt ?? null,
         titleRt: item.titleRt ?? null,
         descriptionRt: item.descriptionRt ?? null,
+        style: item.style ?? null,
+        columns: item.columns ?? null,
+        colorVariant: item.colorVariant ?? null,
         itemsCollection: item.itemsCollection
           ? {
               items: item.itemsCollection.items
@@ -318,6 +321,7 @@ function transformSection(item: any): PageSection | null {
                         media: card.media ?? null,
                         animationKey: card.animationKey ?? null,
                         mediaPlacement: card.mediaPlacement ?? null,
+                        mediaSize: card.mediaSize ?? null,
                         sectionStyle: card.sectionStyle ?? null,
                       }
                     : null,

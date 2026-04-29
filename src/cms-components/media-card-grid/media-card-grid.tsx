@@ -85,7 +85,7 @@ function MediaCardItem({ card }: { card: MediaCardFragment }) {
       {(card.title?.json || card.description?.json) && (
         <div className="mt-4">
           {card.title?.json && (
-            <h3 className="text-foreground text-2xl font-medium leading-tight">
+            <h3 className="text-2xl font-medium leading-tight">
               {rt(card.title.json)}
             </h3>
           )}
@@ -129,7 +129,7 @@ const MediaCardGrid = ({ data, className, ...props }: BlockProps<MediaCardGridFr
         {/* Section header — matches metafi-all-integrations h2 style */}
         {title && (
           <h2
-            className="text-foreground text-center text-[40px] leading-tight font-medium tracking-tight md:text-[52px]"
+            className="text-center text-[40px] leading-tight font-medium tracking-tight md:text-[52px]"
             {...getProps({ fieldId: 'title' })}
           >
             {title}
