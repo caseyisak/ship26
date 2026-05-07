@@ -72,15 +72,7 @@ function PersonaDropdown({
   const handleSwitch = (p: Persona) => {
     if (p.customer_type === activePersona.customer_type) return;
     setPersona(p);
-    ninetailed.identify('', {
-      customer_type: p.customer_type,
-      first_name: p.first_name ?? null,
-      last_name: p.last_name ?? null,
-      display_name: p.display_name ?? null,
-      industry: p.industry ?? null,
-      location: p.location ?? null,
-      is_logged_in: true,
-    });
+    ninetailed.identify('', { ...p, is_logged_in: true });
     onPersonaChange(p);
     // No router.refresh() — NT <Experience> swap is client-side
   };
@@ -196,15 +188,7 @@ const Navbar = () => {
     // anonymous users get 'new-visitor' so the LocalAudienceEvaluator fires correctly.
     const id = setTimeout(() => {
       if (p) {
-        ninetailed.identify('', {
-          customer_type: p.customer_type,
-          first_name: p.first_name ?? null,
-          last_name: p.last_name ?? null,
-          display_name: p.display_name ?? null,
-          industry: p.industry ?? null,
-          location: p.location ?? null,
-          is_logged_in: true,
-        });
+        ninetailed.identify('', { ...p, is_logged_in: true });
       } else {
         ninetailed.identify('', { customer_type: 'new-visitor' });
       }
@@ -285,15 +269,7 @@ const Navbar = () => {
                 setActivePersona(p);
                 if (p) {
                   setTimeout(() => {
-                    ninetailed.identify('', {
-                      customer_type: p.customer_type,
-                      first_name: p.first_name ?? null,
-                      last_name: p.last_name ?? null,
-                      display_name: p.display_name ?? null,
-                      industry: p.industry ?? null,
-                      location: p.location ?? null,
-                      is_logged_in: true,
-                    });
+                    ninetailed.identify('', { ...p, is_logged_in: true });
                   }, 0);
                 }
               }}

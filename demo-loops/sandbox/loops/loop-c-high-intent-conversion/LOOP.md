@@ -33,7 +33,7 @@ content_types:
     note: Two experiences — one wires the high-intent hero variant, one wires the discount banner
   - id: nt_audience
     status: existing
-    note: "Customer Type — Premium" (ID 44TqmMBSfzojdSbujjqaX4) — matches customer_type trait = 'premium'
+    note: "Customer Type — Premium" (ID 68QIUQcYy6JtPpKt2N0Dnr) — matches customer_type trait = 'premium'
 components:
   - hero (src/cms-components/hero/hero.tsx)
   - banner (src/cms-components/banner/banner.tsx)
@@ -153,7 +153,7 @@ Loop C measures offer effectiveness and macro-conversion for high-intent visitor
 
 | Entry | Content Type | ID | Status | Preview URL |
 |---|---|---|---|---|
-| Customer Type — Premium (NT Audience) | nt_audience | `44TqmMBSfzojdSbujjqaX4` | published | — |
+| Customer Type — Premium (NT Audience) | nt_audience | `68QIUQcYy6JtPpKt2N0Dnr` | published | — |
 | High Intent Hero Variant | hero | `3Gw5z9OtOcxTMspAoNComh` | published | — |
 | High Intent Hero NT Experience | nt_experience | `3UMQQgfU0ukuB04rBUP5Pp` | published | — |
 | Discount Banner (High Intent only) | banner | `5NCMzyA5b9oYgZaqM9ZoOW` | published | `http://localhost:3000/page/home?preview=true` |

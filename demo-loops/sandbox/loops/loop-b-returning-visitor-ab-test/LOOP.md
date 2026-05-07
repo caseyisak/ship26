@@ -32,7 +32,7 @@ content_types:
     note: "Hero — 3-Way Messaging A/B/C Test" — 33/33/34 traffic split, three hero variants, returning visitor audience rule. Plus a separate experience for the nurture banner.
   - id: nt_audience
     status: existing
-    note: "Customer Type — Returning" — matches customer_type trait = 'returning', fires on identify().
+    note: "Customer Type — Returning" (ID 5NLLFtjqFfRsTPzB977Qd) — matches customer_type trait = 'returning', fires on identify().
 components:
   - hero (src/cms-components/hero/hero.tsx)
   - banner (src/cms-components/banner/banner.tsx)
@@ -65,7 +65,7 @@ What you're about to see is a 3-way messaging test running exclusively on return
    - *"This visitor is in the returning audience. They're being shown one of three hero variants — we'll see exactly which one in a moment."*
 
 3. **[Browser]** Click the **⚙️** gear icon (bottom of page)
-   - NT preview panel opens — confirm: **Return Visitor — Low Engagement** audience highlighted (green dot)
+   - NT preview panel opens — confirm: **Customer Type — Returning** audience highlighted (green dot)
    - Show: active variant name + experience name
    - *"This is the NT debug overlay. In production this is hidden from real visitors — you'd see this in your analytics."*
 
@@ -171,7 +171,7 @@ Loop B is an A/B test. Metrics here declare the winner and measure whether the n
 | Entry | Content Type | ID | Status | Preview URL |
 |---|---|---|---|---|
 | Hero — 3-Way Messaging A/B/C Test (NT Experience) | nt_experience | `6gZyrNnCaLymz0Azi7OvIL` | published | — |
-| Customer Type — Returning (NT Audience) | nt_audience | `6G8BGn5d1B8yhU2EHsSBtk` | published | — |
+| Customer Type — Returning (NT Audience) | nt_audience | `5NLLFtjqFfRsTPzB977Qd` | published | — |
 | Hero Variant A — Velocity | hero | `5pdG6JX0w0zDQXglNXtied` | published | — |
 | Hero Variant B — Proof | hero | `3wSboq7HQdfRPDxDhrYQY4` | published | — |
 | Hero Variant C — Control | hero | `5mSd9AR203wvqRDjEz9arO` | published | — |
@@ -186,9 +186,9 @@ Loop B is an A/B test. Metrics here declare the winner and measure whether the n
 - [ ] Logged out before starting — `/page/home?preview=true` shows default (new visitor) hero
 - [ ] 3 hero variant entries published: A=`5pdG6JX0w0zDQXglNXtied` B=`3wSboq7HQdfRPDxDhrYQY4` C=`5mSd9AR203wvqRDjEz9arO`
 - [ ] NT experience `6gZyrNnCaLymz0Azi7OvIL` has all 3 variants linked with 33/33/34 split
-- [ ] NT audience `6G8BGn5d1B8yhU2EHsSBtk` rule: `customer_type equal returning`
+- [ ] NT audience `5NLLFtjqFfRsTPzB977Qd` rule: `customer_type equal returning`
 - [ ] Login modal available — click Login → sign in as Returning Customer → persona fires `identify({ customer_type: 'returning' })`
-- [ ] ⚙️ NT panel visible after login — shows "Return Visitor — Low Engagement" audience active
+- [ ] ⚙️ NT panel visible after login — shows "Customer Type — Returning" audience active
 - [ ] `.env.local` has `NEXT_PUBLIC_NINETAILED_API_KEY` and `NEXT_PUBLIC_NINETAILED_ENVIRONMENT=main`
 - [ ] Return visitor banner entry published and linked to home page sections
 - [ ] NT experience for return visitor banner created and linked to audience 6G8BGn5d1B8yhU2EHsSBtk

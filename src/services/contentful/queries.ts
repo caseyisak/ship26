@@ -1,3 +1,21 @@
+/**
+ * Links sub-selection for rich text fields that may contain NtMergetag inline entries.
+ * Appended to any `{ json }` rich text field to carry the merge tag resolution data.
+ */
+const MERGE_TAG_RT_LINKS = `
+  links {
+    entries {
+      inline {
+        sys { id }
+        ... on NtMergetag {
+          ntMergetagId
+          ntFallback
+        }
+      }
+    }
+  }
+`;
+
 /** Ninetailed audience fragment fields. */
 const NT_AUDIENCE_FIELDS = `
   sys { id }
@@ -1372,6 +1390,20 @@ export const GET_PERSONALIZATION_AUDIENCES = `
   query GetPersonalizationAudiences($preview: Boolean = false) {
     ntAudienceCollection(preview: $preview, limit: 100) {
       items { ${NT_AUDIENCE_FIELDS} }
+    }
+  }
+`;
+
+/** Fetch all Ninetailed merge tag entries (used by PersonalizationProvider). */
+export const GET_MERGE_TAGS = `
+  query GetMergeTags($preview: Boolean = false) {
+    ntMergetagCollection(preview: $preview, limit: 50) {
+      items {
+        sys { id }
+        ntMergetagId
+        ntFallback
+        ntName
+      }
     }
   }
 `;

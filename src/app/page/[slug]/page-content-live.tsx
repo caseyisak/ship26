@@ -1,6 +1,7 @@
 'use client';
 
 import { useNinetailed } from '@ninetailed/experience.js-react';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { BlockRenderer } from '@/block-renderer';
@@ -362,6 +363,25 @@ function transformSection(item: any): PageSection | null {
  */
 export function PageContentLive({ page }: Props) {
   const { track } = useNinetailed();
+  const router = useRouter();
+
+  // Refresh server data when an nt_mergetag entry is saved in live preview.
+  // MergeTagsContext is server-fetched; it doesn't update via useLiveUpdates().
+  // router.refresh() re-runs the server component and re-fetches the catalog.
+  useEffect(() => {
+    const REFRESH_CONTENT_TYPES = new Set(['nt_mergetag', 'settings']);
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.from !== 'live-preview') return;
+      if (event.data?.method !== 'ENTRY_SAVED') return;
+      const contentTypeId = event.data?.entity?.sys?.contentType?.sys?.id;
+      if (contentTypeId && REFRESH_CONTENT_TYPES.has(contentTypeId)) {
+        router.refresh();
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Scroll Depth Reached — fires once when user scrolls past 60%
   useEffect(() => {

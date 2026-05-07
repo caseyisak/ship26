@@ -3,6 +3,7 @@ id: loop-f-aeo-faq-schema
 customer: sandbox
 build_type: net-new
 promotion_status: sandbox
+origin: "demo/beckons — Beckons Hotels & Resorts, April 2026"
 personas:
   - SEO Lead
   - Marketing Director
