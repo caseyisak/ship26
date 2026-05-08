@@ -42,6 +42,14 @@
   --grid-border: var(--border); /* oklch(0.924 0.003 255.9) */
   --grid-hover: oklch(0.97 0 89.88 / 0.7);
 
+  /* Button hover overrides — set these in siteSettings theme JSON to customize per demo.
+     e.g. { "--button-primary-hover": "#1a1aff" } will update the primary button hover color.
+     Defaults match the Tailwind hover classes in button.tsx. */
+  --button-primary-hover: oklch(0.172 0.006 286.3 / 0.7);   /* primary @ 70% */
+  --button-secondary-hover: oklch(0.9461 0 89.88 / 0.6);    /* secondary @ 60% */
+  --button-outline-hover: oklch(0.9702 0 89.88);             /* muted */
+  --button-ghost-hover: oklch(0.9702 0 89.88);               /* muted */
+
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-marquee: marquee 25s linear infinite;
