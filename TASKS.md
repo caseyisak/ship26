@@ -1,40 +1,46 @@
 # Current State & Roadmap
 
-## ✅ Completed — Current Sprint
+## ✅ Completed — sandbox/v4.2 (current)
 
-| Stream | Issues | Branch | Status |
-|--------|--------|--------|--------|
-| featureSection CT | #57 icon-text/cards/integrations variants | `feat/feature-section` | ✅ PR #72 merged |
-| newsWrapper CT | #5 dynamic news feed block | `feat/news-wrapper` | ✅ PR #73 merged |
-| AIO/AEO/GEO demo loop | M1–M8 | `feat/aio-aeo-geo-demo` | ✅ PR #74 merged |
-| Deprecate data-theme | #8 remove hardcoded CSS theme blocks | `fix/deprecate-data-theme` | ✅ PR #75 merged |
-| Localization | #51 enable all CT fields | `feat/localization` | ✅ PR #76 merged |
-| IconFeatureGrid CT | #55 icon+title+description 3-col grid | `feat/icon-feature-grid` | ✅ PR #77 merged |
-| Form block + NT demo loop | #53 form + personalization | `feat/form-builder-app` | ✅ PR #78 merged |
-
----
-
-## ✅ Completed — Current Sprint
-
-| Stream | Issues | Branch | Status |
-|--------|--------|--------|--------|
-| featureSection CT | #57 icon-text/cards/integrations variants | `feat/feature-section` | ✅ PR #72 merged |
-| newsWrapper CT | #5 dynamic news feed block | `feat/news-wrapper` | ✅ PR #73 merged |
-| AIO/AEO/GEO demo loop | M1–M8 | `feat/aio-aeo-geo-demo` | ✅ PR #74 merged |
-| Deprecate data-theme | #8 remove hardcoded CSS theme blocks | `fix/deprecate-data-theme` | ✅ PR #75 merged |
-| Localization | #51 enable all CT fields | `feat/localization` | ✅ PR #76 merged |
-| IconFeatureGrid CT | #55 icon+title+description 3-col grid | `feat/icon-feature-grid` | ✅ PR #77 merged |
-| Form block + NT demo loop | #53 form + personalization | `feat/form-builder-app` | ✅ PR #78 merged |
-| Newsletter fixes | #88 #89 #90 RT rendering, promoSlot, CtaSection, preview audit | `fix/newsletter-promo-slot` | ✅ PR #91 merged → sandbox/v4.1 |
+| Stream | Issues | Branch/PR | Status |
+|--------|--------|-----------|--------|
+| featureSection CT | #57 | PR #72 | ✅ merged |
+| newsWrapper CT | #5 | PR #73 | ✅ merged |
+| AIO/AEO/GEO demo loop | — | PR #74 | ✅ merged |
+| Deprecate data-theme | #8 | PR #75 | ✅ merged |
+| Localization | #51 | PR #76 | ✅ merged |
+| IconFeatureGrid CT | #55 | PR #77 | ✅ merged |
+| Form block + NT demo loop | #53 | PR #78 | ✅ merged |
+| Newsletter fixes | #88 #89 #90 | PR #91 | ✅ merged → sandbox/v4.1 |
+| Card mediaSize + colorVariant | #85 | PR #85 | ✅ merged |
+| Font system (fontDisplay/fontBody/fontDisplayWeight) | — | main | ✅ shipped |
+| NT merge tag system + identify spread | — | PR #94→squash | ✅ merged |
+| AEO demo panel promotion to sandbox | #92 | PR #93 | ✅ merged |
+| Button hover states + CSS var theming | — | PR #83 + PR #95 | ✅ merged → sandbox/v4.2 |
 
 ---
 
-## ✅ Completed — Current Sprint
+## 🟡 Open — GH Issues
 
-| Stream | Issues | Branch | Status |
-|--------|--------|--------|--------|
-| Card mediaSize + colorVariant + contrast | #85 | `feat/card-media-size` | ✅ PR #85 open — ready to merge |
-| Font system (fontDisplay/fontBody/fontDisplayWeight) | — | `main` | ✅ Shipped — `themeToStyle()` + globals.css + siteSettings |
+| Issue | Title | Priority | Notes |
+|-------|-------|----------|-------|
+| #96 | research: use master env alias for all demos instead of per-demo envs | 🔴 high | New (2026-05-08) — could simplify demo setup significantly |
+| #90 | feat(newsletter): consolidate leadStory → promoSlot + normalize styles | 🟡 medium | May still be open despite PR #91 — verify |
+| #89 | fix(newsletter): headlineRt declared twice in EmbeddedEntry | 🟡 medium | Same — verify if #91 closed it |
+| #87 | feat(product-listing): ProductListing block | 🟡 medium | PR open on `feat/plp-collections` — needs review |
+| #86 | feat(product-listing): PLP section block | 🟡 medium | Linked to PR #87 |
+| #79 | feat(dynamic-listing): search, facets & filters | 🔵 backlog | Large scope |
+| #49 | fix(demo/tilley): personalization issues | 🔵 blocked | TBD details — nothing actionable yet |
+| #2 | feat: style override app | 🔵 backlog | Separate Contentful app, big scope |
+
+---
+
+## 🟡 Open — PRs
+
+| PR | Title | Branch | Notes |
+|----|-------|--------|-------|
+| #87 | feat(product-listing): ProductListing block | `feat/plp-collections` | Worktree exists — needs review + merge |
+| #64 | feat(cta-section): CtaSection CT + component | `feat/cta-section-block` | ⚠️ Old PR — CtaSection is already in blocks inventory as ✅. May be stale/superseded. |
 
 ---
 
@@ -42,21 +48,11 @@
 
 | To-do | Status | Notes |
 |-------|--------|-------|
-| Merge PR #85 | ⬜ ready | Card mediaSize + per-card colorVariant + contrast fixes — all verified, tsc clean |
-| Persona C feature flag | ⬜ needs clarification | Does "feature flag for DataViz" mean (a) show/hide DataViz slot, or (b) replace banner with DataViz? Clarify before starting. |
-| NT data bucket 409 | ⬜ Follow up with NT support | Casey emailed 2026-04-20. Follow up if no response within a few days. |
-| `fix/button-hover-states` | ⬜ user decision needed | 1 unmerged commit (hover states on button variants) — merge or drop? |
-| Tag `sandbox/v4.2` + README changelog | ⬜ | After PR #85 merges (v4.1 = newsletter, v4.2 = card mediaSize + font system) |
-
----
-
-## 🟡 Backlog — deferred
-
-| Issue | Why deferred |
-|-------|-------------|
-| #49 Tilley personalization fix | Blocked — "TBD details," nothing to fix yet |
-| #2 Style override app | Separate Contentful app, big scope |
-| #48 3rd-party integration simulator | ✅ Shipped — multiple PRs to main (b95f1cf, 7271fb2, 8d93db5). Close this issue. |
+| Investigate #96 — master env alias pattern | ⬜ new | Could replace per-demo env creation with an alias pointing at master — major workflow simplification |
+| Close/verify #89 + #90 | ⬜ | Both still show open despite PR #91 claiming to fix them — check and close if resolved |
+| Review + merge PR #87 (ProductListing) | ⬜ | Worktree `feat/plp-collections` — needs visual QA |
+| Close PR #64 (CtaSection) | ⬜ | CtaSection is in main — PR #64 is likely stale. Review and close if superseded. |
+| Persona C feature flag | ⬜ paused | Does "feature flag for DataViz" mean (a) show/hide slot, or (b) swap banner for DataViz? Clarify before starting. |
 
 ---
 
@@ -65,12 +61,12 @@
 | Block | Component | Status |
 |-------|-----------|--------|
 | Hero | cms-components/hero | ✅ section style editor, custom grid |
-| FAQ | cms-components/faq | ✅ |
+| FAQ | cms-components/faq | ✅ AEO demo loop wired |
 | TabbedContent | cms-components/tabbed-content | ✅ |
 | CardsWrapper | cms-components/cards-wrapper | ✅ renamed from features, animation registry |
 | DataViz | cms-components/data-viz | ✅ 5 chart types, interactive legend |
 | Blog | cms-components/blog-post | ✅ rich text, sticky TOC, live preview |
-| Banner | cms-components/banner | ✅ RT fields only, NT personalization |
+| Banner | cms-components/banner | ✅ RT fields, NT personalization, merge tags |
 | CtaSection | cms-components/cta-section | ✅ 5 color variants, dotted pattern, page refs |
 | TwoAcross | cms-components/two-across | ✅ optional form slot |
 | Pricing | cms-components/pricing | ✅ |
@@ -82,6 +78,7 @@
 | IconFeatureGrid | cms-components/icon-feature-grid | ✅ 3-col icon grid |
 | Form | cms-components/form | ✅ newsletter/contact/message, NT personalization |
 | Newsletter | cms-components/newsletter | ✅ Gmail preview, lead story, promo slot, RTE embeds, live preview |
+| ProductListing | cms-components/product-listing | 🟡 PR #87 open — pending merge |
 
 ---
 
@@ -90,6 +87,7 @@
 | Branch | Purpose | CC instance |
 |--------|---------|-------------|
 | `main` | Sandbox, all blocks, source of truth | This CC |
+| `feat/plp-collections` | ProductListing block | Separate worktree |
 
 ---
 
