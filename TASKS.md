@@ -29,15 +29,24 @@
 
 ---
 
+## ✅ Completed — Current Sprint
+
+| Stream | Issues | Branch | Status |
+|--------|--------|--------|--------|
+| Card mediaSize + colorVariant + contrast | #85 | `feat/card-media-size` | ✅ PR #85 open — ready to merge |
+| Font system (fontDisplay/fontBody/fontDisplayWeight) | — | `main` | ✅ Shipped — `themeToStyle()` + globals.css + siteSettings |
+
+---
+
 ## 🟡 Open — Follow-up To-dos
 
 | To-do | Status | Notes |
 |-------|--------|-------|
+| Merge PR #85 | ⬜ ready | Card mediaSize + per-card colorVariant + contrast fixes — all verified, tsc clean |
 | Persona C feature flag | ⬜ needs clarification | Does "feature flag for DataViz" mean (a) show/hide DataViz slot, or (b) replace banner with DataViz? Clarify before starting. |
 | NT data bucket 409 | ⬜ Follow up with NT support | Casey emailed 2026-04-20. Follow up if no response within a few days. |
-| `feat/card-media-size` | ⬜ ready to open PR | 2 unmerged commits (card mediaSize + style/columns/colorVariant) — own branch/worktree, open PR separately |
 | `fix/button-hover-states` | ⬜ user decision needed | 1 unmerged commit (hover states on button variants) — merge or drop? |
-| Tag `sandbox/v4.0` + add README changelog | ⬜ | Tag current main HEAD before merging newsletter PR; v4.1 = post-newsletter |
+| Tag `sandbox/v4.2` + README changelog | ⬜ | After PR #85 merges (v4.1 = newsletter, v4.2 = card mediaSize + font system) |
 
 ---
 

@@ -1,8 +1,104 @@
 # New Demo Setup Runbook
 
+> **Re-spinning an existing demo?** Skip to the [Re-spin checklist](#re-spinning-an-existing-demo) below before reading anything else.
+
 How to spin up a new customer demo from scratch. Written from the bears experience — captures every pain point and gotcha so the next demo goes faster.
 
 **Time estimate:** ~2 hours to fully working demo with personalization. ~45 min if skipping NT.
+
+---
+
+---
+
+## Re-spinning an existing demo
+
+Use this when a customer demo was previously built and you need to run it again after time has passed.
+
+**Do NOT just re-point the old demo branch at the old demo env.** The main sandbox evolves — content type field IDs change, fields get renamed or dropped — and old demo env entries will silently fail against current code. See LL-030.
+
+### Step 1 — Assess schema drift
+
+Check how old the demo env is:
+```bash
+# In Contentful: Settings → Environments → look at the demo env createdAt date
+# If > 4 weeks old, assume drift. If < 2 weeks, it may be safe — but still verify.
+```
+
+Run a quick field audit using the Contentful MCP:
+- `list_content_types` on the demo env — compare field IDs for `hero`, `banner`, `twoAcross`, `newsletter` against master
+- Red flags: `headline` (not `headlineRt`), `leadStory` (not `promoSlot`), `eyebrow` (not `eyebrowRt`)
+
+If ANY of those old field IDs exist on the demo env entries → **create a new env, don't patch.**
+
+### Step 2 — Create a new demo env
+
+Name it `[customer]-2` (or increment). Clone from `master`:
+- Contentful MCP `create_environment` with `sourceEnvironmentId: master`
+- This gets the current schema + all sandbox entries
+
+> 🔴 **MANUAL — M1:** Add the new env to the Contentful API key immediately.
+
+### Step 3 — Identify what to port from the old env
+
+Key entries to carry over (skip generic sandbox seeds):
+- Branded blog posts / articles (customer-specific content)
+- Newsletter entries
+- Settings entry (brand theme JSON, nav/footer refs)
+- Nav, footer, navLink entries
+- Hero, banner, twoAcross entries used on the home page
+- Page entries (home, any demo-specific pages)
+
+Skip: NT experience entries, `newsletterIssue`/`adSlot` (if they existed in old env), generic placeholder entries.
+
+### Step 4 — Migrate content with field mapping
+
+Spin a Contentful MCP agent to read old entries and create new ones in the new env. Key mappings to apply:
+
+| Old field | New field | CTs affected |
+|-----------|-----------|--------------|
+| `headline` | `headlineRt` (RichText) | hero, banner |
+| `subheadline` | `subheadlineRt` (RichText) | hero, banner |
+| `eyebrow` | `eyebrowRt` (RichText) | twoAcross |
+| `heading` | `headingRt` (RichText) | twoAcross |
+| `title` | `titleRt` (RichText) | faq |
+| `description` | `descriptionRt` (RichText) | faq |
+| `leadStory` | `promoSlot` | newsletter |
+| `slug` (newsletter) | omit | newsletter |
+
+For RichText fields, wrap the Symbol text value in a Contentful RichText document:
+```json
+{ "nodeType": "document", "data": {}, "content": [{ "nodeType": "paragraph", "data": {}, "content": [{ "nodeType": "text", "value": "YOUR TEXT", "marks": [], "data": {} }] }] }
+```
+
+Port in dependency order: assets → authors → blogPosts → navLinks → nav/footer → banners → twoAcross → hero → newsletter → pages → settings.
+
+**Reference:** `documentation/handoff-punchbowl-2-setup.md` is a worked example of this full migration (punchbowl → punchbowl-2, 2026-04-29).
+
+### Step 5 — Create new worktree off main
+
+```bash
+bash scripts/worktree-add.sh demo/[customer]-[YYYY-MM]
+```
+
+Update `.env.local` in the new worktree:
+- `CONTENTFUL_ENVIRONMENT=[customer]-2`
+- `NEXT_PUBLIC_NINETAILED_ENVIRONMENT=development`
+
+Restore brand theme CSS (`[data-theme='[customer]']`) from the old demo branch:
+```bash
+git show demo/[customer]-[old-date]:src/app/globals.css | grep -A 50 "\[data-theme='[customer]'\]"
+```
+Add that block to `src/app/globals.css` in the new worktree.
+
+### Step 6 — Verify
+
+Run through the verification checklist in the worktree's handoff doc. Core checks:
+- [ ] Home page loads with brand colors
+- [ ] Newsletter renders with promoSlot + embedded article cards
+- [ ] Live preview: edit a newsletter field → updates in iframe within 2s
+- [ ] Walk each demo loop's click path once
+
+**Time estimate for re-spin:** ~1 hour (vs ~2.5 hours for a new demo from scratch).
 
 ---
 
