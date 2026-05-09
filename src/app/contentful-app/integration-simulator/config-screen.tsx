@@ -4,65 +4,60 @@ import {
   Box,
   Flex,
   Heading,
-  Note,
   Paragraph,
-  Select,
   Spinner,
   Stack,
-  Switch,
+  Tabs,
   Text,
-  TextInput,
 } from '@contentful/f36-components';
 import React, { useEffect, useState } from 'react';
 
-// ── Public types (re-used by field-editor) ────────────────────────────────────
+import type {
+  AppParams as ConnectorAppParams,
+  ConnectorProfile,
+  MappingRow,
+} from './connector-types';
+import { ConnectorsTab } from './connectors-tab';
+import type { Activation } from './mappings-tab';
+import { MappingsTab } from './mappings-tab';
+import {
+  CONNECTOR_ID_TO_SIMULATOR_TYPE,
+  findConnector,
+  SEED_CONNECTORS,
+  SIMULATOR_TYPE_TO_CONNECTOR_ID,
+} from './seed-connectors';
 
-export type SimulatorType =
-  | 'SHOPIFY'
-  | 'COMMERCETOOLS'
-  | 'BIGCOMMERCE'
-  | 'BYNDER'
-  | 'ADOBE'
-  | 'BRANDFOLDER';
+// ── Re-exports for back-compat (field-editor + dialog still import these) ────
 
-/** Brand metadata for each simulator vendor. */
-export const BRAND_CONFIG: Record<
-  SimulatorType,
-  { label: string; color: string; textColor: string }
-> = {
-  SHOPIFY:       { label: 'Shopify',             color: '#96BF48', textColor: '#fff' },
-  COMMERCETOOLS: { label: 'commercetools',        color: '#FF7C00', textColor: '#fff' },
-  BIGCOMMERCE:   { label: 'BigCommerce',          color: '#2776C6', textColor: '#fff' },
-  BYNDER:        { label: 'Bynder',               color: '#00A1E4', textColor: '#fff' },
-  ADOBE:         { label: 'Adobe AEM Assets',     color: '#FA0F00', textColor: '#fff' },
-  BRANDFOLDER:   { label: 'Brandfolder',          color: '#0033CC', textColor: '#fff' },
-};
+export type { AppParams, MappingRow, SimulatorType } from './connector-types';
+export { BRAND_CONFIG, isBookingType, isEcomType } from './connector-types';
 
-export const ECOM_TYPES: SimulatorType[] = ['SHOPIFY', 'COMMERCETOOLS', 'BIGCOMMERCE'];
-export function isEcomType(t: SimulatorType): boolean { return ECOM_TYPES.includes(t); }
-
-export interface MappingRow {
-  /** Local React key — stripped before saving to Contentful params */
-  _id: string;
-  contentTypeId: string;
-  fieldId: string;
-  simulatorType: SimulatorType;
-}
-
-export interface AppParams {
-  mappings: Omit<MappingRow, '_id'>[];
-}
-
-// ── Internal types ────────────────────────────────────────────────────────────
+// ── Internal types ───────────────────────────────────────────────────────────
 
 type CTField = { id: string; name: string; type: string };
 type ContentType = { sys: { id: string }; name: string; fields: CTField[] };
-type Activation = { fieldId: string; simulatorType: SimulatorType };
 
 type ConfigSdk = {
+  ids: { app: string };
   app: {
-    getParameters: () => Promise<AppParams | null>;
-    onConfigure: (handler: () => { parameters: AppParams }) => () => void;
+    getParameters: () => Promise<ConnectorAppParams | null>;
+    onConfigure: (
+      handler: () => {
+        parameters: ConnectorAppParams;
+        targetState?: {
+          EditorInterface: Record<
+            string,
+            {
+              controls: Array<{
+                fieldId: string;
+                widgetNamespace?: 'app';
+                widgetId?: string;
+              }>;
+            }
+          >;
+        };
+      },
+    ) => () => void;
     setReady: () => void;
   };
   space: {
@@ -70,18 +65,42 @@ type ConfigSdk = {
   };
 };
 
-// ── Main component ────────────────────────────────────────────────────────────
+// ── Migration helpers ────────────────────────────────────────────────────────
+
+/**
+ * Migrate a legacy mapping (carrying `simulatorType`) into the new shape with
+ * `connectorId`. Existing entries in production already have simulatorType
+ * set; this lets the app keep functioning while we transition.
+ */
+function migrateMappings(
+  raw: ConnectorAppParams['mappings'],
+): Array<{ contentTypeId: string; fieldId: string; connectorId: string }> {
+  return raw.map((m) => {
+    const explicit = (m as Partial<MappingRow>).connectorId;
+    const fromLegacy = SIMULATOR_TYPE_TO_CONNECTOR_ID[m.simulatorType];
+    return {
+      contentTypeId: m.contentTypeId,
+      fieldId: m.fieldId,
+      connectorId: explicit ?? fromLegacy ?? '',
+    };
+  });
+}
+
+// ── Main component ──────────────────────────────────────────────────────────
 
 export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
   const appSdk = sdk as ConfigSdk;
 
   const [contentTypes, setContentTypes] = useState<ContentType[]>([]);
-  const [activations, setActivations] = useState<Record<string, Activation | null>>({});
-  const [loadingCts, setLoadingCts] = useState(true);
+  const [connectors, setConnectors] =
+    useState<ConnectorProfile[]>(SEED_CONNECTORS);
+  const [activations, setActivations] = useState<
+    Record<string, Activation | null>
+  >({});
+  const [loading, setLoading] = useState(true);
   const [ready, setReady] = useState(false);
-  const [search, setSearch] = useState('');
 
-  // Load saved params + all content types in parallel, then mark ready
+  // Load saved params + all content types in parallel
   useEffect(() => {
     async function init() {
       const [params, ctsResult] = await Promise.all([
@@ -94,40 +113,84 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
       );
       setContentTypes(cts);
 
+      // Load connectors — fall back to seed if none persisted
+      if (params?.connectors && params.connectors.length > 0) {
+        setConnectors(params.connectors);
+      }
+
+      // Load + migrate mappings
       if (params?.mappings?.length) {
+        const migrated = migrateMappings(params.mappings);
         const map: Record<string, Activation> = {};
-        for (const m of params.mappings) {
-          map[m.contentTypeId] = { fieldId: m.fieldId, simulatorType: m.simulatorType };
+        for (const m of migrated) {
+          map[m.contentTypeId] = {
+            fieldId: m.fieldId,
+            connectorId: m.connectorId,
+          };
         }
         setActivations(map);
       }
 
-      setLoadingCts(false);
+      setLoading(false);
       setReady(true);
       appSdk.app.setReady();
     }
     init();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Re-register onConfigure whenever activations change so the handler closes
-  // over the latest state. Field appearance (widgetId/widgetNamespace) must be
-  // set manually in Content Model → field appearance — targetState is not used
-  // because the Contentful parent frame rejects it consistently.
+  // Re-register onConfigure whenever activations OR connectors change so the
+  // handler closes over latest state. targetState auto-attaches the 3P App
+  // widget to each mapped field on save.
   useEffect(() => {
     if (!ready) return;
-    const cleanup = appSdk.app.onConfigure(() => ({
-      parameters: {
-        mappings: Object.entries(activations)
-          .filter((entry): entry is [string, Activation] => entry[1] !== null)
-          .map(([ctId, v]) => ({
+    const cleanup = appSdk.app.onConfigure(() => {
+      const mappings = Object.entries(activations)
+        .filter((entry): entry is [string, Activation] => entry[1] !== null)
+        .map(([ctId, v]) => {
+          const legacySimulator =
+            CONNECTOR_ID_TO_SIMULATOR_TYPE[v.connectorId] ?? 'SHOPIFY';
+          return {
             contentTypeId: ctId,
             fieldId: v.fieldId,
-            simulatorType: v.simulatorType,
-          })),
-      },
-    }));
+            connectorId: v.connectorId,
+            simulatorType: legacySimulator,
+          };
+        });
+
+      // Build EditorInterface targetState for auto-appearance attachment.
+      const EditorInterface: Record<
+        string,
+        {
+          controls: Array<{
+            fieldId: string;
+            widgetNamespace?: 'app';
+            widgetId?: string;
+          }>;
+        }
+      > = {};
+      for (const m of mappings) {
+        const existing = EditorInterface[m.contentTypeId]?.controls ?? [];
+        EditorInterface[m.contentTypeId] = {
+          controls: [
+            ...existing,
+            {
+              fieldId: m.fieldId,
+              widgetNamespace: 'app',
+              widgetId: appSdk.ids.app,
+            },
+          ],
+        };
+      }
+
+      return {
+        parameters: { mappings, connectors },
+        ...(Object.keys(EditorInterface).length > 0
+          ? { targetState: { EditorInterface } }
+          : {}),
+      };
+    });
     return cleanup;
-  }, [activations, ready]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activations, connectors, ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleCt = (ct: ContentType) => {
     setActivations((prev) => {
@@ -136,12 +199,14 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
         delete next[ct.sys.id];
         return next;
       }
-      // Default: first field, Shopify
+      // Default: first field, first connector in list
+      const defaultConnectorId =
+        connectors[0]?.id ?? findConnector(connectors, 'shopify')?.id ?? '';
       return {
         ...prev,
         [ct.sys.id]: {
           fieldId: ct.fields[0]?.id ?? '',
-          simulatorType: 'SHOPIFY' as SimulatorType,
+          connectorId: defaultConnectorId,
         },
       };
     });
@@ -154,201 +219,54 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
     }));
   };
 
-  const q = search.toLowerCase();
-  const visible = q
-    ? contentTypes.filter(
-        (ct) =>
-          ct.name.toLowerCase().includes(q) || ct.sys.id.toLowerCase().includes(q),
-      )
-    : contentTypes;
-
-  const activatedCts = visible.filter((ct) => activations[ct.sys.id]);
-  const inactiveCts = visible.filter((ct) => !activations[ct.sys.id]);
-
   return (
     <Box padding="spacingL">
       <Box style={{ width: '60%', margin: '0 auto' }}>
-      <Stack flexDirection="column" spacing="spacingL" alignItems="flex-start">
-        <Box style={{ width: '100%' }}>
-          <Heading>Integration Simulator</Heading>
-          <Paragraph>
-            Toggle a content type to activate the integration picker on one of its
-            fields. Editors will see an &ldquo;Add Product&rdquo; or &ldquo;Add
-            Asset&rdquo; button in place of the normal field input.
-          </Paragraph>
-        </Box>
+        <Stack flexDirection="column" spacing="spacingL" alignItems="stretch">
+          <Box style={{ width: '100%', textAlign: 'center' }}>
+            <Heading>3P App Integration</Heading>
+            <Paragraph>
+              Simulate any third-party integration with rich pickers — without
+              writing custom apps for every vendor.
+            </Paragraph>
+          </Box>
 
-        {loadingCts ? (
-          <Flex alignItems="center" gap="spacingS">
-            <Spinner />
-            <Text fontColor="gray600">Loading content types…</Text>
-          </Flex>
-        ) : (
-          <Stack
-            flexDirection="column"
-            spacing="spacingXs"
-            style={{ width: '100%' }}
-          >
-            <TextInput
-              value={search}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setSearch(e.target.value)
-              }
-              placeholder="Search content types…"
-              size="small"
-            />
-            {/* ── Activated content types (top) ── */}
-            {activatedCts.length > 0 && (
-              <Text
-                fontWeight="fontWeightDemiBold"
-                style={{ marginBottom: 4 }}
-              >
-                Active
-              </Text>
-            )}
-            {activatedCts.map((ct) => (
-              <CtRow
-                key={ct.sys.id}
-                ct={ct}
-                activation={activations[ct.sys.id]!}
-                onToggle={() => toggleCt(ct)}
-                onUpdate={(patch) => updateActivation(ct.sys.id, patch)}
-              />
-            ))}
+          {loading ? (
+            <Flex alignItems="center" gap="spacingS" justifyContent="center">
+              <Spinner />
+              <Text fontColor="gray600">Loading content types…</Text>
+            </Flex>
+          ) : (
+            <Tabs defaultTab="mappings">
+              <Tabs.List>
+                <Tabs.Tab panelId="mappings">Mappings</Tabs.Tab>
+                <Tabs.Tab panelId="connectors">Connectors</Tabs.Tab>
+              </Tabs.List>
 
-            {/* ── Inactive content types (below) ── */}
-            {inactiveCts.length > 0 && (
-              <Text
-                fontColor="gray500"
-                style={{
-                  marginTop: activatedCts.length > 0 ? 12 : 0,
-                  marginBottom: 4,
-                }}
-              >
-                Available content types
-              </Text>
-            )}
-            {inactiveCts.map((ct) => (
-              <CtRow
-                key={ct.sys.id}
-                ct={ct}
-                activation={null}
-                onToggle={() => toggleCt(ct)}
-                onUpdate={() => {}}
-              />
-            ))}
-          </Stack>
-        )}
+              <Tabs.Panel id="mappings">
+                <Box style={{ paddingTop: 16 }}>
+                  <MappingsTab
+                    contentTypes={contentTypes}
+                    connectors={connectors}
+                    activations={activations}
+                    onToggle={toggleCt}
+                    onUpdate={updateActivation}
+                  />
+                </Box>
+              </Tabs.Panel>
 
-        {activatedCts.some((ct) => !activations[ct.sys.id]?.fieldId) && (
-          <Note variant="warning">
-            All active content types must have a field selected before saving.
-          </Note>
-        )}
-      </Stack>
+              <Tabs.Panel id="connectors">
+                <Box style={{ paddingTop: 16 }}>
+                  <ConnectorsTab
+                    connectors={connectors}
+                    onChange={setConnectors}
+                  />
+                </Box>
+              </Tabs.Panel>
+            </Tabs>
+          )}
+        </Stack>
       </Box>
-    </Box>
-  );
-}
-
-// ── CT row ────────────────────────────────────────────────────────────────────
-
-function CtRow({
-  ct,
-  activation,
-  onToggle,
-  onUpdate,
-}: {
-  ct: ContentType;
-  activation: Activation | null;
-  onToggle: () => void;
-  onUpdate: (patch: Partial<Activation>) => void;
-}) {
-  const isActive = activation !== null;
-
-  return (
-    <Box
-      style={{
-        border: `1px solid ${isActive ? '#0059C8' : '#CFD9E0'}`,
-        borderRadius: 8,
-        padding: '12px 16px',
-        background: isActive ? '#F0F5FF' : '#FAFBFC',
-        transition: 'border-color 0.15s, background 0.15s',
-        width: '100%',
-      }}
-    >
-      {/* Header row: name + toggle */}
-      <Flex alignItems="center" justifyContent="space-between">
-        <Box>
-          <Text fontWeight="fontWeightDemiBold">{ct.name}</Text>
-          <Text
-            fontColor="gray500"
-            style={{ display: 'block', fontSize: 11, marginTop: 2 }}
-          >
-            {ct.sys.id}
-          </Text>
-        </Box>
-        <Switch
-          id={`ct-toggle-${ct.sys.id}`}
-          isChecked={isActive}
-          onChange={onToggle}
-        >
-          {isActive ? 'Active' : 'Inactive'}
-        </Switch>
-      </Flex>
-
-      {/* Field + simulator selectors (only when active) */}
-      {isActive && (
-        <Flex gap="spacingS" style={{ marginTop: 12 }}>
-          <Box style={{ flex: 1 }}>
-            <Text
-              fontColor="gray600"
-              style={{ display: 'block', fontSize: 12, marginBottom: 4 }}
-            >
-              Field
-            </Text>
-            <Select
-              value={activation.fieldId}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                onUpdate({ fieldId: e.target.value })
-              }
-              size="small"
-            >
-              {ct.fields.map((f) => (
-                <Select.Option key={f.id} value={f.id}>
-                  {f.name} ({f.id})
-                </Select.Option>
-              ))}
-            </Select>
-          </Box>
-          <Box>
-            <Text
-              fontColor="gray600"
-              style={{ display: 'block', fontSize: 12, marginBottom: 4 }}
-            >
-              Simulator
-            </Text>
-            <Select
-              value={activation.simulatorType}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                onUpdate({ simulatorType: e.target.value as SimulatorType })
-              }
-              size="small"
-            >
-              <optgroup label="E-Commerce">
-                <Select.Option value="SHOPIFY">Shopify</Select.Option>
-                <Select.Option value="COMMERCETOOLS">commercetools</Select.Option>
-                <Select.Option value="BIGCOMMERCE">BigCommerce</Select.Option>
-              </optgroup>
-              <optgroup label="DAM">
-                <Select.Option value="BYNDER">Bynder</Select.Option>
-                <Select.Option value="ADOBE">Adobe AEM Assets</Select.Option>
-                <Select.Option value="BRANDFOLDER">Brandfolder</Select.Option>
-              </optgroup>
-            </Select>
-          </Box>
-        </Flex>
-      )}
     </Box>
   );
 }

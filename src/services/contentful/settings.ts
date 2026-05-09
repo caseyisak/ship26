@@ -42,6 +42,7 @@ export interface SiteSettings {
   footerForm?: FormFragment | null;
   productCatalog?: ProductRecord[] | null;
   assetCatalog?: AssetRecord[] | null;
+  bookingCatalog?: Record<string, unknown>[] | null;
 }
 
 const NAV_LINKS_FRAGMENT = `
@@ -75,6 +76,7 @@ const SETTINGS_QUERY = `
         }
         productCatalog
         assetCatalog
+        bookingCatalog
         footerForm {
           __typename
           sys { id }
@@ -142,6 +144,7 @@ type SettingsResponse = {
       footerForm?: RawFormSettings | null;
       productCatalog?: ProductRecord[] | null;
       assetCatalog?: AssetRecord[] | null;
+      bookingCatalog?: Record<string, unknown>[] | null;
     }>;
   };
 };
@@ -190,6 +193,7 @@ export async function getSettings({
         : null,
       productCatalog: raw.productCatalog ?? null,
       assetCatalog: raw.assetCatalog ?? null,
+      bookingCatalog: raw.bookingCatalog ?? null,
       footerForm: raw.footerForm && raw.footerForm.__typename === 'Form'
         ? {
             __typename: 'Form' as const,

@@ -3,13 +3,14 @@
 import { Badge, Box, Button, Flex, Text } from '@contentful/f36-components';
 import React, { useEffect, useState } from 'react';
 
+import { BookingWidget } from '@/components/demo/booking-widget/BookingWidget';
 import type {
   AssetRecord,
   ProductRecord,
 } from '@/lib/integration-adapters/types';
 
 import type { AppParams, MappingRow, SimulatorType } from './config-screen';
-import { BRAND_CONFIG, isEcomType } from './config-screen';
+import { BRAND_CONFIG, isBookingType, isEcomType } from './config-screen';
 
 // ── SDK type ──────────────────────────────────────────────────────────────────
 
@@ -136,7 +137,9 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
       title:
         simulatorType && isEcomType(simulatorType)
           ? 'Select Product'
-          : 'Select Asset',
+          : simulatorType && isBookingType(simulatorType)
+            ? 'Booking Widget'
+            : 'Select Asset',
       width: 'fullWidth',
       minHeight: 650,
       parameters: { mode: simulatorType },
@@ -150,8 +153,25 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
   };
 
   const isEcom = simulatorType ? isEcomType(simulatorType) : false;
+  const isBooking = simulatorType ? isBookingType(simulatorType) : false;
   const product = isEcom ? (fieldValue as ProductRecord | null) : null;
-  const asset = !isEcom ? (fieldValue as AssetRecord | null) : null;
+  const asset =
+    !isEcom && !isBooking ? (fieldValue as AssetRecord | null) : null;
+
+  // ── Booking widget (inline, no picker flow) ───────────────────────────────
+  if (isBooking && simulatorType) {
+    const provider =
+      simulatorType === 'BOOKING_REVRAISE'
+        ? 'revraise'
+        : simulatorType === 'BOOKING_OPENTABLE'
+          ? 'opentable'
+          : 'spaone';
+    return (
+      <Box style={{ padding: 8 }}>
+        <BookingWidget provider={provider} />
+      </Box>
+    );
+  }
 
   // ── No mapping configured ─────────────────────────────────────────────────
   if (!simulatorType) {
@@ -208,6 +228,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
                       objectFit: 'scale-down',
                       display: 'block',
                     }}
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
                 ) : (
                   <Flex
@@ -255,7 +276,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
                   <MetaRow label="Price">
                     <Flex alignItems="center" gap="spacingXs">
                       <Text style={{ fontSize: 12, fontWeight: 600 }}>
-                        ${(product.salePrice ?? product.price).toFixed(2)}
+                        ${(product.salePrice ?? product.price ?? 0).toFixed(2)}
                       </Text>
                       {product.salePrice && (
                         <Text
@@ -265,7 +286,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
                             textDecoration: 'line-through',
                           }}
                         >
-                          ${product.price.toFixed(2)}
+                          ${(product.price ?? 0).toFixed(2)}
                         </Text>
                       )}
                     </Flex>
@@ -359,6 +380,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
                       objectFit: 'cover',
                       display: 'block',
                     }}
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
                 </Box>
               )}

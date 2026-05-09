@@ -14,12 +14,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { contentfulCatalogAdapter } from '@/lib/integration-adapters/contentful-catalog';
 import type { ProductRecord } from '@/lib/integration-adapters/types';
 
+import { BRAND_CONFIG } from './config-screen';
+import type { SimulatorType } from './config-screen';
 import { useFakeFetch } from './shared/use-fake-fetch';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const SHOPIFY_GREEN = '#96BF48';
-const SHOPIFY_DARK = '#5C6F2E';
 const IMPORT_DELAY_MS = 1200;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -84,6 +84,7 @@ function ProductCard({
             src={product.images[0]}
             alt={product.name}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
           />
         ) : (
           <Flex
@@ -140,7 +141,7 @@ function ProductCard({
             {product.sku}
           </Badge>
           <Text fontColor="gray700" style={{ fontSize: 11, fontWeight: 600 }}>
-            ${(product.salePrice ?? product.price).toFixed(2)}
+            ${(product.salePrice ?? product.price ?? 0).toFixed(2)}
           </Text>
         </Flex>
         <Box style={{ marginTop: 3 }}>
@@ -189,6 +190,7 @@ function ProductDetailPanel({ product }: { product: ProductRecord }) {
           src={product.images[0]}
           alt={product.name}
           style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', borderRadius: 6, display: 'block' }}
+          onError={(e) => { e.currentTarget.style.display = 'none'; }}
         />
       ) : (
         <Box style={{ width: '100%', aspectRatio: '4/3', background: '#F0F4F8', borderRadius: 6 }} />
@@ -205,11 +207,11 @@ function ProductDetailPanel({ product }: { product: ProductRecord }) {
           <Text fontColor="gray500" style={{ fontSize: 10, display: 'block' }}>Price</Text>
           <Flex alignItems="center" gap="spacingXs">
             <Text style={{ fontSize: 13, fontWeight: 600 }}>
-              ${(product.salePrice ?? product.price).toFixed(2)}
+              ${(product.salePrice ?? product.price ?? 0).toFixed(2)}
             </Text>
             {product.salePrice && (
               <Text fontColor="gray500" style={{ fontSize: 11, textDecoration: 'line-through' }}>
-                ${product.price.toFixed(2)}
+                ${(product.price ?? 0).toFixed(2)}
               </Text>
             )}
           </Flex>
@@ -277,6 +279,7 @@ function ProductDetailPanel({ product }: { product: ProductRecord }) {
 // ── Full-page picker content (rendered in Contentful dialog) ──────────────────
 
 export interface EcomPickerContentProps {
+  simulatorType: SimulatorType;
   onSelect: (product: ProductRecord) => void;
   onClose: () => void;
   /** Accumulate multiple selections (DynamicListing) */
@@ -284,10 +287,14 @@ export interface EcomPickerContentProps {
 }
 
 export function EcomPickerContent({
+  simulatorType,
   onSelect,
   onClose,
   multiSelect = false,
 }: EcomPickerContentProps) {
+  const brand = BRAND_CONFIG[simulatorType];
+  const headerBg = brand.color;
+  const headerLabel = `${brand.label} — Product Catalog`;
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
@@ -359,10 +366,10 @@ export function EcomPickerContent({
 
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      {/* Shopify-branded header — full width */}
+      {/* Vendor-branded header — full width */}
       <Box
         style={{
-          background: SHOPIFY_GREEN,
+          background: headerBg,
           padding: '12px 20px',
           display: 'flex',
           alignItems: 'center',
@@ -370,14 +377,16 @@ export function EcomPickerContent({
           flexShrink: 0,
         }}
       >
+        {/* Generic storefront icon */}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-          <path d="M19.5 8.25h-1.732A5.768 5.768 0 0 0 12 3a5.768 5.768 0 0 0-5.768 5.25H4.5A1.5 1.5 0 0 0 3 9.75v9A1.5 1.5 0 0 0 4.5 20.25h15a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5zM12 4.5a4.27 4.27 0 0 1 4.232 3.75H7.768A4.27 4.27 0 0 1 12 4.5z" />
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z" />
+          <polyline points="9 22 9 12 15 12 15 22" fill="white" />
         </svg>
         <Text
           fontWeight="fontWeightDemiBold"
           style={{ color: '#fff', fontSize: 14, letterSpacing: '0.02em' }}
         >
-          Shopify — Product Catalog
+          {headerLabel}
         </Text>
       </Box>
 
@@ -388,11 +397,11 @@ export function EcomPickerContent({
         <Box style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
           {/* Search bar */}
-          <Box style={{ padding: '10px 16px', background: SHOPIFY_GREEN, flexShrink: 0 }}>
+          <Box style={{ padding: '10px 16px', background: headerBg, flexShrink: 0 }}>
             <TextInput
               value={search}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-              placeholder="Search your Shopify store…"
+              placeholder={`Search ${brand.label}…`}
               isDisabled={isLoading}
               style={{ borderRadius: 6 }}
             />
@@ -402,7 +411,7 @@ export function EcomPickerContent({
           {!isLoading && categories.length > 1 && (
             <Box
               style={{
-                background: SHOPIFY_DARK,
+                background: headerBg,
                 padding: '6px 16px',
                 display: 'flex',
                 gap: 4,

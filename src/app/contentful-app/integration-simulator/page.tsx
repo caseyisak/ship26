@@ -11,30 +11,26 @@ import { useEffect } from 'react';
  * @contentful/f36-components accesses browser APIs at module evaluation time.
  *
  * Local URL: http://localhost:3000/contentful-app/integration-simulator
- * Locations: app-config, entry-field, dialog
+ * Locations: app-config, entry-field, dialog, page
  */
 
 const IntegrationSimulatorConfig = dynamic(
-  () =>
-    import('./config-screen').then(
-      (m) => m.IntegrationSimulatorConfig,
-    ),
+  () => import('./config-screen').then((m) => m.IntegrationSimulatorConfig),
   { ssr: false },
 );
 
 const IntegrationSimulatorField = dynamic(
-  () =>
-    import('./field-editor').then(
-      (m) => m.IntegrationSimulatorField,
-    ),
+  () => import('./field-editor').then((m) => m.IntegrationSimulatorField),
   { ssr: false },
 );
 
 const IntegrationSimulatorDialog = dynamic(
-  () =>
-    import('./dialog').then(
-      (m) => m.IntegrationSimulatorDialog,
-    ),
+  () => import('./dialog').then((m) => m.IntegrationSimulatorDialog),
+  { ssr: false },
+);
+
+const IntegrationSimulatorLanding = dynamic(
+  () => import('./landing').then((m) => m.IntegrationSimulatorLanding),
   { ssr: false },
 );
 
@@ -44,6 +40,7 @@ const IntegrationSimulatorDialog = dynamic(
  * directly in the browser outside Contentful.
  */
 function FieldWithResizer({ sdk }: { sdk: unknown }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sdkAny = sdk as any;
 
   useEffect(() => {
@@ -62,18 +59,28 @@ export default function IntegrationSimulatorPage() {
   // Debug: log which location Contentful actually sent
   const loc = sdk?.location;
   const detectedLocation = loc
-    ? Object.entries(locations).find(([, v]) => loc.is(v))?.[0] ?? 'unknown'
+    ? (Object.entries(locations).find(([, v]) => loc.is(v))?.[0] ?? 'unknown')
     : 'no-location';
   // eslint-disable-next-line no-console
-  console.log('[IntegrationSimulator] detected location:', detectedLocation, '| sdk.app defined:', Boolean((sdk as any)?.app));
+  console.log(
+    '[IntegrationSimulator] detected location:',
+    detectedLocation,
+    '| sdk.app defined:',
+    Boolean((sdk as unknown as Record<string, unknown>)?.app),
+  );
 
   const isConfig = sdk?.location?.is(locations.LOCATION_APP_CONFIG);
   const isEntryField = sdk?.location?.is(locations.LOCATION_ENTRY_FIELD);
   const isDialog = sdk?.location?.is(locations.LOCATION_DIALOG);
+  const isPage = sdk?.location?.is(locations.LOCATION_PAGE);
+  // Belt-and-suspenders: rare SDK/frame edge cases resolve PAGE as detectedLocation
+  // but `loc.is(LOCATION_PAGE)` is false across reference boundaries.
+  const treatAsPage = isPage || detectedLocation === 'LOCATION_PAGE';
 
   if (sdk && isEntryField) return <FieldWithResizer sdk={sdk} />;
   if (sdk && isDialog) return <IntegrationSimulatorDialog sdk={sdk} />;
   if (sdk && isConfig) return <IntegrationSimulatorConfig sdk={sdk} />;
+  if (sdk && treatAsPage) return <IntegrationSimulatorLanding sdk={sdk} />;
 
   // SDK exists but location isn't one we handle — likely App Definition
   // doesn't have app-config registered, or app is loaded in wrong context.
@@ -81,11 +88,13 @@ export default function IntegrationSimulatorPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-8">
         <p className="text-sm font-medium text-red-600">
-          Integration Simulator loaded in unexpected location: <code>{detectedLocation}</code>
+          Integration Simulator loaded in unexpected location:{' '}
+          <code>{detectedLocation}</code>
         </p>
         <p className="max-w-md text-center text-xs text-gray-500">
-          Ensure the App Definition has <code>app-config</code> registered as a location,
-          then open the app via Apps → Integration Simulator → Configure.
+          Ensure the App Definition has <code>app-config</code> registered as a
+          location, then open the app via Apps → Integration Simulator →
+          Configure.
         </p>
       </div>
     );
@@ -95,11 +104,10 @@ export default function IntegrationSimulatorPage() {
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[var(--background)] p-8 text-[var(--foreground)]">
       <h1 className="text-xl font-semibold">Integration Simulator</h1>
       <p className="max-w-md text-center text-sm text-[var(--muted-foreground)]">
-        Load this URL in Contentful as the Integration Simulator app
-        (locations: <code>app-config</code>, <code>entry-field</code>,{' '}
-        <code>dialog</code>).
+        Load this URL in Contentful as the Integration Simulator app (locations:{' '}
+        <code>app-config</code>, <code>entry-field</code>, <code>dialog</code>).
       </p>
-      <code className="rounded bg-muted px-3 py-1.5 text-sm">
+      <code className="bg-muted rounded px-3 py-1.5 text-sm">
         http://localhost:3000/contentful-app/integration-simulator
       </code>
     </div>

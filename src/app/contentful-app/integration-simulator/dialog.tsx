@@ -3,10 +3,11 @@
 import React from 'react';
 
 import type { AssetRecord, ProductRecord } from '@/lib/integration-adapters/types';
+import { BookingWidget } from '@/components/demo/booking-widget/BookingWidget';
 
 import { DamPickerContent } from './dam-picker-modal';
 import { EcomPickerContent } from './ecom-picker-modal';
-import { isEcomType } from './config-screen';
+import { isEcomType, isBookingType } from './config-screen';
 import type { SimulatorType } from './config-screen';
 
 // ── SDK type ──────────────────────────────────────────────────────────────────
@@ -36,14 +37,30 @@ export function IntegrationSimulatorDialog({ sdk }: { sdk: unknown }) {
   if (mode && isEcomType(mode)) {
     return (
       <EcomPickerContent
+        simulatorType={mode}
         onSelect={(product) => dialogSdk.close(product)}
         onClose={handleClose}
       />
     );
   }
 
+  if (mode && isBookingType(mode)) {
+    const provider =
+      mode === 'BOOKING_REVRAISE'
+        ? 'revraise'
+        : mode === 'BOOKING_OPENTABLE'
+        ? 'opentable'
+        : 'spaone';
+    return (
+      <div style={{ padding: 24, background: '#fff9ed', minHeight: '100%' }}>
+        <BookingWidget provider={provider} />
+      </div>
+    );
+  }
+
   return (
     <DamPickerContent
+      simulatorType={mode}
       onSelect={(asset) => dialogSdk.close(asset)}
       onClose={handleClose}
     />

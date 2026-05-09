@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { SEED_ASSETS, SEED_PRODUCTS } from '@/lib/integration-adapters/seed-data';
 import { getSettings } from '@/services/contentful/settings';
 
 /**
@@ -26,7 +25,7 @@ export async function GET(request: NextRequest) {
   const settings = await getSettings();
 
   if (type === 'products') {
-    const catalog = settings?.productCatalog ?? SEED_PRODUCTS;
+    const catalog = settings?.productCatalog ?? [];
     const results = q
       ? catalog.filter(
           (p) =>
@@ -40,7 +39,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (type === 'assets') {
-    const catalog = settings?.assetCatalog ?? SEED_ASSETS;
+    const catalog = settings?.assetCatalog ?? [];
     const results = q
       ? catalog.filter(
           (a) =>
@@ -54,8 +53,22 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(results, { headers: corsHeaders });
   }
 
+  if (type === 'bookings') {
+    const catalog = (settings?.bookingCatalog ?? []) as Array<Record<string, unknown>>;
+    const results = q
+      ? catalog.filter(
+          (b) =>
+            String(b.name ?? '').toLowerCase().includes(q) ||
+            String(b.provider ?? '').toLowerCase().includes(q) ||
+            String(b.type ?? '').toLowerCase().includes(q) ||
+            (Array.isArray(b.tags) && b.tags.some((t) => String(t).toLowerCase().includes(q))),
+        )
+      : catalog;
+    return NextResponse.json(results, { headers: corsHeaders });
+  }
+
   return NextResponse.json(
-    { error: 'type must be "products" or "assets"' },
+    { error: 'type must be "products", "assets", or "bookings"' },
     { status: 400, headers: corsHeaders },
   );
 }

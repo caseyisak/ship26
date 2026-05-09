@@ -15,6 +15,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { contentfulCatalogAdapter } from '@/lib/integration-adapters/contentful-catalog';
 import type { AssetRecord } from '@/lib/integration-adapters/types';
 
+import { BRAND_CONFIG } from './connector-types';
+import type { SimulatorType } from './connector-types';
 import { useFakeFetch } from './shared/use-fake-fetch';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -114,6 +116,7 @@ function AssetCard({
             src={asset.thumbnailUrl}
             alt={asset.title}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
           />
         ) : (
           <FileTypeIcon fileType={asset.fileType} />
@@ -255,11 +258,16 @@ function MetadataPanel({ asset }: { asset: AssetRecord }) {
 // ── Full-page picker content (rendered in Contentful dialog) ──────────────────
 
 export interface DamPickerContentProps {
+  simulatorType?: SimulatorType;
   onSelect: (asset: AssetRecord) => void;
   onClose: () => void;
 }
 
-export function DamPickerContent({ onSelect, onClose }: DamPickerContentProps) {
+export function DamPickerContent({ simulatorType, onSelect, onClose }: DamPickerContentProps) {
+  const headerBg = simulatorType ? BRAND_CONFIG[simulatorType].color : DAM_HEADER;
+  const headerLabel = simulatorType
+    ? `${BRAND_CONFIG[simulatorType].label} — Media Library`
+    : 'Media Library';
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [activeFolder, setActiveFolder] = useState('All');
@@ -308,10 +316,10 @@ export function DamPickerContent({ onSelect, onClose }: DamPickerContentProps) {
 
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      {/* DAM-branded header */}
+      {/* Vendor-branded header */}
       <Box
         style={{
-          background: DAM_HEADER,
+          background: headerBg,
           padding: '14px 20px',
           display: 'flex',
           alignItems: 'center',
@@ -319,7 +327,7 @@ export function DamPickerContent({ onSelect, onClose }: DamPickerContentProps) {
           flexShrink: 0,
         }}
       >
-        {/* MediaVault icon (SVG) */}
+        {/* Generic media library icon */}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
           <path d="M4 6h16v2H4zm2-4h12v2H6zm14 8H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-8 9l-5-3 5-3 5 3-5 3z" />
         </svg>
@@ -327,12 +335,12 @@ export function DamPickerContent({ onSelect, onClose }: DamPickerContentProps) {
           fontWeight="fontWeightDemiBold"
           style={{ color: '#fff', fontSize: 15, letterSpacing: '0.03em' }}
         >
-          MediaVault DAM
+          {headerLabel}
         </Text>
       </Box>
 
       {/* Search */}
-      <Box style={{ padding: '12px 20px', background: DAM_HEADER, flexShrink: 0 }}>
+      <Box style={{ padding: '12px 20px', background: headerBg, flexShrink: 0 }}>
         <TextInput
           value={search}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
@@ -346,7 +354,7 @@ export function DamPickerContent({ onSelect, onClose }: DamPickerContentProps) {
       {!isLoading && folders.length > 1 && (
         <Box
           style={{
-            background: DAM_HEADER_DARK,
+            background: headerBg,
             padding: '8px 20px',
             display: 'flex',
             gap: 4,
