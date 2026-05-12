@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integration Simulator — UI Preview</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: #fff;
+    color: #2A3039;
+    padding: 48px 24px;
+  }
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .view-heading {
+    font-size: 13px;
+    font-weight: 700;
+    color: #6B7280;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid #E5EAEF;
+    margin: 48px 0;
+  }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+  .badge-secondary { background: #EEF0F2; color: #404852; }
+  .badge-positive  { background: #D3EDDA; color: #1A7035; }
+  .badge-primary   { background: #0059C8; color: #fff; }
+  .badge-type      { background: #E5EAEF; color: #404852; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    line-height: 1.4;
+  }
+  .btn-primary   { background: #0059C8; color: #fff; border: none; }
+  .btn-secondary { background: #fff; color: #2A3039; border: 1px solid #CFD9E0; }
+  .btn-danger    { background: transparent; color: #C13B36; border: none; }
+
+  /* ── METADATA GRID ── */
+  .meta-grid {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 10px;
+    row-gap: 5px;
+    align-items: center;
+  }
+  .meta-label {
+    font-size: 10px;
+    color: #8F9BB3;
+    font-weight: 500;
+  }
+  .meta-value {
+    font-size: 11px;
+    color: #2A3039;
+  }
+
+  /* ══════════════════════════════════════════════
+     VIEW 1 — SINGLE PRODUCT (SHOPIFY) — FILLED
+  ══════════════════════════════════════════════ */
+  .product-card {
+    border: 1px solid #CFD9E0;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    height: 380px;
+  }
+  .product-card__image {
+    width: 250px;
+    flex-shrink: 0;
+    background: #F7F9FA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .product-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+  }
+  .product-card__details {
+    flex: 1;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .brand-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    width: fit-content;
+  }
+  .brand-pill-shopify { background: #96BF48; }
+  .brand-pill-bynder  { background: #00A1E4; }
+
+  .product-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1A202C;
+    line-height: 1.3;
+  }
+  .price-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .price-current { font-size: 12px; font-weight: 700; color: #2A3039; }
+  .price-original { font-size: 11px; color: #8F9BB3; text-decoration: line-through; }
+
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .card-footer {
+    border-top: 1px solid #E5EAEF;
+    padding-top: 10px;
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* ══════════════════════════════════════════════
+     VIEW 2 — MULTI PRODUCT PICKER (SHOPIFY)
+  ══════════════════════════════════════════════ */
+  .picker-dialog {
+    border: 1px solid #CFD9E0;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+  }
+  .picker-header {
+    display: flex;
+    flex-direction: column;
+  }
+  .picker-topbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+  }
+  .picker-topbar-shopify { background: #96BF48; }
+  .picker-topbar-bynder  { background: #00A1E4; }
+  .picker-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .picker-search {
+    padding: 8px 16px;
+  }
+  .picker-search-shopify { background: #96BF48; }
+  .picker-search-bynder  { background: #00A1E4; }
+  .picker-search input {
+    width: 100%;
+    border: none;
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: 12px;
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    outline: none;
+  }
+  .picker-search input::placeholder { color: rgba(255,255,255,0.75); }
+  .picker-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 6px 16px;
+    align-items: center;
+  }
+  .picker-tabs-shopify { background: #96BF48; }
+  .picker-tabs-bynder  { background: #00A1E4; }
+  .picker-tab {
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  .picker-tab.active {
+    background: rgba(255,255,255,0.25);
+    border-color: rgba(255,255,255,0.6);
+    color: #fff;
+    font-weight: 700;
+  }
+  .picker-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  .picker-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .picker-count-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid #E5EAEF;
+  }
+  .picker-count-text {
+    font-size: 11px;
+    color: #8F9BB3;
+  }
+  .picker-orderby {
+    font-size: 11px;
+    color: #2A3039;
+    border: 1px solid #CFD9E0;
+    border-radius: 4px;
+    padding: 3px 8px;
+    background: #fff;
+    width: 180px;
+  }
+  .picker-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    padding: 12px 16px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .picker-grid-dam {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .product-thumb {
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .product-thumb.selected {
+    border: 2px solid #0090FF;
+    background: #E8F4FF;
+  }
+  .product-thumb.unselected {
+    border: 1px solid #CFD9E0;
+    background: #fff;
+  }
+  .product-thumb__img-wrap {
+    position: relative;
+    aspect-ratio: 4/3;
+    background: #F7F9FA;
+    overflow: hidden;
+  }
+  .product-thumb__img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .checkmark-overlay {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #0090FF;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .type-badge-overlay {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 3px;
+  }
+  .product-thumb__info {
+    padding: 6px 7px 7px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .thumb-name {
+    font-size: 10px;
+    font-weight: 700;
+    color: #2A3039;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .thumb-meta {
+    font-size: 9px;
+    color: #8F9BB3;
+  }
+  .picker-right {
+    width: 30%;
+    border-left: 1px solid #CFD9E0;
+    background: #F7F9FA;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .picker-right__img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .picker-right__body {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .picker-right__name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1A202C;
+    line-height: 1.3;
+  }
+  .picker-right__divider {
+    border: none;
+    border-top: 1px solid #E5EAEF;
+  }
+  .picker-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-top: 1px solid #CFD9E0;
+    background: #fff;
+    flex-shrink: 0;
+  }
+  .picker-footer-left {
+    font-size: 11px;
+    color: #6B7280;
+    max-width: 55%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .picker-footer-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .btn-add-products {
+    background: #0090FF;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* ══════════════════════════════════════════════
+     VIEW 3 — SINGLE ASSET (BYNDER) — FILLED
+  ══════════════════════════════════════════════ */
+  .asset-card {
+    border: 1px solid #CFD9E0;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    height: 300px;
+  }
+  .asset-card__image {
+    width: 160px;
+    flex-shrink: 0;
+    background: #F0F4F8;
+    overflow: hidden;
+  }
+  .asset-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .asset-card__details {
+    flex: 1;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .asset-filename {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1A202C;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ══════════════════════════════════════════════
+     ICONS (inline SVG helpers)
+  ══════════════════════════════════════════════ */
+  .icon-storefront {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+  .icon-media {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════════════════════
+     FILE PLACEHOLDER (View 4 PDF asset)
+  ══════════════════════════════════════════════ */
+  .file-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #F0F4F8;
+    gap: 6px;
+  }
+  .file-placeholder span {
+    font-size: 10px;
+    font-weight: 700;
+    color: #8F9BB3;
+  }
+
+  /* ══════════════════════════════════════════════
+     VIEW 2 — CATEGORY CARDS
+  ══════════════════════════════════════════════ */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 12px 16px;
+  }
+  .category-card {
+    border: 1px solid #CFD9E0;
+    border-radius: 8px;
+    background: #fff;
+    padding: 12px;
+    cursor: pointer;
+    position: relative;
+  }
+  .category-card.selected {
+    border: 2px solid #0090FF;
+    background: #E8F4FF;
+    padding: 11px; /* compensate for 2px border */
+  }
+  .category-card__check {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #0090FF;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .category-card__name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2A3039;
+  }
+  .category-card__count {
+    font-size: 11px;
+    color: #68778D;
+    margin-top: 2px;
+  }
+  .category-card__thumbs {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .category-card__thumbs img {
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  /* ── BREADCRUMB BAR ── */
+  .breadcrumb-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #F7F9FA;
+    padding: 8px 16px;
+    border-top: 1px solid #E5EAEF;
+    border-bottom: 1px solid #E5EAEF;
+    font-size: 12px;
+  }
+  .breadcrumb-back {
+    color: #6B7280;
+    font-size: 12px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-weight: 500;
+  }
+  .breadcrumb-path {
+    color: #404852;
+  }
+  .breadcrumb-count {
+    color: #8F9BB3;
+  }
+
+  /* ── READ-ONLY PREVIEW GRID ── */
+  .preview-grid {
+    display: grid;
+    gap: 8px;
+    padding: 12px 16px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .preview-grid-5col { grid-template-columns: repeat(5, 1fr); }
+  .preview-grid-3col { grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 12px; }
+  .preview-card {
+    border: 1px solid #CFD9E0;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .preview-card__img-wrap {
+    position: relative;
+    aspect-ratio: 4/3;
+    background: #F7F9FA;
+    overflow: hidden;
+  }
+  .preview-card__img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .preview-card__info {
+    padding: 6px 7px 7px;
+  }
+  .preview-card__name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #2A3039;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .preview-card__meta {
+    font-size: 10px;
+    color: #8F9BB3;
+    margin-top: 2px;
+  }
+
+  /* ══════════════════════════════════════════════
+     VIEW 4 — COLLECTION BROWSER
+  ══════════════════════════════════════════════ */
+  .browser-columns {
+    display: flex;
+    gap: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+  .browser-left {
+    width: 240px;
+    flex-shrink: 0;
+    border-right: 1px solid #E5EAEF;
+    padding: 12px;
+    overflow-y: auto;
+  }
+  .browser-right {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+  }
+  .browser-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #68778D;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .folder-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .folder-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+  }
+  .folder-row:hover {
+    background: #F7F9FA;
+  }
+  .folder-row.selected {
+    background: #E8F4FF;
+  }
+  .folder-row__check {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #0090FF;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .folder-row__name {
+    font-size: 12px;
+    color: #2A3039;
+  }
+  .folder-row__count {
+    font-size: 11px;
+    color: #68778D;
+  }
+  .folder-row__thumb {
+    width: 28px;
+    height: 28px;
+    border-radius: 3px;
+    object-fit: cover;
+    margin-left: auto;
+  }
+  .tag-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag-chip {
+    background: #EEF0F2;
+    color: #404852;
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+  }
+  .tag-chip.selected {
+    background: #0059C8;
+    color: #fff;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══════════════════════════════════════════════
+       VIEW 1 — Single Product Field (Shopify) — Filled
+  ══════════════════════════════════════════════ -->
+  <p class="view-heading">View 1 — Single Product (Shopify) — Field Editor · Filled State</p>
+
+  <div class="product-card">
+    <!-- LEFT: product image -->
+    <div class="product-card__image">
+      <img
+        src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&q=80"
+        alt="Ergo Pro Mechanical Keyboard"
+        loading="eager"
+      />
+    </div>
+
+    <!-- RIGHT: details -->
+    <div class="product-card__details">
+      <!-- Brand pill -->
+      <div class="brand-pill brand-pill-shopify">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14.5 3.5C14.5 3.5 14.2 2 12.5 2C11.8 2 11 2.3 10.5 3C10.1 2.3 9.3 2 8.5 2C7.5 2 6.5 2.7 6.5 3.5C5.5 3.8 4.5 4.5 4 5.5L5 18H15L16 5.5C15.5 4.5 15 3.8 14.5 3.5Z" fill="white"/>
+        </svg>
+        Shopify
+      </div>
+
+      <!-- Product name -->
+      <div class="product-name">Ergo Pro Mechanical Keyboard</div>
+
+      <!-- Metadata grid -->
+      <div class="meta-grid">
+        <span class="meta-label">SKU</span>
+        <span class="meta-value" style="font-family:ui-monospace,monospace;font-size:11px;">MF-ERG-001</span>
+
+        <span class="meta-label">Price</span>
+        <span class="price-row" style="align-items:center;gap:6px;">
+          <span class="price-current">$189.00</span>
+          <span class="price-original">$229.00</span>
+        </span>
+
+        <span class="meta-label">Stock</span>
+        <span><span class="badge badge-positive">In Stock</span></span>
+
+        <span class="meta-label">Category</span>
+        <span class="meta-value">Keyboards</span>
+      </div>
+
+      <!-- Tags -->
+      <div class="tags-row">
+        <span class="badge badge-secondary">wireless</span>
+        <span class="badge badge-secondary">ergonomic</span>
+        <span class="badge badge-secondary">mechanical</span>
+        <span class="badge badge-secondary">rgb</span>
+      </div>
+
+      <!-- Spacer -->
+      <div style="flex:1;"></div>
+
+      <!-- Footer -->
+      <div class="card-footer">
+        <button class="btn btn-secondary">Change Product</button>
+        <button class="btn btn-danger">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ══════════════════════════════════════════════
+       VIEW 2 — Multi Product Picker (Shopify) — Category Picker State
+  ══════════════════════════════════════════════ -->
+  <p class="view-heading">View 2 — Multi Product Picker (Shopify) — Category Picker · Keyboards + Audio Selected</p>
+
+  <div class="picker-dialog" style="height:auto;">
+
+    <!-- HEADER: topbar + search (NO tabs in category picker) -->
+    <div class="picker-header">
+      <div class="picker-topbar picker-topbar-shopify">
+        <svg class="icon-storefront" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 9L12 3L21 9V20C21 20.55 20.55 21 20 21H4C3.45 21 3 20.55 3 20V9Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M9 21V12H15V21" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="12" cy="9" r="2" fill="white"/>
+        </svg>
+        <span class="picker-title">Shopify — Product Catalog</span>
+      </div>
+      <div class="picker-search picker-search-shopify">
+        <input type="text" placeholder="Search categories…" />
+      </div>
+    </div>
+
+    <!-- BODY: category cards grid -->
+    <div class="category-grid">
+
+      <!-- Keyboards — SELECTED -->
+      <div class="category-card selected">
+        <div class="category-card__check">✓</div>
+        <div class="category-card__name">Keyboards</div>
+        <div class="category-card__count">1 product</div>
+        <div class="category-card__thumbs">
+          <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=120&q=80" alt="Keyboard thumb" />
+        </div>
+      </div>
+
+      <!-- Monitors -->
+      <div class="category-card">
+        <div class="category-card__name">Monitors</div>
+        <div class="category-card__count">1 product</div>
+        <div class="category-card__thumbs">
+          <img src="https://images.unsplash.com/photo-1547119957-637f8679db1e?w=120&q=80" alt="Monitor thumb" />
+        </div>
+      </div>
+
+      <!-- Audio — SELECTED -->
+      <div class="category-card selected">
+        <div class="category-card__check">✓</div>
+        <div class="category-card__name">Audio</div>
+        <div class="category-card__count">1 product</div>
+        <div class="category-card__thumbs">
+          <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=120&q=80" alt="Audio thumb" />
+        </div>
+      </div>
+
+      <!-- Accessories -->
+      <div class="category-card">
+        <div class="category-card__name">Accessories</div>
+        <div class="category-card__count">1 product</div>
+        <div class="category-card__thumbs">
+          <img src="https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=120&q=80" alt="Accessories thumb" />
+        </div>
+      </div>
+
+      <!-- Cameras -->
+      <div class="category-card">
+        <div class="category-card__name">Cameras</div>
+        <div class="category-card__count">1 product</div>
+        <div class="category-card__thumbs">
+          <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=120&q=80" alt="Cameras thumb" />
+        </div>
+      </div>
+
+    </div><!-- /category-grid -->
+
+    <!-- BREADCRUMB (Keyboards + Audio selected) -->
+    <div class="breadcrumb-bar">
+      <button class="breadcrumb-back">&larr; Back</button>
+      <span class="breadcrumb-path">Keyboards, Audio</span>
+      <span class="breadcrumb-count">&middot; 2 categories &middot; 2 products</span>
+    </div>
+
+    <!-- READ-ONLY PREVIEW (combined products from Keyboards + Audio) -->
+    <div class="preview-grid preview-grid-5col">
+      <div class="preview-card">
+        <div class="preview-card__img-wrap">
+          <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&q=80" alt="Ergo Pro Mechanical Keyboard" />
+        </div>
+        <div class="preview-card__info">
+          <div class="preview-card__name">Ergo Pro Mechanical Keyboard</div>
+          <div class="preview-card__meta">$189.00</div>
+        </div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-card__img-wrap">
+          <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80" alt="ANC Headset Pro" />
+        </div>
+        <div class="preview-card__info">
+          <div class="preview-card__name">ANC Headset Pro</div>
+          <div class="preview-card__meta">$349.00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="picker-footer">
+      <span class="picker-footer-left" style="font-size:12px;color:#6B7280;">
+        2 categories &middot; 2 products
+      </span>
+      <div class="picker-footer-right">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-primary">Add 2 Products</button>
+      </div>
+    </div>
+
+  </div><!-- /picker-dialog view 2 -->
+
+  <hr class="divider" />
+
+  <!-- ══════════════════════════════════════════════
+       VIEW 3 — Single Asset Field (Bynder) — Filled
+  ══════════════════════════════════════════════ -->
+  <p class="view-heading">View 3 — Single Asset (Bynder) — Field Editor · Filled State</p>
+
+  <div class="asset-card">
+    <!-- LEFT: asset thumbnail -->
+    <div class="asset-card__image">
+      <img
+        src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=320&q=80"
+        alt="hero-banner-q1-2025.png"
+      />
+    </div>
+
+    <!-- RIGHT: metadata -->
+    <div class="asset-card__details">
+      <!-- Brand pill -->
+      <div class="brand-pill brand-pill-bynder">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="7" height="7" rx="1.5" fill="white"/>
+          <rect x="11" y="2" width="7" height="7" rx="1.5" fill="white"/>
+          <rect x="2" y="11" width="7" height="7" rx="1.5" fill="white"/>
+          <rect x="11" y="11" width="7" height="7" rx="1.5" fill="white"/>
+        </svg>
+        Bynder
+      </div>
+
+      <!-- Filename -->
+      <div class="asset-filename">hero-banner-q1-2025.png</div>
+
+      <!-- Metadata grid -->
+      <div class="meta-grid">
+        <span class="meta-label">Type</span>
+        <span><span class="badge badge-positive">PNG</span></span>
+
+        <span class="meta-label">Size</span>
+        <span class="meta-value">2.4 MB</span>
+
+        <span class="meta-label">Dimensions</span>
+        <span class="meta-value">2400×1350</span>
+
+        <span class="meta-label">Folder</span>
+        <span class="meta-value">Marketing/Campaigns</span>
+
+        <span class="meta-label">Uploaded</span>
+        <span class="meta-value">2025-01-15</span>
+      </div>
+
+      <!-- Tags -->
+      <div class="tags-row">
+        <span class="badge badge-primary">hero</span>
+        <span class="badge badge-primary">brand</span>
+        <span class="badge badge-primary">homepage</span>
+        <span class="badge badge-primary">q1</span>
+      </div>
+
+      <!-- Spacer -->
+      <div style="flex:1;"></div>
+
+      <!-- Footer -->
+      <div class="card-footer">
+        <button class="btn btn-secondary">Change Asset</button>
+        <button class="btn btn-danger">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ══════════════════════════════════════════════
+       VIEW 4 — Multi Asset Picker (Bynder) — Collection Browser
+  ══════════════════════════════════════════════ -->
+  <p class="view-heading">View 4 — Multi Asset Picker (Bynder) — Collection Browser · Marketing + q1 + campaign Selected</p>
+
+  <div class="picker-dialog" style="height:auto;">
+
+    <!-- HEADER: topbar + search (NO folder tabs) -->
+    <div class="picker-header">
+      <div class="picker-topbar picker-topbar-bynder">
+        <svg class="icon-media" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="2"/>
+          <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="white" stroke-width="2"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="2"/>
+          <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="white" stroke-width="2"/>
+        </svg>
+        <span class="picker-title">Bynder — Media Library</span>
+      </div>
+      <div class="picker-search picker-search-bynder">
+        <input type="text" placeholder="Search assets…" />
+      </div>
+    </div>
+
+    <!-- BODY: two-column browser (folders + tags) -->
+    <div class="browser-columns">
+
+      <!-- LEFT: Folders -->
+      <div class="browser-left">
+        <div class="browser-section-label">FOLDERS</div>
+        <div class="folder-list">
+
+          <div class="folder-row">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6C2 4.9 2.9 4 4 4H9L11 6H20C21.1 6 22 6.9 22 8V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6Z" fill="#68778D"/></svg>
+            <span class="folder-row__name">Brand</span>
+            <span class="folder-row__count">(1)</span>
+            <img class="folder-row__thumb" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=80&q=80" alt="Brand" />
+          </div>
+
+          <div class="folder-row">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6C2 4.9 2.9 4 4 4H9L11 6H20C21.1 6 22 6.9 22 8V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6Z" fill="#68778D"/></svg>
+            <span class="folder-row__name">Events</span>
+            <span class="folder-row__count">(1)</span>
+            <img class="folder-row__thumb" src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&q=80" alt="Events" />
+          </div>
+
+          <!-- Marketing — SELECTED -->
+          <div class="folder-row selected">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6C2 4.9 2.9 4 4 4H9L11 6H20C21.1 6 22 6.9 22 8V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6Z" fill="#68778D"/></svg>
+            <span class="folder-row__name">Marketing</span>
+            <span class="folder-row__count">(1)</span>
+            <span class="folder-row__check">✓</span>
+            <img class="folder-row__thumb" src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=80&q=80" alt="Marketing" />
+          </div>
+
+          <div class="folder-row">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6C2 4.9 2.9 4 4 4H9L11 6H20C21.1 6 22 6.9 22 8V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6Z" fill="#68778D"/></svg>
+            <span class="folder-row__name">Product</span>
+            <span class="folder-row__count">(1)</span>
+            <img class="folder-row__thumb" src="https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=80&q=80" alt="Product" />
+          </div>
+
+          <div class="folder-row">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6C2 4.9 2.9 4 4 4H9L11 6H20C21.1 6 22 6.9 22 8V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6Z" fill="#68778D"/></svg>
+            <span class="folder-row__name">Sales</span>
+            <span class="folder-row__count">(1)</span>
+            <img class="folder-row__thumb" src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=80&q=80" alt="Sales" />
+          </div>
+
+          <div class="folder-row">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6C2 4.9 2.9 4 4 4H9L11 6H20C21.1 6 22 6.9 22 8V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6Z" fill="#68778D"/></svg>
+            <span class="folder-row__name">Social</span>
+            <span class="folder-row__count">(1)</span>
+            <img class="folder-row__thumb" src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=80&q=80" alt="Social" />
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: Tags -->
+      <div class="browser-right">
+        <div class="browser-section-label">TAGS</div>
+        <div class="tag-chips">
+          <span class="tag-chip">hero(1)</span>
+          <span class="tag-chip">brand(2)</span>
+          <span class="tag-chip">homepage(1)</span>
+          <span class="tag-chip selected">q1(2)</span>
+          <span class="tag-chip">logo(1)</span>
+          <span class="tag-chip">horizontal(1)</span>
+          <span class="tag-chip">webinar(1)</span>
+          <span class="tag-chip">events(1)</span>
+          <span class="tag-chip">thumbnail(1)</span>
+          <span class="tag-chip">product(2)</span>
+          <span class="tag-chip">photography(1)</span>
+          <span class="tag-chip">lifestyle(1)</span>
+          <span class="tag-chip">social(1)</span>
+          <span class="tag-chip">linkedin(1)</span>
+          <span class="tag-chip selected">campaign(2)</span>
+          <span class="tag-chip">case-study(1)</span>
+          <span class="tag-chip">sales(1)</span>
+          <span class="tag-chip">techforward(1)</span>
+        </div>
+      </div>
+
+    </div><!-- /browser-columns -->
+
+    <!-- BREADCRUMB (Marketing folder + q1 + campaign tags selected) -->
+    <div class="breadcrumb-bar">
+      <button class="breadcrumb-back">&larr; Back</button>
+      <span class="breadcrumb-path">Marketing, q1, campaign</span>
+      <span class="breadcrumb-count">&middot; 3 collections &middot; 4 assets</span>
+    </div>
+
+    <!-- READ-ONLY PREVIEW (combined unique assets from Marketing + q1 + campaign) -->
+    <div class="preview-grid preview-grid-3col">
+
+      <!-- hero-banner-q1-2025.png -->
+      <div class="preview-card">
+        <div class="preview-card__img-wrap">
+          <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=320&q=80" alt="hero-banner-q1-2025.png" />
+          <div class="type-badge-overlay">PNG</div>
+        </div>
+        <div class="preview-card__info">
+          <div class="preview-card__name">hero-banner-q1-2025.png</div>
+          <div class="preview-card__meta">2.4 MB</div>
+        </div>
+      </div>
+
+      <!-- webinar-thumb-apr-2025.png -->
+      <div class="preview-card">
+        <div class="preview-card__img-wrap">
+          <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=320&q=80" alt="webinar-thumb-apr-2025.png" />
+          <div class="type-badge-overlay">PNG</div>
+        </div>
+        <div class="preview-card__info">
+          <div class="preview-card__name">webinar-thumb-apr-2025.png</div>
+          <div class="preview-card__meta">1.1 MB</div>
+        </div>
+      </div>
+
+      <!-- social-linkedin-q1-campaign.png -->
+      <div class="preview-card">
+        <div class="preview-card__img-wrap">
+          <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=320&q=80" alt="social-linkedin-q1-campaign.png" />
+          <div class="type-badge-overlay">PNG</div>
+        </div>
+        <div class="preview-card__info">
+          <div class="preview-card__name">social-linkedin-q1-campaign.png</div>
+          <div class="preview-card__meta">890 KB</div>
+        </div>
+      </div>
+
+      <!-- case-study-tech-forward.pdf (no image — file placeholder) -->
+      <div class="preview-card">
+        <div class="preview-card__img-wrap">
+          <div class="file-placeholder">
+            <svg width="40" height="48" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1" y="1" width="38" height="46" rx="4" fill="#F7F9FA" stroke="#CFD9E0" stroke-width="2"/>
+              <path d="M10 8H24L34 18V40C34 42.2 32.2 44 30 44H10C7.8 44 6 42.2 6 40V12C6 9.8 7.8 8 10 8Z" fill="#fff" stroke="#CFD9E0" stroke-width="1.5"/>
+              <path d="M24 8V18H34" stroke="#CFD9E0" stroke-width="1.5" fill="none"/>
+              <text x="20" y="32" text-anchor="middle" font-size="9" font-weight="700" fill="#C13B36" font-family="ui-monospace, monospace">PDF</text>
+              <line x1="12" y1="36" x2="28" y2="36" stroke="#E5EAEF" stroke-width="1.5"/>
+            </svg>
+            <span>5.2 MB</span>
+          </div>
+          <div class="type-badge-overlay">PDF</div>
+        </div>
+        <div class="preview-card__info">
+          <div class="preview-card__name">case-study-tech-forward.pdf</div>
+          <div class="preview-card__meta">5.2 MB</div>
+        </div>
+      </div>
+
+    </div><!-- /preview-grid -->
+
+    <!-- FOOTER -->
+    <div class="picker-footer">
+      <span class="picker-footer-left" style="font-size:12px;color:#6B7280;">
+        3 collections &middot; 4 assets
+      </span>
+      <div class="picker-footer-right">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-primary">Use 4 Assets</button>
+      </div>
+    </div>
+
+  </div><!-- /picker-dialog view 4 -->
+
+</div><!-- /page -->
+</body>
+</html>

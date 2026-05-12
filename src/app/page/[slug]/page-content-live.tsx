@@ -369,7 +369,7 @@ export function PageContentLive({ page }: Props) {
   // MergeTagsContext is server-fetched; it doesn't update via useLiveUpdates().
   // router.refresh() re-runs the server component and re-fetches the catalog.
   useEffect(() => {
-    const REFRESH_CONTENT_TYPES = new Set(['nt_mergetag', 'settings']);
+    const REFRESH_CONTENT_TYPES = new Set(['nt_mergetag', 'settings', 'dynamicListing']);
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.from !== 'live-preview') return;
       if (event.data?.method !== 'ENTRY_SAVED') return;

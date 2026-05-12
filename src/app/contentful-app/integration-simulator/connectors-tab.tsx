@@ -5,6 +5,7 @@ import {
   Button,
   Flex,
   Note,
+  Select,
   Stack,
   Text,
   Textarea,
@@ -19,9 +20,13 @@ import {
   seedDataHelperText,
 } from './seed-connectors';
 
+const PREDEFINED_CATEGORIES = ['E-Commerce', 'DAM', 'Custom App', 'Booking'];
+
 interface ConnectorsTabProps {
   connectors: ConnectorProfile[];
   onChange: (next: ConnectorProfile[]) => void;
+  customCategories: string[];
+  onCustomCategoriesChange: (next: string[]) => void;
 }
 
 const PICKER_MODE_OPTIONS: Array<{
@@ -54,7 +59,7 @@ function slugify(input: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-export function ConnectorsTab({ connectors, onChange }: ConnectorsTabProps) {
+export function ConnectorsTab({ connectors, onChange, customCategories, onCustomCategoriesChange }: ConnectorsTabProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const handleAdd = () => {
@@ -111,6 +116,9 @@ export function ConnectorsTab({ connectors, onChange }: ConnectorsTabProps) {
             key={c.id}
             connector={c}
             allConnectorIds={connectors.map((x) => x.id)}
+            allConnectors={connectors}
+            customCategories={customCategories}
+            onCustomCategoriesChange={onCustomCategoriesChange}
             isExpanded={expandedId === c.id}
             onToggleExpand={() =>
               setExpandedId(expandedId === c.id ? null : c.id)
@@ -152,6 +160,9 @@ export function ConnectorsTab({ connectors, onChange }: ConnectorsTabProps) {
 interface ConnectorCardProps {
   connector: ConnectorProfile;
   allConnectorIds: string[];
+  allConnectors: ConnectorProfile[];
+  customCategories: string[];
+  onCustomCategoriesChange: (next: string[]) => void;
   isExpanded: boolean;
   onToggleExpand: () => void;
   onUpdate: (patch: Partial<ConnectorProfile>) => void;
@@ -161,6 +172,9 @@ interface ConnectorCardProps {
 function ConnectorCard({
   connector,
   allConnectorIds,
+  allConnectors,
+  customCategories,
+  onCustomCategoriesChange,
   isExpanded,
   onToggleExpand,
   onUpdate,
@@ -236,6 +250,9 @@ function ConnectorCard({
           <ConnectorForm
             connector={connector}
             allConnectorIds={allConnectorIds}
+            allConnectors={allConnectors}
+            customCategories={customCategories}
+            onCustomCategoriesChange={onCustomCategoriesChange}
             onUpdate={onUpdate}
           />
 
@@ -268,17 +285,141 @@ function ConnectorCard({
   );
 }
 
+// ── Category manager (inline in ConnectorForm) ─────────────────────────────
+
+interface CategoryManagerProps {
+  customCategories: string[];
+  onCustomCategoriesChange: (next: string[]) => void;
+  allConnectors: ConnectorProfile[];
+  onUpdate: (patch: Partial<ConnectorProfile>) => void;
+}
+
+function CategoryManager({
+  customCategories,
+  onCustomCategoriesChange,
+  allConnectors,
+  onUpdate,
+}: CategoryManagerProps) {
+  const [newCat, setNewCat] = useState('');
+
+  const handleAdd = () => {
+    const trimmed = newCat.trim();
+    if (
+      !trimmed ||
+      PREDEFINED_CATEGORIES.includes(trimmed) ||
+      customCategories.includes(trimmed)
+    )
+      return;
+    onCustomCategoriesChange([...customCategories, trimmed]);
+    onUpdate({ category: trimmed });
+    setNewCat('');
+  };
+
+  const isCategoryInUse = (cat: string) =>
+    allConnectors.some((c) => c.category === cat);
+
+  return (
+    <Box>
+      <Text
+        fontColor="gray700"
+        style={{ display: 'block', fontSize: 12, marginBottom: 6 }}
+      >
+        Custom categories
+      </Text>
+
+      {/* Add row */}
+      <Flex gap="spacingXs" alignItems="center" style={{ marginBottom: customCategories.length > 0 ? 8 : 0 }}>
+        <TextInput
+          value={newCat}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setNewCat(e.target.value)
+          }
+          onKeyDown={(e: React.KeyboardEvent) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleAdd();
+            }
+          }}
+          placeholder="New category name"
+          size="small"
+          style={{ maxWidth: 200 }}
+        />
+        <Button variant="secondary" size="small" onClick={handleAdd}>
+          Add
+        </Button>
+      </Flex>
+
+      {/* Tag list */}
+      {customCategories.length > 0 && (
+        <Flex gap="spacingXs" style={{ flexWrap: 'wrap' }}>
+          {customCategories.map((cat) => {
+            const inUse = isCategoryInUse(cat);
+            return (
+              <Flex
+                key={cat}
+                alignItems="center"
+                gap="4px"
+                style={{
+                  padding: '2px 8px',
+                  borderRadius: 4,
+                  background: '#E6F0FA',
+                  border: '1px solid #CFD9E0',
+                  fontSize: 12,
+                }}
+              >
+                <Text style={{ fontSize: 12 }}>{cat}</Text>
+                <Box
+                  as="button"
+                  type="button"
+                  onClick={() =>
+                    onCustomCategoriesChange(
+                      customCategories.filter((c) => c !== cat),
+                    )
+                  }
+                  disabled={inUse}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: inUse ? 'not-allowed' : 'pointer',
+                    opacity: inUse ? 0.35 : 0.7,
+                    padding: '0 2px',
+                    fontSize: 14,
+                    lineHeight: 1,
+                  }}
+                  title={
+                    inUse
+                      ? 'Category in use by a connector'
+                      : 'Remove category'
+                  }
+                >
+                  ✕
+                </Box>
+              </Flex>
+            );
+          })}
+        </Flex>
+      )}
+    </Box>
+  );
+}
+
 // ── Form ─────────────────────────────────────────────────────────────────────
 
 interface ConnectorFormProps {
   connector: ConnectorProfile;
   allConnectorIds: string[];
+  allConnectors: ConnectorProfile[];
+  customCategories: string[];
+  onCustomCategoriesChange: (next: string[]) => void;
   onUpdate: (patch: Partial<ConnectorProfile>) => void;
 }
 
 function ConnectorForm({
   connector,
   allConnectorIds,
+  allConnectors,
+  customCategories,
+  onCustomCategoriesChange,
   onUpdate,
 }: ConnectorFormProps) {
   const [seedDraft, setSeedDraft] = useState<string>(() =>
@@ -353,15 +494,39 @@ function ConnectorForm({
           >
             Category
           </Text>
-          <TextInput
+          <Select
             value={connector.category}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               onUpdate({ category: e.target.value })
             }
             size="small"
-          />
+          >
+            {PREDEFINED_CATEGORIES.map((cat) => (
+              <Select.Option key={cat} value={cat}>
+                {cat}
+              </Select.Option>
+            ))}
+            {customCategories.length > 0 && (
+              <Select.Option value="" isDisabled>
+                ── Custom ──
+              </Select.Option>
+            )}
+            {customCategories.map((cat) => (
+              <Select.Option key={cat} value={cat}>
+                {cat}
+              </Select.Option>
+            ))}
+          </Select>
         </Box>
       </Flex>
+
+      {/* Custom categories management */}
+      <CategoryManager
+        customCategories={customCategories}
+        onCustomCategoriesChange={onCustomCategoriesChange}
+        allConnectors={allConnectors}
+        onUpdate={onUpdate}
+      />
 
       {/* Row 2: Brand color + Text color */}
       <Flex gap="spacingS">

@@ -24,6 +24,8 @@ export interface Activation {
   fieldId: string;
   /** Connector id (new canonical reference). */
   connectorId: string;
+  /** Single-item or multi-select collection. Default: 'single'. */
+  mode?: 'single' | 'multi';
 }
 
 interface MappingsTabProps {
@@ -209,7 +211,7 @@ function CtRow({
         </Flex>
       </Flex>
 
-      {/* Field + connector selectors (only when active) */}
+      {/* Field + connector + mode selectors (only when active) */}
       {isActive && activation && (
         <>
           <Flex gap="spacingS" style={{ marginTop: 12 }}>
@@ -253,6 +255,24 @@ function CtRow({
                     {c.label}
                   </Select.Option>
                 ))}
+              </Select>
+            </Box>
+            <Box style={{ flexShrink: 0, width: 120 }}>
+              <Text
+                fontColor="gray700"
+                style={{ display: 'block', fontSize: 12, marginBottom: 4 }}
+              >
+                Mode
+              </Text>
+              <Select
+                value={activation.mode ?? 'single'}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  onUpdate({ mode: e.target.value as 'single' | 'multi' })
+                }
+                size="small"
+              >
+                <Select.Option value="single">Single</Select.Option>
+                <Select.Option value="multi">Multi</Select.Option>
               </Select>
             </Box>
           </Flex>

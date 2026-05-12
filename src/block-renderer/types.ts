@@ -574,12 +574,12 @@ export type ProductDetailPageFragment = BlockData & {
   } | null;
 };
 
-/** DynamicListing block — SKU array drives client-side multi-product fetch. */
+/** DynamicListing block — SKU array or ProductCollection drives client-side multi-product fetch. */
 export type DynamicListingFragment = BlockData & {
   __typename: 'DynamicListing';
   internalName?: string | null;
   titleRt?: { json: Record<string, unknown> } | null;
-  skus?: string[] | null;
+  skus?: string[] | { categories: string[]; items: Record<string, unknown>[] } | null;
   displayVariant?: 'grid' | 'scroll' | null;
 };
 

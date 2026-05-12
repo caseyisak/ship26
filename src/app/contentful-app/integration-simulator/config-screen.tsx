@@ -74,7 +74,7 @@ type ConfigSdk = {
  */
 function migrateMappings(
   raw: ConnectorAppParams['mappings'],
-): Array<{ contentTypeId: string; fieldId: string; connectorId: string }> {
+): Array<{ contentTypeId: string; fieldId: string; connectorId: string; mode?: 'single' | 'multi' }> {
   return raw.map((m) => {
     const explicit = (m as Partial<MappingRow>).connectorId;
     const fromLegacy = SIMULATOR_TYPE_TO_CONNECTOR_ID[m.simulatorType];
@@ -82,6 +82,7 @@ function migrateMappings(
       contentTypeId: m.contentTypeId,
       fieldId: m.fieldId,
       connectorId: explicit ?? fromLegacy ?? '',
+      mode: (m as Partial<MappingRow>).mode,
     };
   });
 }
@@ -94,17 +95,19 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
   const [contentTypes, setContentTypes] = useState<ContentType[]>([]);
   const [connectors, setConnectors] =
     useState<ConnectorProfile[]>(SEED_CONNECTORS);
+  const [customCategories, setCustomCategories] = useState<string[]>([]);
   const [activations, setActivations] = useState<
     Record<string, Activation | null>
   >({});
   const [loading, setLoading] = useState(true);
   const [ready, setReady] = useState(false);
+  const sdkReadyCalled = React.useRef(false);
 
   // Load saved params + all content types in parallel
   useEffect(() => {
     async function init() {
       const [params, ctsResult] = await Promise.all([
-        appSdk.app.getParameters(),
+        appSdk.app?.getParameters?.() ?? null,
         appSdk.space.getContentTypes(),
       ]);
 
@@ -118,6 +121,11 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
         setConnectors(params.connectors);
       }
 
+      // Load custom categories
+      if (params?.customCategories) {
+        setCustomCategories(params.customCategories);
+      }
+
       // Load + migrate mappings
       if (params?.mappings?.length) {
         const migrated = migrateMappings(params.mappings);
@@ -126,6 +134,7 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
           map[m.contentTypeId] = {
             fieldId: m.fieldId,
             connectorId: m.connectorId,
+            mode: m.mode,
           };
         }
         setActivations(map);
@@ -133,7 +142,9 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
 
       setLoading(false);
       setReady(true);
-      appSdk.app.setReady();
+      // Note: appSdk.app.setReady() is called in the onConfigure effect below,
+      // after the handler is registered — avoids race where Save appears before
+      // onConfigure is wired up.
     }
     init();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -141,8 +152,11 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
   // Re-register onConfigure whenever activations OR connectors change so the
   // handler closes over latest state. targetState auto-attaches the 3P App
   // widget to each mapped field on save.
+  // Skip in PAGE context — sdk.app is undefined there (read-only mode).
+  // setReady() is called here (not in init) so Contentful shows the Save button
+  // only after the handler is registered — eliminates the race condition.
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || !appSdk.app) return;
     const cleanup = appSdk.app.onConfigure(() => {
       const mappings = Object.entries(activations)
         .filter((entry): entry is [string, Activation] => entry[1] !== null)
@@ -154,43 +168,43 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
             fieldId: v.fieldId,
             connectorId: v.connectorId,
             simulatorType: legacySimulator,
+            mode: v.mode,
           };
         });
-
-      // Build EditorInterface targetState for auto-appearance attachment.
+      // Build targetState so Contentful re-applies the "3P App Integration"
+      // field appearance on every save. Only include content types that have
+      // an active mapping — touching unrelated CTs causes EditorInterface
+      // conflicts and "Failed to update app configuration".
+      // Note: only { fieldId } is needed per control; the SDK binds the
+      // current app automatically. The old code included widgetNamespace +
+      // widgetId which conflicted with existing EditorInterface entries.
       const EditorInterface: Record<
         string,
-        {
-          controls: Array<{
-            fieldId: string;
-            widgetNamespace?: 'app';
-            widgetId?: string;
-          }>;
-        }
+        { controls: Array<{ fieldId: string }> }
       > = {};
       for (const m of mappings) {
-        const existing = EditorInterface[m.contentTypeId]?.controls ?? [];
-        EditorInterface[m.contentTypeId] = {
-          controls: [
-            ...existing,
-            {
-              fieldId: m.fieldId,
-              widgetNamespace: 'app',
-              widgetId: appSdk.ids.app,
-            },
-          ],
-        };
+        if (!EditorInterface[m.contentTypeId]) {
+          EditorInterface[m.contentTypeId] = { controls: [] };
+        }
+        EditorInterface[m.contentTypeId].controls.push({
+          fieldId: m.fieldId,
+        });
       }
 
       return {
-        parameters: { mappings, connectors },
+        parameters: { mappings, connectors, customCategories },
         ...(Object.keys(EditorInterface).length > 0
           ? { targetState: { EditorInterface } }
           : {}),
       };
     });
+    // Signal ready once, after first onConfigure registration.
+    if (!sdkReadyCalled.current) {
+      sdkReadyCalled.current = true;
+      appSdk.app.setReady();
+    }
     return cleanup;
-  }, [activations, connectors, ready]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activations, connectors, customCategories, ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleCt = (ct: ContentType) => {
     setActivations((prev) => {
@@ -260,6 +274,8 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
                   <ConnectorsTab
                     connectors={connectors}
                     onChange={setConnectors}
+                    customCategories={customCategories}
+                    onCustomCategoriesChange={setCustomCategories}
                   />
                 </Box>
               </Tabs.Panel>

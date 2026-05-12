@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Flex,
+  Select,
   Skeleton,
   Text,
   TextInput,
@@ -16,6 +17,7 @@ import type { ProductRecord } from '@/lib/integration-adapters/types';
 
 import { BRAND_CONFIG } from './config-screen';
 import type { SimulatorType } from './config-screen';
+import type { ProductCollection } from './connector-types';
 import { useFakeFetch } from './shared/use-fake-fetch';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -280,18 +282,19 @@ function ProductDetailPanel({ product }: { product: ProductRecord }) {
 
 export interface EcomPickerContentProps {
   simulatorType: SimulatorType;
-  onSelect: (product: ProductRecord) => void;
+  onSelect: (result: ProductRecord | ProductRecord[] | ProductCollection) => void;
   onClose: () => void;
-  /** Accumulate multiple selections (DynamicListing) */
-  multiSelect?: boolean;
+  /** 'multi' enables category collection picker and returns ProductCollection. */
+  pickerMode?: 'single' | 'multi';
 }
 
 export function EcomPickerContent({
   simulatorType,
   onSelect,
   onClose,
-  multiSelect = false,
+  pickerMode = 'single',
 }: EcomPickerContentProps) {
+  const multiSelect = pickerMode === 'multi';
   const brand = BRAND_CONFIG[simulatorType];
   const headerBg = brand.color;
   const headerLabel = `${brand.label} — Product Catalog`;
@@ -299,7 +302,9 @@ export function EcomPickerContent({
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedSkus, setSelectedSkus] = useState<Set<string>>(new Set());
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [isImporting, setIsImporting] = useState(false);
+  const [sortBy, setSortBy] = useState('featured');
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 400);
@@ -320,11 +325,29 @@ export function EcomPickerContent({
     [products],
   );
 
+  // Categories without 'All' for multi mode card display
+  const displayCategories = useMemo(
+    () => categories.filter((c) => c !== 'All'),
+    [categories],
+  );
+
   const filteredProducts = useMemo(() => {
     if (!products) return [];
-    if (activeCategory === 'All') return products;
-    return products.filter((p) => p.category === activeCategory);
-  }, [products, activeCategory]);
+    const base = activeCategory === 'All' ? products : products.filter((p) => p.category === activeCategory);
+    if (sortBy === 'featured') return base;
+    const sorted = [...base];
+    if (sortBy === 'price-asc') sorted.sort((a, b) => (a.salePrice ?? a.price ?? 0) - (b.salePrice ?? b.price ?? 0));
+    else if (sortBy === 'price-desc') sorted.sort((a, b) => (b.salePrice ?? b.price ?? 0) - (a.salePrice ?? a.price ?? 0));
+    else if (sortBy === 'name-az') sorted.sort((a, b) => a.name.localeCompare(b.name));
+    else if (sortBy === 'in-stock') sorted.sort((a, b) => (b.inStock ? 1 : 0) - (a.inStock ? 1 : 0));
+    return sorted;
+  }, [products, activeCategory, sortBy]);
+
+  // Products from selected categories (multi mode)
+  const multiCategoryProducts = useMemo(() => {
+    if (!products || selectedCategories.size === 0) return [];
+    return products.filter((p) => selectedCategories.has(p.category));
+  }, [products, selectedCategories]);
 
   useEffect(() => {
     setActiveCategory('All');
@@ -343,27 +366,299 @@ export function EcomPickerContent({
     }
   };
 
+  const toggleCategory = (cat: string) => {
+    setSelectedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(cat)) next.delete(cat);
+      else next.add(cat);
+      return next;
+    });
+  };
+
   const selectedProducts = products?.filter((p) => selectedSkus.has(p.sku)) ?? [];
 
   const handleImport = async () => {
-    if (selectedProducts.length === 0) return;
-    setIsImporting(true);
-    await new Promise((r) => setTimeout(r, IMPORT_DELAY_MS));
-    setIsImporting(false);
     if (multiSelect) {
-      selectedProducts.forEach((p) => onSelect(p));
+      if (multiCategoryProducts.length === 0) return;
+      setIsImporting(true);
+      await new Promise((r) => setTimeout(r, IMPORT_DELAY_MS));
+      setIsImporting(false);
+      const collection: ProductCollection = {
+        categories: [...selectedCategories],
+        items: multiCategoryProducts,
+      };
+      onSelect(collection);
+      onClose();
     } else {
+      if (selectedProducts.length === 0) return;
+      setIsImporting(true);
+      await new Promise((r) => setTimeout(r, IMPORT_DELAY_MS));
+      setIsImporting(false);
       onSelect(selectedProducts[0]);
+      onClose();
     }
-    onClose();
   };
 
   const importLabel = isImporting
     ? 'Importing…'
-    : multiSelect && selectedSkus.size > 1
-      ? `Add ${selectedSkus.size} Products`
+    : multiSelect
+      ? multiCategoryProducts.length === 1
+        ? 'Add 1 Product'
+        : `Add ${multiCategoryProducts.length} Products`
       : 'Import Product';
 
+  // ── Multi mode: category cards + preview ──────────────────────────────────
+  if (multiSelect) {
+    return (
+      <Box style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        {/* Vendor-branded header */}
+        <Box
+          style={{
+            background: headerBg,
+            padding: '12px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            flexShrink: 0,
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z" />
+            <polyline points="9 22 9 12 15 12 15 22" fill="white" />
+          </svg>
+          <Text
+            fontWeight="fontWeightDemiBold"
+            style={{ color: '#fff', fontSize: 14, letterSpacing: '0.02em' }}
+          >
+            {headerLabel}
+          </Text>
+        </Box>
+
+        {/* Search bar */}
+        <Box style={{ padding: '10px 16px', background: headerBg, flexShrink: 0 }}>
+          <TextInput
+            value={search}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+            placeholder={`Search ${brand.label}…`}
+            isDisabled={isLoading}
+            style={{ borderRadius: 6 }}
+          />
+        </Box>
+
+        {/* Breadcrumb bar (when categories selected) */}
+        {selectedCategories.size > 0 && (
+          <Box
+            style={{
+              background: '#F7F9FA',
+              padding: '8px 16px',
+              borderTop: '1px solid #E5EAEF',
+              borderBottom: '1px solid #E5EAEF',
+              fontSize: 12,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              flexShrink: 0,
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setSelectedCategories(new Set())}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 12,
+                color: '#0059C8',
+                padding: 0,
+                fontWeight: 600,
+              }}
+            >
+              &larr; Back
+            </button>
+            <Text fontColor="gray600" style={{ fontSize: 12 }}>
+              {[...selectedCategories].join(', ')}
+            </Text>
+            <Text fontColor="gray500" style={{ fontSize: 12 }}>
+              &middot; {multiCategoryProducts.length} product{multiCategoryProducts.length !== 1 ? 's' : ''}
+            </Text>
+          </Box>
+        )}
+
+        {/* Content area */}
+        <Box style={{ flex: 1, overflowY: 'auto' }}>
+          {isLoading ? (
+            <Box style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, padding: '12px 16px' }}>
+              {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+            </Box>
+          ) : selectedCategories.size > 0 ? (
+            /* Read-only preview grid of products from selected categories */
+            <Box style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8, padding: '12px 16px' }}>
+              {multiCategoryProducts.map((product) => (
+                <Box
+                  key={product.sku}
+                  style={{
+                    border: '1px solid #CFD9E0',
+                    borderRadius: 8,
+                    background: '#fff',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: '100%',
+                      aspectRatio: '1/1',
+                      overflow: 'hidden',
+                      background: '#F7F9FA',
+                    }}
+                  >
+                    {product.images[0] ? (
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    ) : (
+                      <Flex alignItems="center" justifyContent="center" style={{ width: '100%', height: '100%' }}>
+                        <Text fontColor="gray400" style={{ fontSize: 10 }}>No image</Text>
+                      </Flex>
+                    )}
+                  </Box>
+                  <Box style={{ padding: '6px 8px' }}>
+                    <Text style={{ display: 'block', fontSize: 11, fontWeight: 600, lineHeight: '1.3' }}>
+                      {product.name}
+                    </Text>
+                    <Text fontColor="gray700" style={{ fontSize: 11 }}>
+                      ${(product.salePrice ?? product.price ?? 0).toFixed(2)}
+                    </Text>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            /* Category cards grid */
+            <Box style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, padding: '12px 16px' }}>
+              {displayCategories.map((cat) => {
+                const catProducts = products?.filter((p) => p.category === cat) ?? [];
+                const isSelected = selectedCategories.has(cat);
+                const thumbs = catProducts.slice(0, 3).map((p) => p.images?.[0]).filter(Boolean);
+                return (
+                  <Box
+                    key={cat}
+                    as="button"
+                    type="button"
+                    onClick={() => toggleCategory(cat)}
+                    style={{
+                      position: 'relative',
+                      border: isSelected ? '2px solid #0090FF' : '1px solid #CFD9E0',
+                      borderRadius: 8,
+                      background: isSelected ? '#E8F4FF' : '#fff',
+                      cursor: 'pointer',
+                      padding: 12,
+                      textAlign: 'left',
+                      transition: 'border-color 0.15s, background 0.15s',
+                    }}
+                  >
+                    {/* Selected checkmark */}
+                    {isSelected && (
+                      <Box
+                        style={{
+                          position: 'absolute',
+                          top: 6,
+                          right: 6,
+                          width: 18,
+                          height: 18,
+                          borderRadius: '50%',
+                          background: '#0090FF',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#fff',
+                          fontSize: 11,
+                          fontWeight: 700,
+                        }}
+                      >
+                        ✓
+                      </Box>
+                    )}
+                    <Text fontWeight="fontWeightDemiBold" style={{ fontSize: 13, display: 'block' }}>
+                      {cat}
+                    </Text>
+                    <Text fontColor="gray600" style={{ fontSize: 11 }}>
+                      {catProducts.length} product{catProducts.length !== 1 ? 's' : ''}
+                    </Text>
+                    {/* Mini thumbnail strip */}
+                    {thumbs.length > 0 && (
+                      <Flex style={{ gap: 4, marginTop: 8 }}>
+                        {thumbs.map((src, i) => (
+                          <Box
+                            key={i}
+                            style={{
+                              width: 44,
+                              height: 44,
+                              borderRadius: 4,
+                              overflow: 'hidden',
+                              flexShrink: 0,
+                              background: '#F7F9FA',
+                            }}
+                          >
+                            <img
+                              src={src}
+                              alt=""
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                            />
+                          </Box>
+                        ))}
+                      </Flex>
+                    )}
+                  </Box>
+                );
+              })}
+            </Box>
+          )}
+          {!isLoading && displayCategories.length === 0 && (
+            <Box style={{ textAlign: 'center', padding: '40px 0' }}>
+              <Text fontColor="gray500">No categories found.</Text>
+            </Box>
+          )}
+        </Box>
+
+        {/* Footer */}
+        <Box
+          style={{
+            borderTop: '1px solid #CFD9E0',
+            padding: '10px 16px',
+            background: '#fff',
+            flexShrink: 0,
+          }}
+        >
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text fontColor="gray600" style={{ fontSize: 12 }}>
+              {selectedCategories.size > 0
+                ? `${selectedCategories.size} categor${selectedCategories.size !== 1 ? 'ies' : 'y'} · ${multiCategoryProducts.length} product${multiCategoryProducts.length !== 1 ? 's' : ''}`
+                : ''}
+            </Text>
+            <Flex gap="spacingS">
+              <Button variant="secondary" onClick={onClose} isDisabled={isImporting}>
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleImport}
+                isDisabled={selectedCategories.size === 0}
+                isLoading={isImporting}
+              >
+                {importLabel}
+              </Button>
+            </Flex>
+          </Flex>
+        </Box>
+      </Box>
+    );
+  }
+
+  // ── Single mode (unchanged) ───────────────────────────────────────────────
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       {/* Vendor-branded header — full width */}
@@ -447,9 +742,11 @@ export function EcomPickerContent({
           {/* Product grid */}
           <Box style={{ flex: 1, overflowY: 'auto', padding: '12px 16px' }}>
             {!isLoading && (
-              <Text fontColor="gray600" style={{ fontSize: 11, marginBottom: 10, display: 'block' }}>
-                {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
-              </Text>
+              <Flex alignItems="center" justifyContent="space-between" style={{ marginBottom: 10 }}>
+                <Text fontColor="gray600" style={{ fontSize: 11 }}>
+                  {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
+                </Text>
+              </Flex>
             )}
             <Box style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
               {isLoading
@@ -501,7 +798,7 @@ export function EcomPickerContent({
                   isDisabled={selectedSkus.size === 0}
                   isLoading={isImporting}
                 >
-                  {importLabel}
+                  {isImporting ? 'Importing…' : 'Import Product'}
                 </Button>
               </Flex>
             </Flex>

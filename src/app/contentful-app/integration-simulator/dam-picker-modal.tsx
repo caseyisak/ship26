@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Flex,
+  Select,
   Skeleton,
   Stack,
   Text,
@@ -17,6 +18,7 @@ import type { AssetRecord } from '@/lib/integration-adapters/types';
 
 import { BRAND_CONFIG } from './connector-types';
 import type { SimulatorType } from './connector-types';
+import type { AssetCollection } from './connector-types';
 import { useFakeFetch } from './shared/use-fake-fetch';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -30,6 +32,18 @@ const IMPORT_DELAY_MS = 1000;
 function deriveFolders(assets: AssetRecord[]): string[] {
   const topLevel = Array.from(new Set(assets.map((a) => a.folder.split('/')[0])));
   return ['All', ...topLevel.sort()];
+}
+
+function deriveTags(assets: AssetRecord[]): Array<{ tag: string; count: number }> {
+  const counts = new Map<string, number>();
+  for (const a of assets) {
+    for (const t of a.tags) {
+      counts.set(t, (counts.get(t) ?? 0) + 1);
+    }
+  }
+  return [...counts.entries()]
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count);
 }
 
 function fileTypeBadge(fileType: string | null | undefined): 'positive' | 'secondary' | 'warning' | 'negative' {
@@ -259,11 +273,14 @@ function MetadataPanel({ asset }: { asset: AssetRecord }) {
 
 export interface DamPickerContentProps {
   simulatorType?: SimulatorType;
-  onSelect: (asset: AssetRecord) => void;
+  onSelect: (result: AssetRecord | AssetRecord[] | AssetCollection) => void;
   onClose: () => void;
+  /** 'multi' enables folder/tag collection picker and returns AssetCollection. */
+  pickerMode?: 'single' | 'multi';
 }
 
-export function DamPickerContent({ simulatorType, onSelect, onClose }: DamPickerContentProps) {
+export function DamPickerContent({ simulatorType, onSelect, onClose, pickerMode = 'single' }: DamPickerContentProps) {
+  const multiSelect = pickerMode === 'multi';
   const headerBg = simulatorType ? BRAND_CONFIG[simulatorType].color : DAM_HEADER;
   const headerLabel = simulatorType
     ? `${BRAND_CONFIG[simulatorType].label} — Media Library`
@@ -272,6 +289,9 @@ export function DamPickerContent({ simulatorType, onSelect, onClose }: DamPicker
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [activeFolder, setActiveFolder] = useState('All');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedFolders, setSelectedFolders] = useState<Set<string>>(new Set());
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
+  const [sortBy, setSortBy] = useState('upload-date');
   const [isImporting, setIsImporting] = useState(false);
 
   useEffect(() => {
@@ -293,27 +313,428 @@ export function DamPickerContent({ simulatorType, onSelect, onClose }: DamPicker
     [assets],
   );
 
+  const displayFolders = useMemo(
+    () => folders.filter((f) => f !== 'All'),
+    [folders],
+  );
+
+  const tags = useMemo(
+    () => (assets ? deriveTags(assets) : []),
+    [assets],
+  );
+
   const filteredAssets = useMemo(() => {
     if (!assets) return [];
-    if (activeFolder === 'All') return assets;
-    return assets.filter((a) => a.folder.startsWith(activeFolder));
-  }, [assets, activeFolder]);
+    const base = activeFolder === 'All' ? assets : assets.filter((a) => a.folder.startsWith(activeFolder));
+    if (sortBy === 'upload-date') return base;
+    const sorted = [...base];
+    if (sortBy === 'filename') sorted.sort((a, b) => a.filename.localeCompare(b.filename));
+    else if (sortBy === 'filetype') sorted.sort((a, b) => (a.fileType ?? '').localeCompare(b.fileType ?? ''));
+    else if (sortBy === 'filesize') sorted.sort((a, b) => (a.fileSize ?? '').localeCompare(b.fileSize ?? ''));
+    return sorted;
+  }, [assets, activeFolder, sortBy]);
+
+  // Deduped assets matching any selected folder or tag (multi mode)
+  const multiCollectionAssets = useMemo(() => {
+    if (!assets) return [];
+    const seen = new Set<string>();
+    const result: AssetRecord[] = [];
+    for (const a of assets) {
+      if (seen.has(a.id)) continue;
+      const matchesFolder = [...selectedFolders].some((f) => a.folder.startsWith(f));
+      const matchesTag = [...selectedTags].some((t) => a.tags.includes(t));
+      if (matchesFolder || matchesTag) {
+        seen.add(a.id);
+        result.push(a);
+      }
+    }
+    return result;
+  }, [assets, selectedFolders, selectedTags]);
+
+  const collectionCount = selectedFolders.size + selectedTags.size;
+
+  const collectionLabel = useMemo(() => {
+    const parts: string[] = [...selectedFolders, ...selectedTags];
+    return parts.join(', ');
+  }, [selectedFolders, selectedTags]);
 
   useEffect(() => {
     setActiveFolder('All');
   }, [debouncedSearch]);
 
-  const selectedAsset = assets?.find((a) => a.id === selectedId) ?? null;
+  // Single mode selection
+  const selectedAsset = !multiSelect ? (assets?.find((a) => a.id === selectedId) ?? null) : null;
 
-  const handleImport = async () => {
-    if (!selectedAsset) return;
-    setIsImporting(true);
-    await new Promise((r) => setTimeout(r, IMPORT_DELAY_MS));
-    setIsImporting(false);
-    onSelect(selectedAsset);
-    onClose();
+  const toggleFolder = (folder: string) => {
+    setSelectedFolders((prev) => {
+      const next = new Set(prev);
+      if (next.has(folder)) next.delete(folder);
+      else next.add(folder);
+      return next;
+    });
   };
 
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) => {
+      const next = new Set(prev);
+      if (next.has(tag)) next.delete(tag);
+      else next.add(tag);
+      return next;
+    });
+  };
+
+  const clearMultiSelection = () => {
+    setSelectedFolders(new Set());
+    setSelectedTags(new Set());
+  };
+
+  const handleImport = async () => {
+    if (multiSelect) {
+      if (multiCollectionAssets.length === 0) return;
+      setIsImporting(true);
+      await new Promise((r) => setTimeout(r, IMPORT_DELAY_MS));
+      setIsImporting(false);
+      const collection: AssetCollection = {
+        collections: [
+          ...[...selectedFolders].map((f) => ({ type: 'folder' as const, key: f })),
+          ...[...selectedTags].map((t) => ({ type: 'tag' as const, key: t })),
+        ],
+        label: collectionLabel,
+        items: multiCollectionAssets,
+      };
+      onSelect(collection);
+      onClose();
+    } else {
+      if (!selectedAsset) return;
+      setIsImporting(true);
+      await new Promise((r) => setTimeout(r, IMPORT_DELAY_MS));
+      setIsImporting(false);
+      onSelect(selectedAsset);
+      onClose();
+    }
+  };
+
+  const multiImportLabel = isImporting
+    ? 'Importing…'
+    : multiCollectionAssets.length === 1
+      ? 'Use 1 Asset'
+      : `Use ${multiCollectionAssets.length} Assets`;
+
+  // ── Multi mode: folder + tag collection picker ────────────────────────────
+  if (multiSelect) {
+    const hasSelection = collectionCount > 0;
+
+    return (
+      <Box style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        {/* Vendor-branded header */}
+        <Box
+          style={{
+            background: headerBg,
+            padding: '14px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            flexShrink: 0,
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <path d="M4 6h16v2H4zm2-4h12v2H6zm14 8H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-8 9l-5-3 5-3 5 3-5 3z" />
+          </svg>
+          <Text
+            fontWeight="fontWeightDemiBold"
+            style={{ color: '#fff', fontSize: 15, letterSpacing: '0.03em' }}
+          >
+            {headerLabel}
+          </Text>
+        </Box>
+
+        {/* Breadcrumb bar (when collections selected) */}
+        {hasSelection && (
+          <Box
+            style={{
+              background: '#F7F9FA',
+              padding: '8px 16px',
+              borderBottom: '1px solid #E5EAEF',
+              fontSize: 12,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              flexShrink: 0,
+            }}
+          >
+            <button
+              type="button"
+              onClick={clearMultiSelection}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 12,
+                color: '#0059C8',
+                padding: 0,
+                fontWeight: 600,
+              }}
+            >
+              &larr; Back
+            </button>
+            <Text fontColor="gray600" style={{ fontSize: 12 }}>
+              {collectionLabel}
+            </Text>
+            <Text fontColor="gray500" style={{ fontSize: 12 }}>
+              &middot; {multiCollectionAssets.length} asset{multiCollectionAssets.length !== 1 ? 's' : ''}
+            </Text>
+          </Box>
+        )}
+
+        {/* Main content area */}
+        <Box style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {isLoading ? (
+            <Box style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, padding: 12 }}>
+              {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+            </Box>
+          ) : hasSelection ? (
+            /* Read-only asset preview grid */
+            <Box style={{ flex: 1, overflowY: 'auto', padding: '12px 16px' }}>
+              <Box style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+                {multiCollectionAssets.map((asset) => {
+                  const isImage = ['PNG', 'JPEG', 'JPG', 'WEBP', 'GIF', 'SVG'].includes(
+                    (asset.fileType ?? '').toUpperCase(),
+                  );
+                  return (
+                    <Box
+                      key={asset.id}
+                      style={{
+                        border: '1px solid #CFD9E0',
+                        borderRadius: 8,
+                        background: '#fff',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <Box
+                        style={{
+                          position: 'relative',
+                          width: '100%',
+                          aspectRatio: '4/3',
+                          overflow: 'hidden',
+                          background: '#F0F4F8',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        {isImage ? (
+                          <img
+                            src={asset.thumbnailUrl}
+                            alt={asset.title}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        ) : (
+                          <FileTypeIcon fileType={asset.fileType} />
+                        )}
+                        <Box style={{ position: 'absolute', top: 6, right: 6 }}>
+                          <Badge variant={fileTypeBadge(asset.fileType)} style={{ fontSize: 9 }}>
+                            {asset.fileType}
+                          </Badge>
+                        </Box>
+                      </Box>
+                      <Box style={{ padding: '6px 8px' }}>
+                        <Text style={{ display: 'block', fontSize: 11, fontWeight: 600, lineHeight: '1.3', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {asset.filename}
+                        </Text>
+                        <Text fontColor="gray500" style={{ fontSize: 10 }}>
+                          {asset.fileSize}
+                        </Text>
+                      </Box>
+                    </Box>
+                  );
+                })}
+              </Box>
+              {multiCollectionAssets.length === 0 && (
+                <Box style={{ textAlign: 'center', padding: '40px 0' }}>
+                  <Text fontColor="gray500">No assets match the selected collections.</Text>
+                </Box>
+              )}
+            </Box>
+          ) : (
+            /* Default view: folders left, tags right */
+            <Box style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+              {/* LEFT column: Folders */}
+              <Box
+                style={{
+                  width: 240,
+                  flexShrink: 0,
+                  borderRight: '1px solid #E5EAEF',
+                  padding: 12,
+                  overflowY: 'auto',
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: '#68778D',
+                    letterSpacing: '0.08em',
+                    marginBottom: 8,
+                    display: 'block',
+                  }}
+                >
+                  FOLDERS
+                </Text>
+                {displayFolders.map((folder) => {
+                  const folderAssets = assets?.filter((a) => a.folder.startsWith(folder)) ?? [];
+                  const isSelected = selectedFolders.has(folder);
+                  const firstThumb = folderAssets.find((a) => a.thumbnailUrl)?.thumbnailUrl;
+                  return (
+                    <Box
+                      key={folder}
+                      as="button"
+                      type="button"
+                      onClick={() => toggleFolder(folder)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        padding: 8,
+                        borderRadius: 6,
+                        cursor: 'pointer',
+                        width: '100%',
+                        textAlign: 'left',
+                        border: 'none',
+                        background: isSelected ? '#E8F4FF' : 'transparent',
+                        transition: 'background 0.1s',
+                      }}
+                    >
+                      {/* Folder icon */}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#94A3B8" style={{ flexShrink: 0 }}>
+                        <path d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-2z" />
+                      </svg>
+                      <Text style={{ fontSize: 12, flex: 1 }}>{folder}</Text>
+                      <Text fontColor="gray500" style={{ fontSize: 11 }}>({folderAssets.length})</Text>
+                      {firstThumb && (
+                        <Box
+                          style={{
+                            width: 28,
+                            height: 28,
+                            borderRadius: 3,
+                            overflow: 'hidden',
+                            flexShrink: 0,
+                            marginLeft: 'auto',
+                          }}
+                        >
+                          <img
+                            src={firstThumb}
+                            alt=""
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        </Box>
+                      )}
+                      {isSelected && (
+                        <Box
+                          style={{
+                            width: 16,
+                            height: 16,
+                            borderRadius: '50%',
+                            background: '#0090FF',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#fff',
+                            fontSize: 10,
+                            fontWeight: 700,
+                            flexShrink: 0,
+                          }}
+                        >
+                          ✓
+                        </Box>
+                      )}
+                    </Box>
+                  );
+                })}
+              </Box>
+
+              {/* RIGHT column: Tags */}
+              <Box style={{ flex: 1, padding: 12, overflowY: 'auto' }}>
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: '#68778D',
+                    letterSpacing: '0.08em',
+                    marginBottom: 8,
+                    display: 'block',
+                  }}
+                >
+                  TAGS
+                </Text>
+                <Flex style={{ flexWrap: 'wrap', gap: 6 }}>
+                  {tags.map(({ tag, count }) => {
+                    const isSelected = selectedTags.has(tag);
+                    return (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => toggleTag(tag)}
+                        style={{
+                          background: isSelected ? '#0059C8' : '#EEF0F2',
+                          color: isSelected ? '#fff' : '#404852',
+                          borderRadius: 12,
+                          padding: '4px 10px',
+                          fontSize: 12,
+                          cursor: 'pointer',
+                          border: 'none',
+                          transition: 'background 0.1s, color 0.1s',
+                        }}
+                      >
+                        {tag} ({count})
+                      </button>
+                    );
+                  })}
+                </Flex>
+                {tags.length === 0 && (
+                  <Text fontColor="gray500" style={{ fontSize: 12 }}>No tags found.</Text>
+                )}
+              </Box>
+            </Box>
+          )}
+        </Box>
+
+        {/* Footer */}
+        <Box
+          style={{
+            borderTop: '1px solid #CFD9E0',
+            padding: '12px 20px',
+            background: '#fff',
+            flexShrink: 0,
+          }}
+        >
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text fontColor="gray600" style={{ fontSize: 12 }}>
+              {collectionCount > 0
+                ? `${collectionCount} collection${collectionCount !== 1 ? 's' : ''} · ${multiCollectionAssets.length} asset${multiCollectionAssets.length !== 1 ? 's' : ''}`
+                : ''}
+            </Text>
+            <Flex gap="spacingS">
+              <Button variant="secondary" onClick={onClose} isDisabled={isImporting}>
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleImport}
+                isDisabled={collectionCount === 0}
+                isLoading={isImporting}
+              >
+                {multiImportLabel}
+              </Button>
+            </Flex>
+          </Flex>
+        </Box>
+      </Box>
+    );
+  }
+
+  // ── Single mode (unchanged) ───────────────────────────────────────────────
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       {/* Vendor-branded header */}
@@ -327,7 +748,6 @@ export function DamPickerContent({ simulatorType, onSelect, onClose }: DamPicker
           flexShrink: 0,
         }}
       >
-        {/* Generic media library icon */}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
           <path d="M4 6h16v2H4zm2-4h12v2H6zm14 8H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-8 9l-5-3 5-3 5 3-5 3z" />
         </svg>
@@ -392,9 +812,11 @@ export function DamPickerContent({ simulatorType, onSelect, onClose }: DamPicker
         {/* Asset grid */}
         <Box style={{ flex: 1, padding: '16px 20px', overflowY: 'auto' }}>
           {!isLoading && (
-            <Text fontColor="gray600" style={{ fontSize: 12, marginBottom: 12, display: 'block' }}>
-              {filteredAssets.length} asset{filteredAssets.length !== 1 ? 's' : ''}
-            </Text>
+            <Flex alignItems="center" justifyContent="space-between" style={{ marginBottom: 12 }}>
+              <Text fontColor="gray600" style={{ fontSize: 12 }}>
+                {filteredAssets.length} asset{filteredAssets.length !== 1 ? 's' : ''}
+              </Text>
+            </Flex>
           )}
           <Box style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
             {isLoading
@@ -404,7 +826,7 @@ export function DamPickerContent({ simulatorType, onSelect, onClose }: DamPicker
                     key={asset.id}
                     asset={asset}
                     isSelected={selectedId === asset.id}
-                    onClick={() => setSelectedId(selectedId === asset.id ? null : asset.id)}
+                    onClick={() => setSelectedId((prev) => (prev === asset.id ? null : asset.id))}
                   />
                 ))}
           </Box>
@@ -415,7 +837,7 @@ export function DamPickerContent({ simulatorType, onSelect, onClose }: DamPicker
           )}
         </Box>
 
-        {/* Metadata side panel */}
+        {/* Metadata side panel — single mode only */}
         {selectedAsset && <MetadataPanel asset={selectedAsset} />}
       </Box>
 

@@ -11,6 +11,7 @@ import type {
 
 import type { AppParams, MappingRow, SimulatorType } from './config-screen';
 import { BRAND_CONFIG, isBookingType, isEcomType } from './config-screen';
+import type { AssetCollection, ProductCollection } from './connector-types';
 
 // ── SDK type ──────────────────────────────────────────────────────────────────
 
@@ -36,21 +37,20 @@ type FieldSdk = {
       shouldCloseOnOverlayClick?: boolean;
       shouldCloseOnEscapePress?: boolean;
       allowHeightOverflow?: boolean;
-    }) => Promise<ProductRecord | AssetRecord | null>;
+    }) => Promise<ProductRecord | AssetRecord | ProductRecord[] | AssetRecord[] | ProductCollection | AssetCollection | null>;
   };
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function getSimulatorType(sdk: FieldSdk): SimulatorType | null {
+function getMapping(sdk: FieldSdk): Omit<MappingRow, '_id'> | null {
   const mappings: Omit<MappingRow, '_id'>[] =
     sdk.parameters?.installation?.mappings ?? [];
   const ctId = sdk.contentType?.sys?.id;
   const fieldId = sdk.field?.id;
-  const match = mappings.find(
+  return mappings.find(
     (m) => m.contentTypeId === ctId && m.fieldId === fieldId,
-  );
-  return match?.simulatorType ?? null;
+  ) ?? null;
 }
 
 function fileTypeBadgeVariant(
@@ -67,7 +67,11 @@ function fileTypeBadgeVariant(
 // ── Brand pill ────────────────────────────────────────────────────────────────
 
 function BrandPill({ simulatorType }: { simulatorType: SimulatorType }) {
-  const brand = BRAND_CONFIG[simulatorType];
+  const brand = BRAND_CONFIG[simulatorType] ?? {
+    label: simulatorType,
+    color: '#8091A5',
+    textColor: '#fff',
+  };
   return (
     <span
       style={{
@@ -114,16 +118,18 @@ function MetaRow({
 
 export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
   const fieldSdk = sdk as FieldSdk;
-  const simulatorType = getSimulatorType(fieldSdk);
+  const mapping = getMapping(fieldSdk);
+  const simulatorType = mapping?.simulatorType ?? null;
+  const pickerMode = mapping?.mode ?? 'single';
 
   const [fieldValue, setFieldValue] = useState<
-    ProductRecord | AssetRecord | null
+    ProductRecord | AssetRecord | ProductRecord[] | AssetRecord[] | ProductCollection | AssetCollection | null
   >(null);
 
   useEffect(() => {
     const raw = fieldSdk.field.getValue();
     if (raw && typeof raw === 'object') {
-      setFieldValue(raw as ProductRecord | AssetRecord);
+      setFieldValue(raw as typeof fieldValue);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -133,16 +139,17 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
   };
 
   const openPicker = async () => {
+    const isMulti = pickerMode === 'multi';
     const result = await fieldSdk.dialogs.openCurrentApp({
       title:
         simulatorType && isEcomType(simulatorType)
-          ? 'Select Product'
+          ? isMulti ? 'Select Products' : 'Select Product'
           : simulatorType && isBookingType(simulatorType)
             ? 'Booking Widget'
-            : 'Select Asset',
+            : isMulti ? 'Select Assets' : 'Select Asset',
       width: 'fullWidth',
       minHeight: 650,
-      parameters: { mode: simulatorType },
+      parameters: { mode: simulatorType, pickerMode },
       shouldCloseOnOverlayClick: true,
       shouldCloseOnEscapePress: true,
       allowHeightOverflow: true,
@@ -154,9 +161,17 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
 
   const isEcom = simulatorType ? isEcomType(simulatorType) : false;
   const isBooking = simulatorType ? isBookingType(simulatorType) : false;
-  const product = isEcom ? (fieldValue as ProductRecord | null) : null;
-  const asset =
-    !isEcom && !isBooking ? (fieldValue as AssetRecord | null) : null;
+
+  // Detect collection vs array vs single value
+  const isProductCollection = fieldValue && !Array.isArray(fieldValue) && 'categories' in (fieldValue as object);
+  const isAssetCollection = fieldValue && !Array.isArray(fieldValue) && 'collections' in (fieldValue as object);
+  const isMultiValue = Array.isArray(fieldValue);
+  const productCollection = isProductCollection ? (fieldValue as ProductCollection) : null;
+  const assetCollection = isAssetCollection ? (fieldValue as AssetCollection) : null;
+  const products = isEcom && isMultiValue ? (fieldValue as ProductRecord[]) : null;
+  const assets = !isEcom && !isBooking && isMultiValue ? (fieldValue as AssetRecord[]) : null;
+  const product = isEcom && !isMultiValue && !isProductCollection ? (fieldValue as ProductRecord | null) : null;
+  const asset = !isEcom && !isBooking && !isMultiValue && !isAssetCollection ? (fieldValue as AssetRecord | null) : null;
 
   // ── Booking widget (inline, no picker flow) ───────────────────────────────
   if (isBooking && simulatorType) {
@@ -192,7 +207,220 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
     );
   }
 
-  // ── Filled state ──────────────────────────────────────────────────────────
+  // ── ProductCollection filled state ─────────────────────────────────────────
+  if (productCollection) {
+    const { categories, items } = productCollection;
+    const thumbs = items.slice(0, 8).map((p) => p.images?.[0]).filter(Boolean);
+    return (
+      <Box
+        style={{
+          border: '1px solid #CFD9E0',
+          borderRadius: 6,
+          overflow: 'hidden',
+          background: '#F7F9FA',
+          padding: '10px 14px',
+        }}
+      >
+        <Flex alignItems="center" gap="spacingS" style={{ marginBottom: 4 }}>
+          {simulatorType && <BrandPill simulatorType={simulatorType} />}
+        </Flex>
+        <Flex alignItems="baseline" gap="spacingXs" style={{ marginBottom: 8 }}>
+          <Text fontWeight="fontWeightDemiBold" style={{ fontSize: 13 }}>
+            {categories.join(', ')}
+          </Text>
+          <Text fontColor="gray600" style={{ fontSize: 11 }}>
+            · {items.length} product{items.length !== 1 ? 's' : ''}
+          </Text>
+        </Flex>
+        {thumbs.length > 0 && (
+          <Flex style={{ gap: 6, overflowX: 'auto', paddingBottom: 4 }}>
+            {thumbs.map((src, i) => (
+              <Box
+                key={i}
+                style={{
+                  width: 56,
+                  height: 56,
+                  flexShrink: 0,
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                  border: '1px solid #CFD9E0',
+                  background: '#fff',
+                }}
+              >
+                <img
+                  src={src}
+                  alt=""
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+              </Box>
+            ))}
+          </Flex>
+        )}
+        <Flex justifyContent="flex-end" gap="spacingS" style={{ marginTop: 10 }}>
+          <Button variant="secondary" size="small" onClick={openPicker}>
+            Change Categories
+          </Button>
+          <Button
+            variant="transparent"
+            size="small"
+            style={{ color: '#C13B36' }}
+            onClick={handleClear}
+          >
+            Remove
+          </Button>
+        </Flex>
+      </Box>
+    );
+  }
+
+  // ── AssetCollection filled state ──────────────────────────────────────────
+  if (assetCollection) {
+    const { label, items } = assetCollection;
+    const thumbs = items.slice(0, 8).map((a) => a.thumbnailUrl).filter(Boolean);
+    return (
+      <Box
+        style={{
+          border: '1px solid #CFD9E0',
+          borderRadius: 6,
+          overflow: 'hidden',
+          background: '#F7F9FA',
+          padding: '10px 14px',
+        }}
+      >
+        <Flex alignItems="center" gap="spacingS" style={{ marginBottom: 4 }}>
+          {simulatorType && <BrandPill simulatorType={simulatorType} />}
+        </Flex>
+        <Text fontColor="gray600" style={{ fontSize: 11, display: 'block', marginBottom: 2 }}>
+          {label}
+        </Text>
+        <Text fontWeight="fontWeightDemiBold" style={{ fontSize: 13, display: 'block', marginBottom: 8 }}>
+          {items.length} asset{items.length !== 1 ? 's' : ''}
+        </Text>
+        {thumbs.length > 0 && (
+          <Flex style={{ gap: 6, overflowX: 'auto', paddingBottom: 4 }}>
+            {thumbs.map((src, i) => (
+              <Box
+                key={i}
+                style={{
+                  width: 56,
+                  height: 56,
+                  flexShrink: 0,
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                  border: '1px solid #CFD9E0',
+                  background: '#fff',
+                }}
+              >
+                <img
+                  src={src}
+                  alt=""
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+              </Box>
+            ))}
+          </Flex>
+        )}
+        <Flex justifyContent="flex-end" gap="spacingS" style={{ marginTop: 10 }}>
+          <Button variant="secondary" size="small" onClick={openPicker}>
+            Change Collection
+          </Button>
+          <Button
+            variant="transparent"
+            size="small"
+            style={{ color: '#C13B36' }}
+            onClick={handleClear}
+          >
+            Remove
+          </Button>
+        </Flex>
+      </Box>
+    );
+  }
+
+  // ── Legacy multi-select filled state: thumbnail strip (backwards compat) ─
+  if (isMultiValue && (products || assets)) {
+    const count = (products ?? assets ?? []).length;
+    const label = products
+      ? `${count} product${count !== 1 ? 's' : ''}`
+      : `${count} asset${count !== 1 ? 's' : ''}`;
+    const thumbs: Array<{ src: string | undefined; alt: string }> = products
+      ? products.map((p) => ({ src: p.images?.[0], alt: p.name }))
+      : (assets ?? []).map((a) => ({ src: a.thumbnailUrl, alt: a.filename }));
+
+    return (
+      <Box
+        style={{
+          border: '1px solid #CFD9E0',
+          borderRadius: 6,
+          overflow: 'hidden',
+          background: '#F7F9FA',
+          padding: '10px 14px',
+        }}
+      >
+        <Flex alignItems="center" gap="spacingS" style={{ marginBottom: 8 }}>
+          {simulatorType && <BrandPill simulatorType={simulatorType} />}
+          <Text fontWeight="fontWeightDemiBold" style={{ fontSize: 13 }}>
+            {label}
+          </Text>
+        </Flex>
+        {/* Thumbnail strip */}
+        <Flex style={{ gap: 6, overflowX: 'auto', paddingBottom: 4 }}>
+          {thumbs.map((t, i) =>
+            t.src ? (
+              <Box
+                key={i}
+                style={{
+                  width: 56,
+                  height: 56,
+                  flexShrink: 0,
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                  border: '1px solid #CFD9E0',
+                  background: '#fff',
+                }}
+              >
+                <img
+                  src={t.src}
+                  alt={t.alt}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+              </Box>
+            ) : (
+              <Box
+                key={i}
+                style={{
+                  width: 56,
+                  height: 56,
+                  flexShrink: 0,
+                  borderRadius: 4,
+                  border: '1px solid #CFD9E0',
+                  background: '#E5EAEF',
+                }}
+              />
+            ),
+          )}
+        </Flex>
+        <Flex justifyContent="flex-end" gap="spacingS" style={{ marginTop: 10 }}>
+          <Button variant="secondary" size="small" onClick={openPicker}>
+            {products ? 'Change Products' : 'Change Assets'}
+          </Button>
+          <Button
+            variant="transparent"
+            size="small"
+            style={{ color: '#C13B36' }}
+            onClick={handleClear}
+          >
+            Remove
+          </Button>
+        </Flex>
+      </Box>
+    );
+  }
+
+  // ── Single-item filled state ───────────────────────────────────────────────
   if (fieldValue) {
     return (
       <Box
@@ -506,11 +734,17 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
       <Flex flexDirection="column" alignItems="center" style={{ gap: 12 }}>
         <Text fontColor="gray600">
           {isEcom
-            ? 'No product linked. Connect a product from your e-commerce store.'
-            : 'No asset linked. Connect a file from your media library.'}
+            ? pickerMode === 'multi'
+              ? 'No products linked. Select a collection from your e-commerce store.'
+              : 'No product linked. Connect a product from your e-commerce store.'
+            : pickerMode === 'multi'
+              ? 'No assets linked. Select files from your media library.'
+              : 'No asset linked. Connect a file from your media library.'}
         </Text>
         <Button variant="primary" onClick={openPicker}>
-          {isEcom ? 'Add Product' : 'Add Asset'}
+          {isEcom
+            ? pickerMode === 'multi' ? 'Add Products' : 'Add Product'
+            : pickerMode === 'multi' ? 'Add Assets' : 'Add Asset'}
         </Button>
       </Flex>
     </Box>

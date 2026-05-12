@@ -126,17 +126,27 @@ export function DynamicListing({
   const [products, setProducts] = useState<ProductRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const skus: string[] = Array.isArray(data.skus) ? data.skus : [];
+  // skus field stores either a ProductCollection {categories, items} (new) or string[] (legacy)
+  const isCollection = data.skus && !Array.isArray(data.skus) && 'items' in data.skus;
+  const collectionItems = isCollection
+    ? ((data.skus as unknown) as { items: ProductRecord[] }).items
+    : null;
+  const skuList: string[] = Array.isArray(data.skus) ? data.skus : [];
 
   useEffect(() => {
-    if (skus.length === 0) {
+    // ProductCollection: items are embedded — no API call needed
+    if (isCollection && collectionItems) {
+      setProducts(collectionItems);
+      return;
+    }
+    // Legacy string[] SKUs: look up from catalog
+    if (skuList.length === 0) {
       setProducts([]);
       return;
     }
     setIsLoading(true);
     contentfulCatalogAdapter.getProducts().then((all) => {
-      const skuSet = new Set(skus.map((s) => s.toLowerCase()));
-      const ordered = skus
+      const ordered = skuList
         .map((sku) =>
           all.find((p) => p.sku.toLowerCase() === sku.toLowerCase()),
         )
@@ -144,7 +154,8 @@ export function DynamicListing({
       setProducts(ordered);
       setIsLoading(false);
     });
-  }, [skus.join(',')]); // eslint-disable-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCollection, collectionItems ? JSON.stringify(collectionItems.map(p => p.sku)) : skuList.join(',')]);
 
   const isScroll = data.displayVariant === 'scroll';
 
@@ -160,11 +171,7 @@ export function DynamicListing({
         </div>
       )}
 
-      {skus.length === 0 && !isLoading && (
-        <div className="rounded-lg border border-dashed border-muted-foreground/40 p-12 text-center text-muted-foreground">
-          No products selected. Use the Integration Simulator app to pick SKUs.
-        </div>
-      )}
+      {products.length === 0 && !isLoading && null}
 
       {/* Scroll layout */}
       {isScroll ? (

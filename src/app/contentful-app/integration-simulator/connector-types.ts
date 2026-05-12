@@ -70,6 +70,24 @@ export interface ConnectorProfile {
   seedData: Record<string, unknown>;
 }
 
+// ── Collection types for multi-mode pickers ─────────────────────────────────
+
+import type {
+  AssetRecord,
+  ProductRecord,
+} from '@/lib/integration-adapters/types';
+
+export interface ProductCollection {
+  categories: string[]; // e.g. ["Keyboards", "Audio"]
+  items: ProductRecord[]; // all products from those categories combined
+}
+
+export interface AssetCollection {
+  collections: Array<{ type: 'folder' | 'tag'; key: string }>; // e.g. [{type:'tag',key:'q1'},{type:'folder',key:'Marketing'}]
+  label: string; // e.g. "Marketing, q1, campaign"
+  items: AssetRecord[]; // deduped assets matching any collection
+}
+
 // ── Persisted shapes ─────────────────────────────────────────────────────────
 
 export interface MappingRow {
@@ -85,10 +103,14 @@ export interface MappingRow {
    * SimulatorType) keep working until they're refactored to read connectorId.
    */
   simulatorType: SimulatorType;
+  /** Single-item picker or multi-select collection. Default: 'single'. */
+  mode?: 'single' | 'multi';
 }
 
 export interface AppParams {
   mappings: Omit<MappingRow, '_id'>[];
   /** Connector profiles authored in the Connectors tab. Optional for back-compat. */
   connectors?: ConnectorProfile[];
+  /** User-defined categories added via the Connectors tab. */
+  customCategories?: string[];
 }

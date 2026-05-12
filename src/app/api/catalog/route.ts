@@ -54,7 +54,14 @@ export async function GET(request: NextRequest) {
   }
 
   if (type === 'bookings') {
-    const catalog = (settings?.bookingCatalog ?? []) as Array<Record<string, unknown>>;
+    const provider = (searchParams.get('provider') ?? '').toUpperCase();
+    const thirdParty = settings?.thirdPartyCatalog ?? {};
+    // If provider specified, return that provider's array; otherwise flatten all providers
+    const catalog = (
+      provider && thirdParty[provider]
+        ? (thirdParty[provider] as Array<Record<string, unknown>>)
+        : Object.values(thirdParty).flat() as Array<Record<string, unknown>>
+    );
     const results = q
       ? catalog.filter(
           (b) =>

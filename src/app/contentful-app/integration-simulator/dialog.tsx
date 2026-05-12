@@ -9,14 +9,15 @@ import { DamPickerContent } from './dam-picker-modal';
 import { EcomPickerContent } from './ecom-picker-modal';
 import { isEcomType, isBookingType } from './config-screen';
 import type { SimulatorType } from './config-screen';
+import type { AssetCollection, ProductCollection } from './connector-types';
 
 // ── SDK type ──────────────────────────────────────────────────────────────────
 
 type DialogSdk = {
   parameters: {
-    invocation: { mode: SimulatorType };
+    invocation: { mode: SimulatorType; pickerMode?: 'single' | 'multi' };
   };
-  close: (value: ProductRecord | AssetRecord | null) => void;
+  close: (value: ProductRecord | AssetRecord | ProductRecord[] | AssetRecord[] | ProductCollection | AssetCollection | null) => void;
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -31,6 +32,7 @@ type DialogSdk = {
 export function IntegrationSimulatorDialog({ sdk }: { sdk: unknown }) {
   const dialogSdk = sdk as DialogSdk;
   const mode = dialogSdk.parameters?.invocation?.mode;
+  const pickerMode = dialogSdk.parameters?.invocation?.pickerMode ?? 'single';
 
   const handleClose = () => dialogSdk.close(null);
 
@@ -38,7 +40,8 @@ export function IntegrationSimulatorDialog({ sdk }: { sdk: unknown }) {
     return (
       <EcomPickerContent
         simulatorType={mode}
-        onSelect={(product) => dialogSdk.close(product)}
+        pickerMode={pickerMode}
+        onSelect={(result) => dialogSdk.close(result)}
         onClose={handleClose}
       />
     );
@@ -61,7 +64,8 @@ export function IntegrationSimulatorDialog({ sdk }: { sdk: unknown }) {
   return (
     <DamPickerContent
       simulatorType={mode}
-      onSelect={(asset) => dialogSdk.close(asset)}
+      pickerMode={pickerMode}
+      onSelect={(result) => dialogSdk.close(result)}
       onClose={handleClose}
     />
   );

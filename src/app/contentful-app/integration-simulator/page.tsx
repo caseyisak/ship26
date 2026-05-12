@@ -80,7 +80,19 @@ export default function IntegrationSimulatorPage() {
   if (sdk && isEntryField) return <FieldWithResizer sdk={sdk} />;
   if (sdk && isDialog) return <IntegrationSimulatorDialog sdk={sdk} />;
   if (sdk && isConfig) return <IntegrationSimulatorConfig sdk={sdk} />;
-  if (sdk && treatAsPage) return <IntegrationSimulatorLanding sdk={sdk} />;
+  // PAGE location — sdk.app is undefined here, so onConfigure/setReady cannot
+  // fire and the Save button never appears. Show a read-only info screen instead.
+  if (sdk && treatAsPage) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-8">
+        <h1 className="text-xl font-semibold">Integration Simulator</h1>
+        <p className="max-w-md text-center text-sm text-gray-600">
+          To configure this app, go to{' '}
+          <strong>Apps → Manage apps → Integration Simulator → Configure</strong>.
+        </p>
+      </div>
+    );
+  }
 
   // SDK exists but location isn't one we handle — likely App Definition
   // doesn't have app-config registered, or app is loaded in wrong context.
