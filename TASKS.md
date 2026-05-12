@@ -24,6 +24,7 @@
 
 | Issue | Title | Priority | Notes |
 |-------|-------|----------|-------|
+| #101 | feat(integration-sim): single/multi mode toggle for product + asset picker | 🔴 high | Active — worktree `feat-integration-sim-multi-select`, CODER running |
 | #96 | research: use master env alias for all demos instead of per-demo envs | 🔴 high | New (2026-05-08) — could simplify demo setup significantly |
 | #90 | feat(newsletter): consolidate leadStory → promoSlot + normalize styles | 🟡 medium | May still be open despite PR #91 — verify |
 | #89 | fix(newsletter): headlineRt declared twice in EmbeddedEntry | 🟡 medium | Same — verify if #91 closed it |
@@ -84,10 +85,11 @@
 
 ## Active branches
 
-| Branch | Purpose | CC instance |
-|--------|---------|-------------|
-| `main` | Sandbox, all blocks, source of truth | This CC |
-| `feat/plp-collections` | ProductListing block | Separate worktree |
+| Branch | Purpose | CC instance | GH |
+|--------|---------|-------------|-----|
+| `main` | Sandbox, all blocks, source of truth | This CC | — |
+| `feat/integration-sim-multi-select` | Integration Sim single/multi mode toggle | Worktree — CODER active | #101 |
+| `feat/plp-collections` | ProductListing block | Separate worktree | #87 |
 
 ---
 
