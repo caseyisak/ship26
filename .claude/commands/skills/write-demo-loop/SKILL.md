@@ -3,6 +3,12 @@ name: write-demo-loop
 description: Write or update demo loop LOOP.md files. Use when the user says "write a demo loop", "create a loop", "add a loop for [feature]", "write the loop doc", "document this demo loop", "write a baseline loop", or "tailor this loop for [customer]". Also invoke after building a new sandbox feature that should be available to demos.
 version: 1.0.0
 author: casey-lisak
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
 ---
 
 # Write Demo Loop Skill

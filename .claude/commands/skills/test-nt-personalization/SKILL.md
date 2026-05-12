@@ -3,6 +3,20 @@ name: test-nt-personalization
 description: Comprehensive Ninetailed personalization verification agent. Uses Playwright MCP to visually confirm variant swaps, monitors NT API network calls, cross-references Contentful entry config, and supports both nav-trigger and direct profile injection test paths. Invoke when user says "test personalization", "verify NT", "check if personalization works", "test the demo flow", "does the variant swap work", or "debug Ninetailed".
 version: 3.0.0
 author: casey-lisak
+allowed-tools:
+  - Read
+  - Glob
+  - Grep
+  - mcp__contentful__get_content_type
+  - mcp__contentful__get_entry
+  - mcp__contentful__search_entries
+  - mcp__playwright__browser_navigate
+  - mcp__playwright__browser_snapshot
+  - mcp__playwright__browser_take_screenshot
+  - mcp__playwright__browser_console_messages
+  - mcp__playwright__browser_network_requests
+  - mcp__playwright__browser_evaluate
+  - mcp__playwright__browser_wait_for
 ---
 
 # Test NT Personalization Skill (v3)

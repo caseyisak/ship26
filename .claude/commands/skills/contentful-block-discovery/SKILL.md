@@ -4,6 +4,13 @@ description: Starting point for all new Contentful block development. Run this b
 metadata:
   author: metafi-project
   version: 1.0.0
+allowed-tools:
+  - Read
+  - Glob
+  - Grep
+  - mcp__contentful__list_content_types
+  - mcp__contentful__get_content_type
+  - mcp__contentful__search_entries
 ---
 
 # Contentful Block: Discovery

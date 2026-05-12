@@ -3,6 +3,24 @@ name: demo-setup
 description: End-to-end guided workflow for spinning up a new customer demo. Runs an intake interview, creates the worktree and branch, scrapes the customer's brand tokens, scaffolds the Contentful environment, selects demo loops, and produces a DEMO_SCRIPT.md. Invoke when user says "set up a new demo", "spin up a demo for [customer]", "create a demo branch", "new demo", "start a demo for", "I have a demo for", or "let's build a demo for".
 version: 1.1.0
 author: casey-lisak
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Bash
+  - mcp__contentful__list_environments
+  - mcp__contentful__create_environment
+  - mcp__contentful__get_space
+  - mcp__contentful__list_content_types
+  - mcp__contentful__create_content_type
+  - mcp__contentful__publish_content_type
+  - mcp__contentful__create_entry
+  - mcp__contentful__publish_entry
+  - mcp__playwright__browser_navigate
+  - mcp__playwright__browser_snapshot
+  - mcp__playwright__browser_take_screenshot
 ---
 
 # Demo Setup Skill

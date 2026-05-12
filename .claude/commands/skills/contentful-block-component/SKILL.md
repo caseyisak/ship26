@@ -4,6 +4,13 @@ description: Milestone 2 of the Contentful block workflow — run when it's time
 metadata:
   author: metafi-project
   version: 1.0.0
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Bash
 ---
 
 # Contentful Block: Component + Config
