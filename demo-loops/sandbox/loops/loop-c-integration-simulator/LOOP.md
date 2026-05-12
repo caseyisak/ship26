@@ -97,7 +97,7 @@ Pull this loop when the prospect has **one or more of these situations**:
 
 ---
 
-### Act 2 — Connecting a product (~90s)
+### Act 2a — Connecting a single product (~90s)
 
 4. **[Contentful]** Open a `productDetailPage` entry in the entry editor (e.g., UltraWide Monitor `25nMACKKb25gA64qBZrdHJ`)
 
@@ -116,6 +116,28 @@ Pull this loop when the prospect has **one or more of these situations**:
 
 8. **[Browser — Live Preview]** PDP block refreshes with the newly selected product
    - *"Change the SKU, the product on the page updates. The source of truth stays in Shopify. Contentful just stores the reference."*
+
+---
+
+### Act 2b — Collection picker: selecting by category (~60s)
+
+*Use this variant when the prospect manages large catalogs or when the conversation is about merchandising at scale, not individual PDPs.*
+
+4. **[Contentful]** Open a `dynamicListing` entry (e.g., "Desk Accessories" `4Y0EoVfRYqBbf2uG5C1FfB`) → click the `skus` field → **"Add Products"**
+   - *"This is the multi-select variant. Instead of picking products one by one, an editor picks a category — and gets everything in it."*
+
+5. **[App — category grid]** Show the category card grid:
+   - Categories displayed as cards: Monitors, Keyboards, Mice, Accessories, Cameras
+   - *"Think of this like Shopify Collections. You select the collection, not individual items."*
+   - Click **"Keyboards"** → card gets blue border + checkmark
+   - Click **"Accessories"** → second card selected
+   - Bottom bar shows: `2 categories selected · 7 products`
+   - *"You can combine categories — everything is deduped. If a product appears in two categories, it shows once."*
+
+6. **[App]** Click **"Import Collection"** → spinner → field updates to brand pill showing category names + product count
+
+7. **[Browser — Live Preview]** DynamicListing block renders the combined product grid — all 7 products, two categories, live
+   - *"The editor made one decision — which categories — and got a fully populated product grid. No SKU list to maintain. When new products are added to Keyboards in Shopify, they show up here automatically on next publish."*
 
 ---
 
@@ -231,6 +253,80 @@ This loop is fully self-contained and swappable:
 | Real Bynder / AEM | Swap `getAssets()` for a real DAM SDK call — same `AssetRecord` interface |
 | Different product field | Update the Integration Simulator app config mapping in Contentful UI — zero code change |
 | Customer-branded demo | Point the App Definition URL at a deployed preview environment — runs from Contentful production |
+
+---
+
+## Building a Real 3P Integration
+
+*For IT / Platform Architect conversations. Use after the demo when the question shifts from "can Contentful do this?" to "how would we actually build this?"*
+
+The Integration Simulator uses a simple postMessage protocol. Replacing the simulated adapter with a real one requires two things: a hosted picker page and a backend API call. No Contentful SDK changes.
+
+### How it works
+
+```
+Contentful entry editor
+  └─ Contentful App (iframe) ← runs at your App Definition URL
+       └─ openCurrentApp({ parameters: { mode, pickerMode } })
+            └─ Dialog iframe ← loads your picker URL
+                 └─ postMessage({ type: 'SELECTION', payload }) → back to field
+```
+
+The field app opens a dialog. The dialog loads your picker. When the user confirms a selection, your picker posts a message back. The field stores whatever shape you return.
+
+### Picker contract
+
+Your picker page must handle one incoming message and send one outgoing:
+
+```ts
+// 1. Receive invocation params from the field app
+window.addEventListener('message', (e) => {
+  const { mode, pickerMode } = e.data; // 'SHOPIFY' | 'BYNDER' etc., 'single' | 'multi'
+  // initialize your picker UI
+});
+
+// 2. On user confirmation, post selection back
+window.parent.postMessage({
+  type: 'SELECTION',
+  payload: pickerMode === 'multi'
+    ? { categories: ['Keyboards'], items: ProductRecord[] }  // ProductCollection
+    : { sku: 'KB-001', name: 'Ergo Pro', price: 149, ... }  // ProductRecord
+}, '*');
+```
+
+### What the field stores
+
+```ts
+// Single mode — ProductRecord stored directly on the JSON field
+{ sku: 'KB-001', name: 'Ergo Pro Keyboard', price: 149, images: [...], inStock: true }
+
+// Multi mode — ProductCollection
+{ categories: ['Keyboards', 'Accessories'], items: [ ...ProductRecord[] ] }
+```
+
+The `DynamicListing` block detects the shape and renders accordingly — no content type changes needed.
+
+### Adapter swap (no code)
+
+The app config screen maps content type fields to vendor connectors. Swapping from Shopify to commercetools is a config change in the Contentful UI:
+
+1. Apps → Integration Simulator → Configure
+2. Connectors tab: add a new connector (label, brand color, picker URL, seed data URL)
+3. Mappings tab: point the field to the new connector
+4. Save
+
+The field app reads the active mapping and opens the correct picker. No component rebuild. No deployment.
+
+### What to build
+
+| Piece | Description | Effort |
+|-------|-------------|--------|
+| Picker page | React SPA hosted anywhere (Vercel, your CDN) — talks to your real API | 1–2 days |
+| Backend adapter | Thin proxy: receive `{ query, category }` → call Shopify/commercetools → return `ProductRecord[]` | 1 day |
+| Auth | OAuth token exchange handled server-side in your adapter — picker never sees credentials | part of adapter |
+| Contentful App Definition | Point `entryField` location URL at your deployed picker | 15 min |
+
+The sandbox ships a TypeScript interface (`ProductRecord`, `AssetRecord`, `ProductCollection`) in `src/app/contentful-app/integration-simulator/connector-types.ts` that your real adapter must match. That's the only contract.
 
 ---
 
