@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 
-import { BlockRenderer } from '@/block-renderer';
 import { Footer } from '@/components/layout/footer';
 import Navbar from '@/components/layout/navbar';
+import { ProductListing } from '@/cms-components/product-listing';
 import { getProductListingById } from '@/services/contentful/product-listing';
 import { getSettings } from '@/services/contentful/settings';
 
@@ -38,7 +38,7 @@ export default async function PreviewProductListingPage({
     <>
       <Navbar />
       <main>
-        <BlockRenderer data={listing} productCatalog={productCatalog} />
+        <ProductListing data={listing} productCatalog={productCatalog} />
       </main>
       <Footer footerForm={settings?.footerForm} />
     </>
