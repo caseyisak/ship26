@@ -962,7 +962,6 @@ const PRODUCT_LISTING_PAGE_FIELDS = `
     sys { id }
     internalName
     titleRt { json }
-    collection
     columns
   }
 `;
