@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { BlockRenderer } from '@/block-renderer';
 import { PageContentLive } from '@/app/page/[slug]/page-content-live';
-import { getPageBySlug, getPageSlugs } from '@/services/contentful/page';
+import { getPageBySlugTwoPass, getPageSlugs } from '@/services/contentful/page';
 import { getPdpBySlug } from '@/services/contentful/pdp';
 import { getNewsWrapperForPage } from '@/services/contentful/news-wrapper';
 
@@ -24,7 +24,7 @@ export default async function ContentfulPage({
   const { preview } = await searchParams;
   // Use preview query param as override (for cross-site iframe context where cookies may not work)
   const previewEnabled = preview === 'true';
-  const page = await getPageBySlug({
+  const page = await getPageBySlugTwoPass({
     slug,
     locale: 'en-US',
     preview: previewEnabled || undefined,

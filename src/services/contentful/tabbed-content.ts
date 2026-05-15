@@ -30,7 +30,7 @@ type RawTabbedContent = {
 };
 
 type TabbedContentByIdResponse = {
-  tabbedContentCollection: {
+  tabbedcontentCollection: {
     items: Array<RawTabbedContent | null>;
   };
 };
@@ -93,7 +93,7 @@ export async function getTabbedContentByEntryId({
       variables: { id: entryId, locale, preview: true },
       preview: true,
     });
-    const item = data.tabbedContentCollection?.items?.[0] ?? null;
+    const item = data.tabbedcontentCollection?.items?.[0] ?? null;
     return mapTabbedContent(item);
   } catch {
     return null;
