@@ -951,7 +951,11 @@ const DYNAMIC_LISTING_PAGE_FIELDS = `
   }
 `;
 
-/** ProductListing fragment — category-filtered product grid with callout card references. */
+/**
+ * Lean ProductListing fragment for PAGE_BY_SLUG — omits calloutCardsCollection.
+ * Full data (with callout cards) is available via PRODUCT_LISTING_BY_ID (preview route).
+ * Keeps PAGE_BY_SLUG under Contentful's 8192-byte query limit (LL-011).
+ */
 const PRODUCT_LISTING_PAGE_FIELDS = `
   ... on ProductListing {
     __typename
@@ -960,11 +964,6 @@ const PRODUCT_LISTING_PAGE_FIELDS = `
     titleRt { json }
     collection
     columns
-    calloutCardsCollection(limit: 10) {
-      items {
-        ${CARD_FIELDS}
-      }
-    }
   }
 `;
 
@@ -1645,8 +1644,22 @@ export const DYNAMIC_LISTING_BY_ID = `
   }
 `;
 
-/** Full ProductListing fields (same as page — no NT on this block). */
-const PRODUCT_LISTING_FIELDS = PRODUCT_LISTING_PAGE_FIELDS;
+/** Full ProductListing fields — includes calloutCardsCollection for preview route / BY_ID fetch. */
+const PRODUCT_LISTING_FIELDS = `
+  ... on ProductListing {
+    __typename
+    sys { id }
+    internalName
+    titleRt { json }
+    collection
+    columns
+    calloutCardsCollection(limit: 10) {
+      items {
+        ${CARD_FIELDS}
+      }
+    }
+  }
+`;
 
 /** Fetch a single ProductListing by entry ID (live preview). */
 export const PRODUCT_LISTING_BY_ID = `
