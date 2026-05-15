@@ -5,8 +5,8 @@ import { BLOCKS, MARKS } from '@contentful/rich-text-types';
 import React, { useState } from 'react';
 
 import type { HeroFragment, ProductListingFragment } from '@/block-renderer/types';
+import { BlockRenderer } from '@/block-renderer';
 import { Hero } from '@/cms-components/hero';
-import { CardRenderer } from '@/cms-components/card-renderer/card-renderer';
 import { contentfulCatalogAdapter } from '@/lib/integration-adapters/contentful-catalog';
 import type { ProductRecord } from '@/lib/integration-adapters/types';
 import {
@@ -380,7 +380,7 @@ export function ProductListing({
                   <div key={`callout-section-${idx}`} className="flex gap-5">
                     {side === 'left' && (
                       <div className="w-1/3 flex-shrink-0">
-                        <CardRenderer card={card} className="h-full" />
+                        <BlockRenderer data={card} className="h-full" />
                       </div>
                     )}
                     <div className={cn('flex-1 grid gap-5', colsClass)}>
@@ -390,7 +390,7 @@ export function ProductListing({
                     </div>
                     {side === 'right' && (
                       <div className="w-1/3 flex-shrink-0">
-                        <CardRenderer card={card} className="h-full" />
+                        <BlockRenderer data={card} className="h-full" />
                       </div>
                     )}
                   </div>

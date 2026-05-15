@@ -2,7 +2,9 @@ import type {
   BannerFragment,
   BlockConfig,
   BlockData,
+  BlockProps,
   BlogPostsSectionFragment,
+  CardFragment,
   CardsWrapperFragment,
   CtaSectionFragment,
   DataVizFragment,
@@ -22,6 +24,7 @@ import type {
   TabbedContentFragment,
   TwoAcrossFragment,
 } from '@/block-renderer/types';
+import { CardBlock } from '@/block-renderer/configs/card-block';
 import { DynamicListing } from '@/cms-components/dynamic-listing/dynamic-listing';
 import { Pdp } from '@/cms-components/pdp/pdp';
 import { Banner } from '@/cms-components/banner';
@@ -183,6 +186,13 @@ const dynamicListingConfig: BlockConfig<DynamicListingFragment> = {
   },
 };
 
+const cardConfig: BlockConfig<CardFragment> = {
+  typename: 'Card',
+  layouts: {
+    default: () => CardBlock,
+  },
+};
+
 export const blockConfigs: BlockConfig<BlockData>[] = [
   heroConfig as BlockConfig<BlockData>,
   faqConfig as BlockConfig<BlockData>,
@@ -204,4 +214,5 @@ export const blockConfigs: BlockConfig<BlockData>[] = [
   formConfig as BlockConfig<BlockData>,
   pdpConfig as BlockConfig<BlockData>,
   dynamicListingConfig as BlockConfig<BlockData>,
+  cardConfig as BlockConfig<BlockData>,
 ];

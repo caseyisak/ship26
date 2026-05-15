@@ -103,6 +103,17 @@ const NT_VARIANT_FIELDS = `
     colorVariant
     sectionStyle
   }
+  ... on Card {
+    titleRt { json }
+    descriptionRt { json }
+    media { url }
+    animationKey
+    mediaPlacement
+    mediaSize
+    colorVariant
+    style
+    sectionStyle
+  }
 `;
 
 /** Ninetailed experience fragment fields. */
