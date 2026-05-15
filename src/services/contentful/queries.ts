@@ -797,7 +797,7 @@ const FEATURE_SECTION_FIELDS = `
     itemsCollection(limit: 20) {
       items { ${FEATURE_SECTION_ITEM_FIELDS} }
     }
-    ntExperiencesCollection(limit: 10) {
+    ntExperiencesCollectionCollection(limit: 10) {
       items { ${NT_EXPERIENCE_FIELDS} }
     }
   }
@@ -951,7 +951,11 @@ const DYNAMIC_LISTING_PAGE_FIELDS = `
   }
 `;
 
-/** ProductListing fragment — category-filtered product grid with callout card references. */
+/**
+ * Lean ProductListing fragment for PAGE_BY_SLUG — omits calloutCardsCollection.
+ * Full data (with callout cards) is available via PRODUCT_LISTING_BY_ID (preview route).
+ * Keeps PAGE_BY_SLUG under Contentful's 8192-byte query limit (LL-011).
+ */
 const PRODUCT_LISTING_PAGE_FIELDS = `
   ... on ProductListing {
     __typename
@@ -960,11 +964,6 @@ const PRODUCT_LISTING_PAGE_FIELDS = `
     titleRt { json }
     collection
     columns
-    calloutCardsCollection(limit: 10) {
-      items {
-        ${CARD_FIELDS}
-      }
-    }
   }
 `;
 
@@ -1067,7 +1066,7 @@ export const DATA_VIZ_BY_ID = `
 /** Fetch a single TabbedContent entry by entry ID (for ID-based live preview, no slug). Uses same TabbedContent fields as PAGE_BY_SLUG. */
 export const TABBED_CONTENT_BY_ID = `
   query TabbedContentById($id: String!, $locale: String!, $preview: Boolean) {
-    tabbedContentCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+    tabbedcontentCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${TABBED_CONTENT_FIELDS}
       }
@@ -1645,8 +1644,22 @@ export const DYNAMIC_LISTING_BY_ID = `
   }
 `;
 
-/** Full ProductListing fields (same as page — no NT on this block). */
-const PRODUCT_LISTING_FIELDS = PRODUCT_LISTING_PAGE_FIELDS;
+/** Full ProductListing fields — includes calloutCardsCollection for preview route / BY_ID fetch. */
+const PRODUCT_LISTING_FIELDS = `
+  ... on ProductListing {
+    __typename
+    sys { id }
+    internalName
+    titleRt { json }
+    collection
+    columns
+    calloutCardsCollection(limit: 10) {
+      items {
+        ${CARD_FIELDS}
+      }
+    }
+  }
+`;
 
 /** Fetch a single ProductListing by entry ID (live preview). */
 export const PRODUCT_LISTING_BY_ID = `
@@ -1654,6 +1667,44 @@ export const PRODUCT_LISTING_BY_ID = `
     productListingCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${PRODUCT_LISTING_FIELDS}
+      }
+    }
+  }
+`;
+
+/**
+ * PAGE_SECTIONS_SHELL — pass 1 of the two-pass page fetch.
+ * Returns page metadata + section IDs/typenames only (~350 bytes).
+ * Pass 2 uses Promise.all() with *_BY_ID fetchers per section.
+ */
+export const PAGE_SECTIONS_SHELL = `
+  query PageSectionsShell($slug: String!, $locale: String!, $preview: Boolean) {
+    pageCollection(where: { slug: $slug }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        __typename
+        sys { id }
+        internalName
+        slug
+        sectionsCollection(limit: 20) {
+          items {
+            __typename
+            sys { id }
+          }
+        }
+        ntExperiencesCollection(limit: 10) {
+          items { __typename sys { id } }
+        }
+      }
+    }
+  }
+`;
+
+/** Fetch a single TwoAcross entry by entry ID (for ID-based live preview and two-pass page fetch). */
+export const TWO_ACROSS_BY_ID = `
+  query TwoAcrossById($id: String!, $locale: String!, $preview: Boolean) {
+    twoAcrossCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${TWO_ACROSS_FIELDS}
       }
     }
   }
