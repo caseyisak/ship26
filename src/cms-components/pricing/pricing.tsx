@@ -15,6 +15,7 @@ import {
 } from '@/lib/live-preview';
 import { NT_EVENTS } from '@/lib/nt-events';
 import { getPersona } from '@/lib/persona-session';
+import { planCardBgClass, planCardBtnClass, planCardCheckClass, planCardMutedClass, sectionClasses, sectionMutedTextClass } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
 
 const rtOptions = {
@@ -35,28 +36,6 @@ function rt(json: Record<string, unknown> | undefined | null): React.ReactNode |
   );
 }
 
-// Per-card contrast-safe styles keyed by colorVariant
-const CARD_CLASS: Record<string, string> = {
-  light: 'bg-card border-border-light text-foreground',
-  dark: 'bg-foreground border-transparent text-background',
-  primary: 'bg-primary border-transparent text-primary-foreground',
-};
-const CARD_MUTED: Record<string, string> = {
-  light: 'text-muted-foreground',
-  dark: 'text-background/70',
-  primary: 'text-primary-foreground/80',
-};
-const CARD_BTN: Record<string, string> = {
-  light: 'bg-primary text-primary-foreground hover:bg-primary/90',
-  dark: 'bg-background text-foreground hover:bg-background/90',
-  primary: 'bg-primary-foreground text-primary hover:bg-primary-foreground/90',
-};
-const CARD_CHECK: Record<string, string> = {
-  light: 'text-tagline',
-  dark: 'text-background',
-  primary: 'text-primary-foreground',
-};
-
 function PlanCard({
   plan,
   yearly,
@@ -65,10 +44,10 @@ function PlanCard({
   yearly: boolean;
 }) {
   const variant = (plan.colorVariant ?? 'light') as string;
-  const cardClass = CARD_CLASS[variant] ?? CARD_CLASS.light;
-  const mutedClass = CARD_MUTED[variant] ?? CARD_MUTED.light;
-  const btnClass = CARD_BTN[variant] ?? CARD_BTN.light;
-  const checkClass = CARD_CHECK[variant] ?? CARD_CHECK.light;
+  const cardClass = planCardBgClass(variant);
+  const mutedClass = planCardMutedClass(variant);
+  const btnClass = planCardBtnClass(variant);
+  const checkClass = planCardCheckClass(variant);
 
   const price = yearly ? plan.annualPrice : plan.monthlyPrice;
   const perUnit = yearly ? plan.perUnitAnnual : plan.perUnitMonthly;
@@ -165,20 +144,6 @@ function PlanCard({
   );
 }
 
-// Section-level background and text colors keyed by colorVariant
-const SECTION_BG: Record<string, React.CSSProperties> = {
-  light: { backgroundColor: 'var(--background)', color: 'var(--foreground)' },
-  dark: { backgroundColor: 'var(--foreground)', color: 'var(--background)' },
-  accent: { backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' },
-};
-
-// Muted text color per section variant (for description / toggle labels)
-const SECTION_MUTED: Record<string, string> = {
-  light: 'text-muted-foreground',
-  dark: 'text-background/70',
-  accent: 'text-primary-foreground/80',
-};
-
 const Pricing = ({ data, className, ...props }: BlockProps<PricingFragment>) => {
   const liveData = useLiveUpdates(data) as PricingFragment;
   const getProps = useContentfulInspectorModeProps(data.sys.id);
@@ -204,15 +169,13 @@ const Pricing = ({ data, className, ...props }: BlockProps<PricingFragment>) => 
   const dataVariant: 'light' | 'dark' | 'accent' =
     rawVariant === 'dark' ? 'dark' : rawVariant === 'accent' ? 'accent' : 'light';
 
-  const sectionStyle = SECTION_BG[dataVariant] ?? SECTION_BG.light;
-  const mutedClass = SECTION_MUTED[dataVariant] ?? SECTION_MUTED.light;
+  const mutedClass = sectionMutedTextClass(dataVariant);
 
   return (
     <section
       id="pricing"
       data-variant={dataVariant}
-      className={cn('px-6 lg:px-0', className ?? '')}
-      style={sectionStyle}
+      className={cn('px-6 lg:px-0', sectionClasses(dataVariant), className ?? '')}
       {...props}
     >
       <div className="container px-0 py-16 sm:py-20 md:px-6 md:py-24">

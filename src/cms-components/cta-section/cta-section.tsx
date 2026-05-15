@@ -10,27 +10,8 @@ import {
   useLiveUpdates,
 } from '@/lib/live-preview';
 import { parseSectionStyle } from '@/lib/section-style-types';
+import { ctaPrimaryBtnStyle, ctaSecondaryBtnStyle, sectionBgClass, sectionTextClass } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
-
-// ── colorVariant → background class ──────────────────────────────────────────
-const COLOR_VARIANT_BG: Record<string, string> = {
-  light: 'bg-background',
-  dark: 'bg-foreground',
-  alt: 'bg-secondary',
-  primary: 'bg-primary',
-  secondary: 'bg-secondary',
-  image: '', // backgroundImage handles this
-};
-
-// ── colorVariant → always-contrasting text class ──────────────────────────────
-const COLOR_VARIANT_TEXT: Record<string, string> = {
-  light: 'text-foreground',
-  dark: 'text-background',
-  alt: 'text-secondary-foreground',
-  primary: 'text-primary-foreground',
-  secondary: 'text-secondary-foreground',
-  image: 'text-white', // overlay ensures legibility
-};
 
 /**
  * Returns true if the given hex color is "dark" (luminance < 0.5).
@@ -100,10 +81,10 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
 
   const colorBgClass =
     !useOverride && !isImageVariant
-      ? (COLOR_VARIANT_BG[resolvedVariant] ?? 'bg-primary')
+      ? sectionBgClass(resolvedVariant)
       : '';
   const colorTextClass = !useOverride
-    ? (COLOR_VARIANT_TEXT[resolvedVariant] ?? 'text-primary-foreground')
+    ? sectionTextClass(resolvedVariant)
     : '';
 
   // ── Section-level inline styles ───────────────────────────────────────────
@@ -173,42 +154,17 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
 
   // Button inline styles — override shadcn's bg-primary/bg-background base classes.
   // Inline styles guarantee contrast regardless of Tailwind specificity order.
-  const primaryBtnColors: Record<
-    string,
-    { backgroundColor: string; color: string }
-  > = {
-    accent: {
-      backgroundColor: 'var(--primary-foreground)',
-      color: 'var(--primary)',
-    },
-    dark: { backgroundColor: 'var(--background)', color: 'var(--foreground)' },
-    light: {
-      backgroundColor: 'var(--primary)',
-      color: 'var(--primary-foreground)',
-    },
-  };
-  const secondaryBtnColors: Record<
-    string,
-    { color: string; borderColor: string }
-  > = {
-    accent: {
-      color: 'var(--primary-foreground)',
-      borderColor: 'var(--primary-foreground)',
-    },
-    dark: { color: 'var(--background)', borderColor: 'var(--background)' },
-    light: { color: 'var(--foreground)', borderColor: 'var(--border)' },
-  };
 
   // Merge sectionStyle.buttonBgColor override on top of variant defaults
   const primaryInlineStyle: React.CSSProperties = {
-    ...(primaryBtnColors[dataVariant] ?? primaryBtnColors.light),
+    ...ctaPrimaryBtnStyle(resolvedVariant),
     ...(useOverride && sectionStyle.buttonBgColor
       ? { backgroundColor: sectionStyle.buttonBgColor }
       : {}),
   };
   const secondaryBtnStyle: React.CSSProperties = {
     backgroundColor: 'transparent',
-    ...(secondaryBtnColors[dataVariant] ?? secondaryBtnColors.light),
+    ...ctaSecondaryBtnStyle(resolvedVariant),
   };
 
   return (

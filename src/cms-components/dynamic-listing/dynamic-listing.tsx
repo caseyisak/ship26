@@ -1,9 +1,17 @@
 'use client';
 
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
-import type { BlockProps, DynamicListingFragment } from '@/block-renderer/types';
+import type { BlockProps, CardFragment, DynamicListingFragment } from '@/block-renderer/types';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 import { contentfulCatalogAdapter } from '@/lib/integration-adapters/contentful-catalog';
 import type { ProductRecord } from '@/lib/integration-adapters/types';
 import {
@@ -115,6 +123,53 @@ function MiniProductSkeleton() {
   );
 }
 
+// ── Callout card ──────────────────────────────────────────────────────────────
+
+function CalloutCard({ card }: { card: CardFragment }) {
+  const liveCard = useLiveUpdates(card);
+  const getCardProps = useContentfulInspectorModeProps(liveCard.sys.id);
+
+  const rawUrl = (liveCard as CardFragment).media?.url ?? undefined;
+  const imageUrl = rawUrl?.startsWith('//') ? `https:${rawUrl}` : rawUrl;
+
+  return (
+    <div className="border-primary/30 bg-primary/5 flex flex-col overflow-hidden rounded-lg border p-4 shadow-sm">
+      {imageUrl && (
+        <div className="relative mb-3 h-32 w-full overflow-hidden rounded-md">
+          <Image
+            src={imageUrl}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 25vw"
+            {...getCardProps({ fieldId: 'media' })}
+          />
+        </div>
+      )}
+      {(liveCard as CardFragment).titleRt?.json && (
+        <div
+          className="text-primary text-sm font-semibold"
+          {...getCardProps({ fieldId: 'titleRt' })}
+        >
+          {documentToReactComponents(
+            (liveCard as CardFragment).titleRt!.json as unknown as Parameters<typeof documentToReactComponents>[0],
+          )}
+        </div>
+      )}
+      {(liveCard as CardFragment).descriptionRt?.json && (
+        <div
+          className="text-muted-foreground mt-1 text-xs"
+          {...getCardProps({ fieldId: 'descriptionRt' })}
+        >
+          {documentToReactComponents(
+            (liveCard as CardFragment).descriptionRt!.json as unknown as Parameters<typeof documentToReactComponents>[0],
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function DynamicListing({
@@ -158,6 +213,25 @@ export function DynamicListing({
   }, [isCollection, collectionItems ? JSON.stringify(collectionItems.map(p => p.sku)) : skuList.join(',')]);
 
   const isScroll = data.displayVariant === 'scroll';
+  const calloutCards = data.calloutCardsCollection?.items ?? [];
+
+  // Build interleaved grid items (grid layout only; scroll appends callouts after products)
+  const colCount =
+    products.length <= 2 ? 2 : products.length === 3 ? 3 : 4;
+
+  type GridItem =
+    | { kind: 'product'; product: ProductRecord }
+    | { kind: 'callout'; card: CardFragment };
+
+  const gridItems: GridItem[] = [];
+  let calloutIndex = 0;
+  products.forEach((product, i) => {
+    gridItems.push({ kind: 'product', product });
+    if ((i + 1) % colCount === 0 && calloutIndex < calloutCards.length) {
+      gridItems.push({ kind: 'callout', card: calloutCards[calloutIndex] });
+      calloutIndex++;
+    }
+  });
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-12">
@@ -173,20 +247,41 @@ export function DynamicListing({
 
       {products.length === 0 && !isLoading && null}
 
-      {/* Scroll layout */}
+      {/* Carousel layout */}
       {isScroll ? (
-        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
-          {isLoading
-            ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="w-56 flex-shrink-0">
-                  <MiniProductSkeleton />
-                </div>
-              ))
-            : products.map((p) => (
-                <div key={p.sku} className="w-56 flex-shrink-0 snap-start">
-                  <MiniProductCard product={p} />
-                </div>
-              ))}
+        <div className="relative px-12">
+          <Carousel opts={{ align: 'start', loop: false }} className="w-full">
+            <CarouselContent>
+              {isLoading
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <CarouselItem key={i} className="basis-56">
+                      <MiniProductSkeleton />
+                    </CarouselItem>
+                  ))
+                : (() => {
+                    const items: React.ReactNode[] = [];
+                    let cIdx = 0;
+                    products.forEach((p, i) => {
+                      items.push(
+                        <CarouselItem key={p.sku} className="basis-56">
+                          <MiniProductCard product={p} />
+                        </CarouselItem>,
+                      );
+                      if ((i + 1) % 3 === 0 && cIdx < calloutCards.length) {
+                        items.push(
+                          <CarouselItem key={`callout-${cIdx}`} className="basis-56">
+                            <CalloutCard card={calloutCards[cIdx]} />
+                          </CarouselItem>,
+                        );
+                        cIdx++;
+                      }
+                    });
+                    return items;
+                  })()}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
         </div>
       ) : (
         /* Grid layout (default) */
@@ -204,9 +299,13 @@ export function DynamicListing({
             ? Array.from({ length: 4 }).map((_, i) => (
                 <MiniProductSkeleton key={i} />
               ))
-            : products.map((p) => (
-                <MiniProductCard key={p.sku} product={p} />
-              ))}
+            : gridItems.map((item, idx) =>
+                item.kind === 'product' ? (
+                  <MiniProductCard key={item.product.sku} product={item.product} />
+                ) : (
+                  <CalloutCard key={`callout-${idx}`} card={item.card} />
+                ),
+              )}
         </div>
       )}
     </section>

@@ -16,6 +16,7 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { featureCardBgClass } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
 
 const rtOptions = {
@@ -39,18 +40,6 @@ function renderRt(
     rtOptions,
   );
 }
-
-/** Color-variant → Tailwind background + text class map */
-const colorVariantClasses: Record<string, string> = {
-  blue: 'bg-blue-50 text-blue-900 dark:bg-blue-950 dark:text-blue-100',
-  green: 'bg-green-50 text-green-900 dark:bg-green-950 dark:text-green-100',
-  purple:
-    'bg-purple-50 text-purple-900 dark:bg-purple-950 dark:text-purple-100',
-  orange:
-    'bg-orange-50 text-orange-900 dark:bg-orange-950 dark:text-orange-100',
-  red: 'bg-red-50 text-red-900 dark:bg-red-950 dark:text-red-100',
-  gray: 'bg-muted text-muted-foreground',
-};
 
 /** Resolve columns to Tailwind grid class */
 function gridColsClass(columns: number | null | undefined): string {
@@ -145,9 +134,7 @@ function CardItem({ item }: { item: FeatureSectionItemFragment }) {
     ? getFeatureVisualComponent(animationKey)
     : null;
 
-  const colorClasses = colorVariant
-    ? (colorVariantClasses[colorVariant] ?? 'bg-card')
-    : 'bg-card';
+  const colorClasses = featureCardBgClass(colorVariant);
 
   return (
     <div
@@ -213,9 +200,7 @@ function IntegrationsItem({ item }: { item: FeatureSectionItemFragment }) {
     ? getFeatureVisualComponent(animationKey)
     : null;
 
-  const colorClasses = colorVariant
-    ? (colorVariantClasses[colorVariant] ?? 'bg-card')
-    : 'bg-card';
+  const colorClasses = featureCardBgClass(colorVariant);
 
   const inner = (
     <div

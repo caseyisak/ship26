@@ -18,6 +18,7 @@ import { resolveMergeTagsInDoc } from '@/lib/merge-tags';
 import { NT_EVENTS } from '@/lib/nt-events';
 import { useMergeTags } from '@/personalization/merge-tags-context';
 import { parseSectionStyle } from '@/lib/section-style-types';
+import { sectionBgClass, sectionTextClass } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
 
 const SPACING_MAP = {
@@ -40,24 +41,6 @@ function isDarkColor(hex: string): boolean {
   const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
   return luminance < 0.5;
 }
-
-// ── colorVariant → always-contrasting text class ─────────────────────────────
-// Each entry guarantees readable text on its background. No light-on-light.
-const COLOR_VARIANT_TEXT: Record<string, string> = {
-  light: 'text-foreground',
-  dark: 'text-background',
-  alt: 'text-secondary-foreground',
-  primary: 'text-primary-foreground',
-  secondary: 'text-secondary-foreground',
-};
-
-const COLOR_VARIANT_BG: Record<string, string> = {
-  light: 'bg-background',
-  dark: 'bg-foreground',
-  alt: 'bg-secondary',
-  primary: 'bg-primary',
-  secondary: 'bg-secondary',
-};
 
 // ── Style variant → layout + padding ─────────────────────────────────────────
 const VARIANT_CLASSES: Record<string, { width: string; padding: string }> = {
@@ -141,12 +124,8 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
 
   // ── colorVariant classes (only when sectionStyle override is NOT active) ──
   const resolvedColorVariant = colorVariant ?? 'primary';
-  const colorBgClass = !useOverride
-    ? (COLOR_VARIANT_BG[resolvedColorVariant] ?? 'bg-primary')
-    : '';
-  const colorTextClass = !useOverride
-    ? (COLOR_VARIANT_TEXT[resolvedColorVariant] ?? 'text-primary-foreground')
-    : '';
+  const colorBgClass = !useOverride ? sectionBgClass(resolvedColorVariant) : '';
+  const colorTextClass = !useOverride ? sectionTextClass(resolvedColorVariant) : '';
 
   // ── Section-level color overrides ─────────────────────────────────────────
   const sectionStyle_inline: React.CSSProperties = useOverride && sectionStyle.backgroundColor

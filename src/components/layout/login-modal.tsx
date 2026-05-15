@@ -39,10 +39,11 @@ export function LoginModal({ open, onOpenChange, onLogin }: LoginModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const allTraits = {
-      ...(settings?.loggedInMetadata ?? {}),
-      isLoggedIn: true,
-    };
+    const rawTraits = { ...(settings?.loggedInMetadata ?? {}), isLoggedIn: true };
+    // NT SDK rejects objects with undefined values; strip them before calling identify
+    const allTraits = Object.fromEntries(
+      Object.entries(rawTraits).filter(([, v]) => v !== undefined),
+    );
     ninetailed.identify(userId, allTraits);
     onLogin();
   };

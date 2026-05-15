@@ -170,8 +170,10 @@ export type CardFragment = {
   image?: { url?: string } | null; // Mapped field name (legacy)
   media?: { url?: string } | null; // Raw Contentful field name
   animationKey?: string | null;
-  mediaPlacement?: 'top' | 'bottom' | 'left' | 'right' | null;
-  mediaSize?: 'icon' | 'small' | 'medium' | 'fill' | 'cover' | null;
+  /** Where the media sits relative to text — 'background' fills the entire card. */
+  mediaPlacement?: 'top' | 'bottom' | 'left' | 'right' | 'background' | null;
+  /** How the media is sized — 'background' fills the entire card (same effect as mediaPlacement: background). */
+  mediaSize?: 'icon' | 'small' | 'medium' | 'fill' | 'cover' | 'background' | null;
   colorVariant?: 'transparent' | 'light' | 'dark' | 'accent' | null;
   style?: 'card' | 'borderless' | null;
   sectionStyle?: Record<string, string> | null;
@@ -184,10 +186,8 @@ export type CardsWrapperFragment = BlockData & {
   labelRt?: { json: Record<string, unknown> } | null;
   titleRt?: { json: Record<string, unknown> } | null;
   descriptionRt?: { json: Record<string, unknown> } | null;
-  mediaPosition?: 'top' | 'bottom' | 'left' | 'right' | null;
-  style?: 'card' | 'borderless' | null;
+  backgroundColor?: 'default' | 'light' | 'dark' | 'accent' | null;
   columns?: number | null;
-  colorVariant?: 'light' | 'dark' | 'accent' | null;
   itemsCollection?: { items: CardFragment[] } | null;
   ntExperiencesCollection?: {
     items: Array<NtExperienceFragment>;
@@ -581,6 +581,21 @@ export type DynamicListingFragment = BlockData & {
   titleRt?: { json: Record<string, unknown> } | null;
   skus?: string[] | { categories: string[]; items: Record<string, unknown>[] } | null;
   displayVariant?: 'grid' | 'scroll' | null;
+  calloutCardsCollection?: {
+    items: CardFragment[];
+  } | null;
+};
+
+/** ProductListing block — category-filtered product grid with left-side filters and injected callout cards. */
+export type ProductListingFragment = BlockData & {
+  __typename: 'ProductListing';
+  internalName?: string | null;
+  titleRt?: { json: Record<string, unknown> } | null;
+  collection?: string | null;
+  columns?: number | null;
+  calloutCardsCollection?: {
+    items: CardFragment[];
+  } | null;
 };
 
 export type InheritedProps = Record<string, unknown>;

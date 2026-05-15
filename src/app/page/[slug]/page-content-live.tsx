@@ -305,9 +305,8 @@ function transformSection(item: any): PageSection | null {
         labelRt: item.labelRt ?? null,
         titleRt: item.titleRt ?? null,
         descriptionRt: item.descriptionRt ?? null,
-        style: item.style ?? null,
+        backgroundColor: item.backgroundColor ?? null,
         columns: item.columns ?? null,
-        colorVariant: item.colorVariant ?? null,
         itemsCollection: item.itemsCollection
           ? {
               items: item.itemsCollection.items
@@ -323,7 +322,8 @@ function transformSection(item: any): PageSection | null {
                         animationKey: card.animationKey ?? null,
                         mediaPlacement: card.mediaPlacement ?? null,
                         mediaSize: card.mediaSize ?? null,
-                        sectionStyle: card.sectionStyle ?? null,
+                        colorVariant: card.colorVariant ?? null,
+                        style: card.style ?? null,
                       }
                     : null,
                 )
@@ -341,6 +341,18 @@ function transformSection(item: any): PageSection | null {
         titleRt: item.titleRt ?? null,
         skus: item.skus ?? null,
         displayVariant: item.displayVariant ?? null,
+        calloutCardsCollection: item.calloutCardsCollection ?? null,
+      };
+    }
+    if (item.__typename === 'ProductListing') {
+      return {
+        __typename: 'ProductListing',
+        sys: { id: item.sys.id },
+        internalName: item.internalName ?? null,
+        titleRt: item.titleRt ?? null,
+        collection: item.collection ?? null,
+        columns: item.columns ?? null,
+        calloutCardsCollection: item.calloutCardsCollection ?? null,
       };
     }
     return null;

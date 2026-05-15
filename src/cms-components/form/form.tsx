@@ -11,6 +11,7 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { sectionClasses } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
 
 import { ContactForm } from './contact-form';
@@ -39,13 +40,6 @@ function renderRt(
   );
 }
 
-const bgMap: Record<string, string> = {
-  light: 'bg-background text-foreground',
-  dark: 'bg-foreground text-background',
-  accent: 'bg-accent text-accent-foreground',
-  primary: 'bg-primary text-primary-foreground',
-};
-
 const Form = ({ data, className, ...props }: BlockProps<FormFragment>) => {
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
@@ -64,7 +58,7 @@ const Form = ({ data, className, ...props }: BlockProps<FormFragment>) => {
   const submitLabel = fd.submitLabel ?? null;
   const redirectUrl = fd.redirectUrl ?? null;
 
-  const bgClass = colorVariant ? (bgMap[colorVariant] ?? 'bg-background') : 'bg-background';
+  const bgClass = sectionClasses(colorVariant);
 
   const handleSuccess = () => {
     setSubmitted(true);

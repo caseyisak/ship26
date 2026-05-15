@@ -315,9 +315,8 @@ const CARDS_WRAPPER_FIELDS = `
     labelRt { json }
     titleRt { json }
     descriptionRt { json }
-    style
+    backgroundColor
     columns
-    colorVariant
     itemsCollection(limit: 20) {
       items {
         ${CARD_FIELDS}
@@ -342,9 +341,8 @@ const CARDS_WRAPPER_PAGE_FIELDS = `
     labelRt { json }
     titleRt { json }
     descriptionRt { json }
-    style
+    backgroundColor
     columns
-    colorVariant
     itemsCollection(limit: 20) {
       items {
         ${CARD_FIELDS}
@@ -936,7 +934,7 @@ const PDP_PAGE_FIELDS = `
   }
 `;
 
-/** DynamicListing lean fragment for PAGE_BY_SLUG — skus array + display config; no NT. */
+/** DynamicListing lean fragment for PAGE_BY_SLUG — skus array + display config + callout cards; no NT. */
 const DYNAMIC_LISTING_PAGE_FIELDS = `
   ... on DynamicListing {
     __typename
@@ -945,6 +943,28 @@ const DYNAMIC_LISTING_PAGE_FIELDS = `
     titleRt { json }
     skus
     displayVariant
+    calloutCardsCollection(limit: 10) {
+      items {
+        ${CARD_FIELDS}
+      }
+    }
+  }
+`;
+
+/** ProductListing fragment — category-filtered product grid with callout card references. */
+const PRODUCT_LISTING_PAGE_FIELDS = `
+  ... on ProductListing {
+    __typename
+    sys { id }
+    internalName
+    titleRt { json }
+    collection
+    columns
+    calloutCardsCollection(limit: 10) {
+      items {
+        ${CARD_FIELDS}
+      }
+    }
   }
 `;
 
@@ -984,6 +1004,7 @@ export const PAGE_BY_SLUG = `
             ${FORM_PAGE_FIELDS}
             ${PDP_PAGE_FIELDS}
             ${DYNAMIC_LISTING_PAGE_FIELDS}
+            ${PRODUCT_LISTING_PAGE_FIELDS}
             ... on NewsWrapper {
               __typename
               sys { id }
@@ -1619,6 +1640,20 @@ export const DYNAMIC_LISTING_BY_ID = `
     dynamicListingCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${DYNAMIC_LISTING_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Full ProductListing fields (same as page — no NT on this block). */
+const PRODUCT_LISTING_FIELDS = PRODUCT_LISTING_PAGE_FIELDS;
+
+/** Fetch a single ProductListing by entry ID (live preview). */
+export const PRODUCT_LISTING_BY_ID = `
+  query ProductListingById($id: String!, $locale: String!, $preview: Boolean) {
+    productListingCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${PRODUCT_LISTING_FIELDS}
       }
     }
   }

@@ -18,6 +18,7 @@ import type {
   NewsWrapperFragment,
   PricingFragment,
   ProductDetailPageFragment,
+  ProductListingFragment,
   TabbedContentFragment,
   TwoAcrossFragment,
 } from '@/block-renderer/types';
@@ -45,7 +46,8 @@ export type PageSection =
   | IconFeatureGridFragment
   | FormFragment
   | ProductDetailPageFragment
-  | DynamicListingFragment;
+  | DynamicListingFragment
+  | ProductListingFragment;
 
 export type PageData = {
   __typename?: string;

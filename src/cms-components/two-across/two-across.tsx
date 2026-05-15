@@ -13,6 +13,7 @@ import {
   useLiveUpdates,
 } from '@/lib/live-preview';
 import { parseSectionStyle } from '@/lib/section-style-types';
+import { sectionClasses } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
 
 const richTextOptions = {
@@ -89,19 +90,10 @@ const TwoAcross = ({
   );
   const useOverride = sectionStyle.useStyleOverride;
 
-  const COLOR_VARIANT_CLASSES: Record<string, string> = {
-    light: 'bg-white text-gray-900',
-    dark: 'bg-foreground text-background',
-    primary: 'bg-primary text-primary-foreground',
-    secondary: 'bg-secondary text-secondary-foreground',
-    alt: 'bg-muted text-foreground',
-  };
   const variantClass =
     useOverride && sectionStyle.backgroundColor
       ? ''
-      : colorVariant
-        ? (COLOR_VARIANT_CLASSES[colorVariant] ?? '')
-        : 'bg-background';
+      : sectionClasses(colorVariant ?? null);
 
   const sectionStyleInline: React.CSSProperties =
     useOverride && sectionStyle.backgroundColor

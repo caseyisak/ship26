@@ -10,6 +10,7 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { sectionClasses, sectionMutedTextClass } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
 
 const rtOptions = {
@@ -29,17 +30,6 @@ function rt(json: Record<string, unknown> | undefined | null): React.ReactNode |
     rtOptions,
   );
 }
-
-const SECTION_BG: Record<string, React.CSSProperties> = {
-  light: { backgroundColor: 'var(--background)', color: 'var(--foreground)' },
-  dark: { backgroundColor: 'var(--foreground)', color: 'var(--background)' },
-  accent: { backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' },
-};
-const SECTION_MUTED: Record<string, string> = {
-  light: 'text-muted-foreground',
-  dark: 'text-background/70',
-  accent: 'text-primary-foreground/80',
-};
 
 function ShowcaseItem({ item, index, mutedClass }: { item: FeatureShowcaseItemFragment; index: number; mutedClass: string }) {
   const mediaUrl = item.media?.url?.startsWith('//')
@@ -101,15 +91,13 @@ const FeatureShowcase = ({ data, className, ...props }: BlockProps<FeatureShowca
   const rawVariant = liveData.colorVariant ?? 'light';
   const dataVariant: 'light' | 'dark' | 'accent' =
     rawVariant === 'dark' ? 'dark' : rawVariant === 'accent' ? 'accent' : 'light';
-  const sectionStyle = SECTION_BG[dataVariant] ?? SECTION_BG.light;
-  const mutedClass = SECTION_MUTED[dataVariant] ?? SECTION_MUTED.light;
+  const mutedClass = sectionMutedTextClass(dataVariant);
 
   return (
     <section
       id="feature-showcase"
       data-variant={dataVariant}
-      className={cn('px-6 lg:px-0', className ?? '')}
-      style={sectionStyle}
+      className={cn('px-6 lg:px-0', sectionClasses(dataVariant), className ?? '')}
       {...props}
     >
       <div className="container px-0 py-16 sm:py-20 md:px-6 lg:py-28">

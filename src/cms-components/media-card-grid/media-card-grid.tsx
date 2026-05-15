@@ -10,6 +10,7 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { sectionClasses, sectionMutedTextClass } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
 
 const rtOptions = {
@@ -29,17 +30,6 @@ function rt(json: Record<string, unknown> | undefined | null): React.ReactNode |
     rtOptions,
   );
 }
-
-const SECTION_BG: Record<string, React.CSSProperties> = {
-  light: { backgroundColor: 'var(--background)', color: 'var(--foreground)' },
-  dark: { backgroundColor: 'var(--foreground)', color: 'var(--background)' },
-  accent: { backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' },
-};
-const SECTION_MUTED: Record<string, string> = {
-  light: 'text-muted-foreground',
-  dark: 'text-background/70',
-  accent: 'text-primary-foreground/80',
-};
 
 const COL_CLASS: Record<number, string> = {
   2: 'sm:grid-cols-2',
@@ -114,15 +104,13 @@ const MediaCardGrid = ({ data, className, ...props }: BlockProps<MediaCardGridFr
   const rawVariant = liveData.colorVariant ?? 'light';
   const dataVariant: 'light' | 'dark' | 'accent' =
     rawVariant === 'dark' ? 'dark' : rawVariant === 'accent' ? 'accent' : 'light';
-  const sectionStyle = SECTION_BG[dataVariant] ?? SECTION_BG.light;
-  const mutedClass = SECTION_MUTED[dataVariant] ?? SECTION_MUTED.light;
+  const mutedClass = sectionMutedTextClass(dataVariant);
 
   return (
     <section
       id="media-card-grid"
       data-variant={dataVariant}
-      className={cn('px-6 lg:px-0', className ?? '')}
-      style={sectionStyle}
+      className={cn('px-6 lg:px-0', sectionClasses(dataVariant), className ?? '')}
       {...props}
     >
       <div className="container px-0 py-16 sm:py-20 md:px-6 md:py-24">

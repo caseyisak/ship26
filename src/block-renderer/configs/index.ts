@@ -19,10 +19,12 @@ import type {
   NewsWrapperFragment,
   PricingFragment,
   ProductDetailPageFragment,
+  ProductListingFragment,
   TabbedContentFragment,
   TwoAcrossFragment,
 } from '@/block-renderer/types';
 import { DynamicListing } from '@/cms-components/dynamic-listing/dynamic-listing';
+import { ProductListing } from '@/cms-components/product-listing';
 import { Pdp } from '@/cms-components/pdp/pdp';
 import { Banner } from '@/cms-components/banner';
 import { Form } from '@/cms-components/form';
@@ -183,6 +185,13 @@ const dynamicListingConfig: BlockConfig<DynamicListingFragment> = {
   },
 };
 
+const productListingConfig: BlockConfig<ProductListingFragment> = {
+  typename: 'ProductListing',
+  layouts: {
+    default: () => ProductListing,
+  },
+};
+
 export const blockConfigs: BlockConfig<BlockData>[] = [
   heroConfig as BlockConfig<BlockData>,
   faqConfig as BlockConfig<BlockData>,
@@ -204,4 +213,5 @@ export const blockConfigs: BlockConfig<BlockData>[] = [
   formConfig as BlockConfig<BlockData>,
   pdpConfig as BlockConfig<BlockData>,
   dynamicListingConfig as BlockConfig<BlockData>,
+  productListingConfig as BlockConfig<BlockData>,
 ];

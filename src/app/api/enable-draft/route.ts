@@ -42,6 +42,7 @@ export async function GET(request: NextRequest) {
       type === 'mediaCardGrid' ||
       type === 'dashboardPage' ||
       type === 'productDetailPage' ||
+      type === 'productListing' ||
       type === 'form' ||
       type === 'faq')
   ) {
@@ -85,6 +86,7 @@ export async function GET(request: NextRequest) {
       mediaCardGrid: 'media-card-grid',
       dashboardPage: 'dashboard',
       productDetailPage: 'pdp',
+      productListing: 'product-listing',
       form: 'form',
       faq: 'faq',
     };
