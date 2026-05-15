@@ -797,7 +797,7 @@ const FEATURE_SECTION_FIELDS = `
     itemsCollection(limit: 20) {
       items { ${FEATURE_SECTION_ITEM_FIELDS} }
     }
-    ntExperiencesCollection(limit: 10) {
+    ntExperiencesCollectionCollection(limit: 10) {
       items { ${NT_EXPERIENCE_FIELDS} }
     }
   }
@@ -1650,7 +1650,6 @@ const PRODUCT_LISTING_FIELDS = `
     sys { id }
     internalName
     titleRt { json }
-    collection
     columns
     calloutCardsCollection(limit: 10) {
       items {
