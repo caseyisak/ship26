@@ -590,8 +590,22 @@ export type DynamicListingFragment = BlockData & {
 export type ProductListingFragment = BlockData & {
   __typename: 'ProductListing';
   internalName?: string | null;
+  slug?: string | null;
   titleRt?: { json: Record<string, unknown> } | null;
-  collection?: string | null;
+  productCollection?: Record<string, unknown> | null;
+  hero?: {
+    __typename: 'Hero';
+    sys: { id: string };
+    internalName?: string | null;
+    headlineRt?: { json: Record<string, unknown> } | null;
+    subheadlineRt?: { json: Record<string, unknown> } | null;
+    background?: { url: string } | null;
+    media?: { url: string } | null;
+    ctaText?: string | null;
+    ctaUrl?: string | null;
+    sectionStyle?: string | null;
+    variant?: string | null;
+  } | null;
   columns?: number | null;
   calloutCardsCollection?: {
     items: CardFragment[];

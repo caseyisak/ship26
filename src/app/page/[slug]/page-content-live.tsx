@@ -344,17 +344,6 @@ function transformSection(item: any): PageSection | null {
         calloutCardsCollection: item.calloutCardsCollection ?? null,
       };
     }
-    if (item.__typename === 'ProductListing') {
-      return {
-        __typename: 'ProductListing',
-        sys: { id: item.sys.id },
-        internalName: item.internalName ?? null,
-        titleRt: item.titleRt ?? null,
-        collection: item.collection ?? null,
-        columns: item.columns ?? null,
-        calloutCardsCollection: item.calloutCardsCollection ?? null,
-      };
-    }
     return null;
   } catch (error) {
     // eslint-disable-next-line no-console

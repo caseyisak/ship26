@@ -956,15 +956,6 @@ const DYNAMIC_LISTING_PAGE_FIELDS = `
  * Full data (with callout cards) is available via PRODUCT_LISTING_BY_ID (preview route).
  * Keeps PAGE_BY_SLUG under Contentful's 8192-byte query limit (LL-011).
  */
-const PRODUCT_LISTING_PAGE_FIELDS = `
-  ... on ProductListing {
-    __typename
-    sys { id }
-    internalName
-    titleRt { json }
-    columns
-  }
-`;
 
 /**
  * PAGE_BY_SLUG — lean query kept under Contentful's 8192-byte limit (LL-011).
@@ -1002,7 +993,6 @@ export const PAGE_BY_SLUG = `
             ${FORM_PAGE_FIELDS}
             ${PDP_PAGE_FIELDS}
             ${DYNAMIC_LISTING_PAGE_FIELDS}
-            ${PRODUCT_LISTING_PAGE_FIELDS}
             ... on NewsWrapper {
               __typename
               sys { id }
@@ -1643,13 +1633,28 @@ export const DYNAMIC_LISTING_BY_ID = `
   }
 `;
 
-/** Full ProductListing fields — includes calloutCardsCollection for preview route / BY_ID fetch. */
+/** Full ProductListing fields — used by BY_ID (live preview) and BY_SLUG (page route). */
 const PRODUCT_LISTING_FIELDS = `
   ... on ProductListing {
     __typename
     sys { id }
     internalName
+    slug
     titleRt { json }
+    productCollection
+    hero {
+      __typename
+      sys { id }
+      internalName
+      headlineRt { json }
+      subheadlineRt { json }
+      background { url }
+      media { url }
+      ctaText
+      ctaUrl
+      sectionStyle
+      variant
+    }
     columns
     calloutCardsCollection(limit: 10) {
       items {
@@ -1663,6 +1668,17 @@ const PRODUCT_LISTING_FIELDS = `
 export const PRODUCT_LISTING_BY_ID = `
   query ProductListingById($id: String!, $locale: String!, $preview: Boolean) {
     productListingCollection(where: { sys: { id: $id } }, locale: $locale, preview: $preview, limit: 1) {
+      items {
+        ${PRODUCT_LISTING_FIELDS}
+      }
+    }
+  }
+`;
+
+/** Fetch a single ProductListing by slug (page route). */
+export const PRODUCT_LISTING_BY_SLUG = `
+  query ProductListingBySlug($slug: String!, $locale: String!, $preview: Boolean) {
+    productListingCollection(where: { slug: $slug }, locale: $locale, preview: $preview, limit: 1) {
       items {
         ${PRODUCT_LISTING_FIELDS}
       }

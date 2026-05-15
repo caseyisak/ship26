@@ -188,7 +188,7 @@ export function ProductListing({
 
   // Sidebar filter state
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    liveData.collection ?? 'all',
+    'all',
   );
   const [priceBucket, setPriceBucket] = useState<PriceBucket>('all');
   const [inStockOnly, setInStockOnly] = useState(false);
