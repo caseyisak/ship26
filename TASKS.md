@@ -19,6 +19,9 @@
 | Button hover states + CSS var theming | — | PR #83 + PR #95 | ✅ merged → sandbox/v4.2 |
 | ProductListing block | #86 #87 | PR #87 | ✅ merged 2026-05-15 |
 | PAGE_BY_SLUG query oversize fix | — | main | ✅ fixed 2026-05-15 (was 8228→7943 bytes) |
+| GraphQL two-pass page fetch | — | PR #104 | ✅ merged 2026-05-14 — shell + parallel BY_ID fetch |
+| ProductListing standalone route | — | main | ✅ merged 2026-05-14 — /products/[[...slug]] catch-all |
+| PLP: Hero + NT callout cards | — | main | ✅ merged 2026-05-14 — hero renders, Card in blockConfigs for NT |
 
 ---
 
@@ -82,6 +85,7 @@
 |--------|---------|-------------|-----|
 | `main` | Sandbox, all blocks, source of truth | This CC | — |
 | `feat/integration-sim-multi-select` | Integration Sim single/multi mode toggle | Worktree — CODER active | #101 |
+| `feat/graphql-two-pass` | Two-pass page fetch — eliminates PAGE_BY_SLUG byte limit | ✅ merged | PR #104 |
 
 ---
 
