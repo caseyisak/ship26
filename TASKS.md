@@ -28,8 +28,6 @@
 |-------|-------|----------|-------|
 | #101 | feat(integration-sim): single/multi mode toggle for product + asset picker | 🔴 high | Active — worktree `feat-integration-sim-multi-select`, CODER running |
 | #96 | research: use master env alias for all demos instead of per-demo envs | 🔴 high | New (2026-05-08) — could simplify demo setup significantly |
-| #90 | feat(newsletter): consolidate leadStory → promoSlot + normalize styles | 🟡 medium | May still be open despite PR #91 — verify |
-| #89 | fix(newsletter): headlineRt declared twice in EmbeddedEntry | 🟡 medium | Same — verify if #91 closed it |
 | #79 | feat(dynamic-listing): search, facets & filters | 🔵 backlog | Large scope |
 | #49 | fix(demo/tilley): personalization issues | 🔵 blocked | TBD details — nothing actionable yet |
 | #2 | feat: style override app | 🔵 backlog | Separate Contentful app, big scope |
@@ -40,7 +38,6 @@
 
 | PR | Title | Branch | Notes |
 |----|-------|--------|-------|
-| #64 | feat(cta-section): CtaSection CT + component | `feat/cta-section-block` | ⚠️ Old PR — CtaSection is already in blocks inventory as ✅. May be stale/superseded. |
 
 ---
 
@@ -49,8 +46,6 @@
 | To-do | Status | Notes |
 |-------|--------|-------|
 | Investigate #96 — master env alias pattern | ⬜ new | Could replace per-demo env creation with an alias pointing at master — major workflow simplification |
-| Close/verify #89 + #90 | ⬜ | Both still show open despite PR #91 claiming to fix them — check and close if resolved |
-| Close PR #64 (CtaSection) | ⬜ | CtaSection is in main — PR #64 is likely stale. Review and close if superseded. |
 | Persona C feature flag | ⬜ paused | Does "feature flag for DataViz" mean (a) show/hide slot, or (b) swap banner for DataViz? Clarify before starting. |
 
 ---
