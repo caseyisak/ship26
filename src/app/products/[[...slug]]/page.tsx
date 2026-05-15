@@ -1,7 +1,5 @@
 import { notFound } from 'next/navigation';
 
-import { Footer } from '@/components/layout/footer';
-import Navbar from '@/components/layout/navbar';
 import { ProductListing } from '@/cms-components/product-listing';
 import { getProductListingBySlug } from '@/services/contentful/product-listing';
 import { getSettings } from '@/services/contentful/settings';
@@ -31,13 +29,5 @@ export default async function ProductsPage({
 
   const productCatalog = settings?.productCatalog ?? [];
 
-  return (
-    <>
-      <Navbar />
-      <main>
-        <ProductListing data={listing} productCatalog={productCatalog} />
-      </main>
-      <Footer footerForm={settings?.footerForm} />
-    </>
-  );
+  return <ProductListing data={listing} productCatalog={productCatalog} />;
 }
