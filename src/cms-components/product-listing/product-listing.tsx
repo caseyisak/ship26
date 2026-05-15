@@ -4,7 +4,8 @@ import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import { BLOCKS, MARKS } from '@contentful/rich-text-types';
 import React, { useState } from 'react';
 
-import type { ProductListingFragment } from '@/block-renderer/types';
+import type { HeroFragment, ProductListingFragment } from '@/block-renderer/types';
+import { Hero } from '@/cms-components/hero';
 import { CardRenderer } from '@/cms-components/card-renderer/card-renderer';
 import { contentfulCatalogAdapter } from '@/lib/integration-adapters/contentful-catalog';
 import type { ProductRecord } from '@/lib/integration-adapters/types';
@@ -236,6 +237,10 @@ export function ProductListing({
   };
 
   return (
+    <>
+    {liveData.hero && (
+      <Hero data={liveData.hero as unknown as HeroFragment} />
+    )}
     <section
       className="bg-background px-6 py-12 lg:px-0"
       {...getProps({ fieldId: 'internalName' })}
@@ -409,5 +414,6 @@ export function ProductListing({
         </div>
       </div>
     </section>
+    </>
   );
 }
