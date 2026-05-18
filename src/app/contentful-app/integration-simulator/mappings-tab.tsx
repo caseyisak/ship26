@@ -24,14 +24,16 @@ export interface Activation {
   fieldId: string;
   /** Connector id (new canonical reference). */
   connectorId: string;
-  /** Single-item or multi-select collection. Default: 'single'. */
-  mode?: 'single' | 'multi';
+  /** Picker mode: single item, category collection, or filtered-category pre-filter. Default: 'single'. */
+  mode?: 'single' | 'category' | 'filtered-category';
 }
 
 interface MappingsTabProps {
   contentTypes: ContentType[];
   connectors: ConnectorProfile[];
   activations: Record<string, Activation | null>;
+  /** CT IDs whose mapped field no longer exists in Contentful. */
+  staleCtIds?: Set<string>;
   onToggle: (ct: ContentType) => void;
   onUpdate: (ctId: string, patch: Partial<Activation>) => void;
 }
@@ -42,6 +44,7 @@ export function MappingsTab({
   contentTypes,
   connectors,
   activations,
+  staleCtIds,
   onToggle,
   onUpdate,
 }: MappingsTabProps) {
@@ -94,6 +97,7 @@ export function MappingsTab({
           ct={ct}
           activation={activations[ct.sys.id]!}
           connectors={connectors}
+          isStale={staleCtIds?.has(ct.sys.id) ?? false}
           onToggle={() => onToggle(ct)}
           onUpdate={(patch) => onUpdate(ct.sys.id, patch)}
         />
@@ -141,12 +145,14 @@ function CtRow({
   ct,
   activation,
   connectors,
+  isStale = false,
   onToggle,
   onUpdate,
 }: {
   ct: ContentType;
   activation: Activation | null;
   connectors: ConnectorProfile[];
+  isStale?: boolean;
   onToggle: () => void;
   onUpdate: (patch: Partial<Activation>) => void;
 }) {
@@ -178,7 +184,24 @@ function CtRow({
           </Text>
         </Box>
         <Flex alignItems="center" gap="spacingS">
-          {isActive && (
+          {isActive && isStale && (
+            <Box
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                padding: '2px 8px',
+                borderRadius: 999,
+                background: '#FFF3CD',
+                border: '1px solid #C09000',
+              }}
+            >
+              <Text style={{ color: '#856404', fontSize: 11, fontWeight: 600 }}>
+                Mapped field missing
+              </Text>
+            </Box>
+          )}
+          {isActive && !isStale && (
             <Box
               style={{
                 display: 'inline-flex',
@@ -267,12 +290,13 @@ function CtRow({
               <Select
                 value={activation.mode ?? 'single'}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  onUpdate({ mode: e.target.value as 'single' | 'multi' })
+                  onUpdate({ mode: e.target.value as 'single' | 'category' | 'filtered-category' })
                 }
                 size="small"
               >
                 <Select.Option value="single">Single</Select.Option>
-                <Select.Option value="multi">Multi</Select.Option>
+                <Select.Option value="category">Category</Select.Option>
+                <Select.Option value="filtered-category">Filtered Category</Select.Option>
               </Select>
             </Box>
           </Flex>

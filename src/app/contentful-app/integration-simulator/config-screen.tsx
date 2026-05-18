@@ -10,7 +10,7 @@ import {
   Tabs,
   Text,
 } from '@contentful/f36-components';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import type {
   AppParams as ConnectorAppParams,
@@ -74,15 +74,17 @@ type ConfigSdk = {
  */
 function migrateMappings(
   raw: ConnectorAppParams['mappings'],
-): Array<{ contentTypeId: string; fieldId: string; connectorId: string; mode?: 'single' | 'multi' }> {
+): Array<{ contentTypeId: string; fieldId: string; connectorId: string; mode?: 'single' | 'category' | 'filtered-category' }> {
   return raw.map((m) => {
     const explicit = (m as Partial<MappingRow>).connectorId;
     const fromLegacy = SIMULATOR_TYPE_TO_CONNECTOR_ID[m.simulatorType];
+    // Legacy data may still have 'multi' — migrate to 'category'
+    const rawMode = (m as Record<string, unknown>).mode as string | undefined;
     return {
       contentTypeId: m.contentTypeId,
       fieldId: m.fieldId,
       connectorId: explicit ?? fromLegacy ?? '',
-      mode: (m as Partial<MappingRow>).mode,
+      mode: rawMode === 'multi' ? 'category' : (rawMode as MappingRow['mode']),
     };
   });
 }
@@ -182,7 +184,15 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
         string,
         { controls: Array<{ fieldId: string }> }
       > = {};
+      // Build a fast lookup: ctId → Set<fieldId> from already-loaded contentTypes
+      // No extra API call needed — contentTypes is already in component state
+      const ctFieldIndex = new Map(
+        contentTypes.map((ct) => [ct.sys.id, new Set(ct.fields.map((f) => f.id))])
+      );
       for (const m of mappings) {
+        // Skip if the CT or field no longer exists in Contentful — prevents
+        // "Failed to update app configuration" when a field is deleted after mapping
+        if (!ctFieldIndex.get(m.contentTypeId)?.has(m.fieldId)) continue;
         if (!EditorInterface[m.contentTypeId]) {
           EditorInterface[m.contentTypeId] = { controls: [] };
         }
@@ -204,7 +214,7 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
       appSdk.app.setReady();
     }
     return cleanup;
-  }, [activations, connectors, customCategories, ready]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activations, connectors, customCategories, contentTypes, ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleCt = (ct: ContentType) => {
     setActivations((prev) => {
@@ -225,6 +235,19 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
       };
     });
   };
+
+  // Detect mappings that reference a field that no longer exists on the CT
+  const staleCtIds = useMemo(() => {
+    const stale = new Set<string>();
+    for (const [ctId, activation] of Object.entries(activations)) {
+      if (!activation) continue;
+      const ct = contentTypes.find((c) => c.sys.id === ctId);
+      if (!ct || !ct.fields.find((f) => f.id === activation.fieldId)) {
+        stale.add(ctId);
+      }
+    }
+    return stale;
+  }, [contentTypes, activations]);
 
   const updateActivation = (ctId: string, patch: Partial<Activation>) => {
     setActivations((prev) => ({
@@ -263,6 +286,7 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
                     contentTypes={contentTypes}
                     connectors={connectors}
                     activations={activations}
+                    staleCtIds={staleCtIds}
                     onToggle={toggleCt}
                     onUpdate={updateActivation}
                   />

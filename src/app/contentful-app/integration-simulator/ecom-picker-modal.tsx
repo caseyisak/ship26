@@ -282,10 +282,10 @@ function ProductDetailPanel({ product }: { product: ProductRecord }) {
 
 export interface EcomPickerContentProps {
   simulatorType: SimulatorType;
-  onSelect: (result: ProductRecord | ProductRecord[] | ProductCollection) => void;
+  onSelect: (result: ProductRecord | ProductRecord[] | ProductCollection | Record<string, unknown>) => void;
   onClose: () => void;
-  /** 'multi' enables category collection picker and returns ProductCollection. */
-  pickerMode?: 'single' | 'multi';
+  /** Picker mode: single item, category collection, or filtered-category pre-filter. */
+  pickerMode?: 'single' | 'category' | 'filtered-category';
 }
 
 export function EcomPickerContent({
@@ -294,7 +294,8 @@ export function EcomPickerContent({
   onClose,
   pickerMode = 'single',
 }: EcomPickerContentProps) {
-  const multiSelect = pickerMode === 'multi';
+  const multiSelect = pickerMode === 'category';
+  const filteredCategory = pickerMode === 'filtered-category';
   const brand = BRAND_CONFIG[simulatorType];
   const headerBg = brand.color;
   const headerLabel = `${brand.label} — Product Catalog`;
@@ -305,6 +306,7 @@ export function EcomPickerContent({
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [isImporting, setIsImporting] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
+  const [filteredCatSelection, setFilteredCatSelection] = useState<string>('');
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 400);
@@ -406,6 +408,87 @@ export function EcomPickerContent({
         ? 'Add 1 Product'
         : `Add ${multiCategoryProducts.length} Products`
       : 'Import Product';
+
+  // ── Filtered-category mode: lightweight category dropdown ─────────────────
+  if (filteredCategory) {
+    const handleFilteredConfirm = () => {
+      onSelect({
+        type: 'filtered-category',
+        category: filteredCatSelection || null,
+      });
+      onClose();
+    };
+
+    return (
+      <Box style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* Header */}
+        <Box
+          style={{
+            background: headerBg,
+            padding: '12px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            flexShrink: 0,
+          }}
+        >
+          <Text
+            fontWeight="fontWeightDemiBold"
+            style={{ color: '#fff', fontSize: 14, letterSpacing: '0.02em' }}
+          >
+            {brand.label} — Set Category Pre-filter
+          </Text>
+        </Box>
+
+        {/* Body */}
+        <Box style={{ flex: 1, padding: '20px 24px' }}>
+          <Text style={{ fontSize: 13, display: 'block', marginBottom: 12 }}>
+            Choose a category to pre-select on the PLP sidebar. Visitors can still change
+            the filter — this only sets the initial state.
+          </Text>
+
+          {isLoading ? (
+            <Skeleton.Container>
+              <Skeleton.BodyText numberOfLines={3} />
+            </Skeleton.Container>
+          ) : (
+            <Select
+              value={filteredCatSelection}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                setFilteredCatSelection(e.target.value)
+              }
+            >
+              <Select.Option value="">All (no pre-filter)</Select.Option>
+              {displayCategories.map((cat) => (
+                <Select.Option key={cat} value={cat}>
+                  {cat}
+                </Select.Option>
+              ))}
+            </Select>
+          )}
+        </Box>
+
+        {/* Footer */}
+        <Box
+          style={{
+            borderTop: '1px solid #CFD9E0',
+            padding: '10px 16px',
+            background: '#fff',
+            flexShrink: 0,
+          }}
+        >
+          <Flex justifyContent="flex-end" gap="spacingS">
+            <Button variant="secondary" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleFilteredConfirm} isDisabled={isLoading}>
+              Confirm
+            </Button>
+          </Flex>
+        </Box>
+      </Box>
+    );
+  }
 
   // ── Multi mode: category cards + preview ──────────────────────────────────
   if (multiSelect) {

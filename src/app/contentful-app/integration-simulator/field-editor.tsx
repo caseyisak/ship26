@@ -37,7 +37,7 @@ type FieldSdk = {
       shouldCloseOnOverlayClick?: boolean;
       shouldCloseOnEscapePress?: boolean;
       allowHeightOverflow?: boolean;
-    }) => Promise<ProductRecord | AssetRecord | ProductRecord[] | AssetRecord[] | ProductCollection | AssetCollection | null>;
+    }) => Promise<ProductRecord | AssetRecord | ProductRecord[] | AssetRecord[] | ProductCollection | AssetCollection | Record<string, unknown> | null>;
   };
 };
 
@@ -123,7 +123,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
   const pickerMode = mapping?.mode ?? 'single';
 
   const [fieldValue, setFieldValue] = useState<
-    ProductRecord | AssetRecord | ProductRecord[] | AssetRecord[] | ProductCollection | AssetCollection | null
+    ProductRecord | AssetRecord | ProductRecord[] | AssetRecord[] | ProductCollection | AssetCollection | Record<string, unknown> | null
   >(null);
 
   useEffect(() => {
@@ -139,16 +139,23 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
   };
 
   const openPicker = async () => {
-    const isMulti = pickerMode === 'multi';
+    const isCategory = pickerMode === 'category';
+    const isFilteredCategory = pickerMode === 'filtered-category';
+    const dialogTitle = simulatorType && isEcomType(simulatorType)
+      ? isFilteredCategory
+        ? 'Set Category Pre-filter'
+        : isCategory
+          ? 'Select Category Collection'
+          : 'Select Product'
+      : simulatorType && isBookingType(simulatorType)
+        ? 'Booking Widget'
+        : isCategory
+          ? 'Select Assets'
+          : 'Select Asset';
     const result = await fieldSdk.dialogs.openCurrentApp({
-      title:
-        simulatorType && isEcomType(simulatorType)
-          ? isMulti ? 'Select Products' : 'Select Product'
-          : simulatorType && isBookingType(simulatorType)
-            ? 'Booking Widget'
-            : isMulti ? 'Select Assets' : 'Select Asset',
-      width: 'fullWidth',
-      minHeight: 650,
+      title: dialogTitle,
+      width: isFilteredCategory ? 'medium' : 'fullWidth',
+      minHeight: isFilteredCategory ? 350 : 650,
       parameters: { mode: simulatorType, pickerMode },
       shouldCloseOnOverlayClick: true,
       shouldCloseOnEscapePress: true,
@@ -163,15 +170,17 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
   const isBooking = simulatorType ? isBookingType(simulatorType) : false;
 
   // Detect collection vs array vs single value
-  const isProductCollection = fieldValue && !Array.isArray(fieldValue) && 'categories' in (fieldValue as object);
-  const isAssetCollection = fieldValue && !Array.isArray(fieldValue) && 'collections' in (fieldValue as object);
+  const isFilteredCategoryValue = fieldValue && typeof fieldValue === 'object' && !Array.isArray(fieldValue) && 'type' in (fieldValue as object) && (fieldValue as Record<string, unknown>).type === 'filtered-category';
+  const isProductCollection = fieldValue && !Array.isArray(fieldValue) && !isFilteredCategoryValue && 'categories' in (fieldValue as object);
+  const isAssetCollection = fieldValue && !Array.isArray(fieldValue) && !isFilteredCategoryValue && 'collections' in (fieldValue as object);
   const isMultiValue = Array.isArray(fieldValue);
   const productCollection = isProductCollection ? (fieldValue as ProductCollection) : null;
   const assetCollection = isAssetCollection ? (fieldValue as AssetCollection) : null;
+  const filteredCategoryValue = isFilteredCategoryValue ? (fieldValue as Record<string, unknown>) : null;
   const products = isEcom && isMultiValue ? (fieldValue as ProductRecord[]) : null;
   const assets = !isEcom && !isBooking && isMultiValue ? (fieldValue as AssetRecord[]) : null;
-  const product = isEcom && !isMultiValue && !isProductCollection ? (fieldValue as ProductRecord | null) : null;
-  const asset = !isEcom && !isBooking && !isMultiValue && !isAssetCollection ? (fieldValue as AssetRecord | null) : null;
+  const product = isEcom && !isMultiValue && !isProductCollection && !isFilteredCategoryValue ? (fieldValue as ProductRecord | null) : null;
+  const asset = !isEcom && !isBooking && !isMultiValue && !isAssetCollection && !isFilteredCategoryValue ? (fieldValue as AssetRecord | null) : null;
 
   // ── Booking widget (inline, no picker flow) ───────────────────────────────
   if (isBooking && simulatorType) {
@@ -260,6 +269,45 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
         <Flex justifyContent="flex-end" gap="spacingS" style={{ marginTop: 10 }}>
           <Button variant="secondary" size="small" onClick={openPicker}>
             Change Categories
+          </Button>
+          <Button
+            variant="transparent"
+            size="small"
+            style={{ color: '#C13B36' }}
+            onClick={handleClear}
+          >
+            Remove
+          </Button>
+        </Flex>
+      </Box>
+    );
+  }
+
+  // ── Filtered-category filled state ─────────────────────────────────────────
+  if (filteredCategoryValue) {
+    const catName = typeof filteredCategoryValue.category === 'string'
+      ? filteredCategoryValue.category
+      : null;
+    return (
+      <Box
+        style={{
+          border: '1px solid #CFD9E0',
+          borderRadius: 6,
+          background: '#F7F9FA',
+          padding: '10px 14px',
+        }}
+      >
+        <Flex alignItems="center" gap="spacingS" style={{ marginBottom: 6 }}>
+          {simulatorType && <BrandPill simulatorType={simulatorType} />}
+        </Flex>
+        <Flex alignItems="center" gap="spacingS">
+          <Badge variant={catName ? 'primary' : 'secondary'}>
+            {catName ? `Pre-filtering to: ${catName}` : 'No pre-filter (All)'}
+          </Badge>
+        </Flex>
+        <Flex justifyContent="flex-end" gap="spacingS" style={{ marginTop: 10 }}>
+          <Button variant="secondary" size="small" onClick={openPicker}>
+            Change Pre-filter
           </Button>
           <Button
             variant="transparent"
@@ -734,17 +782,23 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
       <Flex flexDirection="column" alignItems="center" style={{ gap: 12 }}>
         <Text fontColor="gray600">
           {isEcom
-            ? pickerMode === 'multi'
+            ? pickerMode === 'category'
               ? 'No products linked. Select a collection from your e-commerce store.'
-              : 'No product linked. Connect a product from your e-commerce store.'
-            : pickerMode === 'multi'
+              : pickerMode === 'filtered-category'
+                ? 'No category pre-filter set. Choose a category to pre-select on the PLP sidebar.'
+                : 'No product linked. Connect a product from your e-commerce store.'
+            : pickerMode === 'category'
               ? 'No assets linked. Select files from your media library.'
               : 'No asset linked. Connect a file from your media library.'}
         </Text>
         <Button variant="primary" onClick={openPicker}>
           {isEcom
-            ? pickerMode === 'multi' ? 'Add Products' : 'Add Product'
-            : pickerMode === 'multi' ? 'Add Assets' : 'Add Asset'}
+            ? pickerMode === 'category'
+              ? 'Add Products'
+              : pickerMode === 'filtered-category'
+                ? 'Set Pre-filter'
+                : 'Add Product'
+            : pickerMode === 'category' ? 'Add Assets' : 'Add Asset'}
         </Button>
       </Flex>
     </Box>

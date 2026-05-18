@@ -103,8 +103,8 @@ export interface MappingRow {
    * SimulatorType) keep working until they're refactored to read connectorId.
    */
   simulatorType: SimulatorType;
-  /** Single-item picker or multi-select collection. Default: 'single'. */
-  mode?: 'single' | 'multi';
+  /** Picker mode: single item, category collection, or filtered-category pre-filter. Default: 'single'. */
+  mode?: 'single' | 'category' | 'filtered-category';
 }
 
 export interface AppParams {

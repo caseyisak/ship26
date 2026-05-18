@@ -275,12 +275,12 @@ export interface DamPickerContentProps {
   simulatorType?: SimulatorType;
   onSelect: (result: AssetRecord | AssetRecord[] | AssetCollection) => void;
   onClose: () => void;
-  /** 'multi' enables folder/tag collection picker and returns AssetCollection. */
-  pickerMode?: 'single' | 'multi';
+  /** 'category' enables folder/tag collection picker and returns AssetCollection. */
+  pickerMode?: 'single' | 'category' | 'filtered-category';
 }
 
 export function DamPickerContent({ simulatorType, onSelect, onClose, pickerMode = 'single' }: DamPickerContentProps) {
-  const multiSelect = pickerMode === 'multi';
+  const multiSelect = pickerMode === 'category';
   const headerBg = simulatorType ? BRAND_CONFIG[simulatorType].color : DAM_HEADER;
   const headerLabel = simulatorType
     ? `${BRAND_CONFIG[simulatorType].label} — Media Library`

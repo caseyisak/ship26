@@ -2,7 +2,7 @@
 
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, MARKS } from '@contentful/rich-text-types';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import type { HeroFragment, ProductListingFragment } from '@/block-renderer/types';
 import { BlockRenderer } from '@/block-renderer';
@@ -187,20 +187,41 @@ export function ProductListing({
   const columns = liveData.columns ?? 3;
   const colsClass = COLS_CLASS[columns] ?? 'grid-cols-3';
 
+  // Derive initial category filter from productCollection field value
+  // Only applies when the 3P app configured this field with mode='filtered-category'
+  const initialCategory = useMemo(() => {
+    const pc = liveData.productCollection;
+    if (
+      pc &&
+      typeof pc === 'object' &&
+      'type' in pc &&
+      (pc as Record<string, unknown>).type === 'filtered-category'
+    ) {
+      const cat = (pc as Record<string, unknown>).category;
+      if (typeof cat === 'string') return cat;
+    }
+    return 'all';
+  }, [liveData.productCollection]);
+
   // Sidebar filter state
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    'all',
+    initialCategory,
   );
   const [priceBucket, setPriceBucket] = useState<PriceBucket>('all');
   const [inStockOnly, setInStockOnly] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [tagsExpanded, setTagsExpanded] = useState(false);
 
   // Derived filter options
   const allCategories = Array.from(
     new Set(productCatalog.map((p) => p.category).filter(Boolean)),
   );
+  // Tags derived from category-filtered products — only shows tags relevant to active category
+  const categoryProducts = selectedCategory === 'all'
+    ? productCatalog
+    : productCatalog.filter((p) => p.category === selectedCategory);
   const allTags = Array.from(
-    new Set(productCatalog.flatMap((p) => p.tags ?? [])),
+    new Set(categoryProducts.flatMap((p) => p.tags ?? [])),
   );
 
   // Filtered products
@@ -332,28 +353,50 @@ export function ProductListing({
               </label>
             </div>
 
-            {/* Tags */}
+            {/* Tags (collapsible) */}
             {allTags.length > 0 && (
               <div>
-                <h3 className="text-muted-foreground mb-2 text-xs font-semibold tracking-wider uppercase">
+                <button
+                  type="button"
+                  onClick={() => setTagsExpanded((v) => !v)}
+                  className="text-muted-foreground mb-2 flex w-full items-center justify-between text-xs font-semibold tracking-wider uppercase"
+                >
                   Tags
-                </h3>
-                <div className="space-y-1">
-                  {allTags.map((tag) => (
-                    <label
-                      key={tag}
-                      className="text-foreground flex cursor-pointer items-center gap-2 text-sm"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedTags.includes(tag)}
-                        onChange={() => toggleTag(tag)}
-                        className="border-border accent-primary h-4 w-4 rounded"
-                      />
-                      {tag}
-                    </label>
-                  ))}
-                </div>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={cn(
+                      'transition-transform duration-200',
+                      tagsExpanded ? 'rotate-180' : '',
+                    )}
+                  >
+                    <path d="M3 4.5L6 7.5L9 4.5" />
+                  </svg>
+                </button>
+                {tagsExpanded && (
+                  <div className="space-y-1">
+                    {allTags.map((tag) => (
+                      <label
+                        key={tag}
+                        className="text-foreground flex cursor-pointer items-center gap-2 text-sm"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedTags.includes(tag)}
+                          onChange={() => toggleTag(tag)}
+                          className="border-border accent-primary h-4 w-4 rounded"
+                        />
+                        {tag}
+                      </label>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </aside>

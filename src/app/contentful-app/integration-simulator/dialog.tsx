@@ -15,9 +15,9 @@ import type { AssetCollection, ProductCollection } from './connector-types';
 
 type DialogSdk = {
   parameters: {
-    invocation: { mode: SimulatorType; pickerMode?: 'single' | 'multi' };
+    invocation: { mode: SimulatorType; pickerMode?: 'single' | 'category' | 'filtered-category' };
   };
-  close: (value: ProductRecord | AssetRecord | ProductRecord[] | AssetRecord[] | ProductCollection | AssetCollection | null) => void;
+  close: (value: ProductRecord | AssetRecord | ProductRecord[] | AssetRecord[] | ProductCollection | AssetCollection | Record<string, unknown> | null) => void;
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
