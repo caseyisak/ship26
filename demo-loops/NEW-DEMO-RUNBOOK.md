@@ -80,8 +80,13 @@ Port in dependency order: assets → authors → blogPosts → navLinks → nav/
 bash scripts/worktree-add.sh demo/[customer]-[YYYY-MM]
 ```
 
+Re-point the `demo` alias to the new env:
+```bash
+bash scripts/alias-swap.sh [customer]-2
+```
+
 Update `.env.local` in the new worktree:
-- `CONTENTFUL_ENVIRONMENT=[customer]-2`
+- `CONTENTFUL_ENVIRONMENT=demo`  ← always `demo`, never the env ID directly
 - `NEXT_PUBLIC_NINETAILED_ENVIRONMENT=development`
 
 Restore brand theme CSS (`[data-theme='[customer]']`) from the old demo branch:
@@ -109,8 +114,9 @@ CC will remind you at the right point in the build — but print this list and c
 
 | # | Step | Where | When |
 |---|------|--------|------|
-| M1 | **Add new env to Contentful API key** | Contentful → Settings → API Keys → [key] → Environments tab → add env → Save | Immediately after creating the Contentful env (Step 3) |
-| M2 | **Connect NT Personalization app to new env** | Contentful → Apps → Contentful Personalization → click Connect | After API key is scoped (M1) |
+| M0 | **One-time only: Create `demo` alias + add to API key** | Contentful → Settings → Environments → Manage aliases → Create alias (`demo` → `master`). Then Settings → API Keys → [key] → Environments → add `demo` → Save | First demo only — skip on all subsequent demos |
+| M1 | **Re-point `demo` alias to new env** | Run: `bash scripts/alias-swap.sh [customer-env-id]` | Immediately after creating the Contentful env (Step 3) |
+| M2 | **Connect NT Personalization app to new env** | Contentful → Apps → Contentful Personalization → click Connect | After alias is pointed (M1) |
 | M3 | **Enable personalizable content types in NT app** | Contentful Personalization app → Personalizable content types tab → enable each CT | After connecting NT app (M2) |
 | M4 | **Omit field collisions caused by NT app** | Contentful → Content model → [each CT] → omit `ntExperiences` (camelCase) field | Immediately after M3 — see LL-016 |
 | M4b | **Never add `nt_experiences` manually to new CTs** | Do NOT create `nt_experiences` via MCP when building new CTs — let NT app create it in M3. Manual creation with wrong field ID causes `ntExperiencesCollectionCollection` double suffix → 400 error | Before building new CTs — see LL-026 |
@@ -118,8 +124,11 @@ CC will remind you at the right point in the build — but print this list and c
 | M6 | **Link existing NT experiences (not clone)** | Contentful → each baseline entry → NT sidebar → "Link existing experience" | After creating variant entries (Step 8) — see LL-020 |
 | M7 | **Publish all NT experience + audience entries** | Contentful → each `nt_experience` + `nt_audience` entry | Before first Playwright verification run |
 | M8 | **Visual sign-off** | Browser at localhost:3000 | After Playwright passes — human eyes on every loop |
+| M9 | **Post-demo: reset alias + NT sync** | Run: `bash scripts/alias-swap.sh --reset`. Then in Contentful: publish any minor edit to an NT Experience entry in the new env (flushes NT cache). | After demo ends |
 
-> **M1 is the most commonly missed.** Without it, every GraphQL call returns `UNKNOWN_ENVIRONMENT` and the app silently 404s. Do it the moment the Contentful env exists — CC will flag it.
+> **M1 (alias re-point) replaces the old M1 (add env to API key).** The `demo` alias is added to the API key once (M0) and stays there. No per-demo API key edits needed.
+
+> **M9 is easy to forget.** If you skip it, `demo` alias keeps pointing at the old customer env. Set a calendar reminder or do it immediately after the demo.
 
 ---
 
@@ -144,11 +153,13 @@ claude /Users/casey.lisak/Dev/metafi-worktrees/demo-[customer]-[YYYY-MM]
 Edit `[worktree]/.env.local`:
 
 ```bash
-CONTENTFUL_ENVIRONMENT=[customer]        # must match the new Contentful env name
+CONTENTFUL_ENVIRONMENT=demo              # always 'demo' — the alias is re-pointed per demo (Step 3b)
 NEXT_PUBLIC_BRAND=[customer]             # drives data-theme attribute
 NEXT_PUBLIC_NINETAILED_API_KEY=[key]     # REQUIRED — use NEXT_PUBLIC_ prefix, not NINETAILED_CLIENT_ID
-NEXT_PUBLIC_NINETAILED_ENVIRONMENT=development  # make each demo worktree development so there are no conflicts with the main env which should be reserved for the master/main sandbox
+NEXT_PUBLIC_NINETAILED_ENVIRONMENT=development  # demo envs always use the development NT bucket
 ```
+
+> **Why `demo` not `[customer]`?** The `demo` Contentful environment alias always points at whichever customer env is currently active. All demo worktrees use `CONTENTFUL_ENVIRONMENT=demo` — you only change the alias target, not the env name in code.
 
 > 🔴 **MANUAL — M5:** Get `NEXT_PUBLIC_NINETAILED_API_KEY` from NT dashboard → workspace settings. Paste it into `.env.local`. CC cannot read or inject this value.
 
@@ -160,13 +171,24 @@ NEXT_PUBLIC_NINETAILED_ENVIRONMENT=development  # make each demo worktree develo
 
 In Contentful UI: Settings → Environments → Add environment → **copy from `master`**.
 
-Name it `[customer]` (same as `CONTENTFUL_ENVIRONMENT` above).
+Name it `[customer]` (e.g. `beckons-2026-05` — use a date suffix so old envs are identifiable).
 
 ⚠️ **Pain from bears:** Copying from master gives you all the existing content types and components, but does NOT copy:
 - The NT Personalization app installation (you have to re-connect it per env — see Step 6)
 - Any entries (those are env-specific)
 
-> 🔴 **MANUAL — M1:** Immediately after creating the env, go to Contentful → Settings → API Keys → [your key] → Environments tab → add the new env → Save. **Do this now, before running the dev server.** Without it, every GraphQL call returns `UNKNOWN_ENVIRONMENT`.
+## Step 3b — Re-point the `demo` alias to the new env
+
+> 🔴 **MANUAL — M1:** Run the alias swap script immediately after the env is created — before starting the dev server:
+
+```bash
+bash scripts/alias-swap.sh [customer-env-id]
+# Example: bash scripts/alias-swap.sh beckons-2026-05
+```
+
+This re-points the `demo` alias from its previous target to the new customer env. All requests using `CONTENTFUL_ENVIRONMENT=demo` will now hit the new env.
+
+> **No API key changes needed** — the `demo` alias was added to the API key once during M0 setup and stays there permanently.
 
 ---
 
@@ -342,6 +364,8 @@ pkill -f "next dev" && rm -rf .next && bun run dev > /tmp/[customer]-dev.log 2>&
 
 After the current demo, before starting the next one:
 
+- [ ] **Reset alias:** `bash scripts/alias-swap.sh --reset` (re-points `demo` → `master` env)
+- [ ] **NT sync:** publish a minor edit to any NT Experience entry in the just-used customer env (flushes stale cache)
 - [ ] Merge current demo branch → `demo/[customer]` (NOT main)
 - [ ] Copy `demo-loops/` to main metafi repo and commit
 - [ ] File GH issues for anything worth promoting to main sandbox
