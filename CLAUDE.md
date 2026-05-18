@@ -321,11 +321,36 @@ When preview is broken: clarify parent vs iframe first. Most issues are in the i
 
 ---
 
-## What we're building next: Demo-OS
+## Metafi's role in the Demo-OS system
 
-Demo-OS is an agent-based system that will automate demo construction. It reads `demo-loops/DEMO-OS.md` (the sandbox inventory + loop library + pain signal mappings) and instructs CC on how to build a custom demo end-to-end.
+**Demo-OS** (`/Users/casey.lisak/Dev/demo-os`) is a separate project — the planning and orchestration layer. **Metafi is the execution layer.** This distinction is non-negotiable:
 
-Before starting Demo-OS work:
-1. Pass `demo-loops/DEMO-OS.md` to the context
-2. Review active sandbox blocks in `TASKS.md`
-3. Ensure all demo loops have valid `LOOP.md` files per `demo-loops/_schema.md`
+| Demo-OS does | Metafi does |
+|---|---|
+| Read discovery briefs | Build components |
+| Select demo loops | Create/update Contentful entries |
+| Write change plans | Run the dev server |
+| Write handoff docs → Metafi | Execute handoff instructions |
+| Track loop promotion | Write technical lessons learned |
+
+### When a Metafi CC session starts for a demo
+
+1. **Read the handoff doc first:** `documentation/handoff-[customer].md` — Demo-OS wrote it, it specifies exactly what to build
+2. **Build what the handoff specifies.** Don't make loop selection decisions — that already happened in Demo-OS.
+3. **Follow the existing demo runbook:** `demo-loops/NEW-DEMO-RUNBOOK.md`
+4. **Technical lessons learned** (code bugs, GraphQL errors, live preview issues) → `documentation/lessons-learned/`. Demo-specific lessons (what loops landed with the prospect, brand observations) → flag for Demo-OS, they don't belong here.
+
+### What Metafi does NOT do in the Demo-OS workflow
+
+- Make loop selection decisions (Demo-OS owns this)
+- Update `demo-loops/DEMO-OS.md` promotion status (Demo-OS owns this)
+- Write `documentation/output/*.json` files (those are Demo-OS output artifacts)
+- Reason about which loops best match a prospect's pain signals
+
+### The loop library lives here
+
+`demo-loops/DEMO-OS.md` is the sandbox inventory and loop library index. Demo-OS reads it — Metafi does not need to read or modify it except when promoting a loop to sandbox status (which happens via a PR to main, not by editing the file directly).
+
+### Entry IDs matter
+
+The most valuable thing Metafi CC can do for the Demo-OS pipeline is **keep entry IDs accurate in LOOP.md Entry Reference tables**. When a loop is built or updated, record the `sys.id` of every Contentful entry the loop touches. Demo-OS's `demo-plan` skill depends on these IDs to produce an actionable change plan.
