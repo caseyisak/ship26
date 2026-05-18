@@ -22,6 +22,7 @@
 | GraphQL two-pass page fetch | — | PR #104 | ✅ merged 2026-05-14 — shell + parallel BY_ID fetch |
 | ProductListing standalone route | — | main | ✅ merged 2026-05-14 — /products/[[...slug]] catch-all |
 | PLP: Hero + NT callout cards | — | main | ✅ merged 2026-05-14 — hero renders, Card in blockConfigs for NT |
+| Integration Sim mode refactor + save bug fix | — | PR #105 | ✅ merged 2026-05-18 — category/filtered-category modes, field-existence guard (LL-038), PLP pre-filter, tags toggle |
 
 ---
 
@@ -29,7 +30,7 @@
 
 | Issue | Title | Priority | Notes |
 |-------|-------|----------|-------|
-| #101 | feat(integration-sim): single/multi mode toggle for product + asset picker | 🔴 high | Active — worktree `feat-integration-sim-multi-select`, CODER running |
+| #101 | feat(integration-sim): single/multi mode toggle for product + asset picker | ✅ done | PR #102 merged |
 | #96 | research: use master env alias for all demos instead of per-demo envs | 🔴 high | New (2026-05-08) — could simplify demo setup significantly |
 | #79 | feat(dynamic-listing): search, facets & filters | 🔵 backlog | Large scope |
 | #49 | fix(demo/tilley): personalization issues | 🔵 blocked | TBD details — nothing actionable yet |
@@ -84,7 +85,6 @@
 | Branch | Purpose | CC instance | GH |
 |--------|---------|-------------|-----|
 | `main` | Sandbox, all blocks, source of truth | This CC | — |
-| `feat/integration-sim-multi-select` | Integration Sim single/multi mode toggle | Worktree — CODER active | #101 |
 | `feat/graphql-two-pass` | Two-pass page fetch — eliminates PAGE_BY_SLUG byte limit | ✅ merged | PR #104 |
 
 ---
