@@ -4,6 +4,12 @@ description: End-of-milestone housekeeping — run after any task or milestone c
 metadata:
   author: metafi-project
   version: 1.0.0
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
 ---
 
 # Continuous improvement (post-run protocol)

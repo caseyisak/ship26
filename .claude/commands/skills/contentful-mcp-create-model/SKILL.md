@@ -4,6 +4,18 @@ description: Milestone 3 of the Contentful block workflow — run when it's time
 metadata:
   author: metafi-project
   version: 1.0.0
+allowed-tools:
+  - Read
+  - mcp__contentful__get_content_type
+  - mcp__contentful__list_content_types
+  - mcp__contentful__create_content_type
+  - mcp__contentful__update_content_type
+  - mcp__contentful__publish_content_type
+  - mcp__contentful__create_entry
+  - mcp__contentful__update_entry
+  - mcp__contentful__publish_entry
+  - mcp__contentful__search_entries
+  - mcp__contentful__get_entry
 ---
 
 # Contentful MCP: Create Content Model

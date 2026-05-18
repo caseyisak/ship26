@@ -84,6 +84,8 @@
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "contentful-cli": "^4.0.1",
+    "contentful-migration": "^5.0.0",
     "eslint": "^9",
     "eslint-config-next": "^15.1.6",
     "eslint-config-prettier": "^9.1.0",
