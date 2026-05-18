@@ -31,7 +31,7 @@
 | Issue | Title | Priority | Notes |
 |-------|-------|----------|-------|
 | #101 | feat(integration-sim): single/multi mode toggle for product + asset picker | ✅ done | PR #102 merged |
-| #96 | research: use master env alias for all demos instead of per-demo envs | 🔴 high | New (2026-05-08) — could simplify demo setup significantly |
+| #96 | research: use master env alias for all demos instead of per-demo envs | ✅ done | Implemented 2026-05-18 — `demo` alias pattern, alias-swap.sh, runbook updated |
 | #79 | feat(dynamic-listing): search, facets & filters | 🔵 backlog | Large scope |
 | #49 | fix(demo/tilley): personalization issues | 🔵 blocked | TBD details — nothing actionable yet |
 | #2 | feat: style override app | 🔵 backlog | Separate Contentful app, big scope |
@@ -49,7 +49,7 @@
 
 | To-do | Status | Notes |
 |-------|--------|-------|
-| Investigate #96 — master env alias pattern | ⬜ new | Could replace per-demo env creation with an alias pointing at master — major workflow simplification |
+| Investigate #96 — master env alias pattern | ✅ done | `demo` alias + alias-swap.sh implemented; M0 one-time setup still needed in Contentful UI |
 | Persona C feature flag | ⬜ paused | Does "feature flag for DataViz" mean (a) show/hide slot, or (b) swap banner for DataViz? Clarify before starting. |
 
 ---
