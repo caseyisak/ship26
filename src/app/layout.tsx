@@ -9,6 +9,7 @@ import { LivePreviewProviderWrapper } from '@/components/live-preview-provider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { PersonalizationProvider } from '@/personalization/provider';
 import { SettingsProvider } from '@/personalization/settings-context';
+import { resolveEnvironmentAlias } from '@/services/contentful/client';
 import { getSettings, themeToStyle } from '@/services/contentful/settings';
 
 const inter = Inter({
@@ -77,7 +78,10 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const settings = await getSettings();
+  const [settings, resolvedEnv] = await Promise.all([
+    getSettings(),
+    resolveEnvironmentAlias(),
+  ]);
   const themeStyle = themeToStyle(settings?.theme);
 
   return (
@@ -107,7 +111,7 @@ export default async function RootLayout({
             <PersonalizationProvider>
               <LivePreviewProviderWrapper
                 space={process.env.CONTENTFUL_SPACE_ID}
-                environment={process.env.CONTENTFUL_ENVIRONMENT ?? 'master'}
+                environment={resolvedEnv}
               >
                 <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
               </LivePreviewProviderWrapper>

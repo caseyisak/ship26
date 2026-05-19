@@ -46,7 +46,7 @@ export interface SiteSettings {
 }
 
 const NAV_LINKS_FRAGMENT = `
-  linksCollection {
+  linksCollection(limit: 10) {
     items {
       sys { id }
       label
