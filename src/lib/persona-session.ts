@@ -20,6 +20,11 @@ export type Persona = {
   industry?: string;
   location?: string;
   promo_discount?: number;
+  loyalty_tier?: string;
+  last_order?: string | null;
+  favorite_item?: string;
+  points?: number;
+  interested_in?: string;
 };
 
 export const PERSONA_COOKIE = 'metafi-persona';
@@ -50,6 +55,9 @@ export function setPersona(persona: Persona): void {
     ).ninetailed?.identify?.('', {
       ...persona,
       is_logged_in: true,
+      // Clear behavioral traits from previous browsing/persona so they
+      // don't leak across profile switches.
+      interested_in: persona.interested_in ?? '',
     });
   }
 }

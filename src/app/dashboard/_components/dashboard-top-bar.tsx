@@ -72,6 +72,7 @@ function PersonaDropdown({
       industry: persona.industry ?? null,
       location: persona.location ?? null,
       is_logged_in: true,
+      interested_in: persona.interested_in ?? '',
     });
     onPersonaChange(persona);
     // No router.refresh() — NT <Experience> swap is client-side; a server refresh races against identify
@@ -171,6 +172,7 @@ export function DashboardTopBar({ loggedInMetadata }: Props) {
           industry: p.industry ?? null,
           location: p.location ?? null,
           is_logged_in: true,
+          interested_in: p.interested_in ?? '',
         });
       }, 0);
       return () => clearTimeout(id);

@@ -316,72 +316,7 @@ export function SectionStyleEditor({
               borderColor: 'var(--gray-200)',
             }}
           >
-            <div
-              className="text-xs font-medium"
-              style={{ color: 'var(--gray-600)' }}
-            >
-              Overlay
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {(['center', 'left', 'right'] as const).map((pos) => {
-                const isSelected =
-                  config.layout === 'overlay' && config.contentPosition === pos;
-                return (
-                  <button
-                    key={pos}
-                    type="button"
-                    className={cn(
-                      'rounded-[var(--border-radius-small)] border px-3 py-1.5 text-sm font-medium transition-colors',
-                      isSelected
-                        ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white hover:bg-[var(--blue-600)]'
-                        : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-100)]',
-                    )}
-                    onClick={() =>
-                      update({ layout: 'overlay', contentPosition: pos })
-                    }
-                  >
-                    {pos}
-                  </button>
-                );
-              })}
-            </div>
-            <div
-              className="text-xs font-medium"
-              style={{ color: 'var(--gray-600)' }}
-            >
-              Split
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {(['50%', '33%'] as const).map((width) => {
-                const isSelected =
-                  config.layout === 'split' && config.contentWidth === width;
-                return (
-                  <button
-                    key={width}
-                    type="button"
-                    className={cn(
-                      'rounded-[var(--border-radius-small)] border px-3 py-1.5 text-sm font-medium transition-colors',
-                      isSelected
-                        ? 'border-[var(--blue-500)] bg-[var(--blue-500)] text-white hover:bg-[var(--blue-600)]'
-                        : 'border-[var(--gray-300)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-400)] hover:bg-[var(--gray-100)]',
-                    )}
-                    onClick={() =>
-                      update({ layout: 'split', contentWidth: width })
-                    }
-                  >
-                    Content {width}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Custom Grid preset */}
-            <div
-              className="text-xs font-medium"
-              style={{ color: 'var(--gray-600)' }}
-            >
-              Custom Grid
-            </div>
+            {/* Custom Grid — overlay/split deprecated in favor of custom grid */}
             <button
               type="button"
               className={cn(
@@ -646,6 +581,30 @@ export function SectionStyleEditor({
                     )}
                     style={{ backgroundColor: `var(--${name})` }}
                     onClick={() => update({ buttonBgColor: cssVar })}
+                  />
+                ))}
+              </div>
+            </div>
+            {/* Button text color */}
+            <div>
+              <Label className="text-xs" style={{ color: 'var(--gray-600)' }}>
+                Button text color
+              </Label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {COLOR_TOKEN_OPTIONS.map(({ name, var: cssVar }) => (
+                  <button
+                    key={name}
+                    type="button"
+                    title={name}
+                    className={cn(
+                      'h-8 w-8 rounded-[var(--border-radius-small)] border-2 transition-all',
+                      config.buttonTextColor === cssVar ||
+                        config.buttonTextColor === name
+                        ? 'border-[var(--blue-500)] ring-2 ring-[var(--blue-200)]'
+                        : 'border-[var(--gray-300)] hover:border-[var(--gray-500)]',
+                    )}
+                    style={{ backgroundColor: `var(--${name})` }}
+                    onClick={() => update({ buttonTextColor: cssVar })}
                   />
                 ))}
               </div>

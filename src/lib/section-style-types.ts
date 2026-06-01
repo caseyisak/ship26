@@ -43,6 +43,7 @@ export interface SectionStyleConfig {
   subheadlineColor?: string;
   // Button Style (banner + future blocks)
   buttonBgColor?: string;
+  buttonTextColor?: string;
   buttonHoverColor?: string;
   buttonSpacing?: SectionStyleSpacing;
   buttonPlacement?: SectionStyleTextAlign;
@@ -204,6 +205,9 @@ export function parseSectionStyle(json: unknown): SectionStyleConfig {
       // Button Style fields
       if (typeof parsed.buttonBgColor === 'string') {
         result.buttonBgColor = parsed.buttonBgColor;
+      }
+      if (typeof parsed.buttonTextColor === 'string') {
+        result.buttonTextColor = parsed.buttonTextColor;
       }
       if (typeof parsed.buttonHoverColor === 'string') {
         result.buttonHoverColor = parsed.buttonHoverColor;

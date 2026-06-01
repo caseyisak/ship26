@@ -37,7 +37,7 @@ const heroRichTextOptions = {
 const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
-  const { track } = useNinetailed();
+  const { track, identify } = useNinetailed();
 
   const headlineRt = (liveData as HeroFragment).headlineRt;
   const subheadlineRt = (liveData as HeroFragment).subheadlineRt;
@@ -70,6 +70,52 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
   );
   const useOverride = sectionStyle.useStyleOverride;
 
+  // ── Content & button style overrides from Section Style Editor ──────────
+  const textAlignClass = useOverride
+    ? ({ left: 'text-left', center: 'text-center', right: 'text-right' }[sectionStyle.textAlign ?? 'left'] ?? 'text-left')
+    : 'text-center';
+
+  const spacingClass = useOverride
+    ? ({
+        sm: 'gap-3 py-8 sm:py-10',
+        md: 'gap-6 py-14 sm:py-16',
+        lg: 'gap-8 py-20 sm:py-24',
+        xl: 'gap-10 py-28 sm:py-32',
+      }[sectionStyle.contentSpacing ?? 'md'] ?? 'gap-6 py-14 sm:py-16')
+    : 'gap-6 py-14 sm:py-16';
+
+  const headlineStyle = useOverride && sectionStyle.headlineColor
+    ? { color: sectionStyle.headlineColor } : undefined;
+  const subheadlineStyle = useOverride && sectionStyle.subheadlineColor
+    ? { color: sectionStyle.subheadlineColor } : undefined;
+
+  const btnPlacementClass = useOverride
+    ? ({
+        left: 'sm:justify-start',
+        center: 'sm:justify-center',
+        right: 'sm:justify-end',
+      }[sectionStyle.buttonPlacement ?? 'center'] ?? 'sm:justify-center')
+    : 'sm:justify-center';
+
+  const btnSizeClass = useOverride
+    ? ({
+        sm: 'px-3 py-1.5 text-sm h-auto',
+        md: '',
+        lg: 'px-6 py-3 text-base h-auto',
+        xl: 'px-8 py-4 text-lg h-auto',
+      }[sectionStyle.buttonSpacing ?? 'md'] ?? '')
+    : '';
+
+  const btnBgStyle: React.CSSProperties | undefined =
+    useOverride && (sectionStyle.buttonBgColor || sectionStyle.buttonTextColor)
+      ? {
+          ...(sectionStyle.buttonBgColor && { backgroundColor: sectionStyle.buttonBgColor, borderColor: sectionStyle.buttonBgColor }),
+          ...(sectionStyle.buttonTextColor && { color: sectionStyle.buttonTextColor }),
+        }
+      : undefined;
+
+  const btnHoverColor = useOverride ? sectionStyle.buttonHoverColor : undefined;
+
   // Use liveData directly - don't fall back to data for live preview updates
   // If liveData.background is null/undefined, it means the field was removed
   // Note: useLiveUpdates returns raw Contentful data, so check both mapped (image) and raw (media) fields
@@ -91,10 +137,11 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
     : (rawImageUrl ?? undefined);
 
   const contentBlock = (
-    <div className="relative z-10 flex flex-col gap-6 py-14 sm:py-16 md:gap-8 md:py-24">
+    <div className={cn('relative z-10 flex flex-col md:gap-8', textAlignClass, spacingClass)}>
       {headline && (
         <h1
           className="text-foreground text-4xl leading-tight font-medium tracking-tight text-balance sm:text-5xl md:text-[68px]"
+          style={headlineStyle}
           {...getProps({ fieldId: 'headlineRt' })}
         >
           {headline}
@@ -102,36 +149,42 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
       )}
       {subheadline && (
         <p
-          className="text-muted-foreground md:text-md mx-auto max-w-2xl text-base sm:text-lg"
+          className={cn('text-muted-foreground md:text-md max-w-2xl text-base sm:text-lg', textAlignClass === 'text-center' && 'mx-auto')}
+          style={subheadlineStyle}
           {...getProps({ fieldId: 'subheadlineRt' })}
         >
           {subheadline}
         </p>
       )}
       {ctaText && (
-        <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4">
+        <div className={cn('mt-2 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4', btnPlacementClass)}>
           {ctaUrl ? (
             <Button
               asChild
-              className="w-full sm:w-auto"
+              className={cn('w-full sm:w-auto', btnSizeClass)}
+              style={btnBgStyle}
               aria-label={ctaText ?? undefined}
+              onMouseEnter={btnHoverColor ? (e) => { (e.currentTarget as HTMLElement).style.backgroundColor = btnHoverColor; } : undefined}
+              onMouseLeave={btnBgStyle ? (e) => { (e.currentTarget as HTMLElement).style.backgroundColor = btnBgStyle.backgroundColor as string; } : undefined}
             >
               <a
                 href={ctaUrl}
-                onClick={() =>
+                onClick={() => {
                   track(NT_EVENTS.HERO_CTA_CLICKED, {
                     ctaText: ctaText ?? '',
                     entryId: data.sys.id,
                     segment: getPersona()?.customer_type ?? 'new-visitor',
-                  })
-                }
+                  });
+                  identify('', { clicked_hero_cta: true });
+                }}
               >
                 {ctaText}
               </a>
             </Button>
           ) : (
             <Button
-              className="w-full sm:w-auto"
+              className={cn('w-full sm:w-auto', btnSizeClass)}
+              style={btnBgStyle}
               aria-label={ctaText ?? undefined}
               disabled
             >
@@ -268,10 +321,11 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
                 zIndex: 10,
               }}
             >
-              <div className="flex flex-col gap-4 p-4">
+              <div className={cn('flex flex-col gap-4 p-4', textAlignClass)}>
                 {headline && (
                   <h1
                     className="text-foreground text-2xl leading-tight font-medium tracking-tight text-balance sm:text-3xl md:text-4xl"
+                    style={headlineStyle}
                     {...getProps({ fieldId: 'headlineRt' })}
                   >
                     {headline}
@@ -280,24 +334,29 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
                 {subheadline && (
                   <p
                     className="text-muted-foreground text-sm sm:text-base"
+                    style={subheadlineStyle}
                     {...getProps({ fieldId: 'subheadlineRt' })}
                   >
                     {subheadline}
                   </p>
                 )}
                 {ctaText && (
-                  <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:gap-3">
+                  <div className={cn('mt-2 flex flex-col gap-2 sm:flex-row sm:gap-3', btnPlacementClass)}>
                     {ctaUrl ? (
                       <Button
                         asChild
-                        className="w-full sm:w-auto"
+                        className={cn('w-full sm:w-auto', btnSizeClass)}
+                        style={btnBgStyle}
                         aria-label={ctaText ?? undefined}
+                        onMouseEnter={btnHoverColor ? (e) => { (e.currentTarget as HTMLElement).style.backgroundColor = btnHoverColor; } : undefined}
+                        onMouseLeave={btnBgStyle ? (e) => { (e.currentTarget as HTMLElement).style.backgroundColor = btnBgStyle.backgroundColor as string; } : undefined}
                       >
                         <a href={ctaUrl}>{ctaText}</a>
                       </Button>
                     ) : (
                       <Button
-                        className="w-full sm:w-auto"
+                        className={cn('w-full sm:w-auto', btnSizeClass)}
+                        style={btnBgStyle}
                         aria-label={ctaText ?? undefined}
                         disabled
                       >
