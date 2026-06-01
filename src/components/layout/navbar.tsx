@@ -10,9 +10,11 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { ProfilePreviewerHost } from '@/components/profile-previewer/profile-previewer';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,26 +31,43 @@ import { getPersona, setPersona, clearPersona } from '@/lib/persona-session';
 import type { Persona } from '@/lib/persona-session';
 import { PersonaButtons } from '@/app/login/persona-buttons';
 
-// Gear icon — opens the NT personalization panel via the preview plugin
-function PersonalizationToggle({ className }: { className?: string }) {
-  const handleClick = () => {
-    (
-      window as unknown as {
-        ninetailed?: { plugins?: { preview?: { toggle?: () => void } } };
-      }
-    ).ninetailed?.plugins?.preview?.toggle?.();
-  };
+// Gear icon dropdown — opens NT panel or Profile Previewer
+function ToolsDropdown({
+  className,
+  onProfilePreviewerToggle,
+}: {
+  className?: string;
+  onProfilePreviewerToggle: () => void;
+}) {
   return (
-    <Button
-      size="sm"
-      variant="outline"
-      onClick={handleClick}
-      className={cn('px-2', className)}
-      aria-label="Open personalization panel"
-      title="Open personalization panel"
-    >
-      <Settings className="h-4 w-4" />
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          size="sm"
+          variant="outline"
+          className={cn('px-2', className)}
+          aria-label="Demo tools"
+        >
+          <Settings className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="rounded-none">
+        <DropdownMenuItem
+          onClick={() => {
+            (
+              window as unknown as {
+                ninetailed?: { plugins?: { preview?: { toggle?: () => void } } };
+              }
+            ).ninetailed?.plugins?.preview?.toggle?.();
+          }}
+        >
+          Personalization Preview
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={onProfilePreviewerToggle}>
+          Profile Previewer
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -72,12 +91,13 @@ function PersonaDropdown({
   const handleSwitch = (p: Persona) => {
     if (p.customer_type === activePersona.customer_type) return;
     setPersona(p);
-    ninetailed.identify('', { ...p, is_logged_in: true });
+    ninetailed.identify('', { ...p, is_logged_in: true, interested_in: p.interested_in ?? '' });
     onPersonaChange(p);
     // No router.refresh() — NT <Experience> swap is client-side
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await ninetailed.reset();
     clearPersona();
     afterLogout?.();
     router.push('/page/home');
@@ -184,16 +204,13 @@ const Navbar = () => {
   useEffect(() => {
     const p = getPersona();
     setActivePersona(p);
-    // Always identify on mount — logged-in users get their persona's traits,
-    // anonymous users get 'new-visitor' so the LocalAudienceEvaluator fires correctly.
-    const id = setTimeout(() => {
-      if (p) {
-        ninetailed.identify('', { ...p, is_logged_in: true });
-      } else {
-        ninetailed.identify('', { customer_type: 'new-visitor' });
-      }
-    }, 0);
-    return () => clearTimeout(id);
+    // Only set UI state from localStorage — do NOT call identify() here.
+    // identify() is called explicitly on login/persona-switch actions.
+    // Calling reset()+identify() on every page load wipes behavioral traits
+    // (e.g. interested_in from PageTracker) and re-identifies with stale
+    // persona data even when the user expects a logged-out experience.
+    // LocalAudienceEvaluator will evaluate against whatever traits are
+    // already in the NT profile from prior identify() calls.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -247,8 +264,13 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', onResize);
   }, [isMenuOpen, panelHeight]);
 
+  const handleProfilePreviewerToggle = () => {
+    (window as { __profilePreviewer?: { toggle: () => void } }).__profilePreviewer?.toggle?.();
+  };
+
   return (
     <>
+      <ProfilePreviewerHost />
       {/* Login Dialog */}
       <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
         <DialogContent className="sm:max-w-md rounded-none">
@@ -256,9 +278,9 @@ const Navbar = () => {
             <DialogTitle className="text-center text-xl font-semibold">
               Sign in to Metafi
             </DialogTitle>
-            <p className="text-center text-sm text-muted-foreground">
+            <DialogDescription className="text-center text-sm text-muted-foreground">
               Choose a persona to explore the dashboard
-            </p>
+            </DialogDescription>
           </DialogHeader>
           <div className="pt-2 pb-4">
             <PersonaButtons
@@ -268,8 +290,9 @@ const Navbar = () => {
                 setIsLoginOpen(false);
                 setActivePersona(p);
                 if (p) {
-                  setTimeout(() => {
-                    ninetailed.identify('', { ...p, is_logged_in: true });
+                  setTimeout(async () => {
+                    await ninetailed.reset();
+                    ninetailed.identify('', { ...p, is_logged_in: true, interested_in: p.interested_in ?? '' });
                   }, 0);
                 }
               }}
@@ -310,7 +333,9 @@ const Navbar = () => {
           <nav className="hidden items-center justify-center gap-8 lg:flex">
             {navLinks.map((link) => {
               const href = link.page
-                ? `/page/${link.page.slug}`
+                ? link.page.__typename === 'ProductListing'
+                  ? `/products/${link.page.slug === 'products' ? '' : link.page.slug}`
+                  : `/page/${link.page.slug}`
                 : (link.url ?? '#');
               return (
                 <Link
@@ -342,7 +367,7 @@ const Navbar = () => {
                 onClick={() => { track(NT_EVENTS.AUTH_MODAL_OPENED, { triggerSource: 'nav' }); setIsLoginOpen(true); }}
               />
             )}
-            <PersonalizationToggle className="hidden sm:flex lg:flex" />
+            <ToolsDropdown className="hidden sm:flex lg:flex" onProfilePreviewerToggle={handleProfilePreviewerToggle} />
 
             <button
               className="text-muted-foreground relative flex size-8 lg:hidden"
@@ -408,7 +433,9 @@ const Navbar = () => {
                     <div className="flex flex-col gap-6">
                       {navLinks.map((link) => {
                         const href = link.page
-                          ? `/page/${link.page.slug}`
+                          ? link.page.__typename === 'ProductListing'
+                            ? `/products/${link.page.slug === 'products' ? '' : link.page.slug}`
+                            : `/page/${link.page.slug}`
                           : (link.url ?? '#');
                         return (
                           <Link
@@ -450,7 +477,7 @@ const Navbar = () => {
                           }}
                         />
                       )}
-                      <PersonalizationToggle className="w-full" />
+                      <ToolsDropdown className="w-full" onProfilePreviewerToggle={handleProfilePreviewerToggle} />
                     </div>
                   </nav>
                 </div>

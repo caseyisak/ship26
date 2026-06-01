@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { BlockRenderer } from '@/block-renderer';
+import { ProductBreadcrumb } from '@/cms-components/pdp/product-breadcrumb';
 import { Footer } from '@/components/layout/footer';
 import Navbar from '@/components/layout/navbar';
 import { getSettings } from '@/services/contentful/settings';
@@ -29,10 +30,13 @@ export default async function PreviewPdpPage({ params, searchParams }: Props) {
     notFound();
   }
 
+  const productName = (pdp.sku as { name?: string } | null)?.name ?? 'Product';
+
   return (
     <>
       <Navbar />
       <main>
+        <ProductBreadcrumb productName={productName} />
         <BlockRenderer data={pdp} />
       </main>
       <Footer footerForm={settings?.footerForm} />

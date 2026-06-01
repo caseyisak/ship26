@@ -6,10 +6,10 @@ import { Inter } from 'next/font/google';
 import { ContentfulAppRedirect } from '@/components/contentful-app-redirect';
 import { ConditionalSiteChrome } from '@/components/layout/conditional-site-chrome';
 import { LivePreviewProviderWrapper } from '@/components/live-preview-provider';
+import { PreviewLinkInterceptor } from '@/components/preview-link-interceptor';
 import { ThemeProvider } from '@/components/theme-provider';
 import { PersonalizationProvider } from '@/personalization/provider';
 import { SettingsProvider } from '@/personalization/settings-context';
-import { resolveEnvironmentAlias } from '@/services/contentful/client';
 import { getSettings, themeToStyle } from '@/services/contentful/settings';
 
 const inter = Inter({
@@ -78,10 +78,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [settings, resolvedEnv] = await Promise.all([
-    getSettings(),
-    resolveEnvironmentAlias(),
-  ]);
+  const settings = await getSettings();
   const themeStyle = themeToStyle(settings?.theme);
 
   return (
@@ -111,8 +108,9 @@ export default async function RootLayout({
             <PersonalizationProvider>
               <LivePreviewProviderWrapper
                 space={process.env.CONTENTFUL_SPACE_ID}
-                environment={resolvedEnv}
+                environment={process.env.CONTENTFUL_ENVIRONMENT ?? 'master'}
               >
+                <PreviewLinkInterceptor />
                 <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
               </LivePreviewProviderWrapper>
             </PersonalizationProvider>

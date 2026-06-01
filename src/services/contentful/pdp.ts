@@ -1,7 +1,7 @@
 import type { ProductDetailPageFragment } from '@/block-renderer/types';
 
 import { fetchGraphQL } from './client';
-import { PDP_BY_ID, PDP_BY_SLUG } from './queries';
+import { PDP_BY_ID, PDP_BY_SLUG, PDP_SLUGS } from './queries';
 
 type RawSection = {
   __typename: string;
@@ -82,5 +82,39 @@ export async function getPdpByEntryId({
     return mapPdp(data.productDetailPageCollection?.items?.[0]);
   } catch {
     return null;
+  }
+}
+
+/** Fetch all PDP entries and return a map of product SKU code → PDP slug. */
+export async function getPdpSlugMap({
+  locale = 'en-US',
+  preview = false,
+}: {
+  locale?: string;
+  preview?: boolean;
+} = {}): Promise<Record<string, string>> {
+  try {
+    const data = await fetchGraphQL<{
+      productDetailPageCollection: {
+        items: Array<{
+          sys: { id: string };
+          slug?: string | null;
+          sku?: { sku?: string } | null;
+        } | null>;
+      };
+    }>({
+      query: PDP_SLUGS,
+      variables: { locale, preview },
+      preview,
+    });
+    const map: Record<string, string> = {};
+    for (const item of data.productDetailPageCollection?.items ?? []) {
+      if (item?.sku?.sku && item.slug) {
+        map[item.sku.sku] = item.slug;
+      }
+    }
+    return map;
+  } catch {
+    return {};
   }
 }
