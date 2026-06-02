@@ -5,12 +5,22 @@ import { useState, useRef, useEffect } from 'react';
 
 import { cn } from '@/lib/utils';
 
+// ── Document type colors — matches DocumentSection.tsx ────────────────────────
+
+const DOC_COLORS: Record<string, string> = {
+  COA: '#16a34a', // green
+  SDS: '#dc2626', // red
+  IFU: '#2563eb', // blue
+};
+
 // ── Hardcoded demo results ────────────────────────────────────────────────────
 
 interface SearchResult {
   id: string;
   title: string;
   type: 'Product' | 'Document' | 'Page';
+  docType?: 'COA' | 'SDS' | 'IFU';
+  isAuthenticated?: boolean;
   excerpt: string;
   href: string;
 }
@@ -34,11 +44,30 @@ const DEMO_RESULTS: SearchResult[] = [
     id: '3',
     title: 'Certificate of Analysis — Escherichia coli ATCC 25922',
     type: 'Document',
+    docType: 'COA',
     excerpt: 'COA for 0335P. Public access. Includes QC test results, organism identity confirmation, and lot-specific data.',
     href: '/products/0335P',
   },
   {
     id: '4',
+    title: 'Safety Data Sheet — Escherichia coli ATCC 25922',
+    type: 'Document',
+    docType: 'SDS',
+    isAuthenticated: true,
+    excerpt: 'SDS for 0335P. Authenticated access required. Hazard classification, handling, storage, and disposal data.',
+    href: '/products/0335P',
+  },
+  {
+    id: '5',
+    title: 'Instructions for Use — KWIK-STIK Format',
+    type: 'Document',
+    docType: 'IFU',
+    isAuthenticated: true,
+    excerpt: 'IFU for KWIK-STIK product line. Authenticated access required. Preparation, inoculation, and QC procedures.',
+    href: '/products/0335P',
+  },
+  {
+    id: '6',
     title: 'KWIK-STIK Reference Strains',
     type: 'Page',
     excerpt: 'Product listing for all KWIK-STIK format reference materials. Includes E. coli, S. aureus, C. parapsilosis.',
@@ -52,7 +81,13 @@ const TYPE_ICON = {
   Page: BookOpen,
 };
 
-const TYPE_COLORS: Record<SearchResult['type'], string> = {
+const DOC_BADGE_COLORS: Record<string, string> = {
+  COA: 'bg-green-100 text-green-700',
+  SDS: 'bg-red-100 text-red-700',
+  IFU: 'bg-blue-100 text-blue-700',
+};
+
+const TYPE_BADGE_COLORS: Record<SearchResult['type'], string> = {
   Product: 'bg-blue-100 text-blue-700',
   Document: 'bg-green-100 text-green-700',
   Page: 'bg-slate-100 text-slate-600',
@@ -62,19 +97,45 @@ const TYPE_COLORS: Record<SearchResult['type'], string> = {
 
 function ResultCard({ result }: { result: SearchResult }) {
   const Icon = TYPE_ICON[result.type];
+  const isColoredDoc = result.type === 'Document' && result.docType;
+  const badgeColor = result.docType
+    ? DOC_BADGE_COLORS[result.docType]
+    : TYPE_BADGE_COLORS[result.type];
+  const badgeLabel = result.docType ?? result.type;
+
   return (
     <a
       href={result.href}
-      className="flex items-start gap-4 rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50"
+      className={cn(
+        'flex items-start gap-4 rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50',
+        result.isAuthenticated && 'doc-private',
+      )}
     >
-      <div className="mt-0.5 flex-shrink-0 rounded-md bg-slate-100 p-2">
-        <Icon className="h-4 w-4 text-slate-500" />
+      <div className="mt-0.5 flex-shrink-0">
+        {isColoredDoc ? (
+          <span
+            className="flex h-8 w-8 items-center justify-center rounded-full text-white text-xs font-bold"
+            style={{ background: DOC_COLORS[result.docType!] }}
+          >
+            {result.docType}
+          </span>
+        ) : (
+          <div className={cn(
+            'rounded-md p-2',
+            result.type === 'Product' ? 'bg-blue-100' : 'bg-slate-100',
+          )}>
+            <Icon className={cn(
+              'h-4 w-4',
+              result.type === 'Product' ? 'text-blue-700' : 'text-slate-500',
+            )} />
+          </div>
+        )}
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <p className="text-sm font-semibold text-slate-900 truncate">{result.title}</p>
-          <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium flex-shrink-0', TYPE_COLORS[result.type])}>
-            {result.type}
+          <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium flex-shrink-0', badgeColor)}>
+            {badgeLabel}
           </span>
         </div>
         <p className="mt-1 text-xs text-slate-500 line-clamp-2">{result.excerpt}</p>
