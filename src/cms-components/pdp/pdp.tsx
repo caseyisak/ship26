@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 
 import type { BlockProps, ProductDetailPageFragment } from '@/block-renderer/types';
 import type { ProductRecord } from '@/lib/integration-adapters/types';
+import { DocumentSection } from './DocumentSection';
 import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
@@ -162,20 +163,25 @@ export function Pdp({ data: rawData }: BlockProps<ProductDetailPageFragment>) {
             <p className="text-sm text-muted-foreground">SKU: {product.sku}</p>
 
             {/* Price */}
-            <div className="flex items-baseline gap-3">
-              {product.salePrice ? (
-                <>
-                  <span className="text-2xl font-bold">${product.salePrice.toFixed(2)}</span>
-                  <span className="text-lg text-muted-foreground line-through">
-                    ${product.price.toFixed(2)}
-                  </span>
-                  <span className="rounded bg-destructive/10 px-2 py-0.5 text-xs font-semibold text-destructive">
-                    SALE
-                  </span>
-                </>
-              ) : (
-                <span className="text-2xl font-bold">${product.price.toFixed(2)}</span>
-              )}
+            <div>
+              <span className="price-public text-2xl font-semibold text-muted-foreground">
+                Log in for pricing
+              </span>
+              <div className="price-authenticated items-baseline gap-3">
+                {product.salePrice ? (
+                  <>
+                    <span className="text-2xl font-bold">${product.salePrice.toFixed(2)}</span>
+                    <span className="text-lg text-muted-foreground line-through">
+                      ${product.price.toFixed(2)}
+                    </span>
+                    <span className="rounded bg-destructive/10 px-2 py-0.5 text-xs font-semibold text-destructive">
+                      SALE
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-2xl font-bold">${product.price.toFixed(2)}</span>
+                )}
+              </div>
             </div>
 
             {/* Stock */}
@@ -273,6 +279,11 @@ export function Pdp({ data: rawData }: BlockProps<ProductDetailPageFragment>) {
                 ))}
               </div>
             ) : null}
+
+            {/* Documents */}
+            {product.documents && product.documents.length > 0 && (
+              <DocumentSection documents={product.documents} />
+            )}
 
             {/* Add to Cart CTA */}
             <div className="mt-2 flex gap-3">

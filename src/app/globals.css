@@ -350,3 +350,38 @@
 body {
   position: relative;
 }
+
+/* ── Document auth-state CSS ─────────────────────────────────────────────── */
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.doc-private {
+  display: none;
+}
+
+.authenticated .doc-private {
+  display: flex;
+  border-left: 3px solid var(--primary, #003366);
+  animation: fadeSlideIn 0.3s ease;
+}
+
+.price-authenticated {
+  display: none;
+}
+
+.authenticated .price-authenticated {
+  display: flex;
+}
+
+.authenticated .price-public {
+  display: none;
+}
