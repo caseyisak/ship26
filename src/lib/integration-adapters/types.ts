@@ -22,6 +22,8 @@ export interface ProductRecord {
     colors?: string[];
     sizes?: string[];
   };
+  /** Platform label stamped on save (e.g. "BigCommerce", "Shopify"). */
+  source?: string;
 }
 
 export interface AssetRecord {

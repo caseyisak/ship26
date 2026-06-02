@@ -162,6 +162,17 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
       allowHeightOverflow: true,
     });
     if (!result) return;
+    // Stamp platform source label so front-end components can display it
+    if (isEcom && simulatorType) {
+      const label = BRAND_CONFIG[simulatorType]?.label ?? simulatorType;
+      if (Array.isArray(result)) {
+        for (const item of result) if ('sku' in item) (item as ProductRecord).source = label;
+      } else if ('items' in (result as object) && Array.isArray((result as ProductCollection).items)) {
+        for (const item of (result as ProductCollection).items) item.source = label;
+      } else if ('sku' in (result as object)) {
+        (result as ProductRecord).source = label;
+      }
+    }
     await fieldSdk.field.setValue(result);
     setFieldValue(result);
   };

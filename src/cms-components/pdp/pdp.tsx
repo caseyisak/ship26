@@ -142,7 +142,7 @@ export function Pdp({ data: rawData }: BlockProps<ProductDetailPageFragment>) {
 
           {/* ── Right: Product info (NOT inspector-tagged — from Shopify) ── */}
           <div className="flex flex-col gap-4">
-            {/* Sourced from Shopify badge */}
+            {/* Sourced-from platform badge */}
             <div>
               <span
                 className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white"
@@ -151,7 +151,7 @@ export function Pdp({ data: rawData }: BlockProps<ProductDetailPageFragment>) {
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
                   <path d="M19.5 8.25h-1.732A5.768 5.768 0 0 0 12 3a5.768 5.768 0 0 0-5.768 5.25H4.5A1.5 1.5 0 0 0 3 9.75v9A1.5 1.5 0 0 0 4.5 20.25h15a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5zM12 4.5a4.27 4.27 0 0 1 4.232 3.75H7.768A4.27 4.27 0 0 1 12 4.5z" />
                 </svg>
-                Ecomm Integration
+                {product.source ?? 'Ecomm Integration'}
               </span>
             </div>
 
