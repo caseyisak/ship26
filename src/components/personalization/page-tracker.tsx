@@ -29,17 +29,23 @@ const ANONYMOUS_OVERWRITE: Record<string, string | number | boolean> = {
 export function PageTracker({ traits }: { traits: Record<string, string | number | boolean | null> }) {
   const ninetailed = useNinetailed();
   useEffect(() => {
-    const isLoggedIn = Boolean(getPersona());
-    if (!isLoggedIn) {
-      // Anonymous visitor: overwrite stale persona traits with empty values,
-      // then layer on the behavioral trait for this page.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ninetailed.identify('', { ...ANONYMOUS_OVERWRITE, ...traits } as any);
-    } else {
-      // Logged in: just add behavioral trait on top of existing persona.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ninetailed.identify('visitor', traits as any);
-    }
+    // Defer to next event loop tick: React effects fire bottom-up, so a child's
+    // useEffect runs before parent subscriptions are ready. Without setTimeout,
+    // identify() fires before NinetailedProvider's onProfileChange listeners
+    // (including LocalAudienceEvaluator) have subscribed.
+    setTimeout(() => {
+      const isLoggedIn = Boolean(getPersona());
+      if (!isLoggedIn) {
+        // Anonymous visitor: overwrite stale persona traits with empty values,
+        // then layer on the behavioral trait for this page.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ninetailed.identify('', { ...ANONYMOUS_OVERWRITE, ...traits } as any);
+      } else {
+        // Logged in: just add behavioral trait on top of existing persona.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ninetailed.identify('visitor', traits as any);
+      }
+    }, 0);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return null;

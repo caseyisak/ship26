@@ -1,22 +1,24 @@
 # Package Versions
 
-## Current Audit (as of 2026-05-12)
+## Current Audit (as of 2026-06-02)
 
-**Status: Needs upgrade** — project uses `-react` instead of `-next`.
+**Status: Correct** -- project uses `@ninetailed/experience.js-react` v7.23.2 (stable).
 
 Run to check current state:
 ```bash
 grep -E "ninetailed" package.json
 ```
 
-## Correct Package Set
+## Correct Package Set (App Router)
+
+> **WARNING:** Previous versions of this document recommended `@ninetailed/experience.js-next`. That package uses `next/router` (Pages Router API) and does NOT work with App Router. Use `-react` instead.
 
 ```json
 {
   "dependencies": {
-    "@ninetailed/experience.js-next": "^7.x.x",
-    "@ninetailed/experience.js-insights": "^7.x.x",
-    "@ninetailed/experience.js-preview": "^7.x.x"
+    "@ninetailed/experience.js-react": "^7.23.2",
+    "@ninetailed/experience.js-utils": "^7.23.2",
+    "@ninetailed/experience.js-plugin-preview": "^7.23.2"
   }
 }
 ```
@@ -25,40 +27,28 @@ grep -E "ninetailed" package.json
 
 | NT Package | Next.js | React | Notes |
 |-----------|---------|-------|-------|
-| v7.x | 13, 14, 15 | 18, 19 | App Router compatible |
+| v7.x | 13, 14, 15 | 18, 19 | App Router compatible (use `-react` package) |
 | v6.x | 12, 13 | 17, 18 | Pages Router era |
-| v5.x and below | Legacy | — | Do not use |
+| v5.x and below | Legacy | --- | Do not use |
 
 ## Alpha Versions
 
-The project was on `v7.22.0-alpha.2` — alpha versions may have undocumented breaking changes. Pin to a stable release when available:
+The project was previously on `v7.22.0-alpha.2` -- alpha versions may have undocumented breaking changes. Upgraded to stable `v7.23.2` in June 2026.
 
 ```bash
 # Check latest stable
-bun info @ninetailed/experience.js-next version
+bun info @ninetailed/experience.js-react version
 
 # Install stable
-bun add @ninetailed/experience.js-next@latest
+bun add @ninetailed/experience.js-react@latest
 ```
 
-## Full Upgrade Command
+## Full Install Command
 
 ```bash
-# Remove old
-bun remove @ninetailed/experience.js-react
-
-# Install correct packages
-bun add @ninetailed/experience.js-next @ninetailed/experience.js-insights @ninetailed/experience.js-preview
+# Install correct packages for App Router
+bun add @ninetailed/experience.js-react @ninetailed/experience.js-utils @ninetailed/experience.js-plugin-preview
 
 # Verify
 grep ninetailed package.json
-```
-
-Then update all imports:
-```bash
-# Find all files importing from -react
-grep -r "experience.js-react" src/ --include="*.ts" --include="*.tsx"
-
-# Replace (manual — verify each file)
-# @ninetailed/experience.js-react → @ninetailed/experience.js-next
 ```

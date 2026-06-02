@@ -3,7 +3,7 @@
 ## "Done" Checklist for NT Personalization on a Block
 
 ### Code
-- [ ] Block uses `@ninetailed/experience.js-next` (not `-react`)
+- [ ] Block uses `@ninetailed/experience.js-react` (correct for App Router; `-next` is Pages Router only)
 - [ ] `NinetailedProvider` is in root layout with correct `clientId` and `environment`
 - [ ] `ntExperiencesCollection` in the block's `*_BY_ID` query (NOT in shared page fragment)
 - [ ] `ntRules` is in `NT_AUDIENCE_FIELDS` fragment

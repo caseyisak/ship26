@@ -4,6 +4,8 @@ import { useNinetailed, useProfile } from '@ninetailed/experience.js-react';
 import { RotateCcw, Users, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { useLocalAudiences } from '@/personalization/local-audience-context';
+
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -64,10 +66,14 @@ function PersonalizationPanel({
 
   const [resetting, setResetting] = useState(false);
 
-  // profile.audiences contains the IDs of audiences the current profile matches.
-  // useProfile() re-renders this component whenever the profile changes, so the
-  // indicator stays up to date as traits are identified.
-  const activeAudienceIds: string[] = profileState.profile?.audiences ?? [];
+  // profile.audiences contains IDs from NT cloud evaluation (empty when disconnected).
+  // Merge with locally-evaluated audiences from LocalAudienceEvaluator so the panel
+  // shows correct state even when NT cloud is not connected to this environment.
+  const { matchedAudienceIds: localAudienceIds } = useLocalAudiences();
+  const sdkAudienceIds: string[] = profileState.profile?.audiences ?? [];
+  const activeAudienceIds = [
+    ...new Set([...sdkAudienceIds, ...localAudienceIds]),
+  ];
   const activeAudiences = audienceDefinitions.filter((a) =>
     activeAudienceIds.includes(a.id),
   );

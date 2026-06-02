@@ -4,9 +4,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { getAudienceName } from './audience-map';
 import { useProfile } from '@ninetailed/experience.js-react';
+
 import { cn } from '@/lib/utils';
+import { useLocalAudiences } from '@/personalization/local-audience-context';
+
+import { getAudienceName } from './audience-map';
 
 // Allowlist of traits shown in the Profile Previewer.
 // Keeps the panel focused on demo-relevant data and hides
@@ -112,8 +115,12 @@ function ProfilePreviewer({
       ? [loc.city, loc.region].filter(Boolean).join(', ') || '—'
       : '—';
 
-  // Audiences — NT profile.audiences is an array of IDs
-  const audienceIds: string[] = profile?.audiences ?? [];
+  // Audiences — merge NT cloud evaluation with locally-evaluated matches so
+  // the panel shows correct state even when NT cloud is disconnected.
+  const { matchedAudienceIds: localAudienceIds } = useLocalAudiences();
+  const audienceIds = [
+    ...new Set([...(profile?.audiences ?? []), ...localAudienceIds]),
+  ];
   const audienceNames = audienceIds.map((id) => ({
     id,
     name: getAudienceName(id),

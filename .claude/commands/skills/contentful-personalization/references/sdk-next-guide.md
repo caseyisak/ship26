@@ -1,6 +1,8 @@
 # NT Next.js SDK Guide
 
-## App Router Setup
+> **WARNING: This guide is for Pages Router ONLY.** The `@ninetailed/experience.js-next` package uses `next/router` (Pages Router API) internally. Its auto page tracker calls `router.events.on('routeChangeComplete', ...)` which does NOT exist in App Router. For App Router projects (like this one), use `@ninetailed/experience.js-react` with a custom Tracker. See `sdk-selection.md` for the correct setup.
+
+## Pages Router Setup (NOT App Router)
 
 ### 1. Install
 
@@ -116,11 +118,13 @@ Use the `NinetailedWrapper` pattern (client component wrapping server layout) to
 
 For statically generated pages, personalization is client-side only (after hydration). For fully SSR personalization, see `references/ssr-guide.md` for the preflight cookie pattern.
 
-## Migration from `-react` to `-next`
+## Migration from `-react` to `-next` (Pages Router only)
+
+> **Do NOT perform this migration in App Router projects.** The `-next` Tracker uses `next/router` which throws in App Router.
 
 1. `bun remove @ninetailed/experience.js-react`
 2. `bun add @ninetailed/experience.js-next`
 3. Find all imports: `grep -r "experience.js-react" src/`
 4. Replace: `@ninetailed/experience.js-react` → `@ninetailed/experience.js-next`
-5. The API is identical — no component changes needed
+5. The API is identical --- no component changes needed
 6. Verify: automatic `page()` events now appear in NT analytics
