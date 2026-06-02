@@ -80,21 +80,26 @@ function ProductCard({ product, href }: { product: ProductRecord; href?: string 
 
         <p className="text-sm leading-snug font-semibold">{product.name}</p>
 
-        <div className="flex items-center gap-1.5">
-          {product.salePrice ? (
-            <>
+        <div>
+          <span className="price-public text-sm font-semibold text-muted-foreground">
+            Log in for pricing
+          </span>
+          <div className="price-authenticated items-center gap-1.5">
+            {product.salePrice ? (
+              <>
+                <span className="text-sm font-bold">
+                  ${product.salePrice.toFixed(2)}
+                </span>
+                <span className="text-muted-foreground text-xs line-through">
+                  ${product.price.toFixed(2)}
+                </span>
+              </>
+            ) : (
               <span className="text-sm font-bold">
-                ${product.salePrice.toFixed(2)}
-              </span>
-              <span className="text-muted-foreground text-xs line-through">
                 ${product.price.toFixed(2)}
               </span>
-            </>
-          ) : (
-            <span className="text-sm font-bold">
-              ${product.price.toFixed(2)}
-            </span>
-          )}
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-1">
