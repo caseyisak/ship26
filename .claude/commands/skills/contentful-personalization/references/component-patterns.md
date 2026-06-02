@@ -6,7 +6,7 @@ The simplest way to render a personalized block — use the `Experience` compone
 
 ```typescript
 'use client';
-import { Experience } from '@ninetailed/experience.js-next';
+import { Experience } from '@ninetailed/experience.js-react';
 import type { HeroFields } from '@/block-renderer/types';
 
 interface HeroWithNTProps {
@@ -40,7 +40,7 @@ When you need full control over rendering (e.g., for complex blocks or server-si
 
 ```typescript
 'use client';
-import { useExperience } from '@ninetailed/experience.js-next';
+import { useExperience } from '@ninetailed/experience.js-react';
 
 export function ManualPersonalizedHero({ data, experiences }) {
   const { variant, isPersonalized } = useExperience({
@@ -58,7 +58,7 @@ For SSR-first personalization where you want the correct variant on first render
 
 ```typescript
 // In a Server Component (page.tsx)
-import { getNinetailedProfile } from '@ninetailed/experience.js-next/server';
+import { getNinetailedProfile } from '@ninetailed/experience.js-plugin-ssr/server';
 
 export default async function Page({ params }) {
   const profile = await getNinetailedProfile({

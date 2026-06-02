@@ -13,7 +13,7 @@ interface SettingsAsset {
 export interface NavLink {
   label: string;
   url?: string;
-  page?: { slug: string };
+  page?: { __typename: string; slug: string };
 }
 
 export interface Nav {
@@ -46,12 +46,16 @@ export interface SiteSettings {
 }
 
 const NAV_LINKS_FRAGMENT = `
-  linksCollection {
+  linksCollection(limit: 10) {
     items {
       sys { id }
       label
       url
-      page { slug }
+      page {
+        __typename
+        ... on Page { slug }
+        ... on ProductListing { slug }
+      }
     }
   }
 `;
@@ -102,7 +106,7 @@ type RawNavLink = {
   sys: { id: string };
   label: string;
   url?: string | null;
-  page?: { slug: string } | null;
+  page?: { __typename: string; slug: string } | null;
 };
 
 type RawNav = {
@@ -153,7 +157,7 @@ function resolveNavLinks(items: RawNavLink[]): NavLink[] {
   return items.map((item) => ({
     label: item.label,
     ...(item.url ? { url: item.url } : {}),
-    ...(item.page ? { page: { slug: item.page.slug } } : {}),
+    ...(item.page ? { page: { __typename: item.page.__typename, slug: item.page.slug } } : {}),
   }));
 }
 
@@ -245,13 +249,19 @@ export function themeToStyle(
         styles['--radius'] = CORNER_RADIUS[v];
       }
     } else if (k === 'fontDisplay') {
-      const familyParam = v.replace(/ /g, '+');
-      imports.push(`@import url('https://fonts.googleapis.com/css2?family=${familyParam}:wght@300;400;500;600;700;800&display=swap');`);
-      styles['--font-display'] = `'${v}', sans-serif`;
+      // Skip if "Inter" — already loaded by Next.js via --font-inter; avoids
+      // double-load and lets the optimized next/font version take precedence.
+      if (v.toLowerCase() !== 'inter') {
+        const familyParam = v.replace(/ /g, '+');
+        imports.push(`@import url('https://fonts.googleapis.com/css2?family=${familyParam}:wght@300;400;500;600;700;800&display=swap');`);
+        styles['--font-display'] = `'${v}', sans-serif`;
+      }
     } else if (k === 'fontBody') {
-      const familyParam = v.replace(/ /g, '+');
-      imports.push(`@import url('https://fonts.googleapis.com/css2?family=${familyParam}:wght@100;200;300;400;500;600;700;800;900&display=swap');`);
-      styles['--font-body'] = `'${v}', sans-serif`;
+      if (v.toLowerCase() !== 'inter') {
+        const familyParam = v.replace(/ /g, '+');
+        imports.push(`@import url('https://fonts.googleapis.com/css2?family=${familyParam}:wght@100;200;300;400;500;600;700;800;900&display=swap');`);
+        styles['--font-body'] = `'${v}', sans-serif`;
+      }
     } else if (k === 'fontDisplayWeight') {
       styles['--font-display-weight'] = v;
     } else if (k.startsWith('--')) {

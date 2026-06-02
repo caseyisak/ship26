@@ -1630,6 +1630,19 @@ export const PDP_BY_SLUG = `
   }
 `;
 
+/** Lightweight query: fetch all PDP slugs + SKU codes for PLP linking. */
+export const PDP_SLUGS = `
+  query PdpSlugs($locale: String!, $preview: Boolean) {
+    productDetailPageCollection(locale: $locale, preview: $preview, limit: 50) {
+      items {
+        sys { id }
+        slug
+        sku
+      }
+    }
+  }
+`;
+
 /** Full DynamicListing fields (same as page). */
 const DYNAMIC_LISTING_FIELDS = DYNAMIC_LISTING_PAGE_FIELDS;
 

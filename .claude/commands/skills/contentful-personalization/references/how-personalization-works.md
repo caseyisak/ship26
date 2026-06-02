@@ -63,3 +63,4 @@ For demos: enables selecting specific experiences and audiences manually in the 
 - Or register `NinetailedPreviewPlugin` so it always shows
 
 The preview bar is the primary tool for demo presentations — it lets you say "this user is an enterprise buyer in finance" and show the personalized content live.
+commit 

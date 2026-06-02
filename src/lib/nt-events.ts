@@ -25,6 +25,7 @@ export const NT_EVENTS = {
   SCROLL_DEPTH_REACHED:            'Scroll Depth Reached',
   PERSONALIZED_EXPERIENCE_VIEWED:  'Personalized Experience Viewed',
   NEWSLETTER_FORM_SUBMITTED:       'Newsletter Form Submitted',
+  CONTACT_FORM_SUBMITTED:          'Contact Form Submitted',
 } as const;
 
 export type NtEventName = (typeof NT_EVENTS)[keyof typeof NT_EVENTS];

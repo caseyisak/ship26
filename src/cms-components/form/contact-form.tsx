@@ -1,12 +1,14 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNinetailed } from '@ninetailed/experience.js-react';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NT_EVENTS } from '@/lib/nt-events';
 
 const schema = z.object({
   firstName: z.string().min(1, { message: 'First name is required.' }),
@@ -24,14 +26,27 @@ type Props = {
 };
 
 export function ContactForm({ submitLabel, onSuccess }: Props) {
+  const { identify, track } = useNinetailed();
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<Fields>({ resolver: zodResolver(schema) });
 
-  const onSubmit = async (_values: Fields) => {
-    // Demo safe — no network call
+  const onSubmit = async (values: Fields) => {
+    track(NT_EVENTS.CONTACT_FORM_SUBMITTED, { email: values.email });
+    // Write form fields to NT profile as traits — enriches the visitor profile
+    // so the Profile Previewer and audience rules can use them immediately.
+    setTimeout(() => {
+      identify('', {
+        first_name: values.firstName,
+        last_name: values.lastName,
+        email: values.email,
+        phone: values.phone ?? '',
+        company: values.company ?? '',
+      });
+    }, 0);
     onSuccess();
   };
 

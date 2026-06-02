@@ -2,6 +2,37 @@ const SPACE_ID = process.env.CONTENTFUL_SPACE_ID;
 const ENVIRONMENT = process.env.CONTENTFUL_ENVIRONMENT ?? 'master';
 const DELIVERY_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN;
 const PREVIEW_TOKEN = process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN;
+const CMA_TOKEN = process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN ?? process.env.CONTENTFUL_CMA_KEY;
+
+/**
+ * Resolve a Contentful environment alias (e.g. "master") to its actual
+ * environment ID. Cached for the lifetime of the server process.
+ * If the env is already a real ID (not an alias), returns it unchanged.
+ */
+let _resolvedEnv: string | undefined;
+export async function resolveEnvironmentAlias(): Promise<string> {
+  if (_resolvedEnv) return _resolvedEnv;
+  const env = ENVIRONMENT ?? 'master';
+  if (!CMA_TOKEN || !SPACE_ID) {
+    _resolvedEnv = env;
+    return env;
+  }
+  try {
+    const res = await fetch(
+      `https://api.contentful.com/spaces/${SPACE_ID}/environment_aliases/${env}`,
+      { headers: { Authorization: `Bearer ${CMA_TOKEN}` } },
+    );
+    if (res.ok) {
+      const data = await res.json();
+      _resolvedEnv = data?.environment?.sys?.id ?? env;
+    } else {
+      _resolvedEnv = env;
+    }
+  } catch {
+    _resolvedEnv = env;
+  }
+  return _resolvedEnv!;
+}
 
 const ENDPOINT = `https://graphql.contentful.com/content/v1/spaces/${SPACE_ID}/environments/${ENVIRONMENT}`;
 

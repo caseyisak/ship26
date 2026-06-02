@@ -51,7 +51,7 @@ export const HERO_BY_ID_WITH_NT = `
 ```typescript
 // src/cms-components/hero/hero.tsx
 'use client';
-import { Experience } from '@ninetailed/experience.js-next';
+import { Experience } from '@ninetailed/experience.js-react';
 import { useLiveUpdates } from '@/lib/live-preview';
 
 export function Hero({ data }) {

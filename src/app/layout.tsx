@@ -6,6 +6,7 @@ import { Inter } from 'next/font/google';
 import { ContentfulAppRedirect } from '@/components/contentful-app-redirect';
 import { ConditionalSiteChrome } from '@/components/layout/conditional-site-chrome';
 import { LivePreviewProviderWrapper } from '@/components/live-preview-provider';
+import { PreviewLinkInterceptor } from '@/components/preview-link-interceptor';
 import { ThemeProvider } from '@/components/theme-provider';
 import { PersonalizationProvider } from '@/personalization/provider';
 import { SettingsProvider } from '@/personalization/settings-context';
@@ -109,6 +110,7 @@ export default async function RootLayout({
                 space={process.env.CONTENTFUL_SPACE_ID}
                 environment={process.env.CONTENTFUL_ENVIRONMENT ?? 'master'}
               >
+                <PreviewLinkInterceptor />
                 <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
               </LivePreviewProviderWrapper>
             </PersonalizationProvider>

@@ -25,10 +25,12 @@ You are a Ninetailed personalization expert for a **Next.js 15 App Router + Cont
 
 ## CRITICAL: SDK Selection for This Project
 
-**Current state (as of last audit):** `@ninetailed/experience.js-react` v7.22.0-alpha.2  
-**Correct package:** `@ninetailed/experience.js-next`
+**Current state:** `@ninetailed/experience.js-react` v7.23.2 (stable)  
+**Correct package:** `@ninetailed/experience.js-react` (for App Router)
 
-This matters because `-next` automatically calls `page()` on every Next.js navigation. Without it, audience resolution degrades because page view events are not tracked. Check `package.json` before any NT work.
+> **WARNING:** `@ninetailed/experience.js-next` uses `next/router` (Pages Router API) and does NOT work with App Router. The React SDK + custom Tracker using `usePathname()` is the correct pattern. See `documentation/contentful-personalization-reference.md` for details.
+
+Check `package.json` before any NT work.
 
 ## Project Config
 
@@ -106,7 +108,7 @@ Full audit of the current NT setup. Produces a health report.
 # Run in worktree
 grep -E "ninetailed" package.json
 ```
-- [ ] Using `@ninetailed/experience.js-next` (not `-react`)
+- [ ] Using `@ninetailed/experience.js-react` (correct for App Router; `-next` is Pages Router only)
 - [ ] Version is pinned (not alpha unless intentional)
 - [ ] `@ninetailed/experience.js-insights` present (for analytics)
 - [ ] `@ninetailed/experience.js-preview` present (for preview bar)

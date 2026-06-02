@@ -32,6 +32,7 @@ import type {
   NtExperienceFragment,
 } from '@/block-renderer/types';
 
+import { LocalAudienceProvider } from './local-audience-context';
 import { LocalAudienceEvaluator } from './local-audience-evaluator';
 import { mapAudiences, mapExperiences } from './utils';
 
@@ -117,9 +118,11 @@ export function NinetailedProvider({
         useSDKEvaluation={true}
         plugins={[previewPlugin]}
       >
-        <Tracker />
-        <LocalAudienceEvaluator audiences={mappedAudiences} />
-        {children}
+        <LocalAudienceProvider>
+          <Tracker />
+          <LocalAudienceEvaluator audiences={mappedAudiences} />
+          {children}
+        </LocalAudienceProvider>
       </ReactNinetailedProvider>
     </NtExperiencesContext.Provider>
   );

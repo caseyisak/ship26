@@ -6,9 +6,8 @@ The provider must wrap the entire app. In Next.js App Router, this goes in `src/
 
 ```typescript
 // src/app/layout.tsx
-import { NinetailedProvider } from '@ninetailed/experience.js-next';
-import { NinetailedInsightsPlugin } from '@ninetailed/experience.js-insights';
-import { NinetailedPreviewPlugin } from '@ninetailed/experience.js-preview';
+import { NinetailedProvider } from '@ninetailed/experience.js-react';
+import { NinetailedPreviewPlugin } from '@ninetailed/experience.js-plugin-preview';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -49,7 +48,7 @@ The NinetailedProvider is a client component. Mark any file that imports it with
 ```typescript
 // src/components/ninetailed-wrapper.tsx
 'use client';
-import { NinetailedProvider } from '@ninetailed/experience.js-next';
+import { NinetailedProvider } from '@ninetailed/experience.js-react';
 // ... providers
 export function NinetailedWrapper({ children }: { children: React.ReactNode }) {
   return <NinetailedProvider ...>{children}</NinetailedProvider>;

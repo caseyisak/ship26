@@ -31,6 +31,8 @@
 import { useNinetailed } from '@ninetailed/experience.js-react';
 import { useEffect } from 'react';
 
+import { useLocalAudiences } from './local-audience-context';
+
 type AudienceRule = {
   type?: string;
   key?: string;
@@ -116,12 +118,42 @@ function getPreviewPlugin(): WindowPreviewPlugin | null {
   return null;
 }
 
+/**
+ * Retry wrapper for getPreviewPlugin().
+ *
+ * The preview plugin attaches to window.ninetailed.plugins.preview during
+ * its initialize() lifecycle. If onProfileChange fires before initialize()
+ * completes, getPreviewPlugin() returns null and audience activation is
+ * silently lost. This function retries with a short interval to cover that
+ * init window.
+ */
+function waitForPreviewPlugin(
+  callback: (plugin: WindowPreviewPlugin) => void,
+  maxAttempts = 10,
+  intervalMs = 200,
+) {
+  let attempts = 0;
+  const check = () => {
+    const plugin = getPreviewPlugin();
+    if (plugin) {
+      callback(plugin);
+      return;
+    }
+    attempts++;
+    if (attempts < maxAttempts) {
+      setTimeout(check, intervalMs);
+    }
+  };
+  check();
+}
+
 export function LocalAudienceEvaluator({
   audiences,
 }: {
   audiences: MappedAudience[];
 }) {
   const ninetailed = useNinetailed();
+  const { setMatchedAudienceIds } = useLocalAudiences();
 
   useEffect(() => {
     const unsubscribe = ninetailed.onProfileChange((profileState) => {
@@ -129,19 +161,32 @@ export function LocalAudienceEvaluator({
         string,
         unknown
       >;
-      const previewPlugin = getPreviewPlugin();
-      if (!previewPlugin) return;
+
+      // Evaluate all audience rules against current traits
+      const matched: string[] = [];
       audiences.forEach((audience) => {
         if (evaluateRules(audience.rules as AudienceRules, traits)) {
-          previewPlugin.activateAudience(audience.id);
-        } else {
-          previewPlugin.resetAudience(audience.id);
+          matched.push(audience.id);
         }
+      });
+
+      // Write matched IDs to shared context so panels can read them
+      setMatchedAudienceIds(matched);
+
+      // Activate/reset audiences on the preview plugin (with retry for init timing)
+      waitForPreviewPlugin((previewPlugin) => {
+        audiences.forEach((audience) => {
+          if (matched.includes(audience.id)) {
+            previewPlugin.activateAudience(audience.id);
+          } else {
+            previewPlugin.resetAudience(audience.id);
+          }
+        });
       });
     });
 
     return unsubscribe;
-  }, [ninetailed, audiences]);
+  }, [ninetailed, audiences, setMatchedAudienceIds]);
 
   return null;
 }

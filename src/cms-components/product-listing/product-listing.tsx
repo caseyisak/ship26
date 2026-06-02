@@ -2,6 +2,7 @@
 
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, MARKS } from '@contentful/rich-text-types';
+import Link from 'next/link';
 import React, { useMemo, useState } from 'react';
 
 import type { HeroFragment, ProductListingFragment } from '@/block-renderer/types';
@@ -48,9 +49,12 @@ function RtField({
 
 // ── Product card ──────────────────────────────────────────────────────────────
 
-function ProductCard({ product }: { product: ProductRecord }) {
-  return (
-    <div className="group border-border bg-card relative flex flex-col overflow-hidden rounded-lg border transition-shadow hover:shadow-md">
+function ProductCard({ product, href }: { product: ProductRecord; href?: string }) {
+  const card = (
+    <div className={cn(
+      'group border-border bg-card relative flex flex-col overflow-hidden rounded-lg border transition-shadow hover:shadow-md',
+      href && 'cursor-pointer',
+    )}>
       {/* Image */}
       <div className="bg-muted aspect-square w-full overflow-hidden">
         {product.images[0] ? (
@@ -112,6 +116,11 @@ function ProductCard({ product }: { product: ProductRecord }) {
       </div>
     </div>
   );
+
+  if (href) {
+    return <Link href={href} className="block">{card}</Link>;
+  }
+  return card;
 }
 
 // ── Price bucket helpers ───────────────────────────────────────────────────────
@@ -152,10 +161,13 @@ const COLS_CLASS: Record<number, string> = {
 export function ProductListing({
   data,
   productCatalog: productCatalogProp,
+  pdpSlugMap: pdpSlugMapProp,
 }: {
   data: ProductListingFragment;
   productCatalog?: ProductRecord[];
+  pdpSlugMap?: Record<string, string>;
 }) {
+  const pdpSlugMap = pdpSlugMapProp ?? {};
   const [fetchedCatalog, setFetchedCatalog] = useState<ProductRecord[] | null>(
     null,
   );
@@ -428,7 +440,7 @@ export function ProductListing({
                     )}
                     <div className={cn('flex-1 grid gap-5', colsClass)}>
                       {products.map((p) => (
-                        <ProductCard key={`product-${p.sku}`} product={p} />
+                        <ProductCard key={`product-${p.sku}`} product={p} href={pdpSlugMap[p.sku] ? `/products/${pdpSlugMap[p.sku]}` : undefined} />
                       ))}
                     </div>
                     {side === 'right' && (
@@ -441,7 +453,7 @@ export function ProductListing({
                 {remainingProducts.length > 0 && (
                   <div className={cn('grid gap-5', colsClass)}>
                     {remainingProducts.map((p) => (
-                      <ProductCard key={`product-${p.sku}`} product={p} />
+                      <ProductCard key={`product-${p.sku}`} product={p} href={pdpSlugMap[p.sku] ? `/products/${pdpSlugMap[p.sku]}` : undefined} />
                     ))}
                   </div>
                 )}
@@ -449,7 +461,7 @@ export function ProductListing({
             ) : (
               <div className={cn('grid gap-5', colsClass)}>
                 {filtered.map((p) => (
-                  <ProductCard key={`product-${p.sku}`} product={p} />
+                  <ProductCard key={`product-${p.sku}`} product={p} href={pdpSlugMap[p.sku] ? `/products/${pdpSlugMap[p.sku]}` : undefined} />
                 ))}
               </div>
             )}
