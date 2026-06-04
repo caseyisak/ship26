@@ -32,6 +32,7 @@ import type {
   NtExperienceFragment,
 } from '@/block-renderer/types';
 
+import { PageTracker } from '@/components/personalization/page-tracker';
 import { LocalAudienceProvider } from './local-audience-context';
 import { LocalAudienceEvaluator } from './local-audience-evaluator';
 import { mapAudiences, mapExperiences } from './utils';
@@ -120,6 +121,7 @@ export function NinetailedProvider({
       >
         <LocalAudienceProvider>
           <Tracker />
+          <PageTracker traits={{}} />
           <LocalAudienceEvaluator audiences={mappedAudiences} />
           {children}
         </LocalAudienceProvider>

@@ -30,6 +30,7 @@ import { NT_EVENTS } from '@/lib/nt-events';
 import { getPersona, setPersona, clearPersona } from '@/lib/persona-session';
 import type { Persona } from '@/lib/persona-session';
 import { PersonaButtons } from '@/app/login/persona-buttons';
+import { SearchPanel, SearchToggleButton } from '@/components/sections/SearchBar';
 
 // Gear icon dropdown — opens NT panel or Profile Previewer
 function ToolsDropdown({
@@ -99,8 +100,9 @@ function PersonaDropdown({
   const handleLogout = async () => {
     await ninetailed.reset();
     clearPersona();
+    document.body.classList.remove('authenticated');
     afterLogout?.();
-    router.push('/page/home');
+    router.refresh();
   };
 
   const triggerLabel = activePersona.display_name || activePersona.label;
@@ -199,6 +201,7 @@ const Navbar = () => {
   const { track } = ninetailed;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activePersona, setActivePersona] = useState<Persona | null>(null);
 
   useEffect(() => {
@@ -289,6 +292,7 @@ const Navbar = () => {
                 const p = getPersona();
                 setIsLoginOpen(false);
                 setActivePersona(p);
+                document.body.classList.add('authenticated');
                 if (p) {
                   setTimeout(async () => {
                     await ninetailed.reset();
@@ -367,6 +371,11 @@ const Navbar = () => {
                 onClick={() => { track(NT_EVENTS.AUTH_MODAL_OPENED, { triggerSource: 'nav' }); setIsLoginOpen(true); }}
               />
             )}
+            <SearchToggleButton
+              isOpen={isSearchOpen}
+              onClick={() => setIsSearchOpen((v) => !v)}
+              className="hidden sm:flex lg:flex"
+            />
             <ToolsDropdown className="hidden sm:flex lg:flex" onProfilePreviewerToggle={handleProfilePreviewerToggle} />
 
             <button
@@ -486,6 +495,7 @@ const Navbar = () => {
           </div>
         </div>
       </header>
+      <SearchPanel isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
 };

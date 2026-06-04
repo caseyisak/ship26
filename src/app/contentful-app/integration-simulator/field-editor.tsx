@@ -620,6 +620,31 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
                   </Flex>
                 )}
 
+                {/* Documents */}
+                {product.documents && product.documents.length > 0 && (
+                  <Box>
+                    <Text
+                      fontColor="gray500"
+                      style={{ fontSize: 10, lineHeight: '1.6', marginBottom: 4 }}
+                    >
+                      Documents
+                    </Text>
+                    <Flex flexDirection="column" style={{ gap: 3 }}>
+                      {product.documents.map((doc, i) => (
+                        <Flex key={i} alignItems="center" gap="spacingXs">
+                          <Badge
+                            variant="secondary"
+                            style={{ fontSize: 9, flexShrink: 0 }}
+                          >
+                            {doc.type}
+                          </Badge>
+                          <Text style={{ fontSize: 11 }}>{doc.name}</Text>
+                        </Flex>
+                      ))}
+                    </Flex>
+                  </Box>
+                )}
+
                 <Box style={{ flex: 1 }} />
 
                 <Flex

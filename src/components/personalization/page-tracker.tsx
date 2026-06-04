@@ -34,16 +34,21 @@ export function PageTracker({ traits }: { traits: Record<string, string | number
     // identify() fires before NinetailedProvider's onProfileChange listeners
     // (including LocalAudienceEvaluator) have subscribed.
     setTimeout(() => {
+      const params = new URLSearchParams(window.location.search);
+      const utmCampaign = params.get('utm_campaign');
+      const utmTraits: Record<string, string> = {};
+      if (utmCampaign) utmTraits.utm_campaign = utmCampaign;
+
       const isLoggedIn = Boolean(getPersona());
       if (!isLoggedIn) {
         // Anonymous visitor: overwrite stale persona traits with empty values,
         // then layer on the behavioral trait for this page.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ninetailed.identify('', { ...ANONYMOUS_OVERWRITE, ...traits } as any);
+        ninetailed.identify('', { ...ANONYMOUS_OVERWRITE, ...traits, ...utmTraits } as any);
       } else {
         // Logged in: just add behavioral trait on top of existing persona.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ninetailed.identify('visitor', traits as any);
+        ninetailed.identify('visitor', { ...traits, ...utmTraits } as any);
       }
     }, 0);
   // eslint-disable-next-line react-hooks/exhaustive-deps

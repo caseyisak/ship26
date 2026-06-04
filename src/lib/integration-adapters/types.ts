@@ -6,6 +6,13 @@
  * CatalogAdapter lets a real Shopify/DAM adapter swap in later.
  */
 
+export interface ProductDocument {
+  name: string;
+  type: string;        // COA | SDS | IFU | Technical | Promotional
+  accessLevel: string; // public | authenticated
+  assetUrl: string;
+}
+
 export interface ProductRecord {
   sku: string;
   name: string;
@@ -24,6 +31,7 @@ export interface ProductRecord {
   };
   /** Platform label stamped on save (e.g. "BigCommerce", "Shopify"). */
   source?: string;
+  documents?: ProductDocument[];
 }
 
 export interface AssetRecord {
