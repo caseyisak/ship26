@@ -9,12 +9,24 @@ type RawSection = {
   [key: string]: unknown;
 };
 
+type RawAioAeoGeo = {
+  __typename: string;
+  sys: { id: string };
+  internalName?: string | null;
+  topic?: string | null;
+  ownerTeam?: string | null;
+  lastUpdated?: string | null;
+  audience?: string | null;
+  region?: string | null;
+};
+
 type RawPdp = {
   __typename: string;
   sys: { id: string };
   internalName?: string | null;
   sku?: Record<string, unknown> | null;
   editorNotes?: { json: Record<string, unknown> } | null;
+  aioAeoGeo?: RawAioAeoGeo | null;
   sectionsCollection?: { items: Array<RawSection | null> } | null;
 };
 
@@ -29,12 +41,26 @@ type PdpByIdResponse = PdpCollectionResponse;
 
 function mapPdp(item: RawPdp | null | undefined): ProductDetailPageFragment | null {
   if (!item || item.__typename !== 'ProductDetailPage') return null;
+  const aioAeoGeo = item.aioAeoGeo?.__typename === 'AioAeoGeo'
+    ? {
+        __typename: 'AioAeoGeo' as const,
+        sys: { id: item.aioAeoGeo.sys.id },
+        internalName: item.aioAeoGeo.internalName ?? null,
+        topic: item.aioAeoGeo.topic ?? null,
+        ownerTeam: item.aioAeoGeo.ownerTeam ?? null,
+        lastUpdated: item.aioAeoGeo.lastUpdated ?? null,
+        audience: item.aioAeoGeo.audience ?? null,
+        region: item.aioAeoGeo.region ?? null,
+      }
+    : null;
+
   return {
     __typename: 'ProductDetailPage',
     sys: { id: item.sys.id },
     internalName: item.internalName ?? null,
     sku: item.sku ?? null,
     editorNotes: item.editorNotes ?? null,
+    aioAeoGeo,
     sectionsCollection: item.sectionsCollection
       ? {
           items: item.sectionsCollection.items as NonNullable<ProductDetailPageFragment['sectionsCollection']>['items'],
@@ -60,7 +86,8 @@ export async function getPdpBySlug({
       preview,
     });
     return mapPdp(data.productDetailPageCollection?.items?.[0]);
-  } catch {
+  } catch (err) {
+    console.error('[getPdpBySlug] Failed for slug:', slug, 'preview:', preview, err);
     return null;
   }
 }

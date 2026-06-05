@@ -9,4 +9,6 @@ export const NT_AUDIENCES = {
   newVisitor: process.env.NEXT_PUBLIC_NT_AUDIENCE_NEW_VISITOR ?? '',
   returning: process.env.NEXT_PUBLIC_NT_AUDIENCE_RETURNING ?? '',
   premium: process.env.NEXT_PUBLIC_NT_AUDIENCE_PREMIUM ?? '',
+  jordan: process.env.NEXT_PUBLIC_NT_AUDIENCE_JORDAN ?? '',
+  amber: process.env.NEXT_PUBLIC_NT_AUDIENCE_AMBER ?? '',
 };

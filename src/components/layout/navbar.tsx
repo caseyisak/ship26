@@ -308,7 +308,7 @@ const Navbar = () => {
         </DialogContent>
       </Dialog>
 
-      <header className="bg-background border-border relative z-50 h-20 border-b px-2.5 lg:px-0">
+      <header className="bg-background border-border sticky top-0 z-50 h-20 border-b px-2.5 lg:px-0">
         <div className="container flex h-20 items-center justify-between lg:grid lg:grid-cols-[auto_1fr_auto]">
           <Link href="/" className="flex items-center gap-2">
             {navLogo?.url ? (

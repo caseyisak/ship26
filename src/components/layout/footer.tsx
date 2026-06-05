@@ -94,7 +94,7 @@ export const Footer = ({ footerForm }: FooterProps = {}) => {
         {/* bottom bar */}
         <div className="mt-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <p className="text-muted-foreground text-sm font-normal">
-            © {new Date().getFullYear()} Metafi. All rights reserved
+            © {new Date().getFullYear()} Arko Home. All rights reserved
           </p>
 
           <div className="flex items-center gap-4">

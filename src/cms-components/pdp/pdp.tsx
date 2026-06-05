@@ -164,10 +164,7 @@ export function Pdp({ data: rawData }: BlockProps<ProductDetailPageFragment>) {
 
             {/* Price */}
             <div>
-              <span className="price-public text-2xl font-semibold text-muted-foreground">
-                Log in for pricing
-              </span>
-              <div className="price-authenticated items-baseline gap-3">
+              <div className="flex items-baseline gap-3">
                 {product.salePrice ? (
                   <>
                     <span className="text-2xl font-bold">${product.salePrice.toFixed(2)}</span>

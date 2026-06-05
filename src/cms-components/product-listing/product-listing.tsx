@@ -8,6 +8,7 @@ import React, { useMemo, useState } from 'react';
 import type { HeroFragment, ProductListingFragment } from '@/block-renderer/types';
 import { BlockRenderer } from '@/block-renderer';
 import { Hero } from '@/cms-components/hero';
+import { ContentMatchReveal } from '@/components/sections/ContentMatchReveal';
 import { contentfulCatalogAdapter } from '@/lib/integration-adapters/contentful-catalog';
 import type { ProductRecord } from '@/lib/integration-adapters/types';
 import {
@@ -81,10 +82,7 @@ function ProductCard({ product, href }: { product: ProductRecord; href?: string 
         <p className="text-sm leading-snug font-semibold">{product.name}</p>
 
         <div>
-          <span className="price-public text-sm font-semibold text-muted-foreground">
-            Log in for pricing
-          </span>
-          <div className="price-authenticated items-center gap-1.5">
+          <div className="flex items-center gap-1.5">
             {product.salePrice ? (
               <>
                 <span className="text-sm font-bold">
@@ -420,6 +418,18 @@ export function ProductListing({
 
           {/* ── Right product grid ────────────────────────────────────── */}
           <div className="min-w-0 flex-1">
+            {/* ContentMatchReveal: show matched tags from top product when filters are active */}
+            {(selectedTags.length > 0 || selectedCategory !== 'all') && filtered.length > 0 && (
+              <ContentMatchReveal
+                matchedTags={filtered[0].tags ?? []}
+                query={
+                  selectedTags.length > 0
+                    ? selectedTags.join(', ')
+                    : selectedCategory
+                }
+                className="mb-5"
+              />
+            )}
             {loading ? (
               <div className={cn('grid gap-4', colsClass)}>
                 {Array.from({ length: columns ?? 3 }).map((_, i) => (

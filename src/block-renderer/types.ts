@@ -62,13 +62,15 @@ export type AioAeoGeoFragment = {
   region?: string | null;
 };
 
-/** FaqItem (matches Contentful FaqItem content type: internalName, questionRt, answerRt, aioAeoGeo). */
+/** FaqItem (matches Contentful FaqItem content type: internalName, questionRt, answerRt, source, aioAeoGeo). */
 export type FaqItemFragment = {
   __typename: 'FaqItem';
   sys: { id: string };
   internalName?: string | null;
   questionRt?: { json: Record<string, unknown> } | null;
   answerRt?: { json: Record<string, unknown> } | null;
+  /** Source badge: manufacturer | editors | customers */
+  source?: 'manufacturer' | 'editors' | 'customers' | string | null;
   aioAeoGeoCollection?: { items: AioAeoGeoFragment[] } | null;
 };
 
@@ -562,6 +564,8 @@ export type ProductDetailPageFragment = BlockData & {
   /** JSON Object field — stores full ProductRecord written by the Integration Simulator app */
   sku?: Record<string, unknown> | null;
   editorNotes?: { json: Record<string, unknown> } | null;
+  /** AEO governance metadata — linking this unlocks attributed AI answers in the AEO preview. */
+  aioAeoGeo?: AioAeoGeoFragment | null;
   sectionsCollection?: {
     items: Array<
       | BannerFragment

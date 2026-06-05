@@ -25,15 +25,48 @@ const faqRichTextOptions = {
   },
 };
 
+// ── Source badge config ──────────────────────────────────────────────────────
+
+const SOURCE_BADGES: Record<string, { label: string; className: string }> = {
+  manufacturer: {
+    label: 'From the manufacturer',
+    className: 'bg-blue-50 text-blue-700 border-blue-200',
+  },
+  editors: {
+    label: 'Styled by our editors',
+    className: 'bg-purple-50 text-purple-700 border-purple-200',
+  },
+  customers: {
+    label: 'Customers say',
+    className: 'bg-amber-50 text-amber-700 border-amber-200',
+  },
+};
+
+function SourceBadge({ source }: { source: string }) {
+  const config = SOURCE_BADGES[source];
+  if (!config) return null;
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium leading-tight',
+        config.className,
+      )}
+    >
+      {config.label}
+    </span>
+  );
+}
+
 type FaqItemProps = {
   id: string;
   question: React.ReactNode;
   answer: React.ReactNode;
+  source?: string | null;
   open: boolean;
   onToggle: (id: string) => void;
 };
 
-function FaqItem({ id, question, answer, open, onToggle }: FaqItemProps) {
+function FaqItem({ id, question, answer, source, open, onToggle }: FaqItemProps) {
   const regionId = `${id}-region`;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -122,6 +155,11 @@ function FaqItem({ id, question, answer, open, onToggle }: FaqItemProps) {
           ref={contentRef}
           className="text-muted-foreground mt-2 text-sm font-normal whitespace-pre-wrap sm:text-base"
         >
+          {source && (
+            <div className="mb-2">
+              <SourceBadge source={source} />
+            </div>
+          )}
           {answer}
         </div>
       </div>
@@ -244,6 +282,7 @@ const Faq = ({ data, className, ...props }: BlockProps<FaqFragment>) => {
                 id={id}
                 question={question}
                 answer={answer}
+                source={item.source}
                 open={open}
                 onToggle={handleToggle}
               />
