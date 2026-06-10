@@ -28,10 +28,12 @@
  * and activate the correct audiences in the preview plugin.
  */
 
+import type { ExperienceConfiguration } from '@ninetailed/experience.js-react';
 import { useNinetailed } from '@ninetailed/experience.js-react';
 import { useEffect } from 'react';
 
 import { useLocalAudiences } from './local-audience-context';
+import { useNtExperiences } from './ninetailed-nextjs';
 
 type AudienceRule = {
   type?: string;
@@ -98,6 +100,8 @@ function evaluateRules(
 type WindowPreviewPlugin = {
   activateAudience: (id: string) => void;
   resetAudience: (id: string) => void;
+  setExperienceVariant: (experienceId: string, variantIndex: number) => void;
+  resetExperience: (experienceId: string) => void;
 };
 
 function getPreviewPlugin(): WindowPreviewPlugin | null {
@@ -109,9 +113,10 @@ function getPreviewPlugin(): WindowPreviewPlugin | null {
   ).ninetailed?.plugins?.preview;
   if (
     plugin &&
-    typeof (plugin as Record<string, unknown>).activateAudience ===
-      'function' &&
-    typeof (plugin as Record<string, unknown>).resetAudience === 'function'
+    typeof (plugin as Record<string, unknown>).activateAudience === 'function' &&
+    typeof (plugin as Record<string, unknown>).resetAudience === 'function' &&
+    typeof (plugin as Record<string, unknown>).setExperienceVariant === 'function' &&
+    typeof (plugin as Record<string, unknown>).resetExperience === 'function'
   ) {
     return plugin as WindowPreviewPlugin;
   }
@@ -154,6 +159,7 @@ export function LocalAudienceEvaluator({
 }) {
   const ninetailed = useNinetailed();
   const { setMatchedAudienceIds } = useLocalAudiences();
+  const allExperiences = useNtExperiences();
 
   useEffect(() => {
     const unsubscribe = ninetailed.onProfileChange((profileState) => {
@@ -174,6 +180,10 @@ export function LocalAudienceEvaluator({
       setMatchedAudienceIds(matched);
 
       // Activate/reset audiences on the preview plugin (with retry for init timing)
+      // AND force variant selection for experiences targeting matched audiences.
+      // activateAudience() alone only updates the plugin's audience state — it does
+      // NOT trigger the SDK's Experience component to re-evaluate. We must also call
+      // setExperienceVariant() to explicitly select variant index 1 (first variant).
       waitForPreviewPlugin((previewPlugin) => {
         audiences.forEach((audience) => {
           if (matched.includes(audience.id)) {
@@ -182,11 +192,27 @@ export function LocalAudienceEvaluator({
             previewPlugin.resetAudience(audience.id);
           }
         });
+
+        // Force variant selection for personalization experiences targeting matched audiences
+        allExperiences.forEach((exp) => {
+          const expConfig = exp as ExperienceConfiguration & {
+            audience?: { id?: string };
+          };
+          const audienceId = expConfig.audience?.id;
+          if (!audienceId) return;
+
+          if (matched.includes(audienceId)) {
+            // Select variant index 1 (first variant) for matched personalization experiences
+            previewPlugin.setExperienceVariant(exp.id, 1);
+          } else {
+            previewPlugin.resetExperience(exp.id);
+          }
+        });
       });
     });
 
     return unsubscribe;
-  }, [ninetailed, audiences, setMatchedAudienceIds]);
+  }, [ninetailed, audiences, allExperiences, setMatchedAudienceIds]);
 
   return null;
 }

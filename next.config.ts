@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     config.watchOptions = {
       ...config.watchOptions,
-      ignored: ['**/node_modules/**', '**/.playwright-mcp/**', '**/.claude/worktrees/**', '**/metafi-worktrees/**'],
+      ignored: ['**/node_modules/**', '**/.playwright-mcp/**', '**/.claude/worktrees/**'],
     };
     return config;
   },

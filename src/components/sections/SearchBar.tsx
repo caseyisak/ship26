@@ -1,13 +1,22 @@
 'use client';
 
-import { Search, X, Sparkle, RotateCcw, ShoppingCart } from 'lucide-react';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import {
+  ArrowUp,
+  Bookmark,
+  History,
+  RotateCcw,
+  Search,
+  ShoppingCart,
+  Sparkle,
+  X,
+} from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { cn } from '@/lib/utils';
-import { useSettings } from '@/personalization/settings-context';
-import { getPersona } from '@/lib/persona-session';
 import { MockCommerceCheckout } from '@/components/demo/MockCommerceCheckout';
 import type { ProductRecord } from '@/lib/integration-adapters/types';
+import { getPersona } from '@/lib/persona-session';
+import { cn } from '@/lib/utils';
+import { useSettings } from '@/personalization/settings-context';
 
 // ── SessionStorage key ──────────────────────────────────────────────────────
 
@@ -107,42 +116,80 @@ function findAiResponse(query: string): ChatMessage[] | null {
 }
 
 // ── Product result card ─────────────────────────────────────────────────────
+// Threaded layout: image rail on the left, details + Add / Details actions on
+// the right. "Add" routes through the same checkout flow as the AI thread.
 
-function ProductResultCard({ product }: { product: ProductRecord }) {
+function ProductResultCard({
+  product,
+  onAddToCart,
+}: {
+  product: ProductRecord;
+  onAddToCart?: (sku: string) => void;
+}) {
+  const href = `/products/${product.sku?.toLowerCase().replace(/_/g, '-')}`;
   return (
-    <a
-      href={`/products/${product.sku?.toLowerCase().replace(/_/g, '-')}`}
-      className="flex items-start gap-4 rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50"
-    >
-      <div className="mt-0.5 flex-shrink-0">
+    <div className="group border-border bg-card flex overflow-hidden rounded-lg border shadow-sm transition-shadow hover:shadow-md">
+      <a
+        href={href}
+        className="bg-muted relative h-auto w-24 shrink-0 overflow-hidden"
+      >
         {product.images[0] ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={product.images[0]}
             alt={product.name}
-            className="h-10 w-10 rounded-md object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-md">
+          <div className="flex h-full w-full items-center justify-center">
             <span className="text-muted-foreground text-xs">IMG</span>
           </div>
         )}
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="truncate text-sm font-semibold text-slate-900">{product.name}</p>
-          <span className="flex-shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
-            {product.category}
-          </span>
+      </a>
+      <div className="flex min-w-0 flex-1 flex-col justify-between gap-2 p-3">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <a
+              href={href}
+              className="text-foreground block truncate text-sm font-semibold hover:underline"
+            >
+              {product.name}
+            </a>
+            <div className="mt-1 flex items-center gap-2">
+              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-medium text-blue-700">
+                {product.category}
+              </span>
+              {product.inStock && (
+                <span className="text-[11px] font-medium text-green-600">
+                  In Stock
+                </span>
+              )}
+            </div>
+          </div>
+          <p className="text-foreground shrink-0 text-sm font-semibold">
+            ${product.price.toFixed(2)}
+          </p>
         </div>
-        <p className="mt-1 line-clamp-2 text-xs text-slate-500">{product.description}</p>
-        <p className="mt-1 text-xs font-semibold text-slate-700">
-          ${product.price.toFixed(2)}
-          {product.inStock && (
-            <span className="ml-2 font-normal text-green-600">In Stock</span>
+        <div className="flex gap-2">
+          {onAddToCart && (
+            <button
+              type="button"
+              onClick={() => onAddToCart(product.sku)}
+              className="bg-primary text-primary-foreground inline-flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-semibold transition-opacity hover:opacity-90"
+            >
+              <ShoppingCart className="h-3 w-3" />
+              Add
+            </button>
           )}
-        </p>
+          <a
+            href={href}
+            className="border-border text-foreground hover:bg-muted inline-flex flex-1 items-center justify-center rounded-md border px-2 py-1.5 text-xs font-semibold transition-colors"
+          >
+            Details
+          </a>
+        </div>
       </div>
-    </a>
+    </div>
   );
 }
 
@@ -158,12 +205,12 @@ function AiSuggestionRow({
   return (
     <>
       <div className="flex items-center gap-3 py-2">
-        <span className="h-px flex-1 bg-slate-200" />
-        <span className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+        <span className="bg-border h-px flex-1" />
+        <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
           <Sparkle className="h-3 w-3" />
           AI suggestion
         </span>
-        <span className="h-px flex-1 bg-slate-200" />
+        <span className="bg-border h-px flex-1" />
       </div>
       <button
         type="button"
@@ -190,42 +237,57 @@ function AiSuggestionRow({
 
 function ChatThread({
   messages,
+  productCatalog,
   onAddToCart,
 }: {
   messages: ChatMessage[];
+  productCatalog: ProductRecord[];
   onAddToCart?: (sku: string) => void;
 }) {
   return (
-    <div className="mt-4 space-y-3">
-      {messages.map((msg, i) => (
-        <div
-          key={i}
-          className={cn(
-            'rounded-lg px-4 py-3 text-sm',
-            msg.role === 'user'
-              ? 'ml-8 bg-slate-100 text-slate-800'
-              : 'mr-8 border border-purple-100 bg-purple-50/40 text-slate-700',
-          )}
-        >
-          {msg.role === 'assistant' && (
-            <div className="mb-1 flex items-center gap-1.5">
-              <Sparkle className="h-3 w-3 text-purple-500" />
-              <span className="text-xs font-medium text-purple-600">Shopping Assistant</span>
+    <div className="space-y-6">
+      {messages.map((msg, i) =>
+        msg.role === 'user' ? (
+          <div key={i} className="flex justify-end">
+            <div className="bg-muted text-foreground max-w-[85%] rounded-2xl rounded-tr-sm px-4 py-3 text-sm shadow-sm">
+              <p className="leading-relaxed">{msg.text}</p>
             </div>
-          )}
-          <p className="leading-relaxed">{msg.text}</p>
-          {msg.showAddToCart && msg.products?.[0] && onAddToCart && (
-            <button
-              type="button"
-              onClick={() => onAddToCart(msg.products![0])}
-              className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-purple-200 bg-purple-100 px-3 py-1.5 text-xs font-medium text-purple-700 transition-colors hover:bg-purple-200"
-            >
-              <ShoppingCart className="h-3 w-3" />
-              Add to cart
-            </button>
-          )}
-        </div>
-      ))}
+          </div>
+        ) : (
+          <div key={i} className="flex gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-purple-600 shadow-sm">
+              <Sparkle className="h-4 w-4 text-white" />
+            </div>
+            <div className="min-w-0 flex-1 space-y-3">
+              <div className="rounded-2xl rounded-tl-sm border border-purple-100 bg-purple-50/50 px-4 py-3 text-sm">
+                <div className="mb-1 flex items-center gap-1.5">
+                  <span className="text-xs font-medium text-purple-600">
+                    Shopping Assistant
+                  </span>
+                </div>
+                <p className="text-foreground leading-relaxed">{msg.text}</p>
+              </div>
+              {(() => {
+                const products = (msg.products ?? [])
+                  .map((sku) => productCatalog.find((p) => p.sku === sku))
+                  .filter((p): p is ProductRecord => Boolean(p));
+                if (products.length === 0) return null;
+                return (
+                  <div className="space-y-2">
+                    {products.map((p) => (
+                      <ProductResultCard
+                        key={p.sku}
+                        product={p}
+                        onAddToCart={onAddToCart}
+                      />
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        ),
+      )}
     </div>
   );
 }
@@ -248,6 +310,7 @@ export function SearchPanel({ isOpen, onClose }: SearchBarProps) {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [checkoutSku, setCheckoutSku] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const feedEndRef = useRef<HTMLDivElement>(null);
 
   // Load persisted state on first open
   useEffect(() => {
@@ -286,6 +349,11 @@ export function SearchPanel({ isOpen, onClose }: SearchBarProps) {
     return () => window.removeEventListener('keydown', handleKey);
   }, [isOpen, onClose]);
 
+  // Keep the threaded feed pinned to the latest message
+  useEffect(() => {
+    feedEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [chatMessages]);
+
   const handleClear = useCallback(() => {
     setQuery('');
     setChatMessages([]);
@@ -321,13 +389,10 @@ export function SearchPanel({ isOpen, onClose }: SearchBarProps) {
     [query, aiMode, handleAiClick],
   );
 
-  const handleAddToCart = useCallback(
-    (sku: string) => {
-      setCheckoutSku(sku);
-      setCheckoutOpen(true);
-    },
-    [],
-  );
+  const handleAddToCart = useCallback((sku: string) => {
+    setCheckoutSku(sku);
+    setCheckoutOpen(true);
+  }, []);
 
   // Resolve checkout item from product catalog
   const checkoutProduct = checkoutSku
@@ -350,97 +415,180 @@ export function SearchPanel({ isOpen, onClose }: SearchBarProps) {
           p.tags?.some((t) => t.toLowerCase().includes(lower))
         );
       })
-    : productCatalog.slice(0, 6);
+    : productCatalog.slice(0, 3);
 
   const hasChat = chatMessages.length > 0;
 
   return (
-    <div className="border-b border-slate-200 bg-slate-50 shadow-sm">
-      <div className="mx-auto max-w-5xl px-6 py-5">
-        {/* Search input */}
-        <form onSubmit={handleSubmit}>
-          <div className="relative flex items-center">
-            {hasQuery ? (
-              <Search className="pointer-events-none absolute left-3 h-4 w-4 text-slate-400" />
-            ) : (
-              <Sparkle className="pointer-events-none absolute left-3 h-4 w-4 text-purple-400" />
-            )}
-            <input
-              ref={inputRef}
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder='Try "lamp for my living room" or "statement piece"'
-              className="h-10 w-full rounded-lg border border-slate-300 bg-white pl-9 pr-20 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200"
+    <>
+      {/* Window tint — 5% darker, no blur. pointer-events-none keeps the page
+          behind the panel scrollable and interactive. */}
+      <div
+        className="animate-in fade-in bg-foreground/5 pointer-events-none fixed inset-0 z-[55] duration-200"
+        aria-hidden="true"
+      />
+
+      {/* Floating threaded assistant panel */}
+      <aside
+        role="dialog"
+        aria-label="Search and shopping assistant"
+        className="animate-in slide-in-from-right-8 fade-in border-border bg-background fixed inset-y-0 right-0 z-[60] flex w-full max-w-xl flex-col border-l shadow-2xl duration-300"
+      >
+        {/* Header */}
+        <div className="border-border flex items-center justify-between gap-4 border-b px-6 py-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-purple-600 shadow-sm">
+              <Sparkle className="h-4 w-4 text-white" />
+            </span>
+            <span className="text-foreground text-base font-semibold">
+              Shopping Assistant
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close search"
+            className="text-muted-foreground hover:bg-muted hover:text-foreground flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors"
+          >
+            <span className="bg-muted rounded px-1.5 py-0.5 text-[10px] font-bold tracking-widest uppercase">
+              Esc
+            </span>
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* Scrollable feed: thread + product results */}
+        <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">
+          {/* Chat thread (State 3) */}
+          {hasChat && (
+            <ChatThread
+              messages={chatMessages}
+              productCatalog={productCatalog}
+              onAddToCart={handleAddToCart}
             />
-            <div className="absolute right-2 flex items-center gap-1">
-              {(hasQuery || hasChat) && (
-                <button
-                  type="button"
-                  onClick={handleClear}
-                  className="flex items-center gap-1 rounded px-1.5 py-1 text-xs text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-                  aria-label="Clear search and conversation"
-                >
-                  <RotateCcw className="h-3 w-3" />
-                  Clear
-                </button>
+          )}
+
+          {/* AI suggestion row (State 2: query present, no chat yet) */}
+          {hasQuery && !hasChat && (
+            <AiSuggestionRow query={query} onClick={handleAiClick} />
+          )}
+
+          {/* Product results */}
+          <div className="flex flex-col gap-3">
+            {productResults.length > 0 ? (
+              <>
+                <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+                  {hasQuery
+                    ? `${productResults.length} product${productResults.length !== 1 ? 's' : ''} for "${query}"`
+                    : hasChat
+                      ? 'You might also like'
+                      : 'Featured products'}
+                </p>
+                {productResults.slice(0, 6).map((p) => (
+                  <ProductResultCard
+                    key={p.sku}
+                    product={p}
+                    onAddToCart={handleAddToCart}
+                  />
+                ))}
+              </>
+            ) : hasQuery ? (
+              <p className="text-muted-foreground py-6 text-center text-sm">
+                No products found for &ldquo;{query}&rdquo;
+              </p>
+            ) : null}
+          </div>
+
+          <div ref={feedEndRef} />
+        </div>
+
+        {/* Interaction footer: input + actions */}
+        <div className="border-border bg-background border-t px-6 py-4">
+          <form onSubmit={handleSubmit}>
+            <div className="border-input bg-card focus-within:border-ring focus-within:ring-ring/20 relative flex items-center gap-2 rounded-xl border px-3 py-1.5 transition-colors focus-within:ring-2">
+              {hasQuery ? (
+                <Search className="text-muted-foreground pointer-events-none h-4 w-4 shrink-0" />
+              ) : (
+                <Sparkle className="pointer-events-none h-4 w-4 shrink-0 text-purple-500" />
               )}
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder='Try "lamp for my living room" or "statement piece"'
+                className="text-foreground placeholder:text-muted-foreground h-9 flex-1 border-none bg-transparent text-sm focus:outline-none"
+              />
               {hasQuery && !hasChat && (
                 <button
                   type="button"
                   onClick={() => setQuery('')}
-                  className="text-slate-400 hover:text-slate-600"
+                  className="text-muted-foreground hover:text-foreground shrink-0"
                   aria-label="Clear search text"
                 >
                   <X className="h-4 w-4" />
                 </button>
               )}
+              <button
+                type="submit"
+                disabled={!hasQuery}
+                aria-label="Ask the shopping assistant"
+                className="bg-primary text-primary-foreground flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-opacity hover:opacity-90 disabled:opacity-40"
+              >
+                <ArrowUp className="h-4 w-4" />
+              </button>
             </div>
+          </form>
+
+          <div className="mt-3 flex items-center justify-center gap-6">
+            <span className="text-muted-foreground flex items-center gap-1.5 text-[11px] font-semibold tracking-wider uppercase">
+              <History className="h-3.5 w-3.5" />
+              Recent
+            </span>
+            <span className="text-muted-foreground flex items-center gap-1.5 text-[11px] font-semibold tracking-wider uppercase">
+              <Bookmark className="h-3.5 w-3.5" />
+              Saved
+            </span>
+            {(hasQuery || hasChat) && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-[11px] font-semibold tracking-wider uppercase transition-colors"
+                aria-label="Clear search and conversation"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                Clear
+              </button>
+            )}
           </div>
-        </form>
-
-        {/* Chat thread (State 3) */}
-        {hasChat && <ChatThread messages={chatMessages} onAddToCart={handleAddToCart} />}
-
-        {/* Product results */}
-        <div className="mt-4 flex flex-col gap-2">
-          {productResults.length > 0 ? (
-            <>
-              <p className="mb-1 text-xs font-medium uppercase tracking-wider text-slate-400">
-                {hasQuery
-                  ? `${productResults.length} product${productResults.length !== 1 ? 's' : ''} for "${query}"`
-                  : 'Featured products'}
-              </p>
-              {productResults.slice(0, 6).map((p) => (
-                <ProductResultCard key={p.sku} product={p} />
-              ))}
-            </>
-          ) : hasQuery ? (
-            <p className="py-6 text-center text-sm text-slate-400">
-              No products found for &ldquo;{query}&rdquo;
-            </p>
-          ) : null}
         </div>
-
-        {/* AI suggestion row (State 2: query present, no chat yet) */}
-        {hasQuery && !hasChat && (
-          <AiSuggestionRow query={query} onClick={handleAiClick} />
-        )}
-      </div>
+      </aside>
 
       {/* Mock checkout modal triggered from AI conversation */}
       <MockCommerceCheckout
         open={checkoutOpen}
         onOpenChange={setCheckoutOpen}
-        personaName={persona?.first_name ?? persona?.display_name ?? persona?.name ?? 'Guest'}
+        personaName={
+          persona?.first_name ??
+          persona?.display_name ??
+          persona?.name ??
+          'Guest'
+        }
         loyaltyTier={persona?.loyalty_tier}
         items={
           checkoutProduct
-            ? [{ name: checkoutProduct.name, variant: checkoutProduct.variants?.colors?.[0] ?? 'matte black', price: checkoutProduct.price }]
+            ? [
+                {
+                  name: checkoutProduct.name,
+                  variant:
+                    checkoutProduct.variants?.colors?.[0] ?? 'matte black',
+                  price: checkoutProduct.price,
+                },
+              ]
             : undefined
         }
       />
-    </div>
+    </>
   );
 }
 
@@ -462,7 +610,7 @@ export function SearchToggleButton({
       aria-label={isOpen ? 'Close search' : 'Open search'}
       aria-expanded={isOpen}
       className={cn(
-        'flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-muted-foreground transition-colors hover:bg-muted hover:text-foreground',
+        'text-muted-foreground hover:bg-muted hover:text-foreground flex h-8 w-8 items-center justify-center rounded-md border border-transparent transition-colors',
         isOpen && 'bg-muted text-foreground',
         className,
       )}

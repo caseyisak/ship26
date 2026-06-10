@@ -208,7 +208,7 @@ const FAQ_FIELDS = `
   ... on Faq {
     internalName
     titleRt { json }
-    descriptionRt { json }
+    descriptionRt { json ${MERGE_TAG_RT_LINKS} }
     faqMetadata {
       ${AIO_AEO_GEO_FIELDS}
     }

@@ -79,7 +79,19 @@ export type FaqFragment = BlockData & {
   __typename: 'Faq';
   internalName?: string | null;
   titleRt?: { json: Record<string, unknown> } | null;
-  descriptionRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: {
+    json: Record<string, unknown>;
+    links?: {
+      entries?: {
+        inline?: Array<{
+          sys: { id: string };
+          __typename?: string;
+          ntMergetagId?: string | null;
+          ntFallback?: string | null;
+        } | null>;
+      };
+    };
+  } | null;
   faqMetadata?: AioAeoGeoFragment | null;
   itemsCollection?: { items: FaqItemFragment[] } | null;
   ntExperiencesCollection?: {
