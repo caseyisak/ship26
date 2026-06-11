@@ -101,8 +101,9 @@ export interface MappingRow {
    * Legacy field — derived from connectorId on save. Kept on the persisted
    * mapping so the existing field-editor + dialog (which still route by
    * SimulatorType) keep working until they're refactored to read connectorId.
+   * Null for custom connectors that have no seed SimulatorType equivalent.
    */
-  simulatorType: SimulatorType;
+  simulatorType: SimulatorType | null;
   /** Picker mode: single item, category collection, or filtered-category pre-filter. Default: 'single'. */
   mode?: 'single' | 'category' | 'filtered-category';
 }

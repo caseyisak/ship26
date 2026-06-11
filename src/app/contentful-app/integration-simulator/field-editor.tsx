@@ -11,7 +11,11 @@ import type {
 
 import type { AppParams, MappingRow, SimulatorType } from './config-screen';
 import { BRAND_CONFIG, isBookingType, isEcomType } from './config-screen';
-import type { AssetCollection, ProductCollection } from './connector-types';
+import type {
+  AssetCollection,
+  ConnectorProfile,
+  ProductCollection,
+} from './connector-types';
 
 // ── SDK type ──────────────────────────────────────────────────────────────────
 
@@ -66,12 +70,18 @@ function fileTypeBadgeVariant(
 
 // ── Brand pill ────────────────────────────────────────────────────────────────
 
-function BrandPill({ simulatorType }: { simulatorType: SimulatorType }) {
-  const brand = BRAND_CONFIG[simulatorType] ?? {
-    label: simulatorType,
-    color: '#8091A5',
-    textColor: '#fff',
-  };
+function BrandPill({
+  connector,
+  simulatorType,
+}: {
+  connector?: ConnectorProfile | null;
+  simulatorType?: SimulatorType | null;
+}) {
+  const fallbackBrand = simulatorType
+    ? BRAND_CONFIG[simulatorType] ?? { label: simulatorType, color: '#8091A5', textColor: '#fff' }
+    : { label: 'Integration', color: '#8091A5', textColor: '#fff' };
+  const brand = connector?.brand ?? { color: fallbackBrand.color, textColor: fallbackBrand.textColor };
+  const label = connector?.label ?? fallbackBrand.label;
   return (
     <span
       style={{
@@ -87,7 +97,7 @@ function BrandPill({ simulatorType }: { simulatorType: SimulatorType }) {
         whiteSpace: 'nowrap',
       }}
     >
-      {brand.label}
+      {label}
     </span>
   );
 }
@@ -121,6 +131,14 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
   const mapping = getMapping(fieldSdk);
   const simulatorType = mapping?.simulatorType ?? null;
   const pickerMode = mapping?.mode ?? 'single';
+
+  // Resolve connector profile from app parameters for accurate badge labelling.
+  // Seed connectors resolve via BRAND_CONFIG fallback; custom connectors require
+  // this lookup because CONNECTOR_ID_TO_SIMULATOR_TYPE won't know about them.
+  const connectors: ConnectorProfile[] =
+    fieldSdk.parameters?.installation?.connectors ?? [];
+  const connector: ConnectorProfile | null =
+    connectors.find((c) => c.id === mapping?.connectorId) ?? null;
 
   const [fieldValue, setFieldValue] = useState<
     ProductRecord | AssetRecord | ProductRecord[] | AssetRecord[] | ProductCollection | AssetCollection | Record<string, unknown> | null
@@ -164,7 +182,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
     if (!result) return;
     // Stamp platform source label so front-end components can display it
     if (isEcom && simulatorType) {
-      const label = BRAND_CONFIG[simulatorType]?.label ?? simulatorType;
+      const label = connector?.label ?? BRAND_CONFIG[simulatorType]?.label ?? simulatorType;
       if (Array.isArray(result)) {
         for (const item of result) if ('sku' in item) (item as ProductRecord).source = label;
       } else if ('items' in (result as object) && Array.isArray((result as ProductCollection).items)) {
@@ -209,7 +227,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
   }
 
   // ── No mapping configured ─────────────────────────────────────────────────
-  if (!simulatorType) {
+  if (!simulatorType && !connector) {
     return (
       <Box
         padding="spacingM"
@@ -242,7 +260,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
         }}
       >
         <Flex alignItems="center" gap="spacingS" style={{ marginBottom: 4 }}>
-          {simulatorType && <BrandPill simulatorType={simulatorType} />}
+          {(connector || simulatorType) && <BrandPill connector={connector} simulatorType={simulatorType} />}
         </Flex>
         <Flex alignItems="baseline" gap="spacingXs" style={{ marginBottom: 8 }}>
           <Text fontWeight="fontWeightDemiBold" style={{ fontSize: 13 }}>
@@ -309,7 +327,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
         }}
       >
         <Flex alignItems="center" gap="spacingS" style={{ marginBottom: 6 }}>
-          {simulatorType && <BrandPill simulatorType={simulatorType} />}
+          {(connector || simulatorType) && <BrandPill connector={connector} simulatorType={simulatorType} />}
         </Flex>
         <Flex alignItems="center" gap="spacingS">
           <Badge variant={catName ? 'primary' : 'secondary'}>
@@ -348,7 +366,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
         }}
       >
         <Flex alignItems="center" gap="spacingS" style={{ marginBottom: 4 }}>
-          {simulatorType && <BrandPill simulatorType={simulatorType} />}
+          {(connector || simulatorType) && <BrandPill connector={connector} simulatorType={simulatorType} />}
         </Flex>
         <Text fontColor="gray600" style={{ fontSize: 11, display: 'block', marginBottom: 2 }}>
           {label}
@@ -419,7 +437,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
         }}
       >
         <Flex alignItems="center" gap="spacingS" style={{ marginBottom: 8 }}>
-          {simulatorType && <BrandPill simulatorType={simulatorType} />}
+          {(connector || simulatorType) && <BrandPill connector={connector} simulatorType={simulatorType} />}
           <Text fontWeight="fontWeightDemiBold" style={{ fontSize: 13 }}>
             {label}
           </Text>
@@ -535,7 +553,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
                 flexDirection="column"
                 style={{ flex: 1, padding: '12px 14px', gap: 8 }}
               >
-                <BrandPill simulatorType={simulatorType} />
+                <BrandPill connector={connector} simulatorType={simulatorType} />
 
                 <Text
                   fontWeight="fontWeightDemiBold"
@@ -707,7 +725,7 @@ export function IntegrationSimulatorField({ sdk }: { sdk: unknown }) {
                   overflow: 'hidden',
                 }}
               >
-                <BrandPill simulatorType={simulatorType} />
+                <BrandPill connector={connector} simulatorType={simulatorType} />
 
                 <Text
                   fontWeight="fontWeightDemiBold"

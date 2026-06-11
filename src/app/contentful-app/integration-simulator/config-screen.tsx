@@ -77,7 +77,7 @@ function migrateMappings(
 ): Array<{ contentTypeId: string; fieldId: string; connectorId: string; mode?: 'single' | 'category' | 'filtered-category' }> {
   return raw.map((m) => {
     const explicit = (m as Partial<MappingRow>).connectorId;
-    const fromLegacy = SIMULATOR_TYPE_TO_CONNECTOR_ID[m.simulatorType];
+    const fromLegacy = m.simulatorType ? SIMULATOR_TYPE_TO_CONNECTOR_ID[m.simulatorType] : undefined;
     // Legacy data may still have 'multi' — migrate to 'category'
     const rawMode = (m as Record<string, unknown>).mode as string | undefined;
     return {
@@ -164,7 +164,7 @@ export function IntegrationSimulatorConfig({ sdk }: { sdk: unknown }) {
         .filter((entry): entry is [string, Activation] => entry[1] !== null)
         .map(([ctId, v]) => {
           const legacySimulator =
-            CONNECTOR_ID_TO_SIMULATOR_TYPE[v.connectorId] ?? 'SHOPIFY';
+            CONNECTOR_ID_TO_SIMULATOR_TYPE[v.connectorId] ?? null;
           return {
             contentTypeId: ctId,
             fieldId: v.fieldId,
