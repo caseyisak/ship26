@@ -191,6 +191,12 @@ export type CardFragment = {
   colorVariant?: 'transparent' | 'light' | 'dark' | 'accent' | null;
   style?: 'card' | 'borderless' | null;
   sectionStyle?: Record<string, string> | null;
+  promptToLogIn?: boolean | null;
+  linkToEntry?: {
+    __typename: string;
+    sys: { id: string };
+    slug?: string;
+  } | null;
 };
 
 /** CardsWrapper section (matches Contentful cardsWrapper content type: renamed from features). */

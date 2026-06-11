@@ -40,5 +40,5 @@ export function useLiveUpdates<T>(data: T): T {
 }
 
 export function useContentfulInspectorModeProps(entryId: string) {
-  return useContentfulInspectorMode({ entryId });
+  return useContentfulInspectorMode({ entryId, locale: 'en-US' });
 }

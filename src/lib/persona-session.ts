@@ -44,6 +44,11 @@ export function setPersona(persona: Persona): void {
     // ignore
   }
 
+  // Notify hooks (e.g. useDiscountedCatalog) that persona changed
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('persona-changed'));
+  }
+
   // Fire NT identify so the audience rules match
   if (typeof window !== 'undefined') {
     (
@@ -79,4 +84,9 @@ export function clearPersona(): void {
     // ignore
   }
   document.cookie = `${PERSONA_COOKIE}=;path=/;max-age=0`;
+
+  // Notify hooks (e.g. useDiscountedCatalog) that persona changed
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('persona-changed'));
+  }
 }

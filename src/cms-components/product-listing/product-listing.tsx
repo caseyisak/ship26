@@ -15,6 +15,8 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { useMergeTagRenderOptions } from '@/lib/rich-text-merge-tags';
+import { useDiscountedCatalog } from '@/lib/use-discounted-catalog';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -37,12 +39,13 @@ function RtField({
 }: {
   rt?: { json: Record<string, unknown> } | null;
 }): React.ReactElement | null {
+  const mergeTagOptions = useMergeTagRenderOptions(rtOptions);
   if (!rt?.json) return null;
   return (
     <>
       {documentToReactComponents(
         rt.json as unknown as Parameters<typeof documentToReactComponents>[0],
-        rtOptions,
+        mergeTagOptions,
       )}
     </>
   );
@@ -194,7 +197,8 @@ export function ProductListing({
     return () => { cancelled = true; };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps -- intentional mount-only; see comment above
 
-  const productCatalog = productCatalogProp ?? fetchedCatalog ?? [];
+  const rawCatalog = productCatalogProp ?? fetchedCatalog ?? [];
+  const productCatalog = useDiscountedCatalog(rawCatalog);
 
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(liveData.sys.id);
@@ -418,16 +422,14 @@ export function ProductListing({
 
           {/* ── Right product grid ────────────────────────────────────── */}
           <div className="min-w-0 flex-1">
-            {/* ContentMatchReveal: show matched tags from top product when filters are active */}
-            {(selectedTags.length > 0 || selectedCategory !== 'all') && filtered.length > 0 && (
+            {/* ContentMatchReveal: show actively selected filter tags */}
+            {selectedTags.length > 0 && (
               <ContentMatchReveal
-                matchedTags={filtered[0].tags ?? []}
-                query={
-                  selectedTags.length > 0
-                    ? selectedTags.join(', ')
-                    : selectedCategory
-                }
+                matchedTags={selectedTags}
                 className="mb-5"
+                onRemoveTag={(tag) => {
+                  setSelectedTags((prev) => prev.filter((t) => t !== tag));
+                }}
               />
             )}
             {loading ? (

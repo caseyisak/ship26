@@ -315,6 +315,15 @@ const CARD_FIELDS = `
     colorVariant
     style
     sectionStyle
+    promptToLogIn
+    linkToEntry {
+      __typename
+      ... on Page { sys { id } slug }
+      ... on ProductDetailPage { sys { id } slug }
+      ... on ProductListing { sys { id } }
+      ... on DynamicPage { sys { id } slug }
+      ... on DashboardPage { sys { id } slug }
+    }
   }
 `;
 
@@ -801,6 +810,15 @@ const CALLOUT_CARD_UNION_FIELDS = `
     colorVariant
     style
     sectionStyle
+    promptToLogIn
+    linkToEntry {
+      __typename
+      ... on Page { sys { id } slug }
+      ... on ProductDetailPage { sys { id } slug }
+      ... on ProductListing { sys { id } }
+      ... on DynamicPage { sys { id } slug }
+      ... on DashboardPage { sys { id } slug }
+    }
   }
   ... on Banner {
     __typename

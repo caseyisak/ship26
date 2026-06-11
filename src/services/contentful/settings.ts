@@ -24,13 +24,22 @@ export interface Nav {
   };
 }
 
+export interface FooterColumn {
+  heading: string | null;
+  links: NavLink[];
+}
+
 export interface Footer {
   internalName: string;
   tagline?: string | null;
   logo?: SettingsAsset | null;
+  colorVariant?: string | null;
   linksCollection: {
     items: NavLink[];
   };
+  col1?: FooterColumn | null;
+  col2?: FooterColumn | null;
+  col3?: FooterColumn | null;
 }
 
 export interface SiteSettings {
@@ -60,6 +69,20 @@ const NAV_LINKS_FRAGMENT = `
   }
 `;
 
+/** Inline fragment for a column links reference field (col1Links, col2Links, col3Links). */
+const COLUMN_LINKS_FRAGMENT = `
+  items {
+    sys { id }
+    label
+    url
+    page {
+      __typename
+      ... on Page { slug }
+      ... on ProductListing { slug }
+    }
+  }
+`;
+
 const SETTINGS_QUERY = `
   query GetSettings($preview: Boolean) {
     settingsCollection(limit: 1, preview: $preview) {
@@ -75,8 +98,15 @@ const SETTINGS_QUERY = `
         footer {
           internalName
           tagline
+          colorVariant
           logo { url title width height }
           ${NAV_LINKS_FRAGMENT}
+          col1Heading
+          col1LinksCollection(limit: 10) { ${COLUMN_LINKS_FRAGMENT} }
+          col2Heading
+          col2LinksCollection(limit: 10) { ${COLUMN_LINKS_FRAGMENT} }
+          col3Heading
+          col3LinksCollection(limit: 10) { ${COLUMN_LINKS_FRAGMENT} }
         }
         productCatalog
         assetCatalog
@@ -118,8 +148,15 @@ type RawNav = {
 type RawFooter = {
   internalName: string;
   tagline?: string | null;
+  colorVariant?: string | null;
   logo?: SettingsAsset | null;
   linksCollection: { items: RawNavLink[] };
+  col1Heading?: string | null;
+  col1LinksCollection?: { items: RawNavLink[] } | null;
+  col2Heading?: string | null;
+  col2LinksCollection?: { items: RawNavLink[] } | null;
+  col3Heading?: string | null;
+  col3LinksCollection?: { items: RawNavLink[] } | null;
 };
 
 type RawFormSettings = {
@@ -189,10 +226,20 @@ export async function getSettings({
         ? {
             internalName: raw.footer.internalName,
             tagline: raw.footer.tagline ?? null,
+            colorVariant: raw.footer.colorVariant ?? null,
             logo: raw.footer.logo ?? null,
             linksCollection: {
               items: resolveNavLinks(raw.footer.linksCollection?.items ?? []),
             },
+            col1: raw.footer.col1LinksCollection
+              ? { heading: raw.footer.col1Heading ?? null, links: resolveNavLinks(raw.footer.col1LinksCollection.items ?? []) }
+              : null,
+            col2: raw.footer.col2LinksCollection
+              ? { heading: raw.footer.col2Heading ?? null, links: resolveNavLinks(raw.footer.col2LinksCollection.items ?? []) }
+              : null,
+            col3: raw.footer.col3LinksCollection
+              ? { heading: raw.footer.col3Heading ?? null, links: resolveNavLinks(raw.footer.col3LinksCollection.items ?? []) }
+              : null,
           }
         : null,
       productCatalog: raw.productCatalog ?? null,
