@@ -16,6 +16,7 @@ const socials = [
 type FooterProps = {
   footerForm?: FormFragment | null;
   colorVariant?: string | null;
+  logo?: { url: string; title?: string | null } | null;
   col1?: FooterColumn | null;
   col2?: FooterColumn | null;
   col3?: FooterColumn | null;
@@ -39,7 +40,7 @@ function resolveHref(link: { url?: string; page?: { __typename: string; slug: st
   return link.url ?? '#';
 }
 
-export const Footer = ({ footerForm, colorVariant, col1, col2, col3 }: FooterProps) => {
+export const Footer = ({ footerForm, colorVariant, logo, col1, col2, col3 }: FooterProps) => {
   const resolvedVariant = colorVariant ?? 'accent';
 
   const bgClass = sectionBgClass(resolvedVariant);
@@ -56,16 +57,17 @@ export const Footer = ({ footerForm, colorVariant, col1, col2, col3 }: FooterPro
       <div className="container py-12 md:py-16">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col gap-6 md:max-w-[280px]">
-            <Link href="/" aria-label="Arko Home">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://images.ctfassets.net/uumzxfocy3ef/1FlCXA1AAb3wwS1rLfTmX5/bdad4da6d6f8a3c11918d9c9321ba319/arko-2.png"
-                alt="Arko Home"
-                width={160}
-                height={53}
-                className=""
-              />
-            </Link>
+            {logo?.url && (
+              <Link href="/" aria-label={logo.title ?? 'Home'}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={logo.url.startsWith('//') ? `https:${logo.url}` : logo.url}
+                  alt={logo.title ?? ''}
+                  width={160}
+                  height={53}
+                />
+              </Link>
+            )}
             {footerForm && (
               <div className={cn(
                 textClass,
