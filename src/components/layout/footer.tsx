@@ -63,7 +63,7 @@ export const Footer = ({ footerForm, colorVariant, col1, col2, col3 }: FooterPro
                 alt="Arko Home"
                 width={160}
                 height={53}
-                className={invertLogo ? 'invert' : ''}
+                className=""
               />
             </Link>
             {footerForm && (
