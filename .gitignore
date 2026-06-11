@@ -49,5 +49,21 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .specstory/
-.cursor/debug.log
-.cursor/hooks/
+.cursor/
+.claude/
+
+# AI config files
+CLAUDE.md
+design.md
+
+# documentation (not needed in deploy)
+documentation/
+demo-loops/
+archive/
+TASKS.md
+
+# template reference (read-only)
+metafi-nextjs-template-1.0.0/
+
+# scripts
+scripts/
