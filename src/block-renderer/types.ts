@@ -62,13 +62,15 @@ export type AioAeoGeoFragment = {
   region?: string | null;
 };
 
-/** FaqItem (matches Contentful FaqItem content type: internalName, questionRt, answerRt, aioAeoGeo). */
+/** FaqItem (matches Contentful FaqItem content type: internalName, questionRt, answerRt, source, aioAeoGeo). */
 export type FaqItemFragment = {
   __typename: 'FaqItem';
   sys: { id: string };
   internalName?: string | null;
   questionRt?: { json: Record<string, unknown> } | null;
   answerRt?: { json: Record<string, unknown> } | null;
+  /** Source badge: manufacturer | editors | customers */
+  source?: 'manufacturer' | 'editors' | 'customers' | string | null;
   aioAeoGeoCollection?: { items: AioAeoGeoFragment[] } | null;
 };
 
@@ -77,7 +79,19 @@ export type FaqFragment = BlockData & {
   __typename: 'Faq';
   internalName?: string | null;
   titleRt?: { json: Record<string, unknown> } | null;
-  descriptionRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: {
+    json: Record<string, unknown>;
+    links?: {
+      entries?: {
+        inline?: Array<{
+          sys: { id: string };
+          __typename?: string;
+          ntMergetagId?: string | null;
+          ntFallback?: string | null;
+        } | null>;
+      };
+    };
+  } | null;
   faqMetadata?: AioAeoGeoFragment | null;
   itemsCollection?: { items: FaqItemFragment[] } | null;
   ntExperiencesCollection?: {
@@ -177,6 +191,12 @@ export type CardFragment = {
   colorVariant?: 'transparent' | 'light' | 'dark' | 'accent' | null;
   style?: 'card' | 'borderless' | null;
   sectionStyle?: Record<string, string> | null;
+  promptToLogIn?: boolean | null;
+  linkToEntry?: {
+    __typename: string;
+    sys: { id: string };
+    slug?: string;
+  } | null;
 };
 
 /** CardsWrapper section (matches Contentful cardsWrapper content type: renamed from features). */
@@ -562,6 +582,8 @@ export type ProductDetailPageFragment = BlockData & {
   /** JSON Object field — stores full ProductRecord written by the Integration Simulator app */
   sku?: Record<string, unknown> | null;
   editorNotes?: { json: Record<string, unknown> } | null;
+  /** AEO governance metadata — linking this unlocks attributed AI answers in the AEO preview. */
+  aioAeoGeo?: AioAeoGeoFragment | null;
   sectionsCollection?: {
     items: Array<
       | BannerFragment

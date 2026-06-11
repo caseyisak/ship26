@@ -11,6 +11,7 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { useMergeTagRenderOptions } from '@/lib/rich-text-merge-tags';
 import { sectionBgClass, sectionMutedTextClass, sectionTextClass } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
 
@@ -35,6 +36,7 @@ const CardsWrapper = ({
 }: BlockProps<CardsWrapperFragment>) => {
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
+  const rtOptions = useMergeTagRenderOptions(cardsWrapperRichTextOptions);
 
   const labelRtData = (liveData as CardsWrapperFragment).labelRt;
   const titleRtData = (liveData as CardsWrapperFragment).titleRt;
@@ -45,19 +47,19 @@ const CardsWrapper = ({
   const label = labelRtData?.json
     ? documentToReactComponents(
         labelRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
-        cardsWrapperRichTextOptions,
+        rtOptions,
       )
     : null;
   const title = titleRtData?.json
     ? documentToReactComponents(
         titleRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
-        cardsWrapperRichTextOptions,
+        rtOptions,
       )
     : null;
   const description = descriptionRtData?.json
     ? documentToReactComponents(
         descriptionRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
-        cardsWrapperRichTextOptions,
+        rtOptions,
       )
     : null;
   const items = liveData.itemsCollection?.items ?? [];

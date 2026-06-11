@@ -24,6 +24,7 @@ type RawFaqItem = {
   internalName?: string | null;
   questionRt?: { json: Record<string, unknown> } | null;
   answerRt?: { json: Record<string, unknown> } | null;
+  source?: string | null;
   aioAeoGeoCollection?: { items: Array<RawAioAeoGeo | null> } | null;
 };
 
@@ -52,6 +53,7 @@ function mapFaqItem(item: RawFaqItem | null): FaqItemFragment | null {
     internalName: item.internalName ?? null,
     questionRt: item.questionRt ?? null,
     answerRt: item.answerRt ?? null,
+    source: item.source ?? null,
     aioAeoGeoCollection: item.aioAeoGeoCollection
       ? {
           items: item.aioAeoGeoCollection.items

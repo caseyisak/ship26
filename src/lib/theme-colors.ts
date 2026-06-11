@@ -66,10 +66,11 @@ export function sectionMutedTextClass(
   colorVariant: string | null | undefined,
 ): string {
   switch (colorVariant) {
-    case 'dark':    return 'text-background/70';
-    case 'primary': return 'text-primary-foreground/80';
-    case 'accent':  return 'text-primary-foreground/80';
-    default:        return 'text-muted-foreground';
+    case 'dark':      return 'text-background/70';
+    case 'primary':   return 'text-primary-foreground/80';
+    case 'accent':    return 'text-accent-foreground/70';
+    case 'secondary': return 'text-secondary-foreground/70';
+    default:          return 'text-muted-foreground';
   }
 }
 

@@ -11,24 +11,40 @@ import { useLocalAudiences } from '@/personalization/local-audience-context';
 
 import { getAudienceName } from './audience-map';
 
-// Allowlist of traits shown in the Profile Previewer.
-// Keeps the panel focused on demo-relevant data and hides
-// any stale or internal-only traits from the NT profile.
-const DEMO_TRAITS = new Set([
+// Session traits: behavioral data collected during the browsing session.
+// These accumulate from search, page views, and interactions.
+const SESSION_TRAITS = new Set([
+  'clicked_hero_cta',
+  'isNewsletterSubscribed',
+  'session_search_query',
+  'session_ai_chat_active',
+  'session_ai_suggestion_clicked',
+  'session_pages_viewed',
+  'session_interacted_with',
+  'session_product_interest',
+  'session_interest',
+]);
+
+// Customer traits: identity data. Starts with anonymous info (visitor ID, location, device).
+// On login, appends persona data (name, tier, order history, etc.).
+const CUSTOMER_TRAITS = new Set([
   'first_name',
   'last_name',
   'email',
   'phone',
   'company',
-  'interested_in',
   'customer_type',
+  'customerType',
   'loyalty_tier',
   'last_order',
   'favorite_item',
   'points',
   'location',
-  'isNewsletterSubscribed',
-  'clicked_hero_cta',
+  'is_logged_in',
+  'interested_in',
+  'reads_manufacturer_notes',
+  'influenced_by_editors',
+  'reads_reviews',
 ]);
 
 const TRAIT_LABELS: Record<string, string> = {
@@ -39,6 +55,7 @@ const TRAIT_LABELS: Record<string, string> = {
   company: 'Company',
   interested_in: 'Interested In',
   customer_type: 'Customer Type',
+  customerType: 'Customer Type',
   loyalty_tier: 'Loyalty Tier',
   last_order: 'Last Order',
   favorite_item: 'Favorite Item',
@@ -46,6 +63,17 @@ const TRAIT_LABELS: Record<string, string> = {
   location: 'Location',
   isNewsletterSubscribed: 'Newsletter',
   clicked_hero_cta: 'Clicked Hero CTA',
+  is_logged_in: 'Logged In',
+  reads_manufacturer_notes: 'Manufacturer Notes',
+  influenced_by_editors: 'Editor Influence',
+  reads_reviews: 'Reviews Reader',
+  session_search_query: 'Search Query',
+  session_ai_chat_active: 'AI Chat',
+  session_ai_suggestion_clicked: 'AI Suggestion',
+  session_pages_viewed: 'Pages Viewed',
+  session_interacted_with: 'Interacted With',
+  session_product_interest: 'Product Interest',
+  session_interest: 'Browsing Interest',
 };
 
 const LS_KEY = 'profile-previewer-open';
@@ -131,20 +159,24 @@ function ProfilePreviewer({
   const visitCount = session?.count ?? 1;
   const isReturning = session?.isReturningVisitor ?? false;
 
-  // Traits — read from NT profile.traits so behavioral traits (interested_in, etc.)
-  // appear immediately after identify() without requiring a reload.
+  // Split traits into session (behavioral) and customer (identity) categories
   const profileTraits = (profile?.traits ?? {}) as Record<string, unknown>;
-  const traits = Object.entries(profileTraits)
-    .filter(([k, v]) => DEMO_TRAITS.has(k) && v != null && v !== '')
-    .map(([k, v]) => ({
-      key: k,
-      label:
-        TRAIT_LABELS[k] ??
-        k
-          .replace(/_/g, ' ')
-          .replace(/\b\w/g, (c) => c.toUpperCase()),
-      value: String(v),
-    }));
+
+  const formatTrait = ([k, v]: [string, unknown]) => ({
+    key: k,
+    label:
+      TRAIT_LABELS[k] ??
+      k.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+    value: String(v),
+  });
+
+  const sessionTraits = Object.entries(profileTraits)
+    .filter(([k, v]) => SESSION_TRAITS.has(k) && v != null && v !== '')
+    .map(formatTrait);
+
+  const customerTraits = Object.entries(profileTraits)
+    .filter(([k, v]) => CUSTOMER_TRAITS.has(k) && v != null && v !== '')
+    .map(formatTrait);
 
   return (
     <AnimatePresence>
@@ -176,29 +208,114 @@ function ProfilePreviewer({
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5 bg-white">
-            {/* Visitor */}
-            <div>
+          {/* 3 rows, each ~33% height, independently scrollable */}
+          <div className="flex flex-1 flex-col min-h-0 bg-white">
+            {/* Session Traits — behavioral data from browsing */}
+            <div className="flex-1 min-h-0 overflow-y-auto border-b border-border px-4 py-3">
               <div className="mb-2">
                 <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
-                  Visitor
+                  Session Traits
                 </span>
               </div>
               <div className="space-y-1 text-sm">
                 <div className="flex gap-3">
-                  <span className="text-muted-foreground w-20 shrink-0">ID</span>
+                  <span className="text-muted-foreground w-28 shrink-0">Visit</span>
+                  <span>#{visitCount} &bull; {isReturning ? 'Returning' : 'New visitor'}</span>
+                </div>
+              </div>
+              <AnimatePresence initial={false}>
+                {sessionTraits.length > 0 && (
+                  <div className="space-y-1.5 mt-1.5">
+                    {sessionTraits.map(({ key: traitKey, label, value }) => (
+                      <motion.div
+                        key={traitKey}
+                        initial={{
+                          opacity: 0,
+                          y: 6,
+                          backgroundColor: 'rgba(140, 46, 234, 0.2)',
+                        }}
+                        animate={{
+                          opacity: 1,
+                          y: 0,
+                          backgroundColor: 'rgba(140, 46, 234, 0)',
+                        }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{
+                          opacity: { duration: 0.25 },
+                          y: { duration: 0.25 },
+                          backgroundColor: { duration: 1.5, delay: 0.1 },
+                        }}
+                        className="flex gap-3 text-sm rounded px-1 py-0.5"
+                      >
+                        <span className="text-muted-foreground w-28 shrink-0">
+                          {label}
+                        </span>
+                        <span>{value}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </AnimatePresence>
+              {sessionTraits.length === 0 && (
+                <p className="text-xs text-muted-foreground mt-1.5">No behavioral signals yet</p>
+              )}
+            </div>
+
+            {/* Customer Traits — anonymous info + enriched on login */}
+            <div className="flex-1 min-h-0 overflow-y-auto border-b border-border px-4 py-3">
+              <div className="mb-2">
+                <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+                  Customer Traits
+                </span>
+              </div>
+              <div className="space-y-1 text-sm">
+                <div className="flex gap-3">
+                  <span className="text-muted-foreground w-28 shrink-0">Visitor ID</span>
                   <span className="font-mono text-xs">{visitorId}</span>
                 </div>
                 <div className="flex gap-3">
-                  <span className="text-muted-foreground w-20 shrink-0">Location</span>
+                  <span className="text-muted-foreground w-28 shrink-0">Location</span>
                   <span>{location}</span>
                 </div>
               </div>
+              <AnimatePresence initial={false}>
+                {customerTraits.length > 0 && (
+                  <div className="space-y-1.5 mt-1.5">
+                    {customerTraits.map(({ key: traitKey, label, value }) => (
+                      <motion.div
+                        key={traitKey}
+                        initial={{
+                          opacity: 0,
+                          y: 6,
+                          backgroundColor: 'rgba(140, 46, 234, 0.2)',
+                        }}
+                        animate={{
+                          opacity: 1,
+                          y: 0,
+                          backgroundColor: 'rgba(140, 46, 234, 0)',
+                        }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{
+                          opacity: { duration: 0.25 },
+                          y: { duration: 0.25 },
+                          backgroundColor: { duration: 1.5, delay: 0.1 },
+                        }}
+                        className="flex gap-3 text-sm rounded px-1 py-0.5"
+                      >
+                        <span className="text-muted-foreground w-28 shrink-0">
+                          {label}
+                        </span>
+                        <span>{value}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Audiences — new items flash purple on entry via framer-motion initial */}
-            <div>
-              <div className="border-t border-border pt-4 mb-2">
+            {/* Audiences */}
+            <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3">
+              <div className="mb-2">
                 <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
                   Audiences
                 </span>
@@ -245,69 +362,6 @@ function ProfilePreviewer({
                   )}
                 </AnimatePresence>
               </ul>
-            </div>
-
-            {/* Traits — reads from NT profile.traits (reactive to identify() calls) */}
-            <AnimatePresence initial={false}>
-              {traits.length > 0 && (
-                <motion.div
-                  key="traits-section"
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                >
-                  <div className="border-t border-border pt-4 mb-2">
-                    <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
-                      Traits
-                    </span>
-                  </div>
-                  <div className="space-y-1.5">
-                    <AnimatePresence initial={false}>
-                      {traits.map(({ key: traitKey, label, value }) => (
-                        <motion.div
-                          key={traitKey}
-                          initial={{
-                            opacity: 0,
-                            y: 6,
-                            backgroundColor: 'rgba(140, 46, 234, 0.2)',
-                          }}
-                          animate={{
-                            opacity: 1,
-                            y: 0,
-                            backgroundColor: 'rgba(140, 46, 234, 0)',
-                          }}
-                          exit={{ opacity: 0, y: -4 }}
-                          transition={{
-                            opacity: { duration: 0.25 },
-                            y: { duration: 0.25 },
-                            backgroundColor: { duration: 1.5, delay: 0.1 },
-                          }}
-                          className="flex gap-3 text-sm rounded px-1 py-0.5"
-                        >
-                          <span className="text-muted-foreground w-28 shrink-0">
-                            {label}
-                          </span>
-                          <span>{value}</span>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Session */}
-            <div>
-              <div className="border-t border-border pt-4 mb-2">
-                <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
-                  Session
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Visit #{visitCount} &bull;{' '}
-                {isReturning ? 'Returning' : 'New visitor'}
-              </p>
             </div>
           </div>
         </motion.div>

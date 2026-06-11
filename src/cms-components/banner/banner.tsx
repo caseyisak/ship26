@@ -1,8 +1,6 @@
 'use client';
 
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
-import { INLINES } from '@contentful/rich-text-types';
-import type { Options } from '@contentful/rich-text-react-renderer';
 import { useNinetailed, useProfile } from '@ninetailed/experience.js-react';
 import { X } from 'lucide-react';
 import * as React from 'react';
@@ -16,7 +14,7 @@ import {
 } from '@/lib/live-preview';
 import { resolveMergeTagsInDoc } from '@/lib/merge-tags';
 import { NT_EVENTS } from '@/lib/nt-events';
-import { useMergeTags } from '@/personalization/merge-tags-context';
+import { useMergeTagRenderOptions } from '@/lib/rich-text-merge-tags';
 import { parseSectionStyle } from '@/lib/section-style-types';
 import { sectionBgClass, sectionTextClass } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
@@ -86,35 +84,7 @@ export function Banner({ data: rawData }: BlockProps<BannerFragment>) {
   );
   const useOverride = sectionStyle.useStyleOverride;
 
-  // Global merge tag catalog fetched at provider level — keyed by Contentful sys.id.
-  const mergeTagMap = useMergeTags();
-
-  // Resolve a dot-notation path like "traits.industry" against the NT profile.
-  const fullProfile = profileState.profile as Record<string, unknown> | null;
-  function resolveNtMergeTagId(mergeTagId: string): string | null {
-    if (!fullProfile) return null;
-    const parts = mergeTagId.split('.');
-    let val: unknown = fullProfile;
-    for (const part of parts) {
-      if (val === null || val === undefined || typeof val !== 'object') return null;
-      val = (val as Record<string, unknown>)[part];
-    }
-    return val != null ? String(val) : null;
-  }
-
-  // Render options: resolve NtMergetag inline entries against the NT profile.
-  const renderOptions: Options = {
-    renderNode: {
-      [INLINES.EMBEDDED_ENTRY]: (node) => {
-        const id = (node.data?.target as { sys?: { id?: string } })?.sys?.id;
-        if (!id) return null;
-        const mergeTag = mergeTagMap.get(id);
-        if (!mergeTag) return null;
-        const resolved = resolveNtMergeTagId(mergeTag.ntMergetagId);
-        return <span>{resolved ?? mergeTag.ntFallback}</span>;
-      },
-    },
-  };
+  const renderOptions = useMergeTagRenderOptions();
 
   if (!isVisible) return null;
 

@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Check } from 'lucide-react';
+import { sectionBgClass, sectionMutedTextClass, sectionTextClass } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
 import { useNinetailed } from '@ninetailed/experience.js-react';
 import { useSettings } from '@/personalization/settings-context';
@@ -174,7 +175,7 @@ function LoginButton({ className, onClick }: { className?: string; onClick: () =
 
 const HEADER_HEIGHT = 80;
 
-const Navbar = () => {
+const Navbar = ({ colorVariant }: { colorVariant?: string | null } = {}) => {
   const pathname = usePathname();
   const settings = useSettings();
   const nav = settings?.nav ?? null;
@@ -218,6 +219,33 @@ const Navbar = () => {
   }, []);
 
   const isLoggedIn = Boolean(activePersona);
+
+  // Listen for external "open-login" events (e.g. from CalloutCard promptToLogIn)
+  useEffect(() => {
+    const handler = () => setIsLoginOpen(true);
+    window.addEventListener('open-login', handler);
+    return () => window.removeEventListener('open-login', handler);
+  }, []);
+
+  // Listen for external "open-search-panel" events (e.g. from PDP add-to-cart)
+  useEffect(() => {
+    const handler = () => setIsSearchOpen(true);
+    window.addEventListener('open-search-panel', handler);
+    return () => window.removeEventListener('open-search-panel', handler);
+  }, []);
+
+  // Listen for add-to-cart events globally (navbar is always mounted)
+  // Stores the product on window so SearchPanel can pick it up when it opens.
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (!detail?.product) return;
+      (window as unknown as Record<string, unknown>).__pendingCartProduct = detail.product;
+      setIsSearchOpen(true);
+    };
+    window.addEventListener('add-to-cart', handler);
+    return () => window.removeEventListener('add-to-cart', handler);
+  }, []);
 
   useEffect(() => {
     document.body.classList.toggle('overflow-hidden', isMenuOpen);
@@ -308,7 +336,11 @@ const Navbar = () => {
         </DialogContent>
       </Dialog>
 
-      <header className="bg-background border-border relative z-50 h-20 border-b px-2.5 lg:px-0">
+      <header className={cn(
+        'sticky top-0 z-50 h-20 border-b border-border px-2.5 lg:px-0',
+        sectionBgClass(colorVariant),
+        sectionTextClass(colorVariant),
+      )}>
         <div className="container flex h-20 items-center justify-between lg:grid lg:grid-cols-[auto_1fr_auto]">
           <Link href="/" className="flex items-center gap-2">
             {navLogo?.url ? (
@@ -346,8 +378,10 @@ const Navbar = () => {
                   key={link.label}
                   href={href}
                   className={cn(
-                    'text-muted-foreground hover:text-foreground text-sm font-medium transition-colors',
-                    pathname === href && 'text-foreground',
+                    'text-sm font-medium transition-colors hover:opacity-100',
+                    pathname === href
+                      ? sectionTextClass(colorVariant)
+                      : cn(sectionMutedTextClass(colorVariant), 'hover:opacity-100'),
                   )}
                 >
                   {link.label}
@@ -379,7 +413,7 @@ const Navbar = () => {
             <ToolsDropdown className="hidden sm:flex lg:flex" onProfilePreviewerToggle={handleProfilePreviewerToggle} />
 
             <button
-              className="text-muted-foreground relative flex size-8 lg:hidden"
+              className={cn('relative flex size-8 lg:hidden', sectionMutedTextClass(colorVariant))}
               onClick={() => setIsMenuOpen((v) => !v)}
               aria-expanded={isMenuOpen}
               aria-label="Toggle main menu"

@@ -115,7 +115,8 @@ export async function getProductListingBySlug({
       preview,
     });
     return mapProductListing(data.productListingCollection?.items?.[0]);
-  } catch {
+  } catch (err) {
+    console.error('[getProductListingBySlug] Failed for slug:', slug, err);
     return null;
   }
 }

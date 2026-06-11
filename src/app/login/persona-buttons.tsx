@@ -21,8 +21,8 @@ export function PersonaButtons({ personas, onSuccess }: Props) {
     setPersona(persona);
     track(NT_EVENTS.AUTH_COMPLETED, {
       authType: 'signup',
-      segment: persona.customer_type,
-    });
+      segment: persona.customer_type ?? (persona as Record<string, unknown>).customerType ?? '',
+    } as Record<string, string>);
     if (onSuccess) {
       onSuccess();
     } else {

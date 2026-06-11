@@ -9,6 +9,7 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { useMergeTagRenderOptions } from '@/lib/rich-text-merge-tags';
 import { parseSectionStyle } from '@/lib/section-style-types';
 import { ctaPrimaryBtnStyle, ctaSecondaryBtnStyle, sectionBgClass, sectionTextClass } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
@@ -48,6 +49,7 @@ function RtField({
 export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
   const data = useLiveUpdates(rawData);
   const getProps = useContentfulInspectorModeProps(rawData.sys.id);
+  const rtOptions = useMergeTagRenderOptions();
 
   const {
     headlineRt,
@@ -208,7 +210,10 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
             style={headlineStyle}
             {...getProps({ fieldId: 'headlineRt' })}
           >
-            <RtField rt={headlineRt} />
+            {documentToReactComponents(
+              headlineRt.json as unknown as Parameters<typeof documentToReactComponents>[0],
+              rtOptions,
+            )}
           </div>
         )}
 
@@ -219,7 +224,10 @@ export function CtaSection({ data: rawData }: BlockProps<CtaSectionFragment>) {
             style={subheadlineStyle}
             {...getProps({ fieldId: 'subheadlineRt' })}
           >
-            <RtField rt={subheadlineRt} />
+            {documentToReactComponents(
+              subheadlineRt.json as unknown as Parameters<typeof documentToReactComponents>[0],
+              rtOptions,
+            )}
           </div>
         )}
 

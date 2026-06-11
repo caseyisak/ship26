@@ -184,7 +184,7 @@ const AIO_AEO_GEO_FIELDS = `
   }
 `;
 
-/** FaqItem fragment: all fields from FaqItem content type (internalName, questionRt, answerRt, aioAeoGeo). */
+/** FaqItem fragment: all fields from FaqItem content type (internalName, questionRt, answerRt, source, aioAeoGeo). */
 const FAQ_ITEM_FIELDS = `
   __typename
   sys { id }
@@ -192,6 +192,7 @@ const FAQ_ITEM_FIELDS = `
     internalName
     questionRt { json }
     answerRt { json }
+    source
     aioAeoGeoCollection(limit: 1) {
       items {
         ${AIO_AEO_GEO_FIELDS}
@@ -207,7 +208,7 @@ const FAQ_FIELDS = `
   ... on Faq {
     internalName
     titleRt { json }
-    descriptionRt { json }
+    descriptionRt { json ${MERGE_TAG_RT_LINKS} }
     faqMetadata {
       ${AIO_AEO_GEO_FIELDS}
     }
@@ -314,6 +315,15 @@ const CARD_FIELDS = `
     colorVariant
     style
     sectionStyle
+    promptToLogIn
+    linkToEntry {
+      __typename
+      ... on Page { sys { id } slug }
+      ... on ProductDetailPage { sys { id } slug }
+      ... on ProductListing { sys { id } }
+      ... on DynamicPage { sys { id } slug }
+      ... on DashboardPage { sys { id } slug }
+    }
   }
 `;
 
@@ -779,6 +789,55 @@ const BANNER_FIELDS = `
   }
 `;
 
+/** Union fragment for calloutCardsCollection items.
+ *  Contentful treats multi-type reference fields as union types, so bare
+ *  top-level fields like __typename/sys are not allowed — they must live
+ *  inside each inline fragment.
+ *  NOTE: Banner.media is inlined as a direct asset sub-selection (no nested ... on MediaWrapper)
+ *  to avoid nested inline fragments that confuse the regex-based fragment validator.
+ *  NOTE: trailing "... on Entry { sys { id } }" catch-all is intentional — it acts as a sentinel
+ *  so the non-greedy regex in the fragment validator doesn't truncate the Banner fragment body. */
+const CALLOUT_CARD_UNION_FIELDS = `
+  ... on Card {
+    __typename
+    sys { id }
+    titleRt { json }
+    descriptionRt { json }
+    media { url }
+    animationKey
+    mediaPlacement
+    mediaSize
+    colorVariant
+    style
+    sectionStyle
+    promptToLogIn
+    linkToEntry {
+      __typename
+      ... on Page { sys { id } slug }
+      ... on ProductDetailPage { sys { id } slug }
+      ... on ProductListing { sys { id } }
+      ... on DynamicPage { sys { id } slug }
+      ... on DashboardPage { sys { id } slug }
+    }
+  }
+  ... on Banner {
+    __typename
+    sys { id }
+    internalName
+    headlineRt { json }
+    subheadlineRt { json }
+    ctaText
+    ctaUrl
+    variant
+    colorVariant
+    sectionStyle
+    media {
+      ${MEDIA_WRAPPER_FIELDS}
+    }
+  }
+  ... on Entry { sys { id } }
+`;
+
 /** FeatureSectionItem fragment: all fields from featureSectionItem content type. */
 const FEATURE_SECTION_ITEM_FIELDS = `
   __typename
@@ -885,7 +944,7 @@ const ICON_FEATURE_GRID_PAGE_FIELDS = `
   }
 `;
 
-/** PDP lean fragment for PAGE_BY_SLUG — sku (JSON) + editorNotes + sections; no NT. */
+/** PDP lean fragment for PAGE_BY_SLUG — sku (JSON) + editorNotes + aioAeoGeo + sections; no NT. */
 const PDP_PAGE_FIELDS = `
   ... on ProductDetailPage {
     __typename
@@ -893,11 +952,14 @@ const PDP_PAGE_FIELDS = `
     internalName
     sku
     editorNotes { json }
+    aioAeoGeo {
+      ${AIO_AEO_GEO_FIELDS}
+    }
     sectionsCollection(limit: 10) {
       items {
-        __typename
-        ... on Entry { sys { id } }
         ... on Banner {
+          __typename
+          sys { id }
           headlineRt { json }
           subheadlineRt { json }
           ctaText
@@ -907,6 +969,8 @@ const PDP_PAGE_FIELDS = `
           sectionStyle
         }
         ... on TwoAcross {
+          __typename
+          sys { id }
           eyebrowRt { json }
           headingRt { json }
           body { json }
@@ -917,6 +981,8 @@ const PDP_PAGE_FIELDS = `
           sectionStyle
         }
         ... on CtaSection {
+          __typename
+          sys { id }
           headlineRt { json }
           subheadlineRt { json }
           ctaPrimaryLabelRt { json }
@@ -927,6 +993,8 @@ const PDP_PAGE_FIELDS = `
           sectionStyle
         }
         ... on Form {
+          __typename
+          sys { id }
           formId
           formType
           labelRt { json }
@@ -936,16 +1004,35 @@ const PDP_PAGE_FIELDS = `
           colorVariant
         }
         ... on DynamicListing {
+          __typename
+          sys { id }
           titleRt { json }
           skus
           displayVariant
+        }
+        ... on Faq {
+          __typename
+          sys { id }
+          internalName
+          titleRt { json }
+          descriptionRt { json }
+          faqMetadata {
+            ${AIO_AEO_GEO_FIELDS}
+          }
+          itemsCollection(limit: 50) {
+            items {
+              ${FAQ_ITEM_FIELDS}
+            }
+          }
         }
       }
     }
   }
 `;
 
-/** DynamicListing lean fragment for PAGE_BY_SLUG — skus array + display config + callout cards; no NT. */
+/** DynamicListing lean fragment for PAGE_BY_SLUG — skus array + display config + callout cards; no NT.
+ *  NOTE: dynamicListing CT calloutCards only accepts Card (not Banner), so use CARD_FIELDS only.
+ *  productListing CT accepts Card|Banner and uses CALLOUT_CARD_UNION_FIELDS. */
 const DYNAMIC_LISTING_PAGE_FIELDS = `
   ... on DynamicListing {
     __typename
@@ -1682,7 +1769,7 @@ const PRODUCT_LISTING_FIELDS = `
     columns
     calloutCardsCollection(limit: 10) {
       items {
-        ${CARD_FIELDS}
+        ${CALLOUT_CARD_UNION_FIELDS}
       }
     }
   }

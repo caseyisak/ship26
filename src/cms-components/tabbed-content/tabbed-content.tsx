@@ -12,6 +12,7 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { useMergeTagRenderOptions } from '@/lib/rich-text-merge-tags';
 import { cn } from '@/lib/utils';
 
 const tabbedRichTextOptions = {
@@ -51,6 +52,7 @@ const TabbedContent = ({
 }: BlockProps<TabbedContentFragment>) => {
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
+  const rtOptions = useMergeTagRenderOptions(tabbedRichTextOptions);
 
   const taglineRtData = (liveData as TabbedContentFragment).taglineRt;
   const titleRtData = (liveData as TabbedContentFragment).titleRt;
@@ -58,21 +60,21 @@ const TabbedContent = ({
   const tagline = taglineRtData?.json
     ? documentToReactComponents(
         taglineRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
-        tabbedRichTextOptions,
+        rtOptions,
       )
-    : 'For Developers';
+    : null;
   const title = titleRtData?.json
     ? documentToReactComponents(
         titleRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
-        tabbedRichTextOptions,
+        rtOptions,
       )
-    : 'Building Blocks for Recurring Billing';
+    : null;
   const description = descriptionRtData?.json
     ? documentToReactComponents(
         descriptionRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
-        tabbedRichTextOptions,
+        rtOptions,
       )
-    : 'Lay the foundation for recurring billing with comprehensive building blocks tailored to your needs.';
+    : null;
 
   const items = liveData.itemsCollection?.items ?? [];
   const [active, setActive] = React.useState<string | null>(
