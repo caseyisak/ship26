@@ -87,6 +87,13 @@ export function useSessionTracker() {
           addInteraction('hero CTA');
           break;
 
+        case 'ai_product_discovery':
+          if (data?.category) {
+            traits.session_ai_product_category = String(data.category);
+          }
+          addInteraction('AI product discovery');
+          break;
+
         case 'product_card_click':
           addInteraction('product card');
           if (data?.category) {

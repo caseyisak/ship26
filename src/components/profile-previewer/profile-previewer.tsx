@@ -23,6 +23,7 @@ const SESSION_TRAITS = new Set([
   'session_interacted_with',
   'session_product_interest',
   'session_interest',
+  'session_ai_product_category',
 ]);
 
 // Customer traits: identity data. Starts with anonymous info (visitor ID, location, device).
@@ -74,6 +75,7 @@ const TRAIT_LABELS: Record<string, string> = {
   session_interacted_with: 'Interacted With',
   session_product_interest: 'Product Interest',
   session_interest: 'Browsing Interest',
+  session_ai_product_category: 'AI Product Category',
 };
 
 const LS_KEY = 'profile-previewer-open';

@@ -12,6 +12,7 @@ export const AUDIENCE_MAP: Record<string, string> = {
   '4R4tisZXLysFGuBY5DAlUj': 'Newsletter Subscribers',
   '2l6gxfQdOb86ntJ5ZtSdMg': 'Logged In User',
   '1nLRlw8OxGgvQx5cjMsr1J': 'New Visitor',
+  '3rG8icRmoreA1OF0T6Cdge': 'Lamp Shopper (AI Discovery)',
 };
 
 export function getAudienceName(id: string): string {

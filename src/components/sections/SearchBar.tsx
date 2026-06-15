@@ -715,6 +715,11 @@ export function SearchPanel({ isOpen, onClose }: SearchBarProps) {
     trackSessionEvent('search', { query: trimmed });
 
     const lower = trimmed.toLowerCase();
+
+    // Fire NT personalization trait when query matches lamp-related AI script
+    if (lower.includes('lamp') || lower.includes('lighting')) {
+      trackSessionEvent('ai_product_discovery', { category: 'lamps' });
+    }
     const userMsg: ChatMessage = { role: 'user', text: trimmed };
 
     // Check if this triggers a navigation action
