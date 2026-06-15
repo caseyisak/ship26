@@ -5,14 +5,56 @@ import { BLOCKS, MARKS } from '@contentful/rich-text-types';
 import Image from 'next/image';
 import * as React from 'react';
 
+import Link from 'next/link';
+
 import type { CardFragment } from '@/block-renderer/types';
 import { getFeatureVisualComponent } from '@/lib/feature-visual-registry';
 import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { useMergeTagRenderOptions } from '@/lib/rich-text-merge-tags';
 import { cardBgClass, cardMutedTextClass, cardTextClass } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
+
+function resolveCardHref(card: CardFragment): string | null {
+  const link = card.linkToEntry;
+  if (!link?.slug) return null;
+  switch (link.__typename) {
+    case 'ProductDetailPage':
+      return `/products/${link.slug}`;
+    case 'DashboardPage':
+      return `/dashboard/${link.slug}`;
+    default:
+      return `/page/${link.slug}`;
+  }
+}
+
+/** Wraps card content with promptToLogIn or linkToEntry behavior */
+function CardInteractionWrapper({
+  card,
+  children,
+}: {
+  card: CardFragment;
+  children: React.ReactNode;
+}) {
+  if (card.promptToLogIn === true) {
+    return (
+      <button
+        type="button"
+        onClick={() => window.dispatchEvent(new Event('open-login'))}
+        className="text-left w-full h-full"
+      >
+        {children}
+      </button>
+    );
+  }
+  const href = resolveCardHref(card);
+  if (href) {
+    return <Link href={href} className="block h-full">{children}</Link>;
+  }
+  return <>{children}</>;
+}
 
 // ── Rich-text renderer ────────────────────────────────────────────────────────
 
@@ -51,8 +93,24 @@ export function CardRenderer({
   card: CardFragment;
   className?: string;
 }) {
+  const hasInteraction = card.promptToLogIn === true || resolveCardHref(card) != null;
+  const inner = <CardRendererInner card={card} className={className} />;
+  if (hasInteraction) {
+    return <CardInteractionWrapper card={card}>{inner}</CardInteractionWrapper>;
+  }
+  return inner;
+}
+
+function CardRendererInner({
+  card,
+  className,
+}: {
+  card: CardFragment;
+  className?: string;
+}) {
   const liveCard = useLiveUpdates(card);
   const getCardProps = useContentfulInspectorModeProps(liveCard.sys.id);
+  const mergeTagOptions = useMergeTagRenderOptions(rtOptions);
 
   // Rich text
   const titleRtData = (liveCard as CardFragment).titleRt;
@@ -62,7 +120,7 @@ export function CardRenderer({
         titleRtData.json as unknown as Parameters<
           typeof documentToReactComponents
         >[0],
-        rtOptions,
+        mergeTagOptions,
       )
     : null;
   const description = descriptionRtData?.json
@@ -70,7 +128,7 @@ export function CardRenderer({
         descriptionRtData.json as unknown as Parameters<
           typeof documentToReactComponents
         >[0],
-        rtOptions,
+        mergeTagOptions,
       )
     : null;
 

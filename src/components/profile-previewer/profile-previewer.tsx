@@ -14,9 +14,16 @@ import { getAudienceName } from './audience-map';
 // Session traits: behavioral data collected during the browsing session.
 // These accumulate from search, page views, and interactions.
 const SESSION_TRAITS = new Set([
-  'interested_in',
   'clicked_hero_cta',
   'isNewsletterSubscribed',
+  'session_search_query',
+  'session_ai_chat_active',
+  'session_ai_suggestion_clicked',
+  'session_pages_viewed',
+  'session_interacted_with',
+  'session_product_interest',
+  'session_interest',
+  'session_ai_product_category',
 ]);
 
 // Customer traits: identity data. Starts with anonymous info (visitor ID, location, device).
@@ -35,6 +42,10 @@ const CUSTOMER_TRAITS = new Set([
   'points',
   'location',
   'is_logged_in',
+  'interested_in',
+  'reads_manufacturer_notes',
+  'influenced_by_editors',
+  'reads_reviews',
 ]);
 
 const TRAIT_LABELS: Record<string, string> = {
@@ -54,6 +65,17 @@ const TRAIT_LABELS: Record<string, string> = {
   isNewsletterSubscribed: 'Newsletter',
   clicked_hero_cta: 'Clicked Hero CTA',
   is_logged_in: 'Logged In',
+  reads_manufacturer_notes: 'Manufacturer Notes',
+  influenced_by_editors: 'Editor Influence',
+  reads_reviews: 'Reviews Reader',
+  session_search_query: 'Search Query',
+  session_ai_chat_active: 'AI Chat',
+  session_ai_suggestion_clicked: 'AI Suggestion',
+  session_pages_viewed: 'Pages Viewed',
+  session_interacted_with: 'Interacted With',
+  session_product_interest: 'Product Interest',
+  session_interest: 'Browsing Interest',
+  session_ai_product_category: 'AI Product Category',
 };
 
 const LS_KEY = 'profile-previewer-open';
@@ -188,9 +210,10 @@ function ProfilePreviewer({
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5 bg-white">
+          {/* 3 rows, each ~33% height, independently scrollable */}
+          <div className="flex flex-1 flex-col min-h-0 bg-white">
             {/* Session Traits — behavioral data from browsing */}
-            <div>
+            <div className="flex-1 min-h-0 overflow-y-auto border-b border-border px-4 py-3">
               <div className="mb-2">
                 <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
                   Session Traits
@@ -241,8 +264,8 @@ function ProfilePreviewer({
             </div>
 
             {/* Customer Traits — anonymous info + enriched on login */}
-            <div>
-              <div className="border-t border-border pt-4 mb-2">
+            <div className="flex-1 min-h-0 overflow-y-auto border-b border-border px-4 py-3">
+              <div className="mb-2">
                 <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
                   Customer Traits
                 </span>
@@ -293,8 +316,8 @@ function ProfilePreviewer({
             </div>
 
             {/* Audiences */}
-            <div>
-              <div className="border-t border-border pt-4 mb-2">
+            <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3">
+              <div className="mb-2">
                 <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
                   Audiences
                 </span>

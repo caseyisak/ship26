@@ -8,6 +8,7 @@ import { BlockRenderer } from '@/block-renderer';
 import { useLiveUpdates } from '@/lib/live-preview';
 import { NT_EVENTS } from '@/lib/nt-events';
 import { getPersona } from '@/lib/persona-session';
+import { useSessionTracker } from '@/personalization/use-session-tracker';
 import type { PageData, PageSection } from '@/services/contentful/page';
 
 type Props = {
@@ -365,6 +366,13 @@ function transformSection(item: any): PageSection | null {
 export function PageContentLive({ page }: Props) {
   const { track } = useNinetailed();
   const router = useRouter();
+  const { trackSessionEvent } = useSessionTracker();
+
+  // Track page view for session traits
+  useEffect(() => {
+    trackSessionEvent('page_view');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Refresh server data when an nt_mergetag entry is saved in live preview.
   // MergeTagsContext is server-fetched; it doesn't update via useLiveUpdates().

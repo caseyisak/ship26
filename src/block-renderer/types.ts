@@ -79,7 +79,19 @@ export type FaqFragment = BlockData & {
   __typename: 'Faq';
   internalName?: string | null;
   titleRt?: { json: Record<string, unknown> } | null;
-  descriptionRt?: { json: Record<string, unknown> } | null;
+  descriptionRt?: {
+    json: Record<string, unknown>;
+    links?: {
+      entries?: {
+        inline?: Array<{
+          sys: { id: string };
+          __typename?: string;
+          ntMergetagId?: string | null;
+          ntFallback?: string | null;
+        } | null>;
+      };
+    };
+  } | null;
   faqMetadata?: AioAeoGeoFragment | null;
   itemsCollection?: { items: FaqItemFragment[] } | null;
   ntExperiencesCollection?: {
@@ -179,6 +191,12 @@ export type CardFragment = {
   colorVariant?: 'transparent' | 'light' | 'dark' | 'accent' | null;
   style?: 'card' | 'borderless' | null;
   sectionStyle?: Record<string, string> | null;
+  promptToLogIn?: boolean | null;
+  linkToEntry?: {
+    __typename: string;
+    sys: { id: string };
+    slug?: string;
+  } | null;
 };
 
 /** CardsWrapper section (matches Contentful cardsWrapper content type: renamed from features). */

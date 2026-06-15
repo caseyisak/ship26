@@ -108,7 +108,7 @@ export default async function RootLayout({
             <PersonalizationProvider>
               <LivePreviewProviderWrapper
                 space={process.env.CONTENTFUL_SPACE_ID}
-                environment={process.env.CONTENTFUL_ENVIRONMENT ?? 'master'}
+                environment={process.env.CONTENTFUL_LIVE_PREVIEW_ENVIRONMENT ?? process.env.CONTENTFUL_ENVIRONMENT ?? 'master'}
               >
                 <PreviewLinkInterceptor />
                 <ConditionalSiteChrome>{children}</ConditionalSiteChrome>

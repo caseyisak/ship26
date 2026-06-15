@@ -30,7 +30,14 @@ export function ConditionalSiteChrome({
     <>
       <Navbar />
       <main>{children}</main>
-      <Footer footerForm={settings?.footerForm} />
+      <Footer
+        footerForm={settings?.footerForm}
+        colorVariant={settings?.footer?.colorVariant}
+        logo={settings?.footer?.logo}
+        col1={settings?.footer?.col1}
+        col2={settings?.footer?.col2}
+        col3={settings?.footer?.col3}
+      />
     </>
   );
 }

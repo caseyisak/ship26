@@ -2,10 +2,12 @@
 
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import dynamic from 'next/dynamic';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import type { BlockProps, ProductDetailPageFragment } from '@/block-renderer/types';
 import type { ProductRecord } from '@/lib/integration-adapters/types';
+import { getPersona } from '@/lib/persona-session';
+import { applyPersonaDiscount } from '@/lib/use-discounted-catalog';
 import { DocumentSection } from './DocumentSection';
 import {
   useContentfulInspectorModeProps,
@@ -73,9 +75,20 @@ export function Pdp({ data: rawData }: BlockProps<ProductDetailPageFragment>) {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // sku field is now a JSON Object storing the full ProductRecord
-  const product = data.sku as ProductRecord | null | undefined;
+  // Defer discount application until after mount to avoid hydration mismatch
+  const rawProduct = data.sku as ProductRecord | null | undefined;
+  const product = rawProduct
+    ? mounted
+      ? applyPersonaDiscount(rawProduct)
+      : rawProduct
+    : null;
 
   const sections = data.sectionsCollection?.items?.filter(Boolean) ?? [];
 
@@ -93,6 +106,10 @@ export function Pdp({ data: rawData }: BlockProps<ProductDetailPageFragment>) {
   const handleAddToCart = () => {
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
+    // Dispatch add-to-cart event for SearchPanel assistant flow
+    window.dispatchEvent(
+      new CustomEvent('add-to-cart', { detail: { product } }),
+    );
   };
 
   return (
@@ -172,7 +189,11 @@ export function Pdp({ data: rawData }: BlockProps<ProductDetailPageFragment>) {
                       ${product.price.toFixed(2)}
                     </span>
                     <span className="rounded bg-destructive/10 px-2 py-0.5 text-xs font-semibold text-destructive">
-                      SALE
+                      {(() => {
+                        const p = typeof window !== 'undefined' ? getPersona() : null;
+                        const tier = p?.loyalty_tier;
+                        return tier ? `${tier.charAt(0).toUpperCase() + tier.slice(1)} Promo` : 'SALE';
+                      })()}
                     </span>
                   </>
                 ) : (

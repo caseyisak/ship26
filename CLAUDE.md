@@ -159,7 +159,7 @@ Write a new LL entry whenever you hit a **non-obvious error** that wasted time a
 **Format:** symptom → root cause → fix → related files.
 **Naming:** `ll-NNN-short-slug.md` (increment from current max).
 
-Current max: LL-029.
+Current max: LL-051.
 
 ### Handoff docs (`documentation/handoff-*.md`)
 

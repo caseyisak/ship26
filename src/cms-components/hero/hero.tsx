@@ -12,6 +12,7 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { useMergeTagRenderOptions } from '@/lib/rich-text-merge-tags';
 import { NT_EVENTS } from '@/lib/nt-events';
 import { getPersona } from '@/lib/persona-session';
 import {
@@ -38,19 +39,20 @@ const Hero = ({ data, className, ...props }: BlockProps<HeroFragment>) => {
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
   const { track, identify } = useNinetailed();
+  const rtOptions = useMergeTagRenderOptions(heroRichTextOptions);
 
   const headlineRt = (liveData as HeroFragment).headlineRt;
   const subheadlineRt = (liveData as HeroFragment).subheadlineRt;
   const headline = headlineRt?.json
     ? documentToReactComponents(
         headlineRt.json as unknown as Parameters<typeof documentToReactComponents>[0],
-        heroRichTextOptions,
+        rtOptions,
       )
     : null;
   const subheadline = subheadlineRt?.json
     ? documentToReactComponents(
         subheadlineRt.json as unknown as Parameters<typeof documentToReactComponents>[0],
-        heroRichTextOptions,
+        rtOptions,
       )
     : null;
   const ctaText = liveData.ctaText;

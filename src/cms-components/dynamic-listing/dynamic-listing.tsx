@@ -3,6 +3,7 @@
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
+import { useMergeTagRenderOptions } from '@/lib/rich-text-merge-tags';
 
 import type { BlockProps, CardFragment, DynamicListingFragment } from '@/block-renderer/types';
 import {
@@ -18,7 +19,9 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { useDiscountedCatalog } from '@/lib/use-discounted-catalog';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 function RtField({
   rt,
@@ -57,16 +60,12 @@ function MiniProductCard({ product }: { product: ProductRecord }) {
 
       {/* Info */}
       <div className="flex flex-1 flex-col gap-1.5 p-3">
-        {/* Shopify source badge */}
-        <span
-          className="self-start inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-semibold text-white"
-          style={{ background: '#96BF48' }}
-        >
-          <svg width="8" height="8" viewBox="0 0 24 24" fill="white">
-            <path d="M19.5 8.25h-1.732A5.768 5.768 0 0 0 12 3a5.768 5.768 0 0 0-5.768 5.25H4.5A1.5 1.5 0 0 0 3 9.75v9A1.5 1.5 0 0 0 4.5 20.25h15a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5zM12 4.5a4.27 4.27 0 0 1 4.232 3.75H7.768A4.27 4.27 0 0 1 12 4.5z" />
-          </svg>
-          Shopify
-        </span>
+        {/* Source badge — reads product.source; hidden when not set */}
+        {product.source && (
+          <span className="self-start inline-flex items-center gap-1 rounded-full border border-border bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+            {product.source}
+          </span>
+        )}
 
         <p className="text-sm font-semibold leading-snug">{product.name}</p>
 
@@ -125,15 +124,37 @@ function MiniProductSkeleton() {
 
 // ── Callout card ──────────────────────────────────────────────────────────────
 
+function resolveCardHref(card: CardFragment): string | null {
+  const link = card.linkToEntry;
+  if (!link) return null;
+  const slug = link.slug;
+  if (!slug) return null;
+  switch (link.__typename) {
+    case 'ProductDetailPage':
+      return `/products/${slug}`;
+    case 'DashboardPage':
+      return `/dashboard/${slug}`;
+    default:
+      return `/page/${slug}`;
+  }
+}
+
 function CalloutCard({ card }: { card: CardFragment }) {
   const liveCard = useLiveUpdates(card);
   const getCardProps = useContentfulInspectorModeProps(liveCard.sys.id);
+  const renderOptions = useMergeTagRenderOptions();
 
   const rawUrl = (liveCard as CardFragment).media?.url ?? undefined;
   const imageUrl = rawUrl?.startsWith('//') ? `https:${rawUrl}` : rawUrl;
 
-  return (
-    <div className="border-primary/30 bg-primary/5 flex flex-col overflow-hidden rounded-lg border p-4 shadow-sm">
+  const isPromptLogin = (liveCard as CardFragment).promptToLogIn === true;
+  const href = resolveCardHref(liveCard as CardFragment);
+
+  const inner = (
+    <div className={cn(
+      'border-primary/30 bg-primary/5 flex flex-col overflow-hidden rounded-lg border p-4 shadow-sm',
+      (isPromptLogin || href) && 'cursor-pointer transition-shadow hover:shadow-md',
+    )}>
       {imageUrl && (
         <div className="relative mb-3 h-32 w-full overflow-hidden rounded-md">
           <Image
@@ -153,6 +174,7 @@ function CalloutCard({ card }: { card: CardFragment }) {
         >
           {documentToReactComponents(
             (liveCard as CardFragment).titleRt!.json as unknown as Parameters<typeof documentToReactComponents>[0],
+            renderOptions,
           )}
         </div>
       )}
@@ -163,11 +185,31 @@ function CalloutCard({ card }: { card: CardFragment }) {
         >
           {documentToReactComponents(
             (liveCard as CardFragment).descriptionRt!.json as unknown as Parameters<typeof documentToReactComponents>[0],
+            renderOptions,
           )}
         </div>
       )}
     </div>
   );
+
+  // promptToLogIn takes precedence
+  if (isPromptLogin) {
+    return (
+      <button
+        type="button"
+        onClick={() => window.dispatchEvent(new Event('open-login'))}
+        className="text-left w-full"
+      >
+        {inner}
+      </button>
+    );
+  }
+
+  if (href) {
+    return <Link href={href} className="block">{inner}</Link>;
+  }
+
+  return inner;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -178,7 +220,8 @@ export function DynamicListing({
   const data = useLiveUpdates(rawData);
   const getProps = useContentfulInspectorModeProps(rawData.sys.id);
 
-  const [products, setProducts] = useState<ProductRecord[]>([]);
+  const [rawProducts, setProducts] = useState<ProductRecord[]>([]);
+  const products = useDiscountedCatalog(rawProducts);
   const [isLoading, setIsLoading] = useState(false);
 
   // skus field stores either a ProductCollection {categories, items} (new) or string[] (legacy)

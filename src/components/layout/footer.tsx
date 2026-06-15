@@ -1,39 +1,11 @@
 import { Globe, Link2, Share2 } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 
 import type { FormFragment } from '@/block-renderer/types';
 import { Form } from '@/cms-components/form';
-
-const columns = [
-  {
-    title: 'Product',
-    links: [
-      { name: 'Features', href: '/features' },
-      { name: 'Integrations', href: '/integrations' },
-      { name: 'Pricing', href: '/pricing' },
-    ],
-  },
-  {
-    title: 'Company',
-    links: [
-      { name: 'About Us', href: '/about' },
-      { name: 'Careers', href: '/careers' },
-      { name: 'Contact', href: '/contact' },
-      { name: 'Blog', href: '/blog' },
-    ],
-  },
-  {
-    title: 'Legal & Access',
-    links: [
-      { name: 'Privacy Policy', href: '/privacy' },
-      { name: 'Terms of Service', href: '/terms' },
-      { name: 'Cookie Policy', href: '/cookie-policy' },
-      { name: 'Sign Up', href: '/signup' },
-      { name: 'Login', href: '/login' },
-    ],
-  },
-];
+import { sectionBgClass, sectionMutedTextClass, sectionTextClass } from '@/lib/theme-colors';
+import type { FooterColumn } from '@/services/contentful/settings';
+import { cn } from '@/lib/utils';
 
 const socials = [
   { Icon: Link2, href: 'https://linkedin.com' },
@@ -43,58 +15,104 @@ const socials = [
 
 type FooterProps = {
   footerForm?: FormFragment | null;
+  colorVariant?: string | null;
+  logo?: { url: string; title?: string | null } | null;
+  col1?: FooterColumn | null;
+  col2?: FooterColumn | null;
+  col3?: FooterColumn | null;
 };
 
-export const Footer = ({ footerForm }: FooterProps = {}) => {
+/**
+ * Determines whether the logo should be inverted (white) for contrast.
+ * Light and default backgrounds need dark logo; dark/primary/accent/secondary need inverted.
+ */
+function shouldInvertLogo(colorVariant: string | null | undefined): boolean {
+  return colorVariant === 'dark' || colorVariant === 'primary' || colorVariant === 'accent' || colorVariant === 'secondary';
+}
+
+/** Resolve a NavLink to an href string. */
+function resolveHref(link: { url?: string; page?: { __typename: string; slug: string } }): string {
+  if (link.page) {
+    return link.page.__typename === 'ProductListing'
+      ? `/products/${link.page.slug === 'products' ? '' : link.page.slug}`
+      : `/page/${link.page.slug}`;
+  }
+  return link.url ?? '#';
+}
+
+export const Footer = ({ footerForm, colorVariant, logo, col1, col2, col3 }: FooterProps) => {
+  const resolvedVariant = colorVariant ?? 'accent';
+
+  const bgClass = sectionBgClass(resolvedVariant);
+  const textClass = sectionTextClass(resolvedVariant);
+  const mutedClass = sectionMutedTextClass(resolvedVariant);
+  const invertLogo = shouldInvertLogo(resolvedVariant);
+
+  // Build columns from CMS data, filtering out empty ones
+  const populatedCols = [col1, col2, col3]
+    .filter((c): c is FooterColumn => c != null && c.links.length > 0);
+
   return (
-    <footer className="force-light-vars bg-primary text-primary-foreground px-2.5 lg:px-0">
+    <footer className={cn(bgClass, textClass, 'px-2.5 lg:px-0')}>
       <div className="container py-12 md:py-16">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col gap-6 md:max-w-[280px]">
-            <Link href="/" aria-label="Metafi">
-              <Image
-                src="/images/layout/logo.svg"
-                alt="Metafi"
-                width={140}
-                height={32}
-                className="invert"
-              />
-            </Link>
+            {logo?.url && (
+              <Link href="/" aria-label={logo.title ?? 'Home'}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={logo.url.startsWith('//') ? `https:${logo.url}` : logo.url}
+                  alt={logo.title ?? ''}
+                  width={160}
+                  height={53}
+                />
+              </Link>
+            )}
             {footerForm && (
-              <Form data={footerForm} className="bg-transparent p-0" />
+              <div className={cn(
+                textClass,
+                '[&_h2]:text-inherit [&_h3]:text-inherit [&_p]:text-inherit [&_label]:text-inherit',
+                '[&_input]:border-current/30 [&_input]:text-inherit [&_input::placeholder]:text-inherit/50',
+              )}>
+                <Form data={footerForm} className="bg-transparent p-0" />
+              </div>
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-10 sm:grid-cols-4 md:flex md:w-[525px] md:items-start md:justify-between md:gap-0">
-            {columns.map((col) => (
-              <div key={col.title} className="min-w-0">
-                <h3 className="text-muted-foreground mb-4 text-sm leading-tight font-medium">
-                  {col.title}
-                </h3>
-                <ul className="space-y-3">
-                  {col.links.map((l) => (
-                    <li key={l.name}>
-                      <Link
-                        href={l.href}
-                        className="text-primary-foreground/90 hover:text-primary-foreground text-sm font-normal transition-colors"
-                      >
-                        {l.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          {populatedCols.length > 0 && (
+            <div className="flex flex-wrap justify-end gap-20">
+              {populatedCols.map((col) => (
+                <div key={col.heading ?? 'col'} className="min-w-0">
+                  {col.heading && (
+                    <h3 className={cn('mb-4 text-sm leading-tight font-bold', mutedClass)}>
+                      {col.heading}
+                    </h3>
+                  )}
+                  <ul className="space-y-3">
+                    {col.links.map((link) => (
+                      <li key={link.label}>
+                        <Link
+                          href={resolveHref(link)}
+                          className="text-sm font-normal opacity-90 transition-colors hover:opacity-100"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* divider */}
-        <div className="border-border/40 mt-12 border-t" />
+        <div className="mt-12 border-t border-current/20" />
 
         {/* bottom bar */}
         <div className="mt-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <p className="text-muted-foreground text-sm font-normal">
-            © {new Date().getFullYear()} Arko Home. All rights reserved
+          <p className={cn('text-sm font-normal', mutedClass)}>
+            &copy; {new Date().getFullYear()} Arko Home. All rights reserved
           </p>
 
           <div className="flex items-center gap-4">
@@ -103,7 +121,7 @@ export const Footer = ({ footerForm }: FooterProps = {}) => {
                 key={href}
                 href={href}
                 aria-label={href}
-                className="text-muted-foreground hover:text-primary-foreground transition-colors"
+                className={cn('transition-colors hover:opacity-100', mutedClass)}
               >
                 <Icon className="h-5 w-5" />
               </Link>

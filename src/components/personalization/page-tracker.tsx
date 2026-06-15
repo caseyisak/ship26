@@ -24,6 +24,7 @@ const ANONYMOUS_OVERWRITE: Record<string, string | number | boolean> = {
   points: 0,
   location: '',
   promo_discount: 0,
+  session_ai_product_category: '',
 };
 
 export function PageTracker({ traits }: { traits: Record<string, string | number | boolean | null> }) {

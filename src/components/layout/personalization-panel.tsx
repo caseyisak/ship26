@@ -82,6 +82,8 @@ function PersonalizationPanel({
     setResetting(true);
     try {
       await ninetailed.reset();
+      // Clear search panel chat state so lamp conversation doesn't persist
+      sessionStorage.removeItem('search-panel-state');
     } finally {
       window.location.reload();
     }

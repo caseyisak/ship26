@@ -12,6 +12,7 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
+import { useMergeTagRenderOptions } from '@/lib/rich-text-merge-tags';
 import { parseSectionStyle } from '@/lib/section-style-types';
 import { sectionClasses } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
@@ -56,19 +57,20 @@ const TwoAcross = ({
 }: BlockProps<TwoAcrossFragment>) => {
   const liveData = useLiveUpdates(data);
   const getProps = useContentfulInspectorModeProps(data.sys.id);
+  const rtOptions = useMergeTagRenderOptions(richTextOptions);
 
   const eyebrowRtData = (liveData as TwoAcrossFragment).eyebrowRt;
   const headingRtData = (liveData as TwoAcrossFragment).headingRt;
   const eyebrow = eyebrowRtData?.json
     ? documentToReactComponents(
         eyebrowRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
-        richTextOptions,
+        rtOptions,
       )
     : null;
   const heading = headingRtData?.json
     ? documentToReactComponents(
         headingRtData.json as unknown as Parameters<typeof documentToReactComponents>[0],
-        richTextOptions,
+        rtOptions,
       )
     : null;
   const body = liveData.body;

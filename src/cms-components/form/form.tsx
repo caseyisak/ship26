@@ -11,7 +11,7 @@ import {
   useContentfulInspectorModeProps,
   useLiveUpdates,
 } from '@/lib/live-preview';
-import { sectionClasses } from '@/lib/theme-colors';
+import { sectionClasses, sectionMutedTextClass } from '@/lib/theme-colors';
 import { cn } from '@/lib/utils';
 
 import { ContactForm } from './contact-form';
@@ -59,6 +59,10 @@ const Form = ({ data, className, ...props }: BlockProps<FormFragment>) => {
   const redirectUrl = fd.redirectUrl ?? null;
 
   const bgClass = sectionClasses(colorVariant);
+  const mutedTextClass = sectionMutedTextClass(colorVariant);
+  // On colored backgrounds (primary, dark, accent), force contrasting text on
+  // form inputs and override shadcn defaults that assume a light surface.
+  const isColoredBg = colorVariant === 'primary' || colorVariant === 'dark' || colorVariant === 'accent';
 
   const handleSuccess = () => {
     setSubmitted(true);
@@ -78,7 +82,7 @@ const Form = ({ data, className, ...props }: BlockProps<FormFragment>) => {
         <div className={cn(!compact && 'mx-auto max-w-xl')}>
           {label && (
             <p
-              className="text-tagline mb-3 text-sm font-semibold uppercase tracking-widest"
+              className={cn('mb-3 text-sm font-semibold uppercase tracking-widest', isColoredBg ? 'opacity-80' : 'text-tagline')}
               {...getProps({ fieldId: 'labelRt' })}
             >
               {label}
@@ -96,7 +100,7 @@ const Form = ({ data, className, ...props }: BlockProps<FormFragment>) => {
 
           {description && (
             <p
-              className="text-muted-foreground mb-6 text-base"
+              className={cn('mb-6 text-base', mutedTextClass)}
               {...getProps({ fieldId: 'descriptionRt' })}
             >
               {description}
@@ -105,13 +109,18 @@ const Form = ({ data, className, ...props }: BlockProps<FormFragment>) => {
 
           {submitted ? (
             <div
-              className="rounded-lg border border-green-300 bg-green-50 p-4 text-green-800"
+              className={cn(
+                'rounded-lg border p-4',
+                isColoredBg
+                  ? 'border-white/30 bg-white/10 text-inherit'
+                  : 'border-green-300 bg-green-50 text-green-800',
+              )}
               role="alert"
             >
               {successMessage ?? <p>Thank you! Your submission was received.</p>}
             </div>
           ) : (
-            <>
+            <div className={cn(isColoredBg && '[&_input]:border-white/30 [&_input]:bg-white/10 [&_input]:text-inherit [&_input]:placeholder:text-inherit/60 [&_button]:bg-white/20 [&_button]:text-inherit [&_button]:hover:bg-white/30 [&_label]:text-inherit')}>
               {formType === 'newsletter' && (
                 <NewsletterForm submitLabel={submitLabel} onSuccess={handleSuccess} />
               )}
@@ -121,7 +130,7 @@ const Form = ({ data, className, ...props }: BlockProps<FormFragment>) => {
               {formType === 'message' && (
                 <MessageForm submitLabel={submitLabel} onSuccess={handleSuccess} />
               )}
-            </>
+            </div>
           )}
         </div>
       </div>
